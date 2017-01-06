@@ -1,0 +1,17 @@
+﻿{
+  "Name": "AutoscalingOnly",
+  "Targets": [
+    { "Email": "AutoscalingOnlyTest@example.com" },
+    { "Url": "http://farley.com" }
+  ],
+  "AlarmNameSuffix": "AutoscalingOnlyTest",
+  "Services":  {
+    "AutoScaling": {
+      "ExcludeResourcesPrefixedWith": [ "testPrefix" ],
+      "Resources": [
+        "foo",
+        { "Pattern": "bar" }
+      ]
+    }
+  }
+}

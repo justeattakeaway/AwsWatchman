@@ -1,0 +1,17 @@
+﻿{
+  "Name": "LambdaOnly",
+  "Targets": [
+    { "Email": "LambdaOnlyTest@example.com" },
+    { "Url": "http://farley.com" }
+  ],
+  "AlarmNameSuffix": "LambdaOnlyTest",
+  "Services": {
+    "Lambda": {
+      "ExcludeResourcesPrefixedWith": [ "testPrefix" ],
+      "Resources": [
+        "foo",
+        { "Pattern": "bar" }
+      ]
+    }
+  }
+}

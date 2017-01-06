@@ -1,0 +1,30 @@
+﻿{
+  "Name": "DynamoAndSqsTest",
+  "Targets": [
+    { "Email": "DynamoAndSqsTest@example.com" },
+    { "Url": "http://farley.com" }
+  ],
+  "AlarmNameSuffix": "DynamoAndSqsTest",
+  "DynamoDb": {
+    "Tables": [
+      "table1",
+      { "Pattern": "foo" }
+    ]
+  },
+  "Sqs": {
+    "LengthThreshold": 57,
+    "Errors": {
+      "LengthThreshold": 13
+    },
+    "Queues": [
+      "queue1",
+      {
+        "Pattern": "foo",
+        "LengthThreshold": 42,
+        "Errors": {
+          "LengthThreshold": 7
+        }
+      }
+    ]
+  }
+}

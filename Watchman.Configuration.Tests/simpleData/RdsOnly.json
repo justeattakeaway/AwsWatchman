@@ -1,0 +1,17 @@
+﻿{
+  "Name": "RdsOnly",
+  "Targets": [
+    { "Email": "RdsOnlyTest@example.com" },
+    { "Url": "http://farley.com" }
+  ],
+  "AlarmNameSuffix": "RdsOnlyTest",
+  "Services":  {
+    "Rds": {
+      "ExcludeResourcesPrefixedWith": [ "testPrefix" ],
+      "Resources": [
+        "foo",
+        { "Pattern": "bar" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{55A30138-C1AA-4422-9E9C-E19D30428770}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Watchman.Engine</RootNamespace>
+    <AssemblyName>Watchman.Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AWSSDK.CloudFormation, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.CloudFormation.3.3.3.5\lib\net45\AWSSDK.CloudFormation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.CloudWatch, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.CloudWatch.3.3.1.3\lib\net45\AWSSDK.CloudWatch.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.Core.3.3.7.1\lib\net45\AWSSDK.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.DynamoDBv2, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.DynamoDBv2.3.3.1.4\lib\net45\AWSSDK.DynamoDBv2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.S3, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.S3.3.3.5.2\lib\net45\AWSSDK.S3.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.SimpleNotificationService, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.SimpleNotificationService.3.3.0.6\lib\net45\AWSSDK.SimpleNotificationService.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AWSSDK.SQS, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.SQS.3.3.1.6\lib\net45\AWSSDK.SQS.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AlarmDefinition.cs" />
+    <Compile Include="Alarms\AlarmFinder.cs" />
+    <Compile Include="Alarms\AlarmThresholds.cs" />
+    <Compile Include="Alarms\Defaults.cs" />
+    <Compile Include="AwsConstants.cs" />
+    <Compile Include="AwsMetrics.cs" />
+    <Compile Include="Alarms\IAlarmFinder.cs" />
+    <Compile Include="AwsNamespace.cs" />
+    <Compile Include="Generation\Alarm.cs" />
+    <Compile Include="Generation\Generic\CloudFormationAlarmCreator.cs" />
+    <Compile Include="Generation\Generic\CloudWatchCloudFormationTemplate.cs" />
+    <Compile Include="Generation\Generic\IAlarmCreator.cs" />
+    <Compile Include="Generation\Generic\OrphanResourcesFinder.cs" />
+    <Compile Include="Generation\Generic\OrphanResourcesReporter.cs" />
+    <Compile Include="Generation\Generic\OrphansModel.cs" />
+    <Compile Include="Generation\Generic\OrphansLogger.cs" />
+    <Compile Include="Generation\Generic\S3Location.cs" />
+    <Compile Include="Generation\IServiceAlarmTasks.cs" />
+    <Compile Include="Generation\ServiceAlarmBuilder.cs" />
+    <Compile Include="Generation\ServiceAlarmGenerator.cs" />
+    <Compile Include="Generation\ServiceAlarmTasks.cs" />
+    <Compile Include="Generation\WatchmanServiceConfigurationMapper.cs" />
+    <Compile Include="ServiceAlertingGroup.cs" />
+    <Compile Include="Generation\Dynamo\Alarms\IIndexAlarmCreator.cs" />
+    <Compile Include="Generation\Dynamo\Alarms\IndexAlarmCreator.cs" />
+    <Compile Include="Generation\Dynamo\Alarms\ITableAlarmCreator.cs" />
+    <Compile Include="Generation\Dynamo\Alarms\TableAlarmCreator.cs" />
+    <Compile Include="Generation\Dynamo\DynamoAlarmGenerator.cs" />
+    <Compile Include="Generation\AlarmLoaderAndGenerator.cs" />
+    <Compile Include="Generation\Dynamo\AlarmTables.cs" />
+    <Compile Include="Generation\Dynamo\AlarmTablesHelper.cs" />
+    <Compile Include="Generation\Dynamo\TableNamePopulator.cs" />
+    <Compile Include="Generation\Dynamo\OrphanTablesReporter.cs" />
+    <Compile Include="Generation\Filters.cs" />
+    <Compile Include="Generation\Dynamo\OrphanTablesFinder.cs" />
+    <Compile Include="Generation\RegexFilters.cs" />
+    <Compile Include="Generation\ResourceNamePopulator.cs" />
+    <Compile Include="Generation\Sqs\IQueueAlarmCreator.cs" />
+    <Compile Include="Generation\Sqs\OrphanQueuesFinder.cs" />
+    <Compile Include="Generation\Sqs\OrphanQueuesReporter.cs" />
+    <Compile Include="Generation\Sqs\QueueAlarmCreator.cs" />
+    <Compile Include="Generation\Sqs\SqsAlarmGenerator.cs" />
+    <Compile Include="Generation\Sqs\QueueNamePopulator.cs" />
+    <Compile Include="Logging\ConsoleAlarmLogger.cs" />
+    <Compile Include="Logging\IAlarmLogger.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RunMode.cs" />
+    <Compile Include="Sns\ISnsSubscriptionCreator.cs" />
+    <Compile Include="Sns\ISnsTopicCreator.cs" />
+    <Compile Include="Sns\SnsSubscriptionCreator.cs" />
+    <Compile Include="Sns\SnsCreator.cs" />
+    <Compile Include="Sns\SnsTopicCreator.cs" />
+    <Compile Include="WatchmanException.cs" />
+    <Compile Include="WatchmanServiceConfiguration.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\AWSSDK.S3.3.3.5.2\analyzers\dotnet\cs\AWSSDK.S3.CodeAnalysis.dll" />
+    <ProjectReference Include="..\Watchman.AwsResources\Watchman.AwsResources.csproj">
+      <Project>{9123605b-b87d-4616-bf13-404342a447ed}</Project>
+      <Name>Watchman.AwsResources</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Watchman.Configuration\Watchman.Configuration.csproj">
+      <Project>{14f0238f-bd4a-45e2-8b79-ae841f28fed3}</Project>
+      <Name>Watchman.Configuration</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\AWSSDK.CloudFormation.3.3.3.5\analyzers\dotnet\cs\AWSSDK.CloudFormation.CodeAnalysis.dll" />
+    <Analyzer Include="..\packages\AWSSDK.CloudWatch.3.3.1.3\analyzers\dotnet\cs\AWSSDK.CloudWatch.CodeAnalysis.dll" />
+    <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.1.4\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />
+    <Analyzer Include="..\packages\AWSSDK.SimpleNotificationService.3.3.0.6\analyzers\dotnet\cs\AWSSDK.SimpleNotificationService.CodeAnalysis.dll" />
+    <Analyzer Include="..\packages\AWSSDK.SQS.3.3.1.6\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

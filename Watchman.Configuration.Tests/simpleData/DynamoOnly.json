@@ -1,0 +1,13 @@
+﻿{
+  "Name": "DynamoOnly",
+  "Targets": [
+    { "Email": "DynamoOnly@example.com" },
+    { "Url": "http://farley.com" }
+  ],
+  "AlarmNameSuffix": "DynamoOnlyTest",
+  "DynamoDb": {
+    "Tables": [
+      "test-table"
+    ]
+  }
+}

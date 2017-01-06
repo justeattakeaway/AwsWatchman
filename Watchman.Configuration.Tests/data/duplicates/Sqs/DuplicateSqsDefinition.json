@@ -1,0 +1,22 @@
+﻿{
+  "Name": "SqsDuplicateTest",
+  "Targets": [
+    { "Email": "SqsDuplicate@example.com" },
+    { "Url": "http://example.com" }
+  ],
+  "AlarmNameSuffix": "SqsDuplicateTest",
+  "Sqs": {
+    "Queues": [
+      "queue1",
+      { "Pattern": "foo" }
+    ]
+  },
+  "Services": {
+    "Sqs": {
+      "Queues": [
+        "queue",
+        { "Pattern": "foo" }
+      ]
+    }
+  }
+}

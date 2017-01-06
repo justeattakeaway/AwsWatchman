@@ -1,0 +1,16 @@
+﻿{
+  "Name": "TablePatternGroup",
+  "Targets": [
+    { "Email": "TablePatternGroup@example.com" }
+  ],
+  "AlarmNameSuffix": "TablePatternGroup",
+  "IsCatchAll": true,
+  "DynamoDb": {
+    "Tables": [
+      { "Pattern": ".*" }
+    ],
+    "ExcludeTablesPrefixedWith": [
+      "group3-excluded"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+﻿{
+  "Name": "SqsOnly",
+  "Targets": [
+    { "Email": "SqsOnlyTest@example.com" },
+    { "Url": "http://farley.com" }
+  ],
+  "AlarmNameSuffix": "SqsOnlyTest",
+  "Sqs": {
+    "Queues": [
+      "queue1",
+      { "Pattern": "foo" }
+    ]
+  }
+}

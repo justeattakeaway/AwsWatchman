@@ -1,0 +1,20 @@
+﻿{
+  "Name": "DynamoGroup2",
+  "AlarmNameSuffix": "DynamoGroup2",
+  "Targets": [
+    { "Email": "DynamoGroup2@example.com" }
+  ],
+  "DynamoDb": {
+    "Threshold": 0.75,
+    "Tables": [
+      "test-data",
+      {
+        "Name": "test-keys",
+        "Threshold": 0.5
+      }
+    ],
+    "ExcludeTablesPrefixedWith": [ "exclude_all" ],
+    "ExcludeReadsForTablesPrefixedWith": [ "exclude_read" ],
+    "ExcludeWritesForTablesPrefixedWith": [ "exclude_write" ]
+  }
+}

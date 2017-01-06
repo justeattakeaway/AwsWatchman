@@ -1,0 +1,22 @@
+﻿{
+  "Name": "DynamoDuplicateTest",
+  "Targets": [
+    { "Email": "DynamoDuplicate@example.com" },
+    { "Url": "http://example.com" }
+  ],
+  "AlarmNameSuffix": "DynamoDuplicateTest",
+  "DynamoDb": {
+    "Tables": [
+      "table1",
+      { "Pattern": "foo" }
+    ]
+  },
+  "Services": {
+    "DynamoDb": {
+      "Tables": [
+        "table1",
+        { "Pattern": "foo" }
+      ]
+    }
+  }
+}

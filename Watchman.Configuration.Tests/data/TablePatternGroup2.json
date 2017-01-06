@@ -1,0 +1,19 @@
+﻿{
+  "Name": "TablePatternGroup2",
+  "AlarmNameSuffix": "TablePatternGroup2",
+  "Targets": [
+    { "Email": "TablePatternGroup2@example.com" }
+  ],
+  "DynamoDb": {
+    "Threshold": 0.75,
+    "MonitorThrottling": true,
+    "ThrottlingThreshold": 10,
+    "Tables": [
+      {
+        "Pattern": "fish",
+        "Threshold": 0.45,
+        "MonitorWrites": false
+      }
+    ]
+  }
+}

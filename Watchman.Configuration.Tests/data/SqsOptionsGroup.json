@@ -1,0 +1,23 @@
+﻿{
+  "Name": "SqsOptionsTest",
+  "Targets": [
+    { "Email": "SqsOptionsTest@example.com" },
+    { "Url": "http://farley.com" }
+  ],
+  "AlarmNameSuffix": "SqsOptionsTest",
+  "Sqs": {
+    "Queues": [
+      "queue1",
+      { "Pattern": "foo" },
+      {
+        "Pattern": "alltheoptions",
+        "LengthThreshold": 100,
+        "OldestMessageThreshold": 600,
+        "Errors": {
+          "LengthThreshold": 12,
+          "Monitored": true
+        }
+      }
+    ]
+  }
+}
