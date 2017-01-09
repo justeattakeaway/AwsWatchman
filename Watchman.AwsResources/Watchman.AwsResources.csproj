@@ -64,10 +64,6 @@
       <HintPath>..\packages\AWSSDK.RDS.3.3.4.1\lib\net45\AWSSDK.RDS.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.SQS, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\packages\AWSSDK.SQS.3.3.1.6\lib\net45\AWSSDK.SQS.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -106,7 +102,6 @@
     <Analyzer Include="..\packages\AWSSDK.ElasticLoadBalancing.3.3.0.6\analyzers\dotnet\cs\AWSSDK.ElasticLoadBalancing.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.Lambda.3.3.2.4\analyzers\dotnet\cs\AWSSDK.Lambda.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.RDS.3.3.4.1\analyzers\dotnet\cs\AWSSDK.RDS.CodeAnalysis.dll" />
-    <Analyzer Include="..\packages\AWSSDK.SQS.3.3.1.6\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

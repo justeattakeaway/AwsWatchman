@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Amazon;
 using Amazon.CloudWatch;
-using Amazon.SQS;
 using NUnit.Framework;
 using TestHelper;
 using Watchman.AwsResources.Services.Sqs;
@@ -26,8 +25,7 @@ namespace Watchman.AwsResources.IntegrationTests.Service.Sqs
         {
             var creds = CredentialsReader.GetCredentials();
             var cloudWatchClient = new AmazonCloudWatchClient(creds, RegionEndpoint.EUWest1);
-            var sqsClient = new AmazonSQSClient(creds, RegionEndpoint.EUWest1);
-            return new QueueSource(cloudWatchClient, sqsClient);
+            return new QueueSource(cloudWatchClient);
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
-using Amazon.SQS;
 
 namespace Watchman.AwsResources.Services.Sqs
 {
@@ -12,38 +12,13 @@ namespace Watchman.AwsResources.Services.Sqs
     /// i.e. have metrics in cloudwatch
     /// See http://stackoverflow.com/a/40346581/5599
     /// </summary>
-    public class QueueSource : IResourceSource<QueueData>
+    public class QueueSource : ResourceSourceBase<QueueData>
     {
         private readonly IAmazonCloudWatch _amazonCloudWatch;
-        private readonly IAmazonSQS _amazonSqs;
-        private IList<string> _queueNames;
 
-        public QueueSource(IAmazonCloudWatch amazonCloudWatch, IAmazonSQS amazonSqs)
+        public QueueSource(IAmazonCloudWatch amazonCloudWatch)
         {
             _amazonCloudWatch = amazonCloudWatch;
-            _amazonSqs = amazonSqs;
-        }
-
-        public async Task<AwsResource<QueueData>> GetResourceAsync(string name)
-        {
-            var attrs = await _amazonSqs.GetAttributesAsync(name);
-            var queueData = new QueueData
-            {
-                Attributes = attrs,
-                Url = name
-            };
-
-            return new AwsResource<QueueData>(name, queueData);
-        }
-
-        public async Task<IList<string>> GetResourceNamesAsync()
-        {
-            if (_queueNames == null)
-            {
-                _queueNames = await ReadActiveQueueNames();
-            }
-
-            return _queueNames;
         }
 
         private async Task<IList<string>> ReadActiveQueueNames()
@@ -90,6 +65,18 @@ namespace Watchman.AwsResources.Services.Sqs
             return metric.Dimensions
                 .Where(d => d.Name == "QueueName")
                 .Select(d => d.Value);
+        }
+
+        protected override string GetResourceName(QueueData resource)
+        {
+            return resource.Name;
+        }
+
+        protected override async Task<IEnumerable<QueueData>> FetchResources()
+        {
+            var names = await ReadActiveQueueNames();
+
+            return names.Select(n => new QueueData() {Name = n});
         }
     }
 }

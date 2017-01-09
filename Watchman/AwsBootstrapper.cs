@@ -13,7 +13,6 @@ using Amazon.RDS;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.SimpleNotificationService;
-using Amazon.SQS;
 using StructureMap;
 using Watchman.Configuration;
 using Watchman.Engine.Generation.Generic;
@@ -34,8 +33,6 @@ namespace Watchman
                 .Use(ctx => new AmazonCloudWatchClient(creds, new AmazonCloudWatchConfig { RegionEndpoint = region }));
             registry.For<IAmazonSimpleNotificationService>()
                 .Use(ctx => new AmazonSimpleNotificationServiceClient(creds, new AmazonSimpleNotificationServiceConfig { RegionEndpoint = region }));
-            registry.For<IAmazonSQS>()
-                 .Use(ctx => new AmazonSQSClient(creds, new AmazonSQSConfig { RegionEndpoint = region }));
             registry.For<IAmazonRDS>()
                  .Use(ctx => new AmazonRDSClient(creds, new AmazonRDSConfig { RegionEndpoint = region }));
             registry.For<IAmazonAutoScaling>()
