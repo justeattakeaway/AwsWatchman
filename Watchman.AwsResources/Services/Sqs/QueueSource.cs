@@ -76,7 +76,7 @@ namespace Watchman.AwsResources.Services.Sqs
         {
             var names = await ReadActiveQueueNames();
 
-            return names.Select(n => new QueueData() {Name = n});
+            return names.Select(n => new QueueData() {Name = n}).ToList();
         }
     }
 }
