@@ -33,7 +33,7 @@ namespace Watchman.Engine
         /// Should send an alert on a transition into the "Ok" state ?
         /// This is useful to get the alert to automatically reset when leaving the error state
         /// </summary>
-        public bool AlertOnOk { get; set; }
+        public bool AlertOnOk { get; set; } = true;
 
         public AlarmDefinition Copy()
         {
