@@ -119,7 +119,6 @@ The user associated with the keys needs the following roles:
 - elasticloadbalancing:DescribeLoadBalancers
 - lambda:ListFunctions
 - rds:DescribeDBInstances
-- sqs:GetQueueAttributes
 - cloudwatch:ListMetrics
 - ec2:DescribeSubnets
 

@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
-using Amazon.SQS;
 using Moq;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Sqs;
@@ -86,9 +85,6 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 {"AttrName", "AttrValue"}
             };
 
-            var sqsMock = new Mock<IAmazonSQS>();
-            sqsMock.Setup(s => s.GetAttributesAsync(It.Is<string>(a => a == "Queue-2"))).ReturnsAsync(_attributes);
-
             var cloudWatchMock = new Mock<IAmazonCloudWatch>();
             cloudWatchMock.Setup(s => s.ListMetricsAsync(
                 It.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == null),
@@ -105,7 +101,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_thirdPage);
 
-            _queueSource = new QueueSource(cloudWatchMock.Object, sqsMock.Object);
+            _queueSource = new QueueSource(cloudWatchMock.Object);
         }
 
         [Test]
@@ -165,9 +161,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
             // assert
             Assert.That(result.Name, Is.EqualTo(secondQueueName));
             Assert.That(result.Resource, Is.InstanceOf<QueueData>());
-            Assert.That(result.Resource.Url, Is.EqualTo(secondQueueName));
-            Assert.That(result.Resource.Attributes.Single().Key, Is.EqualTo(_attributes.Single().Key));
-            Assert.That(result.Resource.Attributes.Single().Value, Is.EqualTo(_attributes.Single().Value));
+            Assert.That(result.Resource.Name, Is.EqualTo(secondQueueName));
         }
     }
 }
