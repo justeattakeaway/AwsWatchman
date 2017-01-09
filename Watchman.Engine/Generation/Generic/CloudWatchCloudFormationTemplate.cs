@@ -37,13 +37,8 @@ namespace Watchman.Engine.Generation.Generic
             var definition = alarm.AlarmDefinition;
 
 
-            var insufficientDataActions = definition.AlertOnInsufficientData
-                ? new[] {alarm.SnsTopicArn}
-                : Enumerable.Empty<string>();
-
-            var okActions = definition.AlertOnOk
-                ? new[] { alarm.SnsTopicArn }
-                : Enumerable.Empty<string>();
+            var insufficientDataActions = ValueOrEmpty(definition.AlertOnInsufficientData, alarm.SnsTopicArn);
+            var okActions = ValueOrEmpty(definition.AlertOnOk, alarm.SnsTopicArn);
 
             var properties = JObject.FromObject(new
             {
@@ -69,6 +64,11 @@ namespace Watchman.Engine.Generation.Generic
 
             alarmJson["Properties"] = properties;
             return alarmJson;
+        }
+
+        private static IEnumerable<string> ValueOrEmpty(bool hasValue, string value)
+        {
+            return hasValue ? new[] {value} : Enumerable.Empty<string>();
         }
     }
 }
