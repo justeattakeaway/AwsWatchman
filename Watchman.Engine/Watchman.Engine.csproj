@@ -86,6 +86,7 @@
     <Compile Include="Generation\Generic\OrphansLogger.cs" />
     <Compile Include="Generation\Generic\S3Location.cs" />
     <Compile Include="Generation\IServiceAlarmTasks.cs" />
+    <Compile Include="Generation\MetricAlarmHelper.cs" />
     <Compile Include="Generation\ServiceAlarmBuilder.cs" />
     <Compile Include="Generation\ServiceAlarmGenerator.cs" />
     <Compile Include="Generation\ServiceAlarmTasks.cs" />

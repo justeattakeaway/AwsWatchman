@@ -127,6 +127,12 @@ namespace Watchman.Engine.Generation.Dynamo.Alarms
                 return true;
             }
 
+            if (!MetricAlarmHelper.AlarmAndOkActionsAreEqual(existingAlarm))
+            {
+                _logger.Info($"Index alarm {alarmName} alarm actions does not match ok actions");
+                return true;
+            }
+
             if (AlarmThresholds.AreEqual(existingAlarm.Threshold, thresholdInUnits) && (existingAlarm.Period == periodSeconds))
             {
                 _logger.Detail($"Table alarm {alarmName} already exists at same threshold {existingAlarm.Threshold}");
