@@ -55,6 +55,7 @@ namespace Watchman.Engine.Generation.Generic
                         Value = d.Value
                     }),
                 AlarmActions = new[] {alarm.SnsTopicArn},
+                OKActions = new [] { alarm.SnsTopicArn },
                 InsufficientDataActions = insufficientDataActions,
                 ComparisonOperator = definition.ComparisonOperator.Value,
                 EvaluationPeriods = definition.EvaluationPeriods,

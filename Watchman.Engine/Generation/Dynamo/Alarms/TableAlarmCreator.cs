@@ -108,7 +108,8 @@ namespace Watchman.Engine.Generation.Dynamo.Alarms
                 Threshold = thresholdInUnits,
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Namespace = AwsNamespace.DynamoDb,
-                AlarmActions = new List<string> {snsTopicArn}
+                AlarmActions = new List<string> {snsTopicArn},
+                OKActions = new List<string> { snsTopicArn }
             };
             await _cloudWatchClient.PutMetricAlarmAsync(alarmRequest);
 

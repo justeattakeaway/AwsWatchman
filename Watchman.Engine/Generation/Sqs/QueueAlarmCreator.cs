@@ -85,8 +85,10 @@ namespace Watchman.Engine.Generation.Sqs
                 Threshold = thresholdInUnits,
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Namespace = AwsNamespace.Sqs,
-                AlarmActions = new List<string> { snsTopicArn }
+                AlarmActions = new List<string> { snsTopicArn },
+                OKActions = new List<string> { snsTopicArn }
             };
+
             await _cloudWatchClient.PutMetricAlarmAsync(alarmRequest);
 
             AlarmPutCount++;
@@ -110,7 +112,8 @@ namespace Watchman.Engine.Generation.Sqs
                 Threshold = thresholdInUnits,
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Namespace = AwsNamespace.Sqs,
-                AlarmActions = new List<string> { snsTopicArn }
+                AlarmActions = new List<string> { snsTopicArn },
+                OKActions = new List<string> { snsTopicArn }
             };
             await _cloudWatchClient.PutMetricAlarmAsync(alarmRequest);
 
