@@ -24,7 +24,16 @@ namespace Watchman.Engine
         /// </summary>
         public IList<string> DimensionNames { get; set; }
 
+        /// <summary>
+        /// Should send an alert on a transition into the "InsufficientData" state ?
+        /// </summary>
         public bool AlertOnInsufficientData { get; set; }
+
+        /// <summary>
+        /// Should send an alert on a transition into the "Ok" state ?
+        /// This is useful to get the alert to automatically reset when leaving the error state
+        /// </summary>
+        public bool AlertOnOk { get; set; }
 
         public AlarmDefinition Copy()
         {
@@ -39,7 +48,8 @@ namespace Watchman.Engine
                 ComparisonOperator = ComparisonOperator,
                 DimensionNames = DimensionNames,
                 Namespace = Namespace,
-                AlertOnInsufficientData = AlertOnInsufficientData
+                AlertOnInsufficientData = AlertOnInsufficientData,
+                AlertOnOk = AlertOnOk
             };
         }
     }
