@@ -23,7 +23,7 @@ Unmonitored infrastructure is a problem waiting to happen, so all infrastructure
 
 ## Run
 
-Run the exe specifying a config folder for config files (see [config schema](https://github.je-labs.com/cogpart/DynamoWatchman/wiki/Configuration-file-format)) and optionally aws credentials.
+Run the exe specifying a config folder for config files (see [Configuration file format](ConfigurationFileFormat.md)) and optionally aws credentials.
 
 
 e.g.
