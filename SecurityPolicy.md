@@ -45,7 +45,7 @@ Permission necessary for AWS Watchman to do all the things.
 				"sns:Subscribe"
 			],
 			"Resource": [
-				"*"
+				"arn:aws:sns:<region>:<account-id>:*"
 			]
 		}
 	]
@@ -71,10 +71,10 @@ Permission necessary for AWS Watchman to do all the things.
 		{
 			"Effect": "Allow",
 			"Action": [
-				"cloudformation:UpdateStack"                
+				"cloudformation:UpdateStack"
 			],
 			"Resource": [
-				"*"
+				"arn:aws:cloudformation:<region>:<account-id>:stack/Watchman*"
 			]
 		},
 		{
@@ -83,7 +83,7 @@ Permission necessary for AWS Watchman to do all the things.
 				"s3:PutObject"
 			],
 			"Resource": [
-				"*"
+				"arn:aws:s3:::<watchman bucket>/*"
 			]
 		}
 	]
