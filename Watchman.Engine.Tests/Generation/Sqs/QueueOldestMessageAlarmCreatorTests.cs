@@ -43,7 +43,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         }
 
         [Test]
-        public async Task WhenQueueLengthAlarmExistsAtSameLevelNoAlarmIsCreated()
+        public async Task WhenOldestMessageAlarmExistsAtSameLevelNoAlarmIsCreated()
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
@@ -61,7 +61,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         }
 
         [Test]
-        public async Task WhenQueueLengthAlarmExistsWithDifferentThresholdAlarmIsCreated()
+        public async Task WhenOldestMessageAlarmExistsWithDifferentThresholdAlarmIsCreated()
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
@@ -79,7 +79,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         }
 
         [Test]
-        public async Task WhenQueueLengthAlarmExistsWithDifferentPeriodAlarmIsCreated()
+        public async Task WhenOldestMessageAlarmExistsWithDifferentPeriodAlarmIsCreated()
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
@@ -96,5 +96,22 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             VerifyCloudwatch.PutMetricAlarmWasCalledOnce(cloudWatch);
         }
 
+        [Test]
+        public async Task WhenOldestMessageAlarmExistsWithDifferentTargetAlarmIsCreated()
+        {
+            var cloudWatch = new Mock<IAmazonCloudWatch>();
+            var alarmFinder = new Mock<IAlarmFinder>();
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 100,
+                AwsConstants.FiveMinutesInSeconds, "firstTarget");
+
+            var logger = new Mock<IAlarmLogger>();
+
+            var queueAlarmCreator = new QueueAlarmCreator(
+                cloudWatch.Object, alarmFinder.Object, logger.Object);
+
+            await queueAlarmCreator.EnsureOldestMessageAlarm("testQueue", 100, "suffix", "secondTarget", false);
+
+            VerifyCloudwatch.PutMetricAlarmWasCalledOnce(cloudWatch);
+        }
     }
 }
