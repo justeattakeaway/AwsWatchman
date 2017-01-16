@@ -85,7 +85,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 31200, 300);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 31200, 300, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -104,7 +104,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 15600, 300);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 15600, 300, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -123,7 +123,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 42, 300);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 42, 300, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -142,7 +142,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 42, 300);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 42, 300, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 

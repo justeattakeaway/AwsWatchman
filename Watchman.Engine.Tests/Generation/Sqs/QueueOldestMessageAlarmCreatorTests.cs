@@ -48,7 +48,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 100,
-                AwsConstants.FiveMinutesInSeconds);
+                AwsConstants.FiveMinutesInSeconds, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -66,7 +66,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 101,
-                AwsConstants.FiveMinutesInSeconds);
+                AwsConstants.FiveMinutesInSeconds, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -84,7 +84,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 100,
-                AwsConstants.FiveMinutesInSeconds + 1);
+                AwsConstants.FiveMinutesInSeconds + 1, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
