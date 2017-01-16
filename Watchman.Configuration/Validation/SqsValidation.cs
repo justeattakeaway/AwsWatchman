@@ -6,24 +6,24 @@
         {
             if (sqs.LengthThreshold.HasValue)
             {
-                ValidQueueThreshold(sqs.LengthThreshold.Value);
+                ValidQueueLength(sqs.LengthThreshold.Value);
             }
 
             if (sqs.OldestMessageThreshold.HasValue)
             {
-                ValidQueueThreshold(sqs.OldestMessageThreshold.Value);
+                ValidQueueMaxAge(sqs.OldestMessageThreshold.Value);
             }
 
             if (sqs.Errors != null)
             {
                 if (sqs.Errors.LengthThreshold.HasValue)
                 {
-                    ValidQueueThreshold(sqs.Errors.LengthThreshold.Value);
+                    ValidQueueLength(sqs.Errors.LengthThreshold.Value);
                 }
 
                 if (sqs.Errors.OldestMessageThreshold.HasValue)
                 {
-                    ValidQueueThreshold(sqs.Errors.OldestMessageThreshold.Value);
+                    ValidQueueMaxAge(sqs.Errors.OldestMessageThreshold.Value);
                 }
             }
 
@@ -52,38 +52,53 @@
 
             if (queue.LengthThreshold.HasValue)
             {
-                ValidQueueThreshold(queue.LengthThreshold.Value);
+                ValidQueueLength(queue.LengthThreshold.Value);
             }
 
             if (queue.OldestMessageThreshold.HasValue)
             {
-                ValidQueueThreshold(queue.OldestMessageThreshold.Value);
+                ValidQueueMaxAge(queue.OldestMessageThreshold.Value);
             }
 
             if (queue.Errors != null)
             {
                 if (queue.Errors?.LengthThreshold != null)
                 {
-                    ValidQueueThreshold(queue.Errors.LengthThreshold.Value);
+                    ValidQueueLength(queue.Errors.LengthThreshold.Value);
                 }
 
                 if (queue.Errors?.OldestMessageThreshold != null)
                 {
-                    ValidQueueThreshold(queue.Errors.OldestMessageThreshold.Value);
+                    ValidQueueMaxAge(queue.Errors.OldestMessageThreshold.Value);
                 }
             }
         }
 
-        private static void ValidQueueThreshold(int threshold)
+        private static void ValidQueueLength(int length)
         {
-            if (threshold <= 0)
+            if (length <= 0)
             {
-                throw new ConfigException($"Threshold of '{threshold}' must be greater than zero");
+                throw new ConfigException($"Queue length of '{length}' must be greater than zero");
             }
 
-            if (threshold > 100000)
+            if (length > 1000)
             {
-                throw new ConfigException($"Threshold of '{threshold}' is ridiculously high");
+                throw new ConfigException($"Queue length of '{length}' is ridiculously high");
+            }
+        }
+
+        private static void ValidQueueMaxAge(int maxAge)
+        {
+            const int sevenDays = 60 * 60 * 24 * 7;
+
+            if (maxAge <= 0)
+            {
+                throw new ConfigException($"Max age of '{maxAge}' must be greater than zero");
+            }
+
+            if (maxAge > sevenDays)
+            {
+                throw new ConfigException($"Max age of '{maxAge}' is ridiculously high");
             }
         }
     }
