@@ -51,19 +51,19 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '-1' must be greater than zero");
+            ConfigAssert.NotValid(_config, "Queue length of '-1' must be greater than zero");
         }
 
         [Test]
         public void SqsConfig_Fails_When_Sqs_LengthThreshold_Is_TooHigh()
         {
             // arrange
-            _sqs.LengthThreshold = 100001;
+            _sqs.LengthThreshold = 1000000;
 
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '100001' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Queue length of '1000000' is ridiculously high");
         }
 
         [Test]
@@ -75,19 +75,19 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '-2' must be greater than zero");
+            ConfigAssert.NotValid(_config, "Max age of '-2' must be greater than zero");
         }
 
         [Test]
         public void SqsConfig_Fails_When_Sqs_OldestMessageThreshold_Is_TooHigh()
         {
             // arrange
-            _sqs.OldestMessageThreshold = 100002;
+            _sqs.OldestMessageThreshold = 1000000;
 
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '100002' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Max age of '1000000' is ridiculously high");
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '-3' must be greater than zero");
+            ConfigAssert.NotValid(_config, "Queue length of '-3' must be greater than zero");
         }
 
         [Test]
@@ -111,7 +111,7 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config,"Threshold of '100003' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Queue length of '100003' is ridiculously high");
         }
 
         [Test]
@@ -123,19 +123,19 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '-4' must be greater than zero");
+            ConfigAssert.NotValid(_config, "Max age of '-4' must be greater than zero");
         }
 
         [Test]
         public void SqsConfig_Fails_When_Sqs_Error_OldestMessageThreshold_Is_TooHigh()
         {
             // arrange
-            _sqs.Errors.OldestMessageThreshold = 100004;
+            _sqs.Errors.OldestMessageThreshold = 1000000;
 
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '100004' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Max age of '1000000' is ridiculously high");
         }
 
         [Test]
@@ -199,7 +199,7 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '-5' must be greater than zero");
+            ConfigAssert.NotValid(_config, "Queue length of '-5' must be greater than zero");
         }
 
         [Test]
@@ -211,7 +211,7 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '100005' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Queue length of '100005' is ridiculously high");
         }
 
         [Test]
@@ -223,19 +223,19 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '-6' must be greater than zero");
+            ConfigAssert.NotValid(_config, "Max age of '-6' must be greater than zero");
         }
 
         [Test]
         public void SqsConfig_Fails_When_Queue_OldestMessageThreshold_Is_TooHigh()
         {
             // arrange
-            _sqs.Queues.First().OldestMessageThreshold = 100006;
+            _sqs.Queues.First().OldestMessageThreshold = 1000000;
 
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '100006' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Max age of '1000000' is ridiculously high");
         }
 
         [Test]
@@ -247,7 +247,7 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config,"Threshold of '-7' must be greater than zero");
+            ConfigAssert.NotValid(_config, "Queue length of '-7' must be greater than zero");
         }
 
         [Test]
@@ -259,7 +259,7 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '100007' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Queue length of '100007' is ridiculously high");
         }
 
         [Test]
@@ -271,19 +271,19 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '-8' must be greater than zero");
+            ConfigAssert.NotValid(_config, "Max age of '-8' must be greater than zero");
         }
 
         [Test]
         public void SqsConfig_Fails_When_Queue_Error_OldestMessageThreshold_Is_TooHigh()
         {
             // arrange
-            _sqs.Queues.First().Errors.OldestMessageThreshold = 100008;
+            _sqs.Queues.First().Errors.OldestMessageThreshold = 1000000;
 
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Threshold of '100008' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Max age of '1000000' is ridiculously high");
         }
 
         [Test]
