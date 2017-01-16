@@ -6,6 +6,18 @@ namespace Watchman.Engine.Generation
 {
     public static class MetricAlarmHelper
     {
+        public static bool AlarmActionsEqualsTarget(List<string> alarmActions, string target)
+        {
+            var alarmCount = alarmActions?.Count ?? 0;
+
+            if (alarmCount != 1)
+            {
+                return false;
+            }
+
+            return string.Equals(alarmActions[0], target, StringComparison.OrdinalIgnoreCase);
+        }
+
         public static bool AlarmAndOkActionsAreEqual(MetricAlarm alarm)
         {
             var alarmCount = alarm.AlarmActions?.Count ?? 0;

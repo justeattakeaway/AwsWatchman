@@ -31,7 +31,7 @@ namespace Watchman.Engine.Generation.Sqs
             var alarmName = GetAlarmName(queueName, AwsMetrics.MessagesVisible, alarmNameSuffix);
 
             var alarmNeedsUpdate = await InspectExistingAlarm(alarmName,
-                threshold, AwsConstants.FiveMinutesInSeconds);
+                threshold, AwsConstants.FiveMinutesInSeconds, snsTopicArn);
 
             if (!alarmNeedsUpdate)
             {
@@ -52,7 +52,7 @@ namespace Watchman.Engine.Generation.Sqs
             var alarmName = GetAlarmName(queueName, AwsMetrics.AgeOfOldestMessage, alarmNameSuffix);
 
             var alarmNeedsUpdate = await InspectExistingAlarm(alarmName,
-                threshold, AwsConstants.FiveMinutesInSeconds);
+                threshold, AwsConstants.FiveMinutesInSeconds, snsTopicArn);
 
             if (!alarmNeedsUpdate)
             {
@@ -126,13 +126,20 @@ namespace Watchman.Engine.Generation.Sqs
             return $"{queueName}-{metricName}-{alarmNameSuffix}";
         }
 
-        private async Task<bool> InspectExistingAlarm(string alarmName, double thresholdInUnits, int periodSeconds)
+        private async Task<bool> InspectExistingAlarm(string alarmName,
+            double thresholdInUnits, int periodSeconds, string targetTopic)
         {
             var existingAlarm = await _alarmFinder.FindAlarmByName(alarmName);
 
             if (existingAlarm == null)
             {
                 _logger.Info($"Queue alarm {alarmName} does not already exist. Creating it at threshold {thresholdInUnits}");
+                return true;
+            }
+
+            if (!MetricAlarmHelper.AlarmActionsEqualsTarget(existingAlarm.AlarmActions, targetTopic))
+            {
+                _logger.Info($"Index alarm {alarmName} alarm target has changed to {targetTopic}");
                 return true;
             }
 
