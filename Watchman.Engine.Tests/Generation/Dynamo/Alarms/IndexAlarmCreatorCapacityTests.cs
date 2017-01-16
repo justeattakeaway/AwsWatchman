@@ -89,7 +89,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 31200, 300);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 31200, 300, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -109,7 +109,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 15600, 300);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 15600, 300, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -129,7 +129,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 42, 300);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 42, 300, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -150,7 +150,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 31200, 123);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 31200, 123, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -167,11 +167,31 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         }
 
         [Test]
+        public async Task WhenReadCapacityAlarmExistsWithDifferentTargetAlarmIsCreated()
+        {
+            var cloudWatch = new Mock<IAmazonCloudWatch>();
+            var alarmFinder = new Mock<IAlarmFinder>();
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 15600, 300, "firstTarget");
+
+            var logger = new Mock<IAlarmLogger>();
+
+            var indexAlarmCreator = new IndexAlarmCreator(
+                cloudWatch.Object, alarmFinder.Object, logger.Object);
+
+            var table = MakeTableDescription();
+            var index = MakeIndexDescription();
+
+            await indexAlarmCreator.EnsureWriteCapacityAlarm(table, index, "suffix", 0.52, "secondTarget", false);
+
+            VerifyCloudwatch.PutMetricAlarmWasCalledOnce(cloudWatch);
+        }
+
+        [Test]
         public async Task WhenWriteCapacityAlarmExistsWithDifferentThresholdAlarmIsCreated()
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 42, 300);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 42, 300, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -182,6 +202,26 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var index = MakeIndexDescription();
 
             await indexAlarmCreator.EnsureWriteCapacityAlarm(table, index, "suffix", 0.52, "testArn", false);
+
+            VerifyCloudwatch.PutMetricAlarmWasCalledOnce(cloudWatch);
+        }
+
+        [Test]
+        public async Task WhenWriteCapacityAlarmExistsWithDifferentTargetAlarmIsCreated()
+        {
+            var cloudWatch = new Mock<IAmazonCloudWatch>();
+            var alarmFinder = new Mock<IAlarmFinder>();
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 15600, 300, "firstTarget");
+
+            var logger = new Mock<IAlarmLogger>();
+
+            var indexAlarmCreator = new IndexAlarmCreator(
+                cloudWatch.Object, alarmFinder.Object, logger.Object);
+
+            var table = MakeTableDescription();
+            var index = MakeIndexDescription();
+
+            await indexAlarmCreator.EnsureWriteCapacityAlarm(table, index, "suffix", 0.52, "secondTarget", false);
 
             VerifyCloudwatch.PutMetricAlarmWasCalledOnce(cloudWatch);
         }

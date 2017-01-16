@@ -47,7 +47,8 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 10, AwsConstants.FiveMinutesInSeconds);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 10,
+                AwsConstants.FiveMinutesInSeconds, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -64,7 +65,8 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         {
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
-            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 101, AwsConstants.FiveMinutesInSeconds);
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 101,
+                AwsConstants.FiveMinutesInSeconds, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -75,7 +77,6 @@ namespace Watchman.Engine.Tests.Generation.Sqs
 
             VerifyCloudwatch.PutMetricAlarmWasCalledOnce(cloudWatch);
         }
-
 
         [Test]
         public async Task WhenQueueLengthAlarmExistsWithDifferentPeriodAlarmIsCreated()
@@ -83,7 +84,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             var cloudWatch = new Mock<IAmazonCloudWatch>();
             var alarmFinder = new Mock<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 10,
-                AwsConstants.FiveMinutesInSeconds + 1);
+                AwsConstants.FiveMinutesInSeconds + 1, "testArn");
 
             var logger = new Mock<IAlarmLogger>();
 
@@ -95,5 +96,22 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             VerifyCloudwatch.PutMetricAlarmWasCalledOnce(cloudWatch);
         }
 
+        [Test]
+        public async Task WhenQueueLengthAlarmExistsWithDifferentTargetAlarmIsCreated()
+        {
+            var cloudWatch = new Mock<IAmazonCloudWatch>();
+            var alarmFinder = new Mock<IAlarmFinder>();
+            VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 10,
+                AwsConstants.FiveMinutesInSeconds, "firstTarget");
+
+            var logger = new Mock<IAlarmLogger>();
+
+            var queueAlarmCreator = new QueueAlarmCreator(
+                cloudWatch.Object, alarmFinder.Object, logger.Object);
+
+            await queueAlarmCreator.EnsureLengthAlarm("testQueue", 10, "suffix", "secondTarget", false);
+
+            VerifyCloudwatch.PutMetricAlarmWasCalledOnce(cloudWatch);
+        }
     }
 }

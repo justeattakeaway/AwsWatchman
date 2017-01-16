@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Moq;
@@ -9,14 +10,16 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
     public static class VerifyCloudwatch
     {
         public static void AlarmFinderFindsThreshold(Mock<IAlarmFinder> alarmFinder,
-            double threshold, int period)
+            double threshold, int period, string action)
         {
             alarmFinder.Setup(x => x.FindAlarmByName(It.IsAny<string>()))
                 .ReturnsAsync(new MetricAlarm
                 {
                     Threshold = threshold,
                     EvaluationPeriods = 1,
-                    Period = period
+                    Period = period,
+                    AlarmActions = new List<string> { action },
+                    OKActions = new List<string> { action }
                 });
         }
 

@@ -74,7 +74,8 @@ namespace Watchman.Engine.Generation.Dynamo.Alarms
             double thresholdInUnits, int periodSeconds,
             string snsTopicArn, bool dryRun)
         {
-            var alarmNeedsUpdate = await InspectExistingAlarm(alarmName, thresholdInUnits, periodSeconds);
+            var alarmNeedsUpdate = await InspectExistingAlarm(alarmName,
+                thresholdInUnits, periodSeconds, snsTopicArn);
 
             if (!alarmNeedsUpdate)
             {
@@ -117,7 +118,8 @@ namespace Watchman.Engine.Generation.Dynamo.Alarms
             _logger.Info($"Put table alarm {alarmName} at threshold {thresholdInUnits} and period {periodSeconds}s");
         }
 
-        private async Task<bool> InspectExistingAlarm(string alarmName, double thresholdInUnits, int periodSeconds)
+        private async Task<bool> InspectExistingAlarm(string alarmName,
+            double thresholdInUnits, int periodSeconds, string targetTopic)
         {
             var existingAlarm = await _alarmFinder.FindAlarmByName(alarmName);
 
@@ -126,6 +128,13 @@ namespace Watchman.Engine.Generation.Dynamo.Alarms
                 _logger.Info($"Table alarm {alarmName} does not already exist. Creating it at threshold {thresholdInUnits}");
                 return true;
             }
+
+            if (!MetricAlarmHelper.AlarmActionsEqualsTarget(existingAlarm.AlarmActions, targetTopic))
+            {
+                _logger.Info($"Index alarm {alarmName} alarm target has changed to {targetTopic}");
+                return true;
+            }
+
 
             if (!MetricAlarmHelper.AlarmAndOkActionsAreEqual(existingAlarm))
             {
