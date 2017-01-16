@@ -9,7 +9,6 @@ namespace Watchman.Engine.Generation.Generic
     {
         private static readonly Regex NonAlpha = new Regex("[^a-zA-Z0-9]+");
 
-
         public static string WriteJson(IList<Alarm> alarms)
         {
             var root = new JObject();
@@ -38,9 +37,8 @@ namespace Watchman.Engine.Generation.Generic
             var definition = alarm.AlarmDefinition;
 
 
-            var insufficientDataActions = definition.AlertOnInsufficientData
-                ? new[] {alarm.SnsTopicArn}
-                : Enumerable.Empty<string>();
+            var insufficientDataActions = ValueOrEmpty(definition.AlertOnInsufficientData, alarm.SnsTopicArn);
+            var okActions = ValueOrEmpty(definition.AlertOnOk, alarm.SnsTopicArn);
 
             var properties = JObject.FromObject(new
             {
@@ -55,6 +53,7 @@ namespace Watchman.Engine.Generation.Generic
                         Value = d.Value
                     }),
                 AlarmActions = new[] {alarm.SnsTopicArn},
+                OKActions = okActions,
                 InsufficientDataActions = insufficientDataActions,
                 ComparisonOperator = definition.ComparisonOperator.Value,
                 EvaluationPeriods = definition.EvaluationPeriods,
@@ -65,6 +64,11 @@ namespace Watchman.Engine.Generation.Generic
 
             alarmJson["Properties"] = properties;
             return alarmJson;
+        }
+
+        private static IEnumerable<string> ValueOrEmpty(bool hasValue, string value)
+        {
+            return hasValue ? new[] {value} : Enumerable.Empty<string>();
         }
     }
 }

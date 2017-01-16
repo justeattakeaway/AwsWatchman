@@ -43,7 +43,8 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
                 && request.Threshold.Equals(threshold)
                 && request.ComparisonOperator == ComparisonOperator.GreaterThanOrEqualToThreshold
                 && request.Namespace == "AWS/DynamoDB"
-                && request.AlarmActions.Contains("sns-topic-arn"));
+                && request.AlarmActions.Contains("sns-topic-arn")
+                && request.OKActions.Contains("sns-topic-arn"));
         }
 
         public static void AlarmWasPutOnIndex(Mock<IAmazonCloudWatch> cloudwatch,
@@ -62,7 +63,8 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
                 && request.Threshold.Equals(threshold)
                 && request.ComparisonOperator == ComparisonOperator.GreaterThanOrEqualToThreshold
                 && request.Namespace == "AWS/DynamoDB"
-                && request.AlarmActions.Contains("sns-topic-arn"));
+                && request.AlarmActions.Contains("sns-topic-arn")
+                && request.OKActions.Contains("sns-topic-arn"));
         }
 
         public static void AlarmWasNotPutOnTable(Mock<IAmazonCloudWatch> cloudwatch, string tableName)
@@ -93,8 +95,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
                 request.Statistic.Value == "Sum"
                 && IsForTable(request, tableName)
                 && IsForIndex(request, indexName)
-                && request.Namespace == "AWS/DynamoDB"
-                && request.AlarmActions.Contains("sns-topic-arn"))), Times.Never);
+                && request.Namespace == "AWS/DynamoDB")), Times.Never);
         }
 
         public static void AlarmWasNotPutOnMetric(Mock<IAmazonCloudWatch> cloudwatch, string metric)

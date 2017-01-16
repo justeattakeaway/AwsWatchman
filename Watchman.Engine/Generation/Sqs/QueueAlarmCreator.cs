@@ -85,8 +85,10 @@ namespace Watchman.Engine.Generation.Sqs
                 Threshold = thresholdInUnits,
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Namespace = AwsNamespace.Sqs,
-                AlarmActions = new List<string> { snsTopicArn }
+                AlarmActions = new List<string> { snsTopicArn },
+                OKActions = new List<string> { snsTopicArn }
             };
+
             await _cloudWatchClient.PutMetricAlarmAsync(alarmRequest);
 
             AlarmPutCount++;
@@ -110,7 +112,8 @@ namespace Watchman.Engine.Generation.Sqs
                 Threshold = thresholdInUnits,
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Namespace = AwsNamespace.Sqs,
-                AlarmActions = new List<string> { snsTopicArn }
+                AlarmActions = new List<string> { snsTopicArn },
+                OKActions = new List<string> { snsTopicArn }
             };
             await _cloudWatchClient.PutMetricAlarmAsync(alarmRequest);
 
@@ -130,6 +133,12 @@ namespace Watchman.Engine.Generation.Sqs
             if (existingAlarm == null)
             {
                 _logger.Info($"Queue alarm {alarmName} does not already exist. Creating it at threshold {thresholdInUnits}");
+                return true;
+            }
+
+            if (!MetricAlarmHelper.AlarmAndOkActionsAreEqual(existingAlarm))
+            {
+                _logger.Info($"Index alarm {alarmName} alarm actions does not match ok actions");
                 return true;
             }
 

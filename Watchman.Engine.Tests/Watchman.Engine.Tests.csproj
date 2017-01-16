@@ -77,6 +77,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlarmDefinitionTests.cs" />
     <Compile Include="Generation\CloudFormationAlarmCreatorTests.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\AlertingGroupData.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\DynamoAlarmGeneratorMockery.cs" />
