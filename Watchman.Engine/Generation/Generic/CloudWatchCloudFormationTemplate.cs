@@ -42,8 +42,8 @@ namespace Watchman.Engine.Generation.Generic
 
             var properties = JObject.FromObject(new
             {
-                AlarmDescription = "AwsWatchman alarm",
                 AlarmName = alarm.AlarmName,
+                AlarmDescription = AwsConstants.DefaultDescription,
                 Namespace = definition.Namespace,
                 MetricName = definition.Metric,
                 Dimensions = alarm.Dimensions
