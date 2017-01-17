@@ -167,3 +167,5 @@ The percentage use can be used to track which tables and indexes are approaching
 - [Configuration file format](ConfigurationFileFormat.md)
 - [Configuration file examples](ConfigurationExamples.md)
 - [Supported Services](SupportedServices.md)
+
+Our production configuration files are kept seperately, in an internal repository.
