@@ -74,6 +74,7 @@ namespace Watchman.Engine.Generation.Sqs
             var alarmRequest = new PutMetricAlarmRequest
             {
                 AlarmName = alarmName,
+                AlarmDescription = AwsConstants.DefaultDescription,
                 MetricName = AwsMetrics.MessagesVisible,
                 Statistic = new Statistic("Sum"),
                 Dimensions = new List<Dimension>
@@ -101,6 +102,7 @@ namespace Watchman.Engine.Generation.Sqs
             var alarmRequest = new PutMetricAlarmRequest
             {
                 AlarmName = alarmName,
+                AlarmDescription = AwsConstants.DefaultDescription,
                 MetricName = AwsMetrics.AgeOfOldestMessage,
                 Statistic = new Statistic("Maximum"),
                 Dimensions = new List<Dimension>

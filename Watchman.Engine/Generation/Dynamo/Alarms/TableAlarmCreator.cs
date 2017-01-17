@@ -98,6 +98,7 @@ namespace Watchman.Engine.Generation.Dynamo.Alarms
             var alarmRequest = new PutMetricAlarmRequest
             {
                 AlarmName = alarmName,
+                AlarmDescription = AwsConstants.DefaultDescription,
                 MetricName = metricName,
                 Statistic = new Statistic("Sum"),
                 Dimensions = new List<Dimension>
