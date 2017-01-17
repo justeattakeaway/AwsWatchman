@@ -6,6 +6,12 @@ Permission necessary for AWS Watchman to do all the things.
 * Allow access with key and secret. Take note of those, you will use them on the commandline or in a profile
 * Add the following as inline policies to the user (You may want to replace `"Resource": [ "*" ]` with something more specific to the account).
 
+The values you will have to subsitute in are:
+
+* `<region>` The AWS region,  eg. `eu-west1`
+* `<watchman bucket>` The name of the S3 bucket to use. The bucket must already exist.
+* `<account-id>` The id of your AWS account.
+
 ## CanDo_CloudwatchAlarms
 
 ```json
