@@ -122,7 +122,7 @@ namespace Watchman.Engine.Generation.Generic
 
             do
             {
-                var allStacks = await _cloudformation.ListStacksAsync(new ListStacksRequest()
+                var allStacks = await _cloudformation.ListStacksAsync(new ListStacksRequest
                 {
                     StackStatusFilter = _stackStatusFilter,
                     NextToken = nextToken
@@ -202,7 +202,7 @@ namespace Watchman.Engine.Generation.Generic
             {
                 _logger.Info($"Stack {stackName} exists, updating");
 
-                await Commit(new UpdateStackRequest()
+                await Commit(new UpdateStackRequest
                 {
                     StackName = stackName,
                     TemplateURL = templateUrl,
@@ -213,7 +213,7 @@ namespace Watchman.Engine.Generation.Generic
             {
                 _logger.Info($"Stack {stackName} does not exist, creating");
 
-                await Commit(new CreateStackRequest()
+                await Commit(new CreateStackRequest
                 {
                     StackName = stackName,
                     TemplateURL = templateUrl,
@@ -235,7 +235,7 @@ namespace Watchman.Engine.Generation.Generic
 
             _logger.Info($"Uploading template to s3://{_s3Location.BucketName}/{s3Path}");
 
-            await _s3Client.PutObjectAsync(new PutObjectRequest()
+            await _s3Client.PutObjectAsync(new PutObjectRequest
             {
                 Key = s3Path,
                 ContentBody = body,
@@ -254,7 +254,7 @@ namespace Watchman.Engine.Generation.Generic
             {
                 await Task.Delay(_stackStatusCheckInterval);
 
-                var stack = (await _cloudformation.DescribeStacksAsync(new DescribeStacksRequest()
+                var stack = (await _cloudformation.DescribeStacksAsync(new DescribeStacksRequest
                 {
                     StackName = stackName
                 })).Stacks.Single();
