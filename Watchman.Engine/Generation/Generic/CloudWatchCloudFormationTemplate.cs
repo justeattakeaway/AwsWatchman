@@ -9,7 +9,7 @@ namespace Watchman.Engine.Generation.Generic
     {
         private static readonly Regex NonAlpha = new Regex("[^a-zA-Z0-9]+");
 
-        public static string WriteJson(IList<Alarm> alarms)
+        public static string WriteJson(IEnumerable<Alarm> alarms)
         {
             var root = new JObject();
             root["AWSTemplateFormatVersion"] = "2010-09-09";

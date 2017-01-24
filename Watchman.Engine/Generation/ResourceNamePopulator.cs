@@ -69,7 +69,7 @@ namespace Watchman.Engine.Generation
 
         private async Task<IList<ResourceThresholds>> GetPatternMatches(ResourceThresholds resourcePattern, string alertingGroupName)
         {
-            var tableNames = (await _resourceSource.GetResourceNamesAsync());
+            var tableNames = await _resourceSource.GetResourceNamesAsync();
 
             var matches = tableNames
                 .WhereRegexIsMatch(resourcePattern.Pattern)
