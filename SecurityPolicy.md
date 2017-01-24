@@ -68,6 +68,7 @@ The values you will have to subsitute in are:
 			"Effect": "Allow",
 			"Action": [
 				"cloudformation:ListStacks",
+				"cloudformation:DescribeStacks",
 				"cloudformation:CreateStack"
 			],
 			"Resource": [
