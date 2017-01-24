@@ -105,7 +105,7 @@ namespace Watchman.Engine.Generation.Generic
             foreach (var group in groupedBySuffix)
             {
                 var stackName = "Watchman-" + group.Suffix;
-                var json = CloudWatchCloudFormationTemplate.WriteJson(group.Alarms.ToList());
+                var json = CloudWatchCloudFormationTemplate.WriteJson(group.Alarms);
 
                 var allStacks = await AllStacks();
 
