@@ -31,27 +31,24 @@ namespace Watchman.Engine.Generation.Generic
         private static JObject BuildAlarmJson(Alarm alarm)
         {
             var alarmJson = new JObject();
-
             alarmJson["Type"] = "AWS::CloudWatch::Alarm";
+            alarmJson["Properties"] = BuildAlarmPropertiesJson(alarm);
+            return alarmJson;
+        }
 
+        private static JObject BuildAlarmPropertiesJson(Alarm alarm)
+        {
             var definition = alarm.AlarmDefinition;
-
-
             var insufficientDataActions = ValueOrEmpty(definition.AlertOnInsufficientData, alarm.SnsTopicArn);
             var okActions = ValueOrEmpty(definition.AlertOnOk, alarm.SnsTopicArn);
 
-            var properties = JObject.FromObject(new
+            var propsObject = new
             {
                 AlarmName = alarm.AlarmName,
                 AlarmDescription = AwsConstants.DefaultDescription,
                 Namespace = definition.Namespace,
                 MetricName = definition.Metric,
-                Dimensions = alarm.Dimensions
-                    .Select(d => new
-                    {
-                        Name = d.Name,
-                        Value = d.Value
-                    }),
+                Dimensions = alarm.Dimensions.Select(d => new { d.Name, d.Value }),
                 AlarmActions = new[] {alarm.SnsTopicArn},
                 OKActions = okActions,
                 InsufficientDataActions = insufficientDataActions,
@@ -60,10 +57,9 @@ namespace Watchman.Engine.Generation.Generic
                 Period = (int) definition.Period.TotalSeconds,
                 Statistic = definition.Statistic.Value,
                 Threshold = definition.Threshold.Value
-            });
+            };
 
-            alarmJson["Properties"] = properties;
-            return alarmJson;
+            return JObject.FromObject(propsObject);
         }
 
         private static IEnumerable<string> ValueOrEmpty(bool hasValue, string value)
