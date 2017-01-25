@@ -60,12 +60,12 @@ namespace Watchman.Configuration.Tests.Validation
         public void SqsConfig_Fails_When_Sqs_LengthThreshold_Is_TooHigh()
         {
             // arrange
-            _sqs.LengthThreshold = 1001;
+            _sqs.LengthThreshold = 10001;
 
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Queue length of '1001' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Queue length of '10001' is ridiculously high");
         }
 
         [Test]
@@ -108,12 +108,12 @@ namespace Watchman.Configuration.Tests.Validation
         public void SqsConfig_Fails_When_Sqs_Error_LengthThreshold_Is_TooHigh()
         {
             // arrange
-            _sqs.Errors.LengthThreshold = 1003;
+            _sqs.Errors.LengthThreshold = 10003;
 
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Queue length of '1003' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Queue length of '10003' is ridiculously high");
         }
 
         [Test]
@@ -208,12 +208,24 @@ namespace Watchman.Configuration.Tests.Validation
         public void SqsConfig_Fails_When_Queue_LengthThreshold_Is_TooHigh()
         {
             // arrange
-            _sqs.Queues.First().LengthThreshold = 1005;
+            _sqs.Queues.First().LengthThreshold = 10005;
 
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Queue length of '1005' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Queue length of '10005' is ridiculously high");
+        }
+
+        [Test]
+        public void SqsConfig_passess_When_Queue_LengthThreshold_Is_At_Max()
+        {
+            // arrange
+            _sqs.Queues.First().LengthThreshold = 10000;
+
+            // act
+
+            // assert
+            ConfigAssert.IsValid(_config);
         }
 
         [Test]
@@ -256,12 +268,12 @@ namespace Watchman.Configuration.Tests.Validation
         public void SqsConfig_Fails_When_Queue_Error_LengthThreshold_Is_TooHigh()
         {
             // arrange
-            _sqs.Queues.First().Errors.LengthThreshold = 1007;
+            _sqs.Queues.First().Errors.LengthThreshold = 10007;
 
             // act
 
             // assert
-            ConfigAssert.NotValid(_config, "Queue length of '1007' is ridiculously high");
+            ConfigAssert.NotValid(_config, "Queue length of '10007' is ridiculously high");
         }
 
         [Test]
