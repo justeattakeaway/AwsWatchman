@@ -133,28 +133,28 @@ namespace Watchman.Engine.Generation.Generic
 
             if (definition.AlertOnInsufficientData)
             {
-                result["InsufficientDataActions"] = Targets2(email: true, url: true);
+                result["InsufficientDataActions"] = TargetRefs(email: true, url: true);
             }
 
             if (definition.AlertOnOk)
             {
-                result["OKActions"] = Targets2(email: false, url: true);
+                result["OKActions"] = TargetRefs(email: false, url: true);
             }
 
-            result["AlarmActions"] = Targets2(email: true, url: true);
+            result["AlarmActions"] = TargetRefs(email: true, url: true);
 
             return result;
         }
 
-        private JArray Targets2(bool email, bool url)
+        private JArray TargetRefs(bool email, bool url)
         {
-            return new JArray(Targets(email, url).Select(t => JObject.FromObject(new
+            return new JArray(TargetResourceNames(email, url).Select(t => JObject.FromObject(new
             {
                 Ref = t
             })));
         }
 
-        private IEnumerable<string> Targets(bool email, bool url)
+        private IEnumerable<string> TargetResourceNames(bool email, bool url)
         {
             if (email && !string.IsNullOrEmpty(_emailTopicResourceName))
             {
