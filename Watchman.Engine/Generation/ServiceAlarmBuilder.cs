@@ -53,29 +53,32 @@ namespace Watchman.Engine.Generation
             AlarmDefinition alarm,
             Dictionary<string, ThresholdValue>[] thresholds)
         {
+            var mergedThreshold = MergeThreshold(alarm, thresholds);
+
             var copy = alarm.Copy();
-            copy.Threshold = MergeThreshold(alarm, thresholds);
-            copy.EvaluationPeriods = copy.Threshold.EvaluationPeriods;
+            copy.Threshold = mergedThreshold.Item1;
+            copy.EvaluationPeriods = mergedThreshold.Item2;
             return copy;
         }
 
-        private static Threshold MergeThreshold(AlarmDefinition x, Dictionary<string, ThresholdValue>[] thresholds)
+        private static Tuple<Threshold, int> MergeThreshold(AlarmDefinition def, Dictionary<string, ThresholdValue>[] thresholds)
         {
-            var key = x.Name;
+            var key = def.Name;
 
             var matchedThreshold = thresholds
                 .Where(t => t != null && t.ContainsKey(key))
                 .Select(t => t[key])
-                .DefaultIfEmpty(new ThresholdValue(x.Threshold.Value, x.EvaluationPeriods))
+                .DefaultIfEmpty(new ThresholdValue(def.Threshold.Value, def.EvaluationPeriods))
                 .First();
 
-            return new Threshold
+            var resultThreshold = new Threshold
             {
-                SourceAttribute = x.Threshold.SourceAttribute,
-                ThresholdType = x.Threshold.ThresholdType,
-                EvaluationPeriods = matchedThreshold.EvaluationPeriods,
+                SourceAttribute = def.Threshold.SourceAttribute,
+                ThresholdType = def.Threshold.ThresholdType,
                 Value = matchedThreshold.Value
             };
+
+            return new Tuple<Threshold, int>(resultThreshold, matchedThreshold.EvaluationPeriods);
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(ServiceAlertingGroup alertingGroup, string snsTopicArn, IList<AlarmDefinition> defaults)
