@@ -44,16 +44,17 @@ namespace Watchman.Configuration.Validation
             }
         }
 
-        private static void ValidServiceThreshold(KeyValuePair<string, double> threshold)
+        private static void ValidServiceThreshold(KeyValuePair<string, ThresholdValue> namedThreshold)
         {
+            var threshold = namedThreshold.Value;
             if (threshold.Value <= 0)
             {
-                throw new ConfigException($"Threshold of '{threshold.Key}' must be greater than zero");
+                throw new ConfigException($"Threshold of '{namedThreshold.Key}' must be greater than zero");
             }
 
             if (threshold.Value > 100000)
             {
-                throw new ConfigException($"Threshold of '{threshold.Key}' is ridiculously high");
+                throw new ConfigException($"Threshold of '{namedThreshold.Key}' is ridiculously high");
             }
         }
     }

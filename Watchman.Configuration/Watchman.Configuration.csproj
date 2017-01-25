@@ -50,6 +50,7 @@
     <Compile Include="ErrorQueue.cs" />
     <Compile Include="Generic\ResourceThresholds.cs" />
     <Compile Include="Generic\AwsServiceAlarms.cs" />
+    <Compile Include="Generic\ThresholdValue.cs" />
     <Compile Include="Threshold.cs" />
     <Compile Include="ThresholdType.cs" />
     <Compile Include="Validation\AwsServiceValidation.cs" />

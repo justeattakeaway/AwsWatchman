@@ -34,7 +34,7 @@ namespace Watchman.Engine.Tests.Generation
             var namedItem = new ResourceThresholds
             {
                 Name = "ItemX",
-                Thresholds = new Dictionary<string, double>
+                Thresholds = new Dictionary<string, ThresholdValue>
                 {
                     {
                         "SomeThreshold", 500
@@ -44,7 +44,7 @@ namespace Watchman.Engine.Tests.Generation
 
             var patternMatchedItem = new ResourceThresholds {
                 Pattern = "Item",
-                Thresholds = new Dictionary<string, double>
+                Thresholds = new Dictionary<string, ThresholdValue>
                 {
                     {
                         "SomeThreshold", 100

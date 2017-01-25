@@ -8,6 +8,6 @@ namespace Watchman.Configuration.Generic
 
         public List<string> ExcludeResourcesPrefixedWith { get; set; }
 
-        public Dictionary<string, double> Thresholds { get; set; }
+        public Dictionary<string, ThresholdValue> Thresholds { get; set; }
     }
 }

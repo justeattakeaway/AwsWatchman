@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -9,8 +7,6 @@ using Watchman.AwsResources;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine.Generation;
-using Watchman.Engine.Generation.Generic;
-using Watchman.Engine.Sns;
 
 namespace Watchman.Engine.Tests.Generation
 {
@@ -55,12 +51,12 @@ namespace Watchman.Engine.Tests.Generation
         {
             // arrange
 
-            var defaults = new List<AlarmDefinition>()
+            var defaults = new List<AlarmDefinition>
             {
-                new AlarmDefinition()
+                new AlarmDefinition
                 {
                     Name = "AlarmName",
-                    Threshold = new Threshold()
+                    Threshold = new Threshold
                     {
                         ThresholdType = ThresholdType.Absolute,
                         Value = 400
@@ -68,23 +64,23 @@ namespace Watchman.Engine.Tests.Generation
                 }
             };
 
-            var alertingGroup = new ServiceAlertingGroup()
+            var alertingGroup = new ServiceAlertingGroup
             {
                 AlarmNameSuffix = "Suffix",
                 Name = "TestAlarm",
-                Service = new AwsServiceAlarms()
+                Service = new AwsServiceAlarms
                 {
-                    Resources = new List<ResourceThresholds>()
+                    Resources = new List<ResourceThresholds>
                     {
-                        new ResourceThresholds()
+                        new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Thresholds = new Dictionary<string, double>()
+                            Thresholds = new Dictionary<string, ThresholdValue>
                             {
                                 {"AlarmName", 200}
                             }
                         },
-                         new ResourceThresholds()
+                         new ResourceThresholds
                         {
                             Name = "ResourceB"
                         }
@@ -114,12 +110,12 @@ namespace Watchman.Engine.Tests.Generation
         {
             // arrange
 
-            var defaults = new List<AlarmDefinition>()
+            var defaults = new List<AlarmDefinition>
             {
                 new AlarmDefinition()
                 {
                     Name = "AlarmName",
-                    Threshold = new Threshold()
+                    Threshold = new Threshold
                     {
                         ThresholdType = ThresholdType.Absolute,
                         Value = 400
@@ -127,28 +123,28 @@ namespace Watchman.Engine.Tests.Generation
                 }
             };
 
-            var alertingGroup = new ServiceAlertingGroup()
+            var alertingGroup = new ServiceAlertingGroup
             {
                 AlarmNameSuffix = "Suffix",
                 Name = "TestAlarm",
-                Service = new AwsServiceAlarms()
+                Service = new AwsServiceAlarms
                 {
-                    Resources = new List<ResourceThresholds>()
+                    Resources = new List<ResourceThresholds>
                     {
-                        new ResourceThresholds()
+                        new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Thresholds = new Dictionary<string, double>()
+                            Thresholds = new Dictionary<string, ThresholdValue>
                             {
                                 {"AlarmName", 200}
                             }
                         },
-                         new ResourceThresholds()
+                         new ResourceThresholds
                         {
                             Name = "ResourceB"
                         }
                     },
-                    Thresholds = new Dictionary<string, double>()
+                    Thresholds = new Dictionary<string, ThresholdValue>
                     {
                         { "AlarmName", 300 }
                     }
