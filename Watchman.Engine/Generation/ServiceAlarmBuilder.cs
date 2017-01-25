@@ -66,7 +66,7 @@ namespace Watchman.Engine.Generation
             var matchedThreshold = thresholds
                 .Where(t => t != null && t.ContainsKey(key))
                 .Select(t => t[key])
-                .DefaultIfEmpty(new ThresholdValue(x.Threshold.Value))
+                .DefaultIfEmpty(new ThresholdValue(x.Threshold.Value, x.EvaluationPeriods))
                 .First();
 
             return new Threshold

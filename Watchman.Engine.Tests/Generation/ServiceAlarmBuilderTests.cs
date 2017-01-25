@@ -47,6 +47,50 @@ namespace Watchman.Engine.Tests.Generation
         }
 
         [Test]
+        public async Task DefaultThresholdIsUsedWhenThereAreNoOverrides()
+        {
+            // arrange
+            var defaults = DefineOneAlarm();
+
+            var alertingGroup = new ServiceAlertingGroup
+            {
+                AlarmNameSuffix = "Suffix",
+                Name = "TestAlarm",
+                Service = new AwsServiceAlarms
+                {
+                    Resources = new List<ResourceThresholds>
+                    {
+                        new ResourceThresholds
+                        {
+                            Name = "ResourceA"
+                        },
+                         new ResourceThresholds
+                        {
+                            Name = "ResourceB"
+                        }
+                    }
+                }
+            };
+
+            SetupFakeResources(new[] { "ResourceA", "ResourceB" });
+
+            // act
+
+            var result = await _generator.GenerateAlarmsFor(alertingGroup, "sns-topic-arn", defaults);
+
+            // assert
+
+            var resourceAlarmA = result.FirstOrDefault(x => x.Resource.Name == "ResourceA");
+            var resourceAlarmB = result.FirstOrDefault(x => x.Resource.Name == "ResourceB");
+
+            Assert.That(resourceAlarmA, Is.Not.Null);
+            Assert.That(resourceAlarmA.AlarmDefinition.Threshold.Value, Is.EqualTo(400));
+
+            Assert.That(resourceAlarmB, Is.Not.Null);
+            Assert.That(resourceAlarmB.AlarmDefinition.Threshold.Value, Is.EqualTo(400));
+        }
+
+        [Test]
         public async Task ResourceThresholdsTakePrecedenceOverDefaults()
         {
             // arrange
@@ -146,7 +190,51 @@ namespace Watchman.Engine.Tests.Generation
         }
 
         [Test]
-        public async Task EvaluationPeriodsAreSelected()
+        public async Task DefaultEvaluationPeriodsIsUsedWhenThereAreNoOverrides()
+        {
+            // arrange
+            var defaults = DefineOneAlarm();
+
+            var alertingGroup = new ServiceAlertingGroup
+            {
+                AlarmNameSuffix = "Suffix",
+                Name = "TestAlarm",
+                Service = new AwsServiceAlarms
+                {
+                    Resources = new List<ResourceThresholds>
+                    {
+                        new ResourceThresholds
+                        {
+                            Name = "ResourceA"
+                        },
+                         new ResourceThresholds
+                        {
+                            Name = "ResourceB"
+                        }
+                    }
+                }
+            };
+
+            SetupFakeResources(new[] { "ResourceA", "ResourceB" });
+
+            // act
+
+            var result = await _generator.GenerateAlarmsFor(alertingGroup, "sns-topic-arn", defaults);
+
+            // assert
+
+            var resourceAlarmA = result.FirstOrDefault(x => x.Resource.Name == "ResourceA");
+            var resourceAlarmB = result.FirstOrDefault(x => x.Resource.Name == "ResourceB");
+
+            Assert.That(resourceAlarmA, Is.Not.Null);
+            Assert.That(resourceAlarmA.AlarmDefinition.EvaluationPeriods, Is.EqualTo(2));
+
+            Assert.That(resourceAlarmB, Is.Not.Null);
+            Assert.That(resourceAlarmB.AlarmDefinition.EvaluationPeriods, Is.EqualTo(2));
+        }
+
+        [Test]
+        public async Task EvaluationPeriodsAreSelectedFromResourceAndGroup()
         {
             // arrange
             var defaults = DefineOneAlarm();
@@ -204,11 +292,11 @@ namespace Watchman.Engine.Tests.Generation
                 new AlarmDefinition
                 {
                     Name = "AlarmName",
+                    EvaluationPeriods = 2,
                     Threshold = new Threshold
                     {
                         ThresholdType = ThresholdType.Absolute,
-                        Value = 400,
-                        EvaluationPeriods = 2
+                        Value = 400
                     }
                 }
             };
