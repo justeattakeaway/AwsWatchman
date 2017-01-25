@@ -124,7 +124,7 @@ namespace Watchman.Engine.Tests.Generation
 
             // act
 
-            var result = await _generator.GenerateAlarmsFor(alertingGroup, "sns-topic-arn", defaults);
+            var result = await _generator.GenerateAlarmsFor(alertingGroup, defaults);
 
             // assert
 
@@ -271,7 +271,7 @@ namespace Watchman.Engine.Tests.Generation
 
             // act
 
-            var result = await _generator.GenerateAlarmsFor(alertingGroup, "sns-topic-arn", defaults);
+            var result = await _generator.GenerateAlarmsFor(alertingGroup, defaults);
 
             // assert
 

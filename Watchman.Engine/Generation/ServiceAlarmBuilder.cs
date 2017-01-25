@@ -87,7 +87,7 @@ namespace Watchman.Engine.Generation
             return new AlarmValues(matchedThresholdValue, matchedEvalPeriods);
         }
 
-        public async Task<IList<Alarm>>  GenerateAlarmsFor(ServiceAlertingGroup alertingGroup, string snsTopicArn, IList<AlarmDefinition> defaults)
+        public async Task<IList<Alarm>>  GenerateAlarmsFor(ServiceAlertingGroup alertingGroup, IList<AlarmDefinition> defaults)
         {
             var service = alertingGroup.Service;
 
@@ -118,7 +118,6 @@ namespace Watchman.Engine.Generation
 
         private async Task<IList<Alarm>> GetAlarms(IList<AlarmDefinition> alarms,
             ResourceThresholds awsResource,
-            string snsTopic,
             ServiceAlertingGroup group)
         {
             var result = new List<Alarm>();
@@ -142,8 +141,7 @@ namespace Watchman.Engine.Generation
                     Resource = entity,
                     AlarmDefinition = alarm,
                     AlertingGroup = group,
-                    Dimensions = dimensions,
-                    SnsTopicArn = snsTopic
+                    Dimensions = dimensions
                 };
                 result.Add(model);
             }

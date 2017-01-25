@@ -11,6 +11,5 @@ namespace Watchman.Engine.Generation
         public List<Dimension> Dimensions { get; set; }
         public AlarmDefinition AlarmDefinition { get; set; }
         public IAwsResource Resource { get; set; }
-        public string SnsTopicArn { get; set; }
     }
 }
