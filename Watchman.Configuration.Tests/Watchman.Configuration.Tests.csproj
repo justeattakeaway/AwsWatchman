@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Load\ConfigFileLoaderSimpleTests.cs" />
     <Compile Include="Load\DuplicatesTests.cs" />
+    <Compile Include="Load\TestFiles.cs" />
     <Compile Include="Validation\ConfigAssert.cs" />
     <Compile Include="Validation\ConfigTestData.cs" />
     <Compile Include="Validation\AwsServicesConfigValidatorTests.cs" />

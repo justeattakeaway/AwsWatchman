@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using Watchman.Configuration.Load;
 
@@ -21,10 +14,7 @@ namespace Watchman.Configuration.Tests.Load
         {
             return () =>
             {
-                var assemblyFilePath = Assembly.GetExecutingAssembly().Location;
-                var basePath = Path.GetDirectoryName(assemblyFilePath);
-                var testFilePath = Path.Combine(basePath, path);
-
+                var testFilePath = TestFiles.GetPathTo(path);
                 var testFilesSettings = new FileSettings(testFilePath);
 
                 var logger = new Mock<IConfigLoadLogger>();
