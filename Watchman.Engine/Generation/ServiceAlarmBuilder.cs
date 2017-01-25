@@ -55,23 +55,26 @@ namespace Watchman.Engine.Generation
         {
             var copy = alarm.Copy();
             copy.Threshold = MergeThreshold(alarm, thresholds);
+            copy.EvaluationPeriods = copy.Threshold.EvaluationPeriods;
             return copy;
         }
 
         private static Threshold MergeThreshold(AlarmDefinition x, Dictionary<string, ThresholdValue>[] thresholds)
         {
             var key = x.Name;
-            var mergedThreshold = thresholds
+
+            var matchedThreshold = thresholds
                 .Where(t => t != null && t.ContainsKey(key))
-                .Select(t => t[key].Value)
-                .DefaultIfEmpty(x.Threshold.Value)
-                .FirstOrDefault();
+                .Select(t => t[key])
+                .DefaultIfEmpty(new ThresholdValue(x.Threshold.Value))
+                .First();
 
             return new Threshold
             {
                 SourceAttribute = x.Threshold.SourceAttribute,
                 ThresholdType = x.Threshold.ThresholdType,
-                Value = mergedThreshold
+                EvaluationPeriods = matchedThreshold.EvaluationPeriods,
+                Value = matchedThreshold.Value
             };
         }
 
@@ -85,15 +88,18 @@ namespace Watchman.Engine.Generation
             }
 
             var allAlarms = await Task.WhenAll(service.Resources
-                .Select(r =>
-                {
-                    // apply thresholds from resource or alerting group
-                    var expanded = ExpandDefaultAlarmsForResource(defaults, r.Thresholds,
-                        service.Thresholds);
-                    return GetAlarms(expanded, r, snsTopicArn, alertingGroup);
-                }));
+                .Select(r => ExpandAlarmsToResources(alertingGroup, snsTopicArn, defaults, r, service)));
 
             return allAlarms.SelectMany(x => x).ToList();
+        }
+
+        private async Task<IList<Alarm>> ExpandAlarmsToResources(ServiceAlertingGroup alertingGroup, string snsTopicArn,
+            IList<AlarmDefinition> defaults,
+            ResourceThresholds resource, AwsServiceAlarms service)
+        {
+            // apply thresholds from resource or alerting group
+            var expanded = ExpandDefaultAlarmsForResource(defaults, resource.Thresholds, service.Thresholds);
+            return await GetAlarms(expanded, resource, snsTopicArn, alertingGroup);
         }
 
         private string GetAlarmName(AwsResource<T> resource, string alertName, string groupSuffix)

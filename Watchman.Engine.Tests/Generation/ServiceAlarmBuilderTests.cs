@@ -50,19 +50,7 @@ namespace Watchman.Engine.Tests.Generation
         public async Task ResourceThresholdsTakePrecedenceOverDefaults()
         {
             // arrange
-
-            var defaults = new List<AlarmDefinition>
-            {
-                new AlarmDefinition
-                {
-                    Name = "AlarmName",
-                    Threshold = new Threshold
-                    {
-                        ThresholdType = ThresholdType.Absolute,
-                        Value = 400
-                    }
-                }
-            };
+            var defaults = DefineOneAlarm();
 
             var alertingGroup = new ServiceAlertingGroup
             {
@@ -101,6 +89,7 @@ namespace Watchman.Engine.Tests.Generation
 
             Assert.That(resourceAlarmA, Is.Not.Null);
             Assert.That(resourceAlarmA.AlarmDefinition.Threshold.Value, Is.EqualTo(200));
+
             Assert.That(resourceAlarmB, Is.Not.Null);
             Assert.That(resourceAlarmB.AlarmDefinition.Threshold.Value, Is.EqualTo(400));
         }
@@ -109,19 +98,7 @@ namespace Watchman.Engine.Tests.Generation
         public async Task ResourceAndGroupThresholdsTakePrecedenceOverDefault()
         {
             // arrange
-
-            var defaults = new List<AlarmDefinition>
-            {
-                new AlarmDefinition()
-                {
-                    Name = "AlarmName",
-                    Threshold = new Threshold
-                    {
-                        ThresholdType = ThresholdType.Absolute,
-                        Value = 400
-                    }
-                }
-            };
+            var defaults = DefineOneAlarm();
 
             var alertingGroup = new ServiceAlertingGroup
             {
@@ -166,6 +143,75 @@ namespace Watchman.Engine.Tests.Generation
             Assert.That(resourceAlarmA.AlarmDefinition.Threshold.Value, Is.EqualTo(200));
             Assert.That(resourceAlarmB, Is.Not.Null);
             Assert.That(resourceAlarmB.AlarmDefinition.Threshold.Value, Is.EqualTo(300));
+        }
+
+        [Test]
+        public async Task EvaluationPeriodsAreSelected()
+        {
+            // arrange
+            var defaults = DefineOneAlarm();
+
+            var alertingGroup = new ServiceAlertingGroup
+            {
+                AlarmNameSuffix = "Suffix",
+                Name = "TestAlarm",
+                Service = new AwsServiceAlarms
+                {
+                    Resources = new List<ResourceThresholds>
+                    {
+                        new ResourceThresholds
+                        {
+                            Name = "ResourceA",
+                            Thresholds = new Dictionary<string, ThresholdValue>
+                            {
+                                {"AlarmName", new ThresholdValue(200, 3)}
+                            }
+                        },
+                         new ResourceThresholds
+                        {
+                            Name = "ResourceB"
+                        }
+                    },
+                    Thresholds = new Dictionary<string, ThresholdValue>
+                    {
+                        { "AlarmName", new ThresholdValue(300, 4) }
+                    }
+                }
+            };
+
+            SetupFakeResources(new[] { "ResourceA", "ResourceB" });
+
+            // act
+
+            var result = await _generator.GenerateAlarmsFor(alertingGroup, "sns-topic-arn", defaults);
+
+            // assert
+
+            var resourceAlarmA = result.FirstOrDefault(x => x.Resource.Name == "ResourceA");
+            var resourceAlarmB = result.FirstOrDefault(x => x.Resource.Name == "ResourceB");
+
+            Assert.That(resourceAlarmA, Is.Not.Null);
+            Assert.That(resourceAlarmA.AlarmDefinition.EvaluationPeriods, Is.EqualTo(3));
+            Assert.That(resourceAlarmB, Is.Not.Null);
+            Assert.That(resourceAlarmB.AlarmDefinition.EvaluationPeriods, Is.EqualTo(4));
+        }
+
+
+        private static List<AlarmDefinition> DefineOneAlarm()
+        {
+            return new List<AlarmDefinition>
+            {
+                new AlarmDefinition
+                {
+                    Name = "AlarmName",
+                    Threshold = new Threshold
+                    {
+                        ThresholdType = ThresholdType.Absolute,
+                        Value = 400,
+                        EvaluationPeriods = 2
+                    }
+                }
+            };
         }
     }
 }
