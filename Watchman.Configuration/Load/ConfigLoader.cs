@@ -94,7 +94,7 @@ namespace Watchman.Configuration.Load
                 _logger.Detail($"Alerting group {group.Name} is catch-all");
             }
 
-            var monitorThrottling = group.DynamoDb.MonitorThrottling ?? false;
+            var monitorThrottling = group.DynamoDb.MonitorThrottling ?? true;
 
             if (monitorThrottling)
             {
