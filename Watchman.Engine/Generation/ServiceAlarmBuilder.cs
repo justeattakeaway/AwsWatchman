@@ -65,9 +65,19 @@ namespace Watchman.Engine.Generation
         {
             var key = def.Name;
 
-            var matchedThreshold = thresholds
+            var matchesForKey = thresholds
                 .Where(t => t != null && t.ContainsKey(key))
                 .Select(t => t[key])
+                .ToList();
+
+            var matchedEvalPeriods = matchesForKey
+                .Where(t => t.EvaluationPeriods.HasValue)
+                .Select(t => t.EvaluationPeriods)
+                .DefaultIfEmpty(def.EvaluationPeriods)
+                .First();
+
+
+            var matchedThreshold = matchesForKey
                 .DefaultIfEmpty(new ThresholdValue(def.Threshold.Value, def.EvaluationPeriods))
                 .First();
 
@@ -78,7 +88,7 @@ namespace Watchman.Engine.Generation
                 Value = matchedThreshold.Threshold
             };
 
-            var evalPeriods = matchedThreshold.EvaluationPeriods ?? 1;
+            var evalPeriods = matchedEvalPeriods ?? def.EvaluationPeriods;
 
             return new Tuple<Threshold, int>(resultThreshold, evalPeriods);
         }

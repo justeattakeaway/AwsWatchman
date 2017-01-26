@@ -306,7 +306,7 @@ namespace Watchman.Engine.Tests.Generation
         public async Task ResourceThresholdCanOverrideServiceValueWithoutResettingEvaluationPeriods()
         {
             // arrange
-            var defaults = new List<AlarmDefinition>()
+            var defaults = new List<AlarmDefinition>
             {
                 new AlarmDefinition
                 {
@@ -357,6 +357,60 @@ namespace Watchman.Engine.Tests.Generation
 
             Assert.That(resourceAlarmA, Is.Not.Null);
             Assert.That(resourceAlarmA.AlarmDefinition.EvaluationPeriods, Is.EqualTo(5));
+            Assert.That(resourceAlarmA.AlarmDefinition.Threshold.Value, Is.EqualTo(200));
+        }
+
+        [Test]
+        public async Task ResourceThresholdCanOverrideServiceValueWithoutResettingEvaluationPeriodsFromDefaults()
+        {
+            // arrange
+            var defaults = new List<AlarmDefinition>
+            {
+                new AlarmDefinition
+                {
+                    Name = "AlarmName",
+                    EvaluationPeriods = 2,
+                    Threshold = new Threshold
+                    {
+                        ThresholdType = ThresholdType.Absolute,
+                        Value = 400
+                    }
+
+                }
+            };
+
+            var alertingGroup = new ServiceAlertingGroup
+            {
+                AlarmNameSuffix = "Suffix",
+                Name = "TestAlarm",
+                Service = new AwsServiceAlarms
+                {
+                    Resources = new List<ResourceThresholds>
+                    {
+                        new ResourceThresholds
+                        {
+                            Name = "ResourceA",
+                            Values = new Dictionary<string, ThresholdValue>
+                            {
+                                {"AlarmName", new ThresholdValue(200, null) }
+                            }
+                        }
+                    }
+                }
+            };
+
+            SetupFakeResources(new[] { "ResourceA" });
+
+            // act
+
+            var result = await _generator.GenerateAlarmsFor(alertingGroup, "sns-topic-arn", defaults);
+
+            // assert
+
+            var resourceAlarmA = result.FirstOrDefault(x => x.Resource.Name == "ResourceA");
+
+            Assert.That(resourceAlarmA, Is.Not.Null);
+            Assert.That(resourceAlarmA.AlarmDefinition.EvaluationPeriods, Is.EqualTo(2));
             Assert.That(resourceAlarmA.AlarmDefinition.Threshold.Value, Is.EqualTo(200));
         }
     }
