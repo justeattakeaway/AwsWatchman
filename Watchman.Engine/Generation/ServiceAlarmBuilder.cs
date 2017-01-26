@@ -42,7 +42,7 @@ namespace Watchman.Engine.Generation
         }
 
         private IList<AlarmDefinition> ExpandDefaultAlarmsForResource(IList<AlarmDefinition> alerts,
-            params Dictionary<string, double>[] thresholds)
+            params Dictionary<string, AlarmValues>[] thresholds)
         {
             return alerts
                 .Select(x => AlarmWithMergedThreshold(x, thresholds))
@@ -51,28 +51,45 @@ namespace Watchman.Engine.Generation
 
         private static AlarmDefinition AlarmWithMergedThreshold(
             AlarmDefinition alarm,
-            Dictionary<string, double>[] thresholds)
+            Dictionary<string, AlarmValues>[] thresholds)
         {
+            var mergedThreshold = MergeThreshold(alarm, thresholds);
+
             var copy = alarm.Copy();
-            copy.Threshold = MergeThreshold(alarm, thresholds);
+            copy.Threshold = mergedThreshold.Item1;
+            copy.EvaluationPeriods = mergedThreshold.Item2;
             return copy;
         }
 
-        private static Threshold MergeThreshold(AlarmDefinition x, Dictionary<string, double>[] thresholds)
+        private static Tuple<Threshold, int> MergeThreshold(AlarmDefinition def, Dictionary<string, AlarmValues>[] thresholds)
         {
-            var key = x.Name;
-            var mergedThreshold = thresholds
+            var key = def.Name;
+
+            var matchesForKey = thresholds
                 .Where(t => t != null && t.ContainsKey(key))
                 .Select(t => t[key])
-                .DefaultIfEmpty(x.Threshold.Value)
+                .ToList();
+
+            var matchedEvalPeriods = matchesForKey
+                .Where(t => t.EvaluationPeriods.HasValue)
+                .Select(t => t.EvaluationPeriods)
                 .FirstOrDefault();
 
-            return new Threshold
+            var matchedThresholdValue = matchesForKey
+                .Where(t => t.Threshold.HasValue)
+                .Select(t => t.Threshold)
+                .FirstOrDefault();
+
+            var resultThreshold = new Threshold
             {
-                SourceAttribute = x.Threshold.SourceAttribute,
-                ThresholdType = x.Threshold.ThresholdType,
-                Value = mergedThreshold
+                SourceAttribute = def.Threshold.SourceAttribute,
+                ThresholdType = def.Threshold.ThresholdType,
+                Value = matchedThresholdValue ?? def.Threshold.Value
             };
+
+            var evalPeriods = matchedEvalPeriods ?? def.EvaluationPeriods;
+
+            return new Tuple<Threshold, int>(resultThreshold, evalPeriods);
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(ServiceAlertingGroup alertingGroup, string snsTopicArn, IList<AlarmDefinition> defaults)
@@ -85,15 +102,18 @@ namespace Watchman.Engine.Generation
             }
 
             var allAlarms = await Task.WhenAll(service.Resources
-                .Select(r =>
-                {
-                    // apply thresholds from resource or alerting group
-                    var expanded = ExpandDefaultAlarmsForResource(defaults, r.Thresholds,
-                        service.Thresholds);
-                    return GetAlarms(expanded, r, snsTopicArn, alertingGroup);
-                }));
+                .Select(r => ExpandAlarmsToResources(alertingGroup, snsTopicArn, defaults, r, service)));
 
             return allAlarms.SelectMany(x => x).ToList();
+        }
+
+        private async Task<IList<Alarm>> ExpandAlarmsToResources(ServiceAlertingGroup alertingGroup, string snsTopicArn,
+            IList<AlarmDefinition> defaults,
+            ResourceThresholds resource, AwsServiceAlarms service)
+        {
+            // apply thresholds from resource or alerting group
+            var expanded = ExpandDefaultAlarmsForResource(defaults, resource.Values, service.Values);
+            return await GetAlarms(expanded, resource, snsTopicArn, alertingGroup);
         }
 
         private string GetAlarmName(AwsResource<T> resource, string alertName, string groupSuffix)

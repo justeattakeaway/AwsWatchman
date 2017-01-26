@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Watchman.Configuration.Generic;
@@ -24,12 +23,13 @@ namespace Watchman.Configuration.Load
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var jsonObject = JObject.Load(reader);
-            var result = new AlertingGroup()
+
+            var result = new AlertingGroup
             {
                 AlarmNameSuffix = (string)jsonObject["AlarmNameSuffix"],
                 IsCatchAll = (bool)(jsonObject["IsCatchAll"] ?? false),
                 Name = (string)jsonObject["Name"],
-                ReportTargets = jsonObject["ReportTargets"]?.ToObject<List<ReportTarget>>() ?? new List<ReportTarget>(),
+                ReportTargets = jsonObject["ReportTargets"]?.ToObject<List<ReportTarget>>(serializer) ?? new List<ReportTarget>(),
                 Services = new Dictionary<string, AwsServiceAlarms>()
             };
 
@@ -38,25 +38,25 @@ namespace Watchman.Configuration.Load
                 ReadIntoTargets(result, jsonObject["Targets"]);
             }
 
-            ReadServiceDefinitions(jsonObject, result);
+            ReadServiceDefinitions(jsonObject, result, serializer);
 
             return result;
         }
 
-        private static void ReadServiceDefinitions(JObject jsonObject, AlertingGroup result)
+        private static void ReadServiceDefinitions(JObject jsonObject, AlertingGroup result, JsonSerializer serializer)
         {
             var readDynamo = false;
             var readSqs = false;
 
             if (jsonObject["DynamoDb"] != null)
             {
-                result.DynamoDb = jsonObject["DynamoDb"].ToObject<DynamoDb>();
+                result.DynamoDb = jsonObject["DynamoDb"].ToObject<DynamoDb>(serializer);
                 readDynamo = true;
             }
 
             if (jsonObject["Sqs"] != null)
             {
-                result.Sqs = jsonObject["Sqs"].ToObject<Sqs>();
+                result.Sqs = jsonObject["Sqs"].ToObject<Sqs>(serializer);
                 readSqs = true;
             }
 
@@ -72,7 +72,7 @@ namespace Watchman.Configuration.Load
                             throw new JsonReaderException("DynamoDb block can only defined once");
                         }
 
-                        result.DynamoDb = prop.Value.ToObject<DynamoDb>();
+                        result.DynamoDb = prop.Value.ToObject<DynamoDb>(serializer);
                     }
                     else if (prop.Key == "Sqs")
                     {
@@ -81,11 +81,11 @@ namespace Watchman.Configuration.Load
                             throw new JsonReaderException("Sqs block can only defined once");
                         }
 
-                        result.Sqs = prop.Value.ToObject<Sqs>();
+                        result.Sqs = prop.Value.ToObject<Sqs>(serializer);
                     }
                     else
                     {
-                        result.Services[prop.Key] = prop.Value.ToObject<AwsServiceAlarms>();
+                        result.Services[prop.Key] = prop.Value.ToObject<AwsServiceAlarms>(serializer);
                     }
                 }
             }
@@ -98,7 +98,10 @@ namespace Watchman.Configuration.Load
 
         private void ReadIntoTargets(AlertingGroup result, JToken jToken)
         {
-            if (!jToken.HasValues) return;
+            if (!jToken.HasValues)
+            {
+                return;
+            }
 
             foreach (var item in jToken.Children())
             {

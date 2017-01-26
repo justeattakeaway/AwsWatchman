@@ -6,7 +6,12 @@ namespace Watchman.Configuration.Generic
     {
         public string Name { get; set; }
         public string Pattern { get; set; }
-        public Dictionary<string, double> Thresholds { get; set; }
+        public Dictionary<string, AlarmValues> Values { get; set; }
+        public Dictionary<string, AlarmValues> Thresholds
+        {
+            get { return Values; }
+            set { Values = value; }
+        }
 
         public static implicit operator ResourceThresholds(string text)
         {

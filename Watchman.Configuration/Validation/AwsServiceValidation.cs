@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.Configuration.Validation
@@ -8,9 +7,9 @@ namespace Watchman.Configuration.Validation
     {
         public static void Validate(string alertingGroupName, string serviceName, AwsServiceAlarms serviceAlarms)
         {
-            if (serviceAlarms.Thresholds != null && serviceAlarms.Thresholds.Any())
+            if (serviceAlarms.Values != null)
             {
-                foreach (var threshold in serviceAlarms.Thresholds)
+                foreach (var threshold in serviceAlarms.Values)
                 {
                     ValidServiceThreshold(threshold);
                 }
@@ -35,25 +34,26 @@ namespace Watchman.Configuration.Validation
                     $"AlertingGroup '{agName}' has a '{serviceName}' Service with no name or pattern");
             }
 
-            if (resource.Thresholds != null && resource.Thresholds.Any())
+            if (resource.Values != null)
             {
-                foreach (var threshold in resource.Thresholds)
+                foreach (var threshold in resource.Values)
                 {
                     ValidServiceThreshold(threshold);
                 }
             }
         }
 
-        private static void ValidServiceThreshold(KeyValuePair<string, double> threshold)
+        private static void ValidServiceThreshold(KeyValuePair<string, AlarmValues> namedThreshold)
         {
-            if (threshold.Value <= 0)
+            var value = namedThreshold.Value;
+            if (value.Threshold <= 0)
             {
-                throw new ConfigException($"Threshold of '{threshold.Key}' must be greater than zero");
+                throw new ConfigException($"Threshold of '{namedThreshold.Key}' must be greater than zero");
             }
 
-            if (threshold.Value > 100000)
+            if (value.Threshold > 100000)
             {
-                throw new ConfigException($"Threshold of '{threshold.Key}' is ridiculously high");
+                throw new ConfigException($"Threshold of '{namedThreshold.Key}' is ridiculously high");
             }
         }
     }

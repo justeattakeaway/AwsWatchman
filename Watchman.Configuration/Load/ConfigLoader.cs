@@ -20,7 +20,11 @@ namespace Watchman.Configuration.Load
             _serializationSettings = new JsonSerializerSettings
             {
                 ObjectCreationHandling = ObjectCreationHandling.Replace,
-                Converters = new List<JsonConverter> {new AlertingGroupConverter(_logger)}
+                Converters = new List<JsonConverter>
+                {
+                    new AlertingGroupConverter(_logger),
+                    new AlarmValuesConverter()
+                }
             };
         }
 

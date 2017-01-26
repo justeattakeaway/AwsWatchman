@@ -25,13 +25,13 @@ namespace Watchman.Configuration.Tests.Validation
                     new ResourceThresholds
                     {
                         Name = "ResourceName",
-                        Thresholds = new Dictionary<string, double>
+                        Values = new Dictionary<string, AlarmValues>
                         {
                             {"testThresholdLow", 42}
                         }
                     }
                 },
-                Thresholds = new Dictionary<string, double>
+                Values = new Dictionary<string, AlarmValues>
                 {
                     {"testThresholdHigh", 242}
                 }
@@ -48,7 +48,7 @@ namespace Watchman.Configuration.Tests.Validation
         public void AwsServicesConfig_Fails_When_ServiceThreshold_Is_Negative()
         {
             // arrange
-            _awsServiceAlarms.Thresholds.Add("invalidThreshold", -42);
+            _awsServiceAlarms.Values.Add("invalidThreshold", -42);
 
             // act
 
@@ -61,7 +61,7 @@ namespace Watchman.Configuration.Tests.Validation
         public void AwsServicesConfig_Fails_When_ServiceThreshold_Is_TooHigh()
         {
             // arrange
-            _awsServiceAlarms.Thresholds.Add("invalidThreshold", 100500);
+            _awsServiceAlarms.Values.Add("invalidThreshold", 100500);
 
             // act
 
@@ -100,7 +100,7 @@ namespace Watchman.Configuration.Tests.Validation
         public void AwsServicesConfig_Fails_When_ResourceThreshold_Is_Negative()
         {
             // arrange
-            _awsServiceAlarms.Resources.First().Thresholds.Add("invalidThreshold", -42);
+            _awsServiceAlarms.Resources.First().Values.Add("invalidThreshold", -42);
 
             // act
 
@@ -113,7 +113,7 @@ namespace Watchman.Configuration.Tests.Validation
         public void AwsServicesConfig_Fails_When_ResourceThreshold_Is_TooHigh()
         {
             // arrange
-            _awsServiceAlarms.Resources.First().Thresholds.Add("invalidThreshold", 100500);
+            _awsServiceAlarms.Resources.First().Values.Add("invalidThreshold", 100500);
 
             // act
 

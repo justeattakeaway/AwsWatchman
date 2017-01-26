@@ -34,20 +34,20 @@ namespace Watchman.Engine.Tests.Generation
             var namedItem = new ResourceThresholds
             {
                 Name = "ItemX",
-                Thresholds = new Dictionary<string, double>
+                Values = new Dictionary<string, AlarmValues>
                 {
                     {
-                        "SomeThreshold", 500
+                        "SomeThreshold", new AlarmValues(500, 2)
                     }
                 }
             };
 
             var patternMatchedItem = new ResourceThresholds {
                 Pattern = "Item",
-                Thresholds = new Dictionary<string, double>
+                Values = new Dictionary<string, AlarmValues>
                 {
                     {
-                        "SomeThreshold", 100
+                        "SomeThreshold", new AlarmValues(100, 3)
                     }
                 }
             };
@@ -68,10 +68,82 @@ namespace Watchman.Engine.Tests.Generation
             await sut.PopulateResourceNames(group);
 
             // assert
-            Assert.That(group.Service.Resources.Count, Is.EqualTo(3));
-            Assert.That(group.Service.Resources.First(x => x.Name == "ItemX").Thresholds["SomeThreshold"], Is.EqualTo(500));
-            Assert.That(group.Service.Resources.First(x => x.Name == "ItemY").Thresholds["SomeThreshold"], Is.EqualTo(100));
-            Assert.That(group.Service.Resources.First(x => x.Name == "ItemZ").Thresholds["SomeThreshold"], Is.EqualTo(100));
+            var resources = group.Service.Resources;
+            Assert.That(resources.Count, Is.EqualTo(3));
+
+            var itemXThreshold = resources.First(x => x.Name == "ItemX").Values["SomeThreshold"];
+            var itemYThreshold = resources.First(x => x.Name == "ItemY").Values["SomeThreshold"];
+            var itemZThreshold = resources.First(x => x.Name == "ItemZ").Values["SomeThreshold"];
+
+            Assert.That(itemXThreshold.Threshold, Is.EqualTo(500));
+            Assert.That(itemYThreshold.Threshold, Is.EqualTo(100));
+            Assert.That(itemZThreshold.Threshold, Is.EqualTo(100));
+        }
+
+        [Test]
+        public async Task PopulateResourceNames_ByPatternAndNamed_ResourcesExpandedWithCorrectEvaluationPeriods()
+        {
+            // arrange
+            var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
+            resourceSourceStub
+                .Setup(x => x.GetResourceNamesAsync())
+                .ReturnsAsync(new List<string>
+                {
+                    "ItemX",
+                    "ItemY",
+                    "ItemZ"
+                });
+
+            var sut = new ResourceNamePopulator<ExampleServiceModel>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+
+            var namedItem = new ResourceThresholds
+            {
+                Name = "ItemX",
+                Values = new Dictionary<string, AlarmValues>
+                {
+                    {
+                        "SomeThreshold", new AlarmValues(500, 2)
+                    }
+                }
+            };
+
+            var patternMatchedItem = new ResourceThresholds
+            {
+                Pattern = "Item",
+                Values = new Dictionary<string, AlarmValues>
+                {
+                    {
+                        "SomeThreshold", new AlarmValues(100, 3)
+                    }
+                }
+            };
+
+            var group = new ServiceAlertingGroup
+            {
+                Service = new AwsServiceAlarms
+                {
+                    Resources = new List<ResourceThresholds>
+                    {
+                        namedItem,
+                        patternMatchedItem
+                    }
+                }
+            };
+
+            // act
+            await sut.PopulateResourceNames(group);
+
+            // assert
+            var resources = group.Service.Resources;
+            Assert.That(resources.Count, Is.EqualTo(3));
+
+            var itemXThreshold = resources.First(x => x.Name == "ItemX").Values["SomeThreshold"];
+            var itemYThreshold = resources.First(x => x.Name == "ItemY").Values["SomeThreshold"];
+            var itemZThreshold = resources.First(x => x.Name == "ItemZ").Values["SomeThreshold"];
+
+            Assert.That(itemXThreshold.EvaluationPeriods, Is.EqualTo(2));
+            Assert.That(itemYThreshold.EvaluationPeriods, Is.EqualTo(3));
+            Assert.That(itemZThreshold.EvaluationPeriods, Is.EqualTo(3));
         }
 
         [Test]
