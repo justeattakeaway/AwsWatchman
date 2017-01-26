@@ -18,10 +18,10 @@
       ],
       "Values": {
         "ErrorsHigh": {
-          "Value": 20,
+          "Threshold": 20,
           "EvaluationPeriods": 2
         },
-        "DurationHigh": { "Value": 30 },
+        "DurationHigh": { "Threshold": 30 },
         "ThrottlesHigh": 40
       }
     }

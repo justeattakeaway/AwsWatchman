@@ -75,9 +75,9 @@ namespace Watchman.Engine.Tests.Generation
             var itemYThreshold = resources.First(x => x.Name == "ItemY").Values["SomeThreshold"];
             var itemZThreshold = resources.First(x => x.Name == "ItemZ").Values["SomeThreshold"];
 
-            Assert.That(itemXThreshold.Value, Is.EqualTo(500));
-            Assert.That(itemYThreshold.Value, Is.EqualTo(100));
-            Assert.That(itemZThreshold.Value, Is.EqualTo(100));
+            Assert.That(itemXThreshold.Threshold, Is.EqualTo(500));
+            Assert.That(itemYThreshold.Threshold, Is.EqualTo(100));
+            Assert.That(itemZThreshold.Threshold, Is.EqualTo(100));
         }
 
         [Test]

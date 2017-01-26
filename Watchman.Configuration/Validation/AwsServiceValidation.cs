@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.Configuration.Validation
@@ -46,13 +45,13 @@ namespace Watchman.Configuration.Validation
 
         private static void ValidServiceThreshold(KeyValuePair<string, ThresholdValue> namedThreshold)
         {
-            var threshold = namedThreshold.Value;
-            if (threshold.Value <= 0)
+            var value = namedThreshold.Value;
+            if (value.Threshold <= 0)
             {
                 throw new ConfigException($"Threshold of '{namedThreshold.Key}' must be greater than zero");
             }
 
-            if (threshold.Value > 100000)
+            if (value.Threshold > 100000)
             {
                 throw new ConfigException($"Threshold of '{namedThreshold.Key}' is ridiculously high");
             }

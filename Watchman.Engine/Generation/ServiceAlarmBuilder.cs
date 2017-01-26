@@ -75,7 +75,7 @@ namespace Watchman.Engine.Generation
             {
                 SourceAttribute = def.Threshold.SourceAttribute,
                 ThresholdType = def.Threshold.ThresholdType,
-                Value = matchedThreshold.Value
+                Value = matchedThreshold.Threshold
             };
 
             var evalPeriods = matchedThreshold.EvaluationPeriods ?? 1;

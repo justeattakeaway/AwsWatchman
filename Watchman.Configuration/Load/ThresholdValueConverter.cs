@@ -17,19 +17,19 @@ namespace Watchman.Configuration.Load
         {
             if (reader.TokenType != JsonToken.StartObject)
             {
-                var threshold = (double)JToken.Load(reader);
-                return new ThresholdValue(threshold, null);
+                var simpleThreshold = (double)JToken.Load(reader);
+                return new ThresholdValue(simpleThreshold, null);
             }
 
             var jsonObject = JObject.Load(reader);
-            var valueProp = jsonObject["Value"];
+            var thresholdProp = jsonObject["Threshold"];
 
-            if (valueProp == null)
+            if (thresholdProp == null)
             {
-                throw new JsonReaderException("ThresholdValue must be number or contain a 'Value' property");
+                throw new JsonReaderException("Must be number or contain a 'Threshold' property");
             }
 
-            var value = valueProp.ToObject<double>();
+            var thresholdValue = thresholdProp.ToObject<double>();
 
             var evaluationPeriodsProp = jsonObject["EvaluationPeriods"];
             int? evaluationPeriods = null;
@@ -38,7 +38,7 @@ namespace Watchman.Configuration.Load
                 evaluationPeriods = evaluationPeriodsProp.ToObject<int>();
             }
 
-            return new ThresholdValue(value, evaluationPeriods);
+            return new ThresholdValue(thresholdValue, evaluationPeriods);
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

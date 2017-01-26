@@ -2,24 +2,24 @@ namespace Watchman.Configuration.Generic
 {
     public class ThresholdValue
     {
-        public double Value { get; }
+        public double Threshold { get; }
         public int? EvaluationPeriods { get; }
 
         public ThresholdValue()
         {
-            Value = 0;
+            Threshold = 0;
             EvaluationPeriods = null;
         }
 
         public ThresholdValue(double value, int? evaluationPeriods)
         {
-            Value = value;
+            Threshold = value;
             EvaluationPeriods = evaluationPeriods;
         }
 
-        public static implicit operator ThresholdValue(double value)
+        public static implicit operator ThresholdValue(double threshold)
         {
-            return new ThresholdValue(value, null);
+            return new ThresholdValue(threshold, null);
         }
     }
 }

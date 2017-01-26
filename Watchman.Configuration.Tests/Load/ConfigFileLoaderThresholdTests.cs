@@ -113,13 +113,13 @@ namespace Watchman.Configuration.Tests.Load
             var durationHigh = values["DurationHigh"];
             var throttlesHigh = values["ThrottlesHigh"];
 
-            Assert.That(errrorsHigh.Value, Is.EqualTo(20));
+            Assert.That(errrorsHigh.Threshold, Is.EqualTo(20));
             Assert.That(errrorsHigh.EvaluationPeriods, Is.EqualTo(2));
 
-            Assert.That(durationHigh.Value, Is.EqualTo(30));
+            Assert.That(durationHigh.Threshold, Is.EqualTo(30));
             Assert.That(durationHigh.EvaluationPeriods, Is.Null);
 
-            Assert.That(throttlesHigh.Value, Is.EqualTo(40));
+            Assert.That(throttlesHigh.Threshold, Is.EqualTo(40));
             Assert.That(throttlesHigh.EvaluationPeriods, Is.Null);
         }
     }
