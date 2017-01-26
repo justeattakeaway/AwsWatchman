@@ -73,19 +73,18 @@ namespace Watchman.Engine.Generation
             var matchedEvalPeriods = matchesForKey
                 .Where(t => t.EvaluationPeriods.HasValue)
                 .Select(t => t.EvaluationPeriods)
-                .DefaultIfEmpty(def.EvaluationPeriods)
-                .First();
+                .FirstOrDefault();
 
-
-            var matchedThreshold = matchesForKey
-                .DefaultIfEmpty(new ThresholdValue(def.Threshold.Value, def.EvaluationPeriods))
-                .First();
+            var matchedThresholdValue = matchesForKey
+                .Where(t => t.Threshold.HasValue)
+                .Select(t => t.Threshold)
+                .FirstOrDefault();
 
             var resultThreshold = new Threshold
             {
                 SourceAttribute = def.Threshold.SourceAttribute,
                 ThresholdType = def.Threshold.ThresholdType,
-                Value = matchedThreshold.Threshold
+                Value = matchedThresholdValue ?? def.Threshold.Value
             };
 
             var evalPeriods = matchedEvalPeriods ?? def.EvaluationPeriods;
