@@ -25,13 +25,13 @@ namespace Watchman.Configuration.Tests.Validation
                     new ResourceThresholds
                     {
                         Name = "ResourceName",
-                        Values = new Dictionary<string, ThresholdValue>
+                        Values = new Dictionary<string, AlarmValues>
                         {
                             {"testThresholdLow", 42}
                         }
                     }
                 },
-                Values = new Dictionary<string, ThresholdValue>
+                Values = new Dictionary<string, AlarmValues>
                 {
                     {"testThresholdHigh", 242}
                 }

@@ -107,7 +107,7 @@ namespace Watchman.Engine.Tests.Generation
                         new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Values = new Dictionary<string, ThresholdValue>
+                            Values = new Dictionary<string, AlarmValues>
                             {
                                 {"AlarmName", 200}
                             }
@@ -155,7 +155,7 @@ namespace Watchman.Engine.Tests.Generation
                         new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Values = new Dictionary<string, ThresholdValue>
+                            Values = new Dictionary<string, AlarmValues>
                             {
                                 {"AlarmName", 200}
                             }
@@ -165,7 +165,7 @@ namespace Watchman.Engine.Tests.Generation
                             Name = "ResourceB"
                         }
                     },
-                    Values = new Dictionary<string, ThresholdValue>
+                    Values = new Dictionary<string, AlarmValues>
                     {
                         { "AlarmName", 300 }
                     }
@@ -250,9 +250,9 @@ namespace Watchman.Engine.Tests.Generation
                         new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Values = new Dictionary<string, ThresholdValue>
+                            Values = new Dictionary<string, AlarmValues>
                             {
-                                {"AlarmName", new ThresholdValue(200, 3)}
+                                {"AlarmName", new AlarmValues(200, 3)}
                             }
                         },
                          new ResourceThresholds
@@ -260,9 +260,9 @@ namespace Watchman.Engine.Tests.Generation
                             Name = "ResourceB"
                         }
                     },
-                    Values = new Dictionary<string, ThresholdValue>
+                    Values = new Dictionary<string, AlarmValues>
                     {
-                        { "AlarmName", new ThresholdValue(300, 4) }
+                        { "AlarmName", new AlarmValues(300, 4) }
                     }
                 }
             };
@@ -332,15 +332,15 @@ namespace Watchman.Engine.Tests.Generation
                         new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Values = new Dictionary<string, ThresholdValue>
+                            Values = new Dictionary<string, AlarmValues>
                             {
-                                {"AlarmName", new ThresholdValue(200, null) }
+                                {"AlarmName", new AlarmValues(200, null) }
                             }
                         }
                     },
-                    Values = new Dictionary<string, ThresholdValue>
+                    Values = new Dictionary<string, AlarmValues>
                     {
-                        { "AlarmName", new ThresholdValue(100, 5) }
+                        { "AlarmName", new AlarmValues(100, 5) }
                     }
                 }
             };
@@ -390,9 +390,9 @@ namespace Watchman.Engine.Tests.Generation
                         new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Values = new Dictionary<string, ThresholdValue>
+                            Values = new Dictionary<string, AlarmValues>
                             {
-                                {"AlarmName", new ThresholdValue(200, null) }
+                                {"AlarmName", new AlarmValues(200, null) }
                             }
                         }
                     }
@@ -418,7 +418,7 @@ namespace Watchman.Engine.Tests.Generation
         public async Task ResourceEvaluationPeriodsCanOverrideServiceValueWithoutResettingThreshold()
         {
             // arrange
-            var defaults = new List<AlarmDefinition>()
+            var defaults = new List<AlarmDefinition>
             {
                 new AlarmDefinition
                 {
@@ -444,15 +444,15 @@ namespace Watchman.Engine.Tests.Generation
                         new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Values = new Dictionary<string, ThresholdValue>
+                            Values = new Dictionary<string, AlarmValues>
                             {
-                                {"AlarmName", new ThresholdValue(null, 17) }
+                                {"AlarmName", new AlarmValues(null, 17) }
                             }
                         }
                     },
-                    Values = new Dictionary<string, ThresholdValue>
+                    Values = new Dictionary<string, AlarmValues>
                     {
-                        { "AlarmName", new ThresholdValue(125, 5) }
+                        { "AlarmName", new AlarmValues(125, 5) }
                     }
                 }
             };

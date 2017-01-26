@@ -43,7 +43,7 @@ namespace Watchman.Configuration.Validation
             }
         }
 
-        private static void ValidServiceThreshold(KeyValuePair<string, ThresholdValue> namedThreshold)
+        private static void ValidServiceThreshold(KeyValuePair<string, AlarmValues> namedThreshold)
         {
             var value = namedThreshold.Value;
             if (value.Threshold <= 0)

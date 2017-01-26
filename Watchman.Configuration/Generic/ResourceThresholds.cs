@@ -6,8 +6,8 @@ namespace Watchman.Configuration.Generic
     {
         public string Name { get; set; }
         public string Pattern { get; set; }
-        public Dictionary<string, ThresholdValue> Values { get; set; }
-        public Dictionary<string, ThresholdValue> Thresholds
+        public Dictionary<string, AlarmValues> Values { get; set; }
+        public Dictionary<string, AlarmValues> Thresholds
         {
             get { return Values; }
             set { Values = value; }

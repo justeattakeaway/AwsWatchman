@@ -34,20 +34,20 @@ namespace Watchman.Engine.Tests.Generation
             var namedItem = new ResourceThresholds
             {
                 Name = "ItemX",
-                Values = new Dictionary<string, ThresholdValue>
+                Values = new Dictionary<string, AlarmValues>
                 {
                     {
-                        "SomeThreshold", new ThresholdValue(500, 2)
+                        "SomeThreshold", new AlarmValues(500, 2)
                     }
                 }
             };
 
             var patternMatchedItem = new ResourceThresholds {
                 Pattern = "Item",
-                Values = new Dictionary<string, ThresholdValue>
+                Values = new Dictionary<string, AlarmValues>
                 {
                     {
-                        "SomeThreshold", new ThresholdValue(100, 3)
+                        "SomeThreshold", new AlarmValues(100, 3)
                     }
                 }
             };
@@ -99,10 +99,10 @@ namespace Watchman.Engine.Tests.Generation
             var namedItem = new ResourceThresholds
             {
                 Name = "ItemX",
-                Values = new Dictionary<string, ThresholdValue>
+                Values = new Dictionary<string, AlarmValues>
                 {
                     {
-                        "SomeThreshold", new ThresholdValue(500, 2)
+                        "SomeThreshold", new AlarmValues(500, 2)
                     }
                 }
             };
@@ -110,10 +110,10 @@ namespace Watchman.Engine.Tests.Generation
             var patternMatchedItem = new ResourceThresholds
             {
                 Pattern = "Item",
-                Values = new Dictionary<string, ThresholdValue>
+                Values = new Dictionary<string, AlarmValues>
                 {
                     {
-                        "SomeThreshold", new ThresholdValue(100, 3)
+                        "SomeThreshold", new AlarmValues(100, 3)
                     }
                 }
             };

@@ -42,7 +42,7 @@ namespace Watchman.Engine.Generation
         }
 
         private IList<AlarmDefinition> ExpandDefaultAlarmsForResource(IList<AlarmDefinition> alerts,
-            params Dictionary<string, ThresholdValue>[] thresholds)
+            params Dictionary<string, AlarmValues>[] thresholds)
         {
             return alerts
                 .Select(x => AlarmWithMergedThreshold(x, thresholds))
@@ -51,7 +51,7 @@ namespace Watchman.Engine.Generation
 
         private static AlarmDefinition AlarmWithMergedThreshold(
             AlarmDefinition alarm,
-            Dictionary<string, ThresholdValue>[] thresholds)
+            Dictionary<string, AlarmValues>[] thresholds)
         {
             var mergedThreshold = MergeThreshold(alarm, thresholds);
 
@@ -61,7 +61,7 @@ namespace Watchman.Engine.Generation
             return copy;
         }
 
-        private static Tuple<Threshold, int> MergeThreshold(AlarmDefinition def, Dictionary<string, ThresholdValue>[] thresholds)
+        private static Tuple<Threshold, int> MergeThreshold(AlarmDefinition def, Dictionary<string, AlarmValues>[] thresholds)
         {
             var key = def.Name;
 
