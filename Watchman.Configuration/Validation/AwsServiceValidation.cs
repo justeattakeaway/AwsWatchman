@@ -8,9 +8,9 @@ namespace Watchman.Configuration.Validation
     {
         public static void Validate(string alertingGroupName, string serviceName, AwsServiceAlarms serviceAlarms)
         {
-            if (serviceAlarms.Thresholds != null && serviceAlarms.Thresholds.Any())
+            if (serviceAlarms.Values != null)
             {
-                foreach (var threshold in serviceAlarms.Thresholds)
+                foreach (var threshold in serviceAlarms.Values)
                 {
                     ValidServiceThreshold(threshold);
                 }
@@ -35,9 +35,9 @@ namespace Watchman.Configuration.Validation
                     $"AlertingGroup '{agName}' has a '{serviceName}' Service with no name or pattern");
             }
 
-            if (resource.Thresholds != null && resource.Thresholds.Any())
+            if (resource.Values != null)
             {
-                foreach (var threshold in resource.Thresholds)
+                foreach (var threshold in resource.Values)
                 {
                     ValidServiceThreshold(threshold);
                 }

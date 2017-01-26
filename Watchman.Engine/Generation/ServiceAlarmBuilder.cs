@@ -103,7 +103,7 @@ namespace Watchman.Engine.Generation
             ResourceThresholds resource, AwsServiceAlarms service)
         {
             // apply thresholds from resource or alerting group
-            var expanded = ExpandDefaultAlarmsForResource(defaults, resource.Thresholds, service.Thresholds);
+            var expanded = ExpandDefaultAlarmsForResource(defaults, resource.Values, service.Values);
             return await GetAlarms(expanded, resource, snsTopicArn, alertingGroup);
         }
 

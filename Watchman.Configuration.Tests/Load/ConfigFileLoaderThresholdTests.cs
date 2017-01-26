@@ -95,23 +95,23 @@ namespace Watchman.Configuration.Tests.Load
             Assert.That(section.ExcludeResourcesPrefixedWith, Is.Not.Null);
             Assert.That(section.ExcludeResourcesPrefixedWith, Is.Not.Empty);
 
-            Assert.That(section.Thresholds, Is.Not.Null);
-            Assert.That(section.Thresholds, Is.Not.Empty);
+            Assert.That(section.Values, Is.Not.Null);
+            Assert.That(section.Values, Is.Not.Empty);
         }
 
         [Test]
-        public void LambdaThresholdsAreCorrect()
+        public void LambdaValuesAreCorrect()
         {
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "LambdaTest");
 
             Assert.That(group, Is.Not.Null);
-            var thresholds = group.Services["Lambda"].Thresholds;
+            var values = group.Services["Lambda"].Values;
 
-            Assert.That(thresholds.Count, Is.EqualTo(3));
+            Assert.That(values.Count, Is.EqualTo(3));
 
-            var errrorsHigh = thresholds["ErrorsHigh"];
-            var durationHigh = thresholds["DurationHigh"];
-            var throttlesHigh = thresholds["ThrottlesHigh"];
+            var errrorsHigh = values["ErrorsHigh"];
+            var durationHigh = values["DurationHigh"];
+            var throttlesHigh = values["ThrottlesHigh"];
 
             Assert.That(errrorsHigh.Value, Is.EqualTo(20));
             Assert.That(errrorsHigh.EvaluationPeriods, Is.EqualTo(2));

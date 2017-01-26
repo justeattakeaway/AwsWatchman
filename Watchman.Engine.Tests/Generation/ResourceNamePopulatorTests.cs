@@ -34,7 +34,7 @@ namespace Watchman.Engine.Tests.Generation
             var namedItem = new ResourceThresholds
             {
                 Name = "ItemX",
-                Thresholds = new Dictionary<string, ThresholdValue>
+                Values = new Dictionary<string, ThresholdValue>
                 {
                     {
                         "SomeThreshold", new ThresholdValue(500, 2)
@@ -44,7 +44,7 @@ namespace Watchman.Engine.Tests.Generation
 
             var patternMatchedItem = new ResourceThresholds {
                 Pattern = "Item",
-                Thresholds = new Dictionary<string, ThresholdValue>
+                Values = new Dictionary<string, ThresholdValue>
                 {
                     {
                         "SomeThreshold", new ThresholdValue(100, 3)
@@ -71,9 +71,9 @@ namespace Watchman.Engine.Tests.Generation
             var resources = group.Service.Resources;
             Assert.That(resources.Count, Is.EqualTo(3));
 
-            var itemXThreshold = resources.First(x => x.Name == "ItemX").Thresholds["SomeThreshold"];
-            var itemYThreshold = resources.First(x => x.Name == "ItemY").Thresholds["SomeThreshold"];
-            var itemZThreshold = resources.First(x => x.Name == "ItemZ").Thresholds["SomeThreshold"];
+            var itemXThreshold = resources.First(x => x.Name == "ItemX").Values["SomeThreshold"];
+            var itemYThreshold = resources.First(x => x.Name == "ItemY").Values["SomeThreshold"];
+            var itemZThreshold = resources.First(x => x.Name == "ItemZ").Values["SomeThreshold"];
 
             Assert.That(itemXThreshold.Value, Is.EqualTo(500));
             Assert.That(itemYThreshold.Value, Is.EqualTo(100));
@@ -99,7 +99,7 @@ namespace Watchman.Engine.Tests.Generation
             var namedItem = new ResourceThresholds
             {
                 Name = "ItemX",
-                Thresholds = new Dictionary<string, ThresholdValue>
+                Values = new Dictionary<string, ThresholdValue>
                 {
                     {
                         "SomeThreshold", new ThresholdValue(500, 2)
@@ -110,7 +110,7 @@ namespace Watchman.Engine.Tests.Generation
             var patternMatchedItem = new ResourceThresholds
             {
                 Pattern = "Item",
-                Thresholds = new Dictionary<string, ThresholdValue>
+                Values = new Dictionary<string, ThresholdValue>
                 {
                     {
                         "SomeThreshold", new ThresholdValue(100, 3)
@@ -137,9 +137,9 @@ namespace Watchman.Engine.Tests.Generation
             var resources = group.Service.Resources;
             Assert.That(resources.Count, Is.EqualTo(3));
 
-            var itemXThreshold = resources.First(x => x.Name == "ItemX").Thresholds["SomeThreshold"];
-            var itemYThreshold = resources.First(x => x.Name == "ItemY").Thresholds["SomeThreshold"];
-            var itemZThreshold = resources.First(x => x.Name == "ItemZ").Thresholds["SomeThreshold"];
+            var itemXThreshold = resources.First(x => x.Name == "ItemX").Values["SomeThreshold"];
+            var itemYThreshold = resources.First(x => x.Name == "ItemY").Values["SomeThreshold"];
+            var itemZThreshold = resources.First(x => x.Name == "ItemZ").Values["SomeThreshold"];
 
             Assert.That(itemXThreshold.EvaluationPeriods, Is.EqualTo(2));
             Assert.That(itemYThreshold.EvaluationPeriods, Is.EqualTo(3));

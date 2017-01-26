@@ -107,7 +107,7 @@ namespace Watchman.Engine.Tests.Generation
                         new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Thresholds = new Dictionary<string, ThresholdValue>
+                            Values = new Dictionary<string, ThresholdValue>
                             {
                                 {"AlarmName", 200}
                             }
@@ -155,7 +155,7 @@ namespace Watchman.Engine.Tests.Generation
                         new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Thresholds = new Dictionary<string, ThresholdValue>
+                            Values = new Dictionary<string, ThresholdValue>
                             {
                                 {"AlarmName", 200}
                             }
@@ -165,7 +165,7 @@ namespace Watchman.Engine.Tests.Generation
                             Name = "ResourceB"
                         }
                     },
-                    Thresholds = new Dictionary<string, ThresholdValue>
+                    Values = new Dictionary<string, ThresholdValue>
                     {
                         { "AlarmName", 300 }
                     }
@@ -250,7 +250,7 @@ namespace Watchman.Engine.Tests.Generation
                         new ResourceThresholds
                         {
                             Name = "ResourceA",
-                            Thresholds = new Dictionary<string, ThresholdValue>
+                            Values = new Dictionary<string, ThresholdValue>
                             {
                                 {"AlarmName", new ThresholdValue(200, 3)}
                             }
@@ -260,7 +260,7 @@ namespace Watchman.Engine.Tests.Generation
                             Name = "ResourceB"
                         }
                     },
-                    Thresholds = new Dictionary<string, ThresholdValue>
+                    Values = new Dictionary<string, ThresholdValue>
                     {
                         { "AlarmName", new ThresholdValue(300, 4) }
                     }

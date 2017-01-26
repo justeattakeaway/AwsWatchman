@@ -98,7 +98,7 @@ namespace Watchman.Engine.Generation
             {
                 Name = tableName,
                 Pattern = null,
-                Thresholds = pattern.Thresholds
+                Values = pattern.Values
             };
         }
     }
