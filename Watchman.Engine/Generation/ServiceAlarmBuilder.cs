@@ -78,7 +78,9 @@ namespace Watchman.Engine.Generation
                 Value = matchedThreshold.Value
             };
 
-            return new Tuple<Threshold, int>(resultThreshold, matchedThreshold.EvaluationPeriods);
+            var evalPeriods = matchedThreshold.EvaluationPeriods ?? 1;
+
+            return new Tuple<Threshold, int>(resultThreshold, evalPeriods);
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(ServiceAlertingGroup alertingGroup, string snsTopicArn, IList<AlarmDefinition> defaults)

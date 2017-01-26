@@ -59,7 +59,7 @@ namespace Watchman.Configuration.Tests.Load
                 .Select(g => g.Name)
                 .ToList();
 
-            AssertContainsName(names, "LambdaOnly");
+            AssertContainsName(names, "LambdaTest");
         }
 
         private static void AssertContainsName(List<string> names, string test)
@@ -70,7 +70,7 @@ namespace Watchman.Configuration.Tests.Load
         [Test]
         public void LambdaResourcesAreDeserialised()
         {
-            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "LambdaOnly");
+            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "LambdaTest");
 
             Assert.That(group, Is.Not.Null);
             AssertSectionIsPopulated(group.Services["Lambda"]);
