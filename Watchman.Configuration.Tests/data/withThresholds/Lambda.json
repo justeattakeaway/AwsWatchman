@@ -14,8 +14,8 @@
       ],
       "Thresholds": {
         "ErrorsHigh": { "Value": 20, "EvaluationPeriods": 2 },
-        "DurationHigh": 100,
-        "ThrottlesHigh": 20
+        "DurationHigh": { "Value": 30 },
+        "ThrottlesHigh": 40
       }
     }
   }

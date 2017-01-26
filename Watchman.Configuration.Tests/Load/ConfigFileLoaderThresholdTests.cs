@@ -73,17 +73,54 @@ namespace Watchman.Configuration.Tests.Load
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "LambdaTest");
 
             Assert.That(group, Is.Not.Null);
-            AssertSectionIsPopulated(group.Services["Lambda"]);
-        }
+            var section = group.Services["Lambda"];
 
-        private static void AssertSectionIsPopulated(AwsServiceAlarms section)
-        {
             Assert.That(section, Is.Not.Null);
             Assert.That(section.ExcludeResourcesPrefixedWith, Is.Not.Null);
             Assert.That(section.ExcludeResourcesPrefixedWith, Is.Not.Empty);
 
             Assert.That(section.Resources, Is.Not.Null);
             Assert.That(section.Resources, Is.Not.Empty);
+        }
+
+        [Test]
+        public void LambdaThresholdsAreDeserialised()
+        {
+            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "LambdaTest");
+
+            Assert.That(group, Is.Not.Null);
+            var section = group.Services["Lambda"];
+
+            Assert.That(section, Is.Not.Null);
+            Assert.That(section.ExcludeResourcesPrefixedWith, Is.Not.Null);
+            Assert.That(section.ExcludeResourcesPrefixedWith, Is.Not.Empty);
+
+            Assert.That(section.Thresholds, Is.Not.Null);
+            Assert.That(section.Thresholds, Is.Not.Empty);
+        }
+
+        [Test]
+        public void LambdaThresholdsAreCorrect()
+        {
+            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "LambdaTest");
+
+            Assert.That(group, Is.Not.Null);
+            var thresholds = group.Services["Lambda"].Thresholds;
+
+            Assert.That(thresholds.Count, Is.EqualTo(3));
+
+            var errrorsHigh = thresholds["ErrorsHigh"];
+            var durationHigh = thresholds["DurationHigh"];
+            var throttlesHigh = thresholds["ThrottlesHigh"];
+
+            Assert.That(errrorsHigh.Value, Is.EqualTo(20));
+            Assert.That(errrorsHigh.EvaluationPeriods, Is.EqualTo(2));
+
+            Assert.That(durationHigh.Value, Is.EqualTo(30));
+            Assert.That(durationHigh.EvaluationPeriods, Is.Null);
+
+            Assert.That(throttlesHigh.Value, Is.EqualTo(40));
+            Assert.That(throttlesHigh.EvaluationPeriods, Is.Null);
         }
     }
 }
