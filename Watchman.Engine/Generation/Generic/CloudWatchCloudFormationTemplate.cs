@@ -42,15 +42,15 @@ namespace Watchman.Engine.Generation.Generic
             return root.ToString();
         }
 
-        private static JObject CreateSnsTopic<T>(string description, List<T> targets, Func<T, JObject> mapper) where T : AlertTarget
+        private static JObject CreateSnsTopic<T>(string name, string description, List<T> targets, Func<T, JObject> mapper) where T : AlertTarget
         {
             var sns = JObject.FromObject(new
             {
                 Type = "AWS::SNS::Topic",
                 Properties = new
                 {
-                    DisplayName = description
-                    //  TopicName todo: decide
+                    DisplayName = description,
+                    TopicName = name
                 }
             });
 
@@ -70,11 +70,21 @@ namespace Watchman.Engine.Generation.Generic
                 .Distinct()
                 .ToList();
 
+            // again, we want the group which is the same for every alarm, but the way we get it is annoying
+
+            var groupName = alarms
+                .Select(a => a.AlertingGroup.Name)
+                .Distinct()
+                .Single();
+
+
             var emails = targets.OfType<AlertEmail>().ToList();
 
             if (emails.Any())
             {
-                var sns = CreateSnsTopic(AwsConstants.DefaultEmailTopicDesciption, emails, email => JObject.FromObject(new
+                var sns = CreateSnsTopic($"AwsWatchman_Email_{groupName}",
+                    AwsConstants.DefaultEmailTopicDesciption,
+                    emails, email => JObject.FromObject(new
                 {
                     Protocol = "email",
                     Endpoint = email.Email
@@ -88,7 +98,9 @@ namespace Watchman.Engine.Generation.Generic
             var urls = targets.OfType<AlertUrl>().ToList();
             if (urls.Any())
             {
-                var sns = CreateSnsTopic(AwsConstants.DefaultUrlTopicDesciption, urls, url =>
+                var sns = CreateSnsTopic($"AwsWatchman_Url_{groupName}",
+                    AwsConstants.DefaultUrlTopicDesciption,
+                    urls, url =>
                 {
                     var protocol = url.Url.StartsWith("https") ? "https" : "http";
                     return JObject.FromObject(new

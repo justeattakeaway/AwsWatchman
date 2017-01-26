@@ -20,6 +20,7 @@ namespace Watchman.Engine.Tests.Generation.Generic
     [TestFixture]
     public class CloudWatchCloudFormationTemplateTests
     {
+        private const string AlertingGroupName = "AlertingGroupName";
 
         private static Alarm CreateExampleAlarm(List<AlertTarget> targets, AwsResource<FakeResourceType> resource)
         {
@@ -36,7 +37,7 @@ namespace Watchman.Engine.Tests.Generation.Generic
                 AlarmName = "",
                 AlertingGroup = new ServiceAlertingGroup()
                 {
-                    Name = "AlertingGroupName",
+                    Name = AlertingGroupName,
                     Targets = targets
                 },
                 Dimensions = new List<Dimension>(),
@@ -118,14 +119,15 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var emailTopic = parsed["Resources"]["EmailTopic"];
 
             Assert.That(emailTopic, Is.Not.Null);
+            Assert.That((string) emailTopic["Properties"]["TopicName"], Is.EqualTo($"AwsWatchman_Email_{AlertingGroupName}"));
 
             var emailsInTopic = emailTopic["Properties"]["Subscription"].ToList();
 
-            Assert.That(emailsInTopic.All(j => j["Protocol"].Value<string>() == "email"));
+            Assert.That(emailsInTopic.All(j => (string) j["Protocol"] == "email"));
             Assert.That(emailsInTopic.Count, Is.EqualTo(2));
 
-            Assert.That(emailsInTopic.Exists(j => j["Endpoint"].Value<string>() == "test1@test.com"));
-            Assert.That(emailsInTopic.Exists(j => j["Endpoint"].Value<string>() == "test2@test.com"));
+            Assert.That(emailsInTopic.Exists(j => (string) j["Endpoint"] == "test1@test.com"));
+            Assert.That(emailsInTopic.Exists(j => (string) j["Endpoint"] == "test2@test.com"));
         }
 
         [Test]
@@ -151,6 +153,7 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var emailTopic = parsed["Resources"]["UrlTopic"];
 
             Assert.That(emailTopic, Is.Not.Null);
+            Assert.That((string) emailTopic["Properties"]["TopicName"], Is.EqualTo($"AwsWatchman_Url_{AlertingGroupName}"));
 
             var emailsInTopic = emailTopic["Properties"]["Subscription"].ToList();
 
@@ -158,12 +161,12 @@ namespace Watchman.Engine.Tests.Generation.Generic
 
             Assert.That(emailsInTopic.Exists(j =>
 
-                 j["Endpoint"].Value<string>() == "http://banana" && j["Protocol"].Value<string>() == "http"
+                 (string)j["Endpoint"] == "http://banana" && (string)j["Protocol"] == "http"
             ));
 
             Assert.That(emailsInTopic.Exists(j =>
 
-                 j["Endpoint"].Value<string>() == "https://banana2" && j["Protocol"].Value<string>() == "https"
+                 (string)j["Endpoint"] == "https://banana2" && (string)j["Protocol"] == "https"
             ));
         }
 
