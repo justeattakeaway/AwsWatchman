@@ -10,13 +10,20 @@
       "ExcludeResourcesPrefixedWith": [ "testPrefix" ],
       "Resources": [
         "foo",
-        { "Pattern": "bar" }
+        { "Pattern": "bar" },
+        {
+          "Pattern": "fish",
+          "Thresholds": { "ThrottlesHigh": 40 }
+        }
       ],
-      "Thresholds": {
-        "ErrorsHigh": { "Value": 20, "EvaluationPeriods": 2 },
-        "DurationHigh": { "Value": 30 },
-        "ThrottlesHigh": 40
-      }
-    }
+          "Thresholds": {
+            "ErrorsHigh": {
+              "Value": 20,
+              "EvaluationPeriods": 2
+            },
+            "DurationHigh": { "Value": 30 },
+            "ThrottlesHigh": 40
+          }
+        }
   }
 }
