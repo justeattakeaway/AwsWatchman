@@ -17,28 +17,42 @@ namespace Watchman.Configuration.Load
         {
             if (reader.TokenType != JsonToken.StartObject)
             {
-                var simpleThreshold = (double)JToken.Load(reader);
-                return new ThresholdValue(simpleThreshold, null);
+                return ReadSimpleThresholdValue(reader);
             }
 
+            return ReadStructuredThresholdValue(reader);
+        }
+        private static object ReadSimpleThresholdValue(JsonReader reader)
+        {
+            var simpleThreshold = (double)JToken.Load(reader);
+            return new ThresholdValue(simpleThreshold, null);
+        }
+
+        private static object ReadStructuredThresholdValue(JsonReader reader)
+        {
             var jsonObject = JObject.Load(reader);
             var thresholdProp = jsonObject["Threshold"];
+            var evalPeriodsProp = jsonObject["EvaluationPeriods"];
 
-            if (thresholdProp == null)
+            if ((thresholdProp == null) && (evalPeriodsProp == null))
             {
-                throw new JsonReaderException("Must be number or contain a 'Threshold' property");
+                throw new JsonReaderException("Must be number or contain a 'Threshold' or 'EvaluationPeriods' property");
             }
 
-            var thresholdValue = thresholdProp.ToObject<double>();
+            double? thresholdValue = null;
+            int? evalPeriods = null;
 
-            var evaluationPeriodsProp = jsonObject["EvaluationPeriods"];
-            int? evaluationPeriods = null;
-            if (evaluationPeriodsProp != null)
+            if (thresholdProp != null)
             {
-                evaluationPeriods = evaluationPeriodsProp.ToObject<int>();
+                thresholdValue = thresholdProp.ToObject<double>();
             }
 
-            return new ThresholdValue(thresholdValue, evaluationPeriods);
+            if (evalPeriodsProp != null)
+            {
+                evalPeriods = evalPeriodsProp.ToObject<int>();
+            }
+
+            return new ThresholdValue(thresholdValue, evalPeriods);
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

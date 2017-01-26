@@ -97,6 +97,7 @@ namespace Watchman.Configuration.Tests.Load
 
             Assert.That(section.Values, Is.Not.Null);
             Assert.That(section.Values, Is.Not.Empty);
+            Assert.That(section.Values.Count, Is.EqualTo(4));
         }
 
         [Test]
@@ -107,11 +108,10 @@ namespace Watchman.Configuration.Tests.Load
             Assert.That(group, Is.Not.Null);
             var values = group.Services["Lambda"].Values;
 
-            Assert.That(values.Count, Is.EqualTo(3));
-
             var errrorsHigh = values["ErrorsHigh"];
             var durationHigh = values["DurationHigh"];
             var throttlesHigh = values["ThrottlesHigh"];
+            var fooHigh = values["FooHigh"];
 
             Assert.That(errrorsHigh.Threshold, Is.EqualTo(20));
             Assert.That(errrorsHigh.EvaluationPeriods, Is.EqualTo(2));
@@ -121,6 +121,9 @@ namespace Watchman.Configuration.Tests.Load
 
             Assert.That(throttlesHigh.Threshold, Is.EqualTo(40));
             Assert.That(throttlesHigh.EvaluationPeriods, Is.Null);
+
+            Assert.That(fooHigh.Threshold, Is.Null);
+            Assert.That(fooHigh.EvaluationPeriods, Is.EqualTo(3));
         }
     }
 }

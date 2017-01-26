@@ -22,6 +22,7 @@
           "EvaluationPeriods": 2
         },
         "DurationHigh": { "Threshold": 30 },
+        "FooHigh": { "EvaluationPeriods": 3 },
         "ThrottlesHigh": 40
       }
     }
