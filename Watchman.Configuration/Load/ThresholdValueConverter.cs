@@ -15,6 +15,13 @@ namespace Watchman.Configuration.Load
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
             JsonSerializer serializer)
         {
+            if (reader.TokenType != JsonToken.StartObject)
+            {
+                var threshold = (double)JToken.Load(reader);
+
+                return new ThresholdValue(threshold, 1); // todo: latter should be nullable and null here
+            }
+
             var jsonObject = JObject.Load(reader);
             double value = 0;
             var valueProp = jsonObject["Value"];
