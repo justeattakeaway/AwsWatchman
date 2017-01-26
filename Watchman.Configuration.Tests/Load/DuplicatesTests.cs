@@ -8,19 +8,17 @@ namespace Watchman.Configuration.Tests.Load
     [TestFixture]
     public class DuplicatesTests
     {
-        private WatchmanConfiguration _config;
-
         private Action GetLoader(string path)
         {
             return () =>
             {
-                var testFilePath = TestFiles.GetPathTo(path);
+                var testFilePath = TestFiles.GetRelativePathTo(path);
                 var testFilesSettings = new FileSettings(testFilePath);
 
                 var logger = new Mock<IConfigLoadLogger>();
                 var loader = new ConfigLoader(testFilesSettings, logger.Object);
 
-                _config = loader.LoadConfig();
+                loader.LoadConfig();
             };
         }
 

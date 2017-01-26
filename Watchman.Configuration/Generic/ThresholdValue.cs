@@ -5,9 +5,9 @@ namespace Watchman.Configuration.Generic
         public double Value { get; }
         public int EvaluationPeriods { get; }
 
-        public ThresholdValue(double value)
+        public ThresholdValue()
         {
-            Value = value;
+            Value = 0;
             EvaluationPeriods = 1;
         }
 
@@ -19,7 +19,7 @@ namespace Watchman.Configuration.Generic
 
         public static implicit operator ThresholdValue(double value)
         {
-            return new ThresholdValue(value);
+            return new ThresholdValue(value, 1);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Watchman.Configuration.Generic;
@@ -24,7 +23,7 @@ namespace Watchman.Configuration.Load
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var jsonObject = JObject.Load(reader);
-            var result = new AlertingGroup()
+            var result = new AlertingGroup
             {
                 AlarmNameSuffix = (string)jsonObject["AlarmNameSuffix"],
                 IsCatchAll = (bool)(jsonObject["IsCatchAll"] ?? false),
@@ -98,7 +97,10 @@ namespace Watchman.Configuration.Load
 
         private void ReadIntoTargets(AlertingGroup result, JToken jToken)
         {
-            if (!jToken.HasValues) return;
+            if (!jToken.HasValues)
+            {
+                return;
+            }
 
             foreach (var item in jToken.Children())
             {

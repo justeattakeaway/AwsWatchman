@@ -53,6 +53,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Load\ConfigFileLoaderThresholdTests.cs" />
     <Compile Include="Load\ConfigFileLoaderSimpleTests.cs" />
     <Compile Include="Load\DuplicatesTests.cs" />
     <Compile Include="Load\TestFiles.cs" />
@@ -103,6 +104,9 @@
     <None Include="data\duplicates\Sqs\DuplicateSqsDefinition.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="data\withThresholds\Lambda.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

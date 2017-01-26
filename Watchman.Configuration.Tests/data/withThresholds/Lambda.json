@@ -1,0 +1,22 @@
+﻿{
+  "Name": "LambdaTest",
+  "Targets": [
+    { "Email": "LambdaTest@example.com" },
+    { "Url": "http://farley.com" }
+  ],
+  "AlarmNameSuffix": "LambdaTest",
+  "Services": {
+    "Lambda": {
+      "ExcludeResourcesPrefixedWith": [ "testPrefix" ],
+      "Resources": [
+        "foo",
+        { "Pattern": "bar" }
+      ],
+      "Thresholds": {
+        "ErrorsHigh": { "Value": 20, "EvaluationPeriods": 2 },
+        "DurationHigh": 100,
+        "ThrottlesHigh": 20
+      }
+    }
+  }
+}

@@ -5,7 +5,7 @@ namespace Watchman.Configuration.Tests.Load
 {
     public static class TestFiles
     {
-        public static string GetPathTo(string folder)
+        public static string GetRelativePathTo(string folder)
         {
             var assemblyFilePath = Assembly.GetExecutingAssembly().Location;
             var basePath = Path.GetDirectoryName(assemblyFilePath);

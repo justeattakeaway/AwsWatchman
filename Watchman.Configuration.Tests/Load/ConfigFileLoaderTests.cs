@@ -14,7 +14,7 @@ namespace Watchman.Configuration.Tests.Load
         [SetUp]
         public void Setup()
         {
-            var testFilePath = TestFiles.GetPathTo("data");
+            var testFilePath = TestFiles.GetRelativePathTo("data");
             var testFilesSettings = new FileSettings(testFilePath);
 
             var logger = new Mock<IConfigLoadLogger>();
