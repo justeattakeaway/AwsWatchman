@@ -53,7 +53,7 @@ namespace Watchman.Engine.Generation
             AlarmDefinition alarm,
             Dictionary<string, AlarmValues>[] thresholds)
         {
-            var mergedThreshold = MergeValueOverrides(alarm, thresholds);
+            var mergedThreshold = MergeValueOverrides(alarm.Name, thresholds);
 
             var copy = alarm.Copy();
 
@@ -69,10 +69,8 @@ namespace Watchman.Engine.Generation
             return copy;
         }
 
-        private static AlarmValues MergeValueOverrides(AlarmDefinition def, Dictionary<string, AlarmValues>[] thresholds)
+        private static AlarmValues MergeValueOverrides(string key, Dictionary<string, AlarmValues>[] thresholds)
         {
-            var key = def.Name;
-
             var matchesForKey = thresholds
                 .Where(t => t != null && t.ContainsKey(key))
                 .Select(t => t[key])
