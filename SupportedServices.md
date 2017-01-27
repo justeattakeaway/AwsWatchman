@@ -27,8 +27,8 @@ They all require an object in this format:
 
 ```
 {
-	// [optional] defines default thresholds for the alerting group
-	"Thresholds": {
+	// [optional] defines default thresholds and evaluation periods for the alerting group
+	"Values": {
   		"AlarmName": 31
   	},
 
@@ -39,7 +39,7 @@ They all require an object in this format:
        		"Pattern": "^.*$", 
 
        		// [optional] override the thresholds defined elsewhere
-        	"Thresholds": {
+        	"Values": {
         		"AlarmName": 11
         	}
      	},
@@ -123,7 +123,7 @@ Note that using the defaults here for all alarms is probably not that useful.
     		},{
     			"Name": "another"
     		}],
-    		"Thresholds": {
+    		"Values": {
       			"FreeStorageSpaceLow": 31
       		}
 	    }
@@ -131,7 +131,7 @@ Note that using the defaults here for all alarms is probably not that useful.
       		"Resources": [
       			{"Pattern": "api-"}
       		],
-      		"Thresholds": {
+      		"Values": {
       			"ErrorsHigh": 10
       		}
 	    }
