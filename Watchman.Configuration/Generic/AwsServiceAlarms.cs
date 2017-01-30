@@ -9,11 +9,5 @@ namespace Watchman.Configuration.Generic
         public List<string> ExcludeResourcesPrefixedWith { get; set; }
 
         public Dictionary<string, AlarmValues> Values { get; set; }
-
-        public Dictionary<string, AlarmValues> Thresholds
-        {
-            get { return Values; }
-            set { Values = value; }
-        }
     }
 }
