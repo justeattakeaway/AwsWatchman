@@ -94,17 +94,19 @@ namespace Watchman.Engine.Generation.Generic
         public async Task SaveChanges(bool dryRun)
         {
             var groupedBySuffix = _alarms
-                .GroupBy(x => x.AlertingGroup.AlarmNameSuffix,
+                .GroupBy(x => x.AlertingGroup.Name,
                     x => x,
                     (g, x) => new
                     {
-                        Suffix = g,
+                        // this is because a lot of the group suffixes are lower(group name)
+                        // and it reduces the impact of moving stack naming from suffix to name
+                        Name = g.ToLowerInvariant(),
                         Alarms = x
                     });
 
             foreach (var group in groupedBySuffix)
             {
-                var stackName = "Watchman-" + group.Suffix;
+                var stackName = "Watchman-" + group.Name;
                 var template = new CloudWatchCloudFormationTemplate();
                 template.AddAlarms(group.Alarms);
                 var json = template.WriteJson();
