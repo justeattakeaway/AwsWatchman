@@ -181,7 +181,6 @@ namespace Watchman.Engine.Generation.Generic
             }
         }
 
-
         private async Task CommitStackChanges(string stackName, bool isUpdate, bool isDryRun, string body)
         {
             string templateUrl = null;
@@ -264,10 +263,12 @@ namespace Watchman.Engine.Generation.Generic
             {
                 await Task.Delay(_stackStatusCheckInterval);
 
-                var stack = (await _cloudformation.DescribeStacksAsync(new DescribeStacksRequest
-                {
-                    StackName = stackName
-                }))?.Stacks?.FirstOrDefault();
+                var stacksResponse = await _cloudformation.DescribeStacksAsync(new DescribeStacksRequest
+                    {
+                        StackName = stackName
+                    });
+
+                var stack = stacksResponse?.Stacks?.FirstOrDefault();
 
                 if (stack == null)
                 {
