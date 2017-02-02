@@ -94,18 +94,22 @@ namespace Watchman.Engine.Generation.Generic
         public async Task SaveChanges(bool dryRun)
         {
             var groupedBySuffix = _alarms
-                .GroupBy(x => x.AlertingGroup.AlarmNameSuffix,
+                .GroupBy(x => x.AlertingGroup.Name,
                     x => x,
                     (g, x) => new
                     {
-                        Suffix = g,
+                        // this is because a lot of the group suffixes are lower(group name)
+                        // and it reduces the impact of moving stack naming from suffix to name
+                        Name = g.ToLowerInvariant(),
                         Alarms = x
                     });
 
             foreach (var group in groupedBySuffix)
             {
-                var stackName = "Watchman-" + group.Suffix;
-                var json = CloudWatchCloudFormationTemplate.WriteJson(group.Alarms);
+                var stackName = "Watchman-" + group.Name;
+                var template = new CloudWatchCloudFormationTemplate();
+                template.AddAlarms(group.Alarms);
+                var json = template.WriteJson();
 
                 var allStacks = await AllStacks();
 
@@ -183,12 +187,6 @@ namespace Watchman.Engine.Generation.Generic
             string templateUrl = null;
             string templateBody = null;
 
-            if (isDryRun)
-            {
-                _logger.Info("Skipping save due to dry run");
-                return;
-            }
-
             if (body.Length >= CloudformationRequestBodyLimit)
             {
                 templateUrl = await CopyTemplateToS3(stackName, body);
@@ -202,6 +200,12 @@ namespace Watchman.Engine.Generation.Generic
             {
                 _logger.Info($"Stack {stackName} exists, updating");
 
+                if (isDryRun)
+                {
+                    _logger.Info("Skipping stack update (dry run)");
+                    return;
+                }
+
                 await Commit(new UpdateStackRequest
                 {
                     StackName = stackName,
@@ -212,6 +216,12 @@ namespace Watchman.Engine.Generation.Generic
             else
             {
                 _logger.Info($"Stack {stackName} does not exist, creating");
+
+                if (isDryRun)
+                {
+                    _logger.Info("Skipping stack creation (dry run)");
+                    return;
+                }
 
                 await Commit(new CreateStackRequest
                 {
@@ -257,7 +267,12 @@ namespace Watchman.Engine.Generation.Generic
                 var stack = (await _cloudformation.DescribeStacksAsync(new DescribeStacksRequest
                 {
                     StackName = stackName
-                })).Stacks.Single();
+                }))?.Stacks?.FirstOrDefault();
+
+                if (stack == null)
+                {
+                    throw new Exception($"Stack {stackName} not returned by describeStacks");
+                }
 
                 if (stack.StackStatus == desiredStatus)
                 {
