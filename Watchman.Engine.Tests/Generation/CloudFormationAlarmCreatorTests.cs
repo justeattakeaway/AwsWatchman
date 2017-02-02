@@ -96,6 +96,7 @@ namespace Watchman.Engine.Tests.Generation
                 {
                     AlarmNameSuffix = "group-suffix"
                 },
+                SnsTopicArn = "sns-arn",
                 Resource = new Resource { Name = $"resource-for-{name}"},
                 Dimensions = new List<Dimension>()
             };
