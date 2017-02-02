@@ -77,7 +77,7 @@ namespace Watchman.Engine.Tests.Generation
         }
         private string ExpectedStackName(ServiceAlertingGroup group)
         {
-            return $"Watchman-{group.AlarmNameSuffix}";
+            return $"Watchman-{group.Name.ToLowerInvariant()}";
         }
         private static Alarm Alarm(string name = "Test alarm")
         {
@@ -94,6 +94,7 @@ namespace Watchman.Engine.Tests.Generation
                 },
                 AlertingGroup = new ServiceAlertingGroup
                 {
+                    Name = "group-name",
                     AlarmNameSuffix = "group-suffix"
                 },
                 Resource = new Resource { Name = $"resource-for-{name}"},
