@@ -105,7 +105,7 @@ namespace Watchman.Engine.Generation.Generic
             foreach (var group in groupedBySuffix)
             {
                 var stackName = "Watchman-" + group.Suffix;
-                var json = CloudWatchCloudFormationTemplate.WriteJson(group.Alarms);
+                var json = CloudWatchCloudFormationTemplate.WriteJson(group.Alarms.ToList());
 
                 var allStacks = await AllStacks();
 
@@ -185,7 +185,7 @@ namespace Watchman.Engine.Generation.Generic
 
             if (isDryRun)
             {
-                _logger.Info("Skipping save due to dry run");
+                _logger.Info($"Skipping save to stack {stackName} due to dry run");
                 return;
             }
 
