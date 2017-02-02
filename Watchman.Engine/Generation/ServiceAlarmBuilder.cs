@@ -97,18 +97,18 @@ namespace Watchman.Engine.Generation
             }
 
             var allAlarms = await Task.WhenAll(service.Resources
-                .Select(r => ExpandAlarmsToResources(alertingGroup, snsTopicArn, defaults, r, service)));
+                .Select(r => ExpandAlarmsToResources(alertingGroup, defaults, r, service)));
 
             return allAlarms.SelectMany(x => x).ToList();
         }
 
-        private async Task<IList<Alarm>> ExpandAlarmsToResources(ServiceAlertingGroup alertingGroup, string snsTopicArn,
+        private async Task<IList<Alarm>> ExpandAlarmsToResources(ServiceAlertingGroup alertingGroup,
             IList<AlarmDefinition> defaults,
             ResourceThresholds resource, AwsServiceAlarms service)
         {
             // apply thresholds from resource or alerting group
             var expanded = ExpandDefaultAlarmsForResource(defaults, resource.Values, service.Values);
-            return await GetAlarms(expanded, resource, snsTopicArn, alertingGroup);
+            return await GetAlarms(expanded, resource, alertingGroup);
         }
 
         private string GetAlarmName(AwsResource<T> resource, string alertName, string groupSuffix)
