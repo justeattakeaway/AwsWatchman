@@ -267,7 +267,12 @@ namespace Watchman.Engine.Generation.Generic
                 var stack = (await _cloudformation.DescribeStacksAsync(new DescribeStacksRequest
                 {
                     StackName = stackName
-                })).Stacks.Single();
+                }))?.Stacks?.FirstOrDefault();
+
+                if (stack == null)
+                {
+                    throw new Exception($"Stack {stackName} not returned by describeStacks");
+                }
 
                 if (stack.StackStatus == desiredStatus)
                 {
