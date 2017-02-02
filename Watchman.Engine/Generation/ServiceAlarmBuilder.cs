@@ -87,7 +87,7 @@ namespace Watchman.Engine.Generation
             return new AlarmValues(matchedThresholdValue, matchedEvalPeriods);
         }
 
-        public async Task<IList<Alarm>>  GenerateAlarmsFor(ServiceAlertingGroup alertingGroup, string snsTopicArn, IList<AlarmDefinition> defaults)
+        public async Task<IList<Alarm>>  GenerateAlarmsFor(ServiceAlertingGroup alertingGroup, IList<AlarmDefinition> defaults)
         {
             var service = alertingGroup.Service;
 
@@ -97,18 +97,18 @@ namespace Watchman.Engine.Generation
             }
 
             var allAlarms = await Task.WhenAll(service.Resources
-                .Select(r => ExpandAlarmsToResources(alertingGroup, snsTopicArn, defaults, r, service)));
+                .Select(r => ExpandAlarmsToResources(alertingGroup, defaults, r, service)));
 
             return allAlarms.SelectMany(x => x).ToList();
         }
 
-        private async Task<IList<Alarm>> ExpandAlarmsToResources(ServiceAlertingGroup alertingGroup, string snsTopicArn,
+        private async Task<IList<Alarm>> ExpandAlarmsToResources(ServiceAlertingGroup alertingGroup,
             IList<AlarmDefinition> defaults,
             ResourceThresholds resource, AwsServiceAlarms service)
         {
             // apply thresholds from resource or alerting group
             var expanded = ExpandDefaultAlarmsForResource(defaults, resource.Values, service.Values);
-            return await GetAlarms(expanded, resource, snsTopicArn, alertingGroup);
+            return await GetAlarms(expanded, resource, alertingGroup);
         }
 
         private string GetAlarmName(AwsResource<T> resource, string alertName, string groupSuffix)
@@ -118,7 +118,6 @@ namespace Watchman.Engine.Generation
 
         private async Task<IList<Alarm>> GetAlarms(IList<AlarmDefinition> alarms,
             ResourceThresholds awsResource,
-            string snsTopic,
             ServiceAlertingGroup group)
         {
             var result = new List<Alarm>();
@@ -142,8 +141,7 @@ namespace Watchman.Engine.Generation
                     Resource = entity,
                     AlarmDefinition = alarm,
                     AlertingGroup = group,
-                    Dimensions = dimensions,
-                    SnsTopicArn = snsTopic
+                    Dimensions = dimensions
                 };
                 result.Add(model);
             }
