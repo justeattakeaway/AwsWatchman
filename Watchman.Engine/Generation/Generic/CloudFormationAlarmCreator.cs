@@ -185,12 +185,6 @@ namespace Watchman.Engine.Generation.Generic
             string templateUrl = null;
             string templateBody = null;
 
-            if (isDryRun)
-            {
-                _logger.Info("Skipping save due to dry run");
-                return;
-            }
-
             if (body.Length >= CloudformationRequestBodyLimit)
             {
                 templateUrl = await CopyTemplateToS3(stackName, body);
@@ -204,6 +198,12 @@ namespace Watchman.Engine.Generation.Generic
             {
                 _logger.Info($"Stack {stackName} exists, updating");
 
+                if (isDryRun)
+                {
+                    _logger.Info("Skipping stack update (dry run)");
+                    return;
+                }
+
                 await Commit(new UpdateStackRequest
                 {
                     StackName = stackName,
@@ -214,6 +214,12 @@ namespace Watchman.Engine.Generation.Generic
             else
             {
                 _logger.Info($"Stack {stackName} does not exist, creating");
+
+                if (isDryRun)
+                {
+                    _logger.Info("Skipping stack creation (dry run)");
+                    return;
+                }
 
                 await Commit(new CreateStackRequest
                 {
