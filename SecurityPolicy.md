@@ -48,7 +48,9 @@ The values you will have to subsitute in are:
 				"sns:ListTopics",
 				"sns:CreateTopic",
 				"sns:ListSubscriptionsByTopic",
-				"sns:Subscribe"
+				"sns:Subscribe",
+				"sns:DeleteTopic",
+				"sns:GetTopicAttributes" 
 			],
 			"Resource": [
 				"arn:aws:sns:<region>:<account-id>:*"
