@@ -40,8 +40,7 @@ namespace Watchman.Configuration.Tests
             var instance1 = new AlertUrl { Url = "abc" };
             var instance2 = new AlertEmail { Email = "abc" };
 
-            Assert.That(instance1, Is.Not.EqualTo(instance2));
-            Assert.That(instance2, Is.Not.EqualTo(instance1));
+            AssertInequalities(instance1, instance2);
         }
 
         [Test]
@@ -50,8 +49,7 @@ namespace Watchman.Configuration.Tests
             var instance1 = new AlertEmail { Email = "a@b.com" };
             var instance2 = new AlertEmail { Email = "a@b.com" };
 
-            Assert.That(instance1, Is.EqualTo(instance2));
-            Assert.That(instance2, Is.EqualTo(instance1));
+            AssertEqualities(instance1, instance2);
         }
 
         [Test]
@@ -60,8 +58,7 @@ namespace Watchman.Configuration.Tests
             var instance1 = new AlertEmail { Email = "a@b.com" };
             var instance2 = new AlertEmail { Email = "beee@ceee.org" };
 
-            Assert.That(instance1, Is.Not.EqualTo(instance2));
-            Assert.That(instance2, Is.Not.EqualTo(instance1));
+            AssertInequalities(instance1, instance2);
         }
 
         [Test]
@@ -70,8 +67,7 @@ namespace Watchman.Configuration.Tests
             var instance1 = new AlertUrl { Url = "http://a.com/b" };
             var instance2 = new AlertUrl { Url = "http://a.com/b" };
 
-            Assert.That(instance1, Is.EqualTo(instance2));
-            Assert.That(instance2, Is.EqualTo(instance1));
+            AssertEqualities(instance1, instance2);
         }
 
         [Test]
@@ -80,8 +76,35 @@ namespace Watchman.Configuration.Tests
             var instance1 = new AlertUrl { Url = "http://a.com/b" };
             var instance2 = new AlertUrl { Url = "https://beee.org/ceee" };
 
-            Assert.That(instance1, Is.Not.EqualTo(instance2));
-            Assert.That(instance2, Is.Not.EqualTo(instance1));
+            AssertInequalities(instance1, instance2);
+        }
+
+        private void AssertEqualities(AlertTarget a, AlertTarget b)
+        {
+            Assert.That(a, Is.EqualTo(a));
+            Assert.That(b, Is.EqualTo(b));
+
+            Assert.That(a, Is.EqualTo(b));
+            Assert.That(b, Is.EqualTo(a));
+
+            Assert.That(a, Is.Not.EqualTo(null));
+            Assert.That(b, Is.Not.EqualTo(null));
+
+            Assert.That(a.GetHashCode(), Is.EqualTo(b.GetHashCode()));
+        }
+
+        private void AssertInequalities(AlertTarget a, AlertTarget b)
+        {
+            Assert.That(a, Is.EqualTo(a));
+            Assert.That(b, Is.EqualTo(b));
+
+            Assert.That(a, Is.Not.EqualTo(b));
+            Assert.That(b, Is.Not.EqualTo(a));
+
+            Assert.That(a, Is.Not.EqualTo(null));
+            Assert.That(b, Is.Not.EqualTo(null));
+
+            Assert.That(a.GetHashCode(), Is.Not.EqualTo(b.GetHashCode()));
         }
     }
 }
