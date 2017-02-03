@@ -35,12 +35,26 @@ namespace Watchman.Configuration.Tests
         }
 
         [Test]
-        public void EmailIsNotEqualToUrl()
+        public void DifferentEmailAndUrlAreNotEqual()
         {
-            var instance1 = new AlertUrl { Url = "abc" };
-            var instance2 = new AlertEmail { Email = "abc" };
+            var instance1 = new AlertUrl { Url = "a@b.c" };
+            var instance2 = new AlertEmail { Email = "http://abc" };
 
             AssertInequalities(instance1, instance2);
+        }
+
+        [Test]
+        public void SameEmailAndUrlAreNotEqual()
+        {
+            var instance1 = new AlertUrl { Url = "a.b.c" };
+            var instance2 = new AlertEmail { Email = "a.b.c" };
+
+            // Can't call AssertInequalities because the hashcodes are same for same strings
+            // This is ot a problem in practice
+            // as emails and urls have different formats
+
+            Assert.That(instance1, Is.Not.EqualTo(instance2));
+            Assert.That(instance2, Is.Not.EqualTo(instance1));
         }
 
         [Test]
