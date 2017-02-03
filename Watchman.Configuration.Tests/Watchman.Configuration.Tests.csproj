@@ -53,6 +53,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlertTargetTests.cs" />
     <Compile Include="Load\ConfigFileLoaderThresholdTests.cs" />
     <Compile Include="Load\ConfigFileLoaderSimpleTests.cs" />
     <Compile Include="Load\DuplicatesTests.cs" />
