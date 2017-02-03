@@ -188,7 +188,10 @@ namespace Watchman.Engine.Generation.Generic
 
             if (body.Length >= CloudformationRequestBodyLimit)
             {
-                templateUrl = await CopyTemplateToS3(stackName, body);
+                if (!isDryRun)
+                {
+                    templateUrl = await CopyTemplateToS3(stackName, body);
+                }
             }
             else
             {
