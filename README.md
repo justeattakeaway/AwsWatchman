@@ -97,35 +97,8 @@ Watchman.exe --RunMode GenerateAlarms --ConfigFolder ".\Configs" --AwsAccessKey 
 
 ## Permissions needed
 
-The user associated with the keys needs the following roles:
+The user associated with the keys needs to be in several roles. These are all documented [in the Security Policy](SecurityPolicy.md).
 
-### For managing alarms
-
-- sns:ListTopics
-- sns:CreateTopic
-- sns:ListSubscriptionsByTopic
-- sns:Subscribe
-- cloudwatch:DescribeAlarms 
-- cloudwatch:PutMetricAlarm
-- cloudformation:ListStacks
-- cloudformation:UpdateStack (stacks prefixed with Watchman-)
-- cloudformation:CreateStack (stacks prefixed with Watchman-)
-- s3:PutObject (ideally constrained to the relevant specific bucket/path)
-
-### For retrieving resource details
-
-- dynamodb:DescribeTable
-- autoscaling:DescribeAutoScalingGroups
-- elasticloadbalancing:DescribeLoadBalancers
-- lambda:ListFunctions
-- rds:DescribeDBInstances
-- cloudwatch:ListMetrics
-- ec2:DescribeSubnets
-
-### For additional quartermaster reporting
-
-- cloudwatch:GetMetricData
-- cloudwatch:GetMetricStatistics
 
 ## Alerts on
 
