@@ -50,7 +50,10 @@ The values you will have to subsitute in are:
 				"sns:ListSubscriptionsByTopic",
 				"sns:Subscribe",
 				"sns:DeleteTopic",
-				"sns:GetTopicAttributes" 
+				"sns:GetTopicAttributes", 
+				"sns:SetTopicAttributes",
+				"sns:Subscribe",
+				"sns:Unsubscribe"
 			],
 			"Resource": [
 				"arn:aws:sns:<region>:<account-id>:*"
@@ -89,7 +92,8 @@ The values you will have to subsitute in are:
 		{
 			"Effect": "Allow",
 			"Action": [
-				"s3:PutObject"
+				"s3:PutObject",
+				"s3:GetObject"
 			],
 			"Resource": [
 				"arn:aws:s3:::<watchman bucket>/*"
