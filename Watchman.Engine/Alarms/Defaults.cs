@@ -262,12 +262,12 @@ namespace Watchman.Engine.Alarms
             {
                 Name = "LatencyHigh",
                 Metric = "Latency",
-                Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 4,
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 2,
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
-                    Value = 0.2
+                    Value = 0.25
                 },
                 DimensionNames = new[] {"LoadBalancerName"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
