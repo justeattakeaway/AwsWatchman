@@ -77,11 +77,7 @@ namespace Watchman.Engine.Generation.Sqs
                 return;
             }
 
-            if (alertingGroup.Sqs.Errors == null)
-            {
-                alertingGroup.Sqs.Errors = new ErrorQueue();
-            }
-            alertingGroup.Sqs.Errors.ReadDefaults(ErrorQueueDefaults);
+            DefaultAlertingGroupErrorSettings(alertingGroup);
 
             await _queueNamePopulator.PopulateSqsNames(alertingGroup);
 
@@ -92,6 +88,24 @@ namespace Watchman.Engine.Generation.Sqs
             await EnsureAllQueueAlarms(alertingGroup, queueResourceNames, snsTopic, dryRun);
         }
 
+        private static void DefaultAlertingGroupErrorSettings(AlertingGroup alertingGroup)
+        {
+            if (alertingGroup.Sqs.Errors == null)
+            {
+                alertingGroup.Sqs.Errors = new ErrorQueue();
+            }
+            alertingGroup.Sqs.Errors.ReadDefaults(ErrorQueueDefaults);
+        }
+
+        private static void DefaultQueueErrorSettings(AlertingGroup group, QueueConfig queue)
+        {
+            if (queue.Errors == null)
+            {
+                queue.Errors = new ErrorQueue();
+            }
+            queue.Errors.ReadDefaults(group.Sqs.Errors);
+        }
+
         private async Task EnsureAllQueueAlarms(AlertingGroup alertingGroup,
             IList<string> queueResourceNames, string snsTopic, bool dryRun)
         {
@@ -100,10 +114,26 @@ namespace Watchman.Engine.Generation.Sqs
                 if (!queueResourceNames.Contains(configuredQueue.Name))
                 {
                     _logger.Info($"No match in active queues for queue {configuredQueue.Name}");
+                    return;
                 }
-                else
+
+                DefaultQueueErrorSettings(alertingGroup, configuredQueue);
+                await EnsureQueueAlarms(alertingGroup, configuredQueue, snsTopic, dryRun);
+
+                if (!IsErrorQueue(configuredQueue))
                 {
-                    await EnsureQueueAlarms(alertingGroup, configuredQueue, snsTopic, dryRun);
+                    var matchingErrorQueueName = configuredQueue.Name + configuredQueue.Errors.Suffix;
+                    if (queueResourceNames.Contains(matchingErrorQueueName))
+                    {
+                        var matchingErrorQueue = new QueueConfig
+                        {
+                            Name = matchingErrorQueueName,
+                            Errors = new ErrorQueue()
+                        };
+                        matchingErrorQueue.Errors.ReadDefaults(configuredQueue.Errors);
+
+                        await EnsureQueueAlarms(alertingGroup, matchingErrorQueue, snsTopic, dryRun);
+                    }
                 }
             }
         }
@@ -113,8 +143,6 @@ namespace Watchman.Engine.Generation.Sqs
         {
             try
             {
-                DefaultQueueErrorSettings(group, configuredQueue);
-
                 if (!configuredQueue.Errors.Monitored.Value && IsErrorQueue(configuredQueue))
                 {
                     _logger.Info($"Skipping error queue {configuredQueue.Name}");
@@ -130,15 +158,6 @@ namespace Watchman.Engine.Generation.Sqs
             }
         }
 
-        private static void DefaultQueueErrorSettings(AlertingGroup group, QueueConfig configuredQueue)
-        {
-            if (configuredQueue.Errors == null)
-            {
-                configuredQueue.Errors = new ErrorQueue();
-            }
-            configuredQueue.Errors.ReadDefaults(group.Sqs.Errors);
-        }
-
         private async Task EnsureActiveQueueAlarms(
             AlertingGroup group, QueueConfig queue,
             string snsTopic, bool dryRun)
@@ -147,7 +166,7 @@ namespace Watchman.Engine.Generation.Sqs
 
             await _queueAlarmCreator.EnsureLengthAlarm(
                 queue.Name, lengthThreshold,
-                @group.AlarmNameSuffix, snsTopic, dryRun);
+                group.AlarmNameSuffix, snsTopic, dryRun);
 
             var oldestMessageThreshold = OldestMessageThreshold(queue, group);
 
@@ -155,7 +174,7 @@ namespace Watchman.Engine.Generation.Sqs
             {
                 await _queueAlarmCreator.EnsureOldestMessageAlarm(
                     queue.Name, oldestMessageThreshold.Value,
-                    @group.AlarmNameSuffix, snsTopic, dryRun);
+                    group.AlarmNameSuffix, snsTopic, dryRun);
             }
         }
 
