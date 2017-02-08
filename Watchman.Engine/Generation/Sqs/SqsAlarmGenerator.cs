@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.Sqs;
 using Watchman.Configuration;
 using Watchman.Engine.Logging;
 using Watchman.Engine.Sns;
+using QueueConfig = Watchman.Configuration.Queue;
 
 namespace Watchman.Engine.Generation.Sqs
 {
@@ -85,49 +87,49 @@ namespace Watchman.Engine.Generation.Sqs
 
             var snsTopic = await _snsCreator.EnsureSnsTopic(alertingGroup, dryRun);
 
-            foreach (var queue in alertingGroup.Sqs.Queues)
+            var queueResourceNames = await _queueSource.GetResourceNamesAsync();
+
+            foreach (var configuredQueue in alertingGroup.Sqs.Queues)
             {
-                await EnsureQueueAlarms(alertingGroup, queue, snsTopic, dryRun);
+                if (!queueResourceNames.Contains(configuredQueue.Name))
+                {
+                    _logger.Info($"No match in active queues for queue {configuredQueue.Name}");
+                }
+                else
+                {
+                    await EnsureQueueAlarms(alertingGroup, configuredQueue, snsTopic, dryRun);
+                }
             }
         }
 
-        private async Task EnsureQueueAlarms(
-            AlertingGroup group, Queue queue,
-            string snsTopic, bool dryRun)
+        private async Task EnsureQueueAlarms(AlertingGroup group,
+            QueueConfig configuredQueue, string snsTopic, bool dryRun)
         {
             try
             {
-                var queues = await _queueSource.GetResourceNamesAsync();
-
-                if (queue.Errors == null)
+                if (configuredQueue.Errors == null)
                 {
-                    queue.Errors = new ErrorQueue();
+                    configuredQueue.Errors = new ErrorQueue();
                 }
-                queue.Errors.ReadDefaults(group.Sqs.Errors);
+                configuredQueue.Errors.ReadDefaults(group.Sqs.Errors);
 
-                if (! queues.Contains(queue.Name))
+                if (!configuredQueue.Errors.Monitored.Value && IsErrorQueue(configuredQueue))
                 {
-                    _logger.Info($"No match in active queues for queue {queue.Name}");
+                    _logger.Info($"Skipping error queue {configuredQueue.Name}");
                     return;
                 }
 
-                if (!queue.Errors.Monitored.Value && IsErrorQueue(queue))
-                {
-                    _logger.Info($"Skipping error queue {queue.Name}");
-                    return;
-                }
-
-                await EnsureActiveQueueAlarms(group, queue, snsTopic, dryRun);
+                await EnsureActiveQueueAlarms(group, configuredQueue, snsTopic, dryRun);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"Error when creating queue alarm for {queue.Name}");
+                _logger.Error(ex, $"Error when creating queue alarm for {configuredQueue.Name}");
                 throw;
             }
         }
 
         private async Task EnsureActiveQueueAlarms(
-            AlertingGroup group, Queue queue,
+            AlertingGroup group, QueueConfig queue,
             string snsTopic, bool dryRun)
         {
             var lengthThreshold = QueueLengthThreshold(queue, group);
@@ -146,7 +148,7 @@ namespace Watchman.Engine.Generation.Sqs
             }
         }
 
-        private int QueueLengthThreshold(Queue queue, AlertingGroup group)
+        private int QueueLengthThreshold(QueueConfig queue, AlertingGroup group)
         {
             if (IsErrorQueue(queue))
             {
@@ -156,7 +158,7 @@ namespace Watchman.Engine.Generation.Sqs
             return queue.LengthThreshold ?? group.Sqs.LengthThreshold ?? AwsConstants.QueueLengthThreshold;
         }
 
-        private int? OldestMessageThreshold(Queue queue, AlertingGroup group)
+        private int? OldestMessageThreshold(QueueConfig queue, AlertingGroup group)
         {
             if (IsErrorQueue(queue))
             {
@@ -166,7 +168,7 @@ namespace Watchman.Engine.Generation.Sqs
             return queue.OldestMessageThreshold ?? group.Sqs.OldestMessageThreshold ?? AwsConstants.OldestMessageThreshold;
         }
 
-        private bool IsErrorQueue(Queue queue)
+        private bool IsErrorQueue(QueueConfig queue)
         {
             return
                 !string.IsNullOrWhiteSpace(queue.Name) &&
