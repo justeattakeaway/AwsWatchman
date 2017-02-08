@@ -69,7 +69,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         }
 
         [Test]
-        public async Task ExtraQueueAtEndShouldBeIgnored()
+        public async Task ExtraQueuesInResourcesShouldBeIgnored()
         {
             var queueSource = new Mock<IResourceSource<QueueData>>();
             VerifyQueues.ReturnsQueues(queueSource, new List<string>
@@ -142,6 +142,46 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             VerifyQueues.NoLengthAlarm(alarmCreator, "nopatternmatch");
             VerifyQueues.EnsureLengthAlarm(alarmCreator, "prod-pattern-queue", 100, false);
             VerifyQueues.EnsureLengthAlarm(alarmCreator, "prod-pattern-queue-two", 100, false);
+        }
+
+        [Test]
+        public async Task ExtraQueueInNameShouldBeIgnored()
+        {
+            var queueSource = new Mock<IResourceSource<QueueData>>();
+            VerifyQueues.ReturnsQueues(queueSource, new List<string>
+                {
+                    "aa_nomatch_queue",
+                    "prod-pattern-queue",
+                    "prod-pattern-queue-two",
+                    "zz_nomatch_queue"
+                });
+
+            var alarmCreator = new Mock<IQueueAlarmCreator>();
+            var snsTopicCreator = new Mock<ISnsTopicCreator>();
+            var snsSubscriptionCreator = new Mock<ISnsSubscriptionCreator>();
+
+            var snsCreator = new SnsCreator(snsTopicCreator.Object, snsSubscriptionCreator.Object);
+
+            var config = MakePatternConfig();
+            config.AlertingGroups[0].Sqs.Queues = new List<Queue>
+                {
+                    new Queue {Name = "nopatternmatch"},
+                    new Queue {Name = "prod-pattern-queue"}
+                };
+
+            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false),
+                queueSource.Object);
+
+            var generator = new SqsAlarmGenerator(
+                new ConsoleAlarmLogger(false), queueSource.Object,
+                populator, alarmCreator.Object,
+                snsCreator);
+
+            await generator.GenerateAlarmsFor(config, RunMode.GenerateAlarms);
+
+            VerifyQueues.NoLengthAlarm(alarmCreator, "nopatternmatch");
+            VerifyQueues.EnsureLengthAlarm(alarmCreator, "prod-pattern-queue", 100, false);
+            VerifyQueues.NoLengthAlarm(alarmCreator, "prod-pattern-queue-two");
         }
 
 
