@@ -89,6 +89,12 @@ namespace Watchman.Engine.Generation.Sqs
 
             var queueResourceNames = await _queueSource.GetResourceNamesAsync();
 
+            await EnsureAllQueueAlarms(alertingGroup, queueResourceNames, snsTopic, dryRun);
+        }
+
+        private async Task EnsureAllQueueAlarms(AlertingGroup alertingGroup,
+            IList<string> queueResourceNames, string snsTopic, bool dryRun)
+        {
             foreach (var configuredQueue in alertingGroup.Sqs.Queues)
             {
                 if (!queueResourceNames.Contains(configuredQueue.Name))
@@ -107,11 +113,7 @@ namespace Watchman.Engine.Generation.Sqs
         {
             try
             {
-                if (configuredQueue.Errors == null)
-                {
-                    configuredQueue.Errors = new ErrorQueue();
-                }
-                configuredQueue.Errors.ReadDefaults(group.Sqs.Errors);
+                DefaultQueueErrorSettings(group, configuredQueue);
 
                 if (!configuredQueue.Errors.Monitored.Value && IsErrorQueue(configuredQueue))
                 {
@@ -126,6 +128,15 @@ namespace Watchman.Engine.Generation.Sqs
                 _logger.Error(ex, $"Error when creating queue alarm for {configuredQueue.Name}");
                 throw;
             }
+        }
+
+        private static void DefaultQueueErrorSettings(AlertingGroup group, QueueConfig configuredQueue)
+        {
+            if (configuredQueue.Errors == null)
+            {
+                configuredQueue.Errors = new ErrorQueue();
+            }
+            configuredQueue.Errors.ReadDefaults(group.Sqs.Errors);
         }
 
         private async Task EnsureActiveQueueAlarms(
