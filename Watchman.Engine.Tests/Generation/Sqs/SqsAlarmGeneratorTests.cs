@@ -103,6 +103,57 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         }
 
         [Test]
+        public async Task PatternQueueShouldAlsoMonitorMatchingErrorQueue()
+        {
+            var queueSource = new Mock<IResourceSource<QueueData>>();
+            VerifyQueues.ReturnsQueues(queueSource, new List<string>
+                {
+                    "prod-pattern-queue",
+                    "prod-pattern-queue_error",
+                    "some-other-queue"
+                });
+
+            var alarmCreator = new Mock<IQueueAlarmCreator>();
+            var snsTopicCreator = new Mock<ISnsTopicCreator>();
+            var snsSubscriptionCreator = new Mock<ISnsSubscriptionCreator>();
+
+            var snsCreator = new SnsCreator(snsTopicCreator.Object, snsSubscriptionCreator.Object);
+
+            var config = MakeSimpleConfig();
+            var sqsConfig = config.AlertingGroups[0].Sqs;
+
+            sqsConfig.LengthThreshold = 11;
+            sqsConfig.Errors = new ErrorQueue
+            {
+                Monitored = true,
+                LengthThreshold = 7
+            };
+
+            sqsConfig.Queues = new List<Queue>
+            {
+                new Queue
+                {
+                    Pattern = "^prod-pattern-queue"
+                }
+            };
+
+            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false),
+                queueSource.Object);
+
+            var generator = new SqsAlarmGenerator(
+                new ConsoleAlarmLogger(false), queueSource.Object,
+                populator, alarmCreator.Object,
+                snsCreator);
+
+            await generator.GenerateAlarmsFor(config, RunMode.GenerateAlarms);
+
+            VerifyQueues.EnsureLengthAlarm(alarmCreator, "prod-pattern-queue", 11, false);
+            VerifyQueues.EnsureLengthAlarm(alarmCreator, "prod-pattern-queue_error", 7, false);
+            VerifyQueues.NoLengthAlarm(alarmCreator, "some-other-queue");
+        }
+
+
+        [Test]
         public async Task NamedQueueShouldAlsoMonitorMatchingErrorQueue()
         {
             var queueSource = new Mock<IResourceSource<QueueData>>();
@@ -133,7 +184,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             {
                 new Queue
                 {
-                    Name = "prod-pattern-queue",
+                    Name = "prod-pattern-queue"
                 }
             };
 
