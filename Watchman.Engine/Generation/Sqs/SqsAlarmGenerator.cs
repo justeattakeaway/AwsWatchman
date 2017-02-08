@@ -113,11 +113,7 @@ namespace Watchman.Engine.Generation.Sqs
 
             foreach (var configuredQueue in configuredQueues)
             {
-                if (!queueResourceNames.Contains(configuredQueue.Name))
-                {
-                    _logger.Info($"No match in active queues for queue {configuredQueue.Name}");
-                }
-                else
+                if (queueResourceNames.Contains(configuredQueue.Name))
                 {
                     DefaultQueueErrorSettings(alertingGroup, configuredQueue);
                     await EnsureQueueAlarms(alertingGroup, configuredQueue, snsTopic, dryRun);
@@ -138,6 +134,10 @@ namespace Watchman.Engine.Generation.Sqs
                             await EnsureQueueAlarms(alertingGroup, matchingErrorQueue, snsTopic, dryRun);
                         }
                     }
+                }
+                else
+                {
+                    _logger.Info($"No match in active queues for queue {configuredQueue.Name}");
                 }
             }
         }
