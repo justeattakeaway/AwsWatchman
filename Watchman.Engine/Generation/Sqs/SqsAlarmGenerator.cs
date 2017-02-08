@@ -116,26 +116,27 @@ namespace Watchman.Engine.Generation.Sqs
                 if (!queueResourceNames.Contains(configuredQueue.Name))
                 {
                     _logger.Info($"No match in active queues for queue {configuredQueue.Name}");
-                    return;
                 }
-
-                DefaultQueueErrorSettings(alertingGroup, configuredQueue);
-                await EnsureQueueAlarms(alertingGroup, configuredQueue, snsTopic, dryRun);
-
-                if (!IsErrorQueue(configuredQueue) && (configuredQueue.Errors.Monitored ?? false))
+                else
                 {
-                    var errorQueueName = configuredQueue.Name + configuredQueue.Errors.Suffix;
+                    DefaultQueueErrorSettings(alertingGroup, configuredQueue);
+                    await EnsureQueueAlarms(alertingGroup, configuredQueue, snsTopic, dryRun);
 
-                    if (IsUnmatchedErrorQueue(errorQueueName, configuredQueues, queueResourceNames))
+                    if (!IsErrorQueue(configuredQueue) && (configuredQueue.Errors.Monitored ?? false))
                     {
-                        var matchingErrorQueue = new Queue
-                        {
-                            Name = errorQueueName,
-                            Errors = new ErrorQueue()
-                        };
-                        matchingErrorQueue.Errors.ReadDefaults(configuredQueue.Errors);
+                        var errorQueueName = configuredQueue.Name + configuredQueue.Errors.Suffix;
 
-                        await EnsureQueueAlarms(alertingGroup, matchingErrorQueue, snsTopic, dryRun);
+                        if (IsUnmatchedErrorQueue(errorQueueName, configuredQueues, queueResourceNames))
+                        {
+                            var matchingErrorQueue = new Queue
+                            {
+                                Name = errorQueueName,
+                                Errors = new ErrorQueue()
+                            };
+                            matchingErrorQueue.Errors.ReadDefaults(configuredQueue.Errors);
+
+                            await EnsureQueueAlarms(alertingGroup, matchingErrorQueue, snsTopic, dryRun);
+                        }
                     }
                 }
             }
