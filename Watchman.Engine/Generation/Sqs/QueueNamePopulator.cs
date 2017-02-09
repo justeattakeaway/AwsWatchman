@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.Sqs;
@@ -55,7 +56,10 @@ namespace Watchman.Engine.Generation.Sqs
         {
             foreach (var namedQueue in namedQueues)
             {
-                namedQueue.Pattern = $"^{namedQueue.Name}({namedQueue.Errors?.Suffix})?$";
+                var name = Regex.Escape(namedQueue.Name);
+                var suffix = Regex.Escape(namedQueue.Errors?.Suffix);
+
+                namedQueue.Pattern = $"^{name}({suffix})?$";
                 namedQueue.Name = string.Empty;
             }
         }
