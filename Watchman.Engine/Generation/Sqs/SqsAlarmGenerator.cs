@@ -77,7 +77,7 @@ namespace Watchman.Engine.Generation.Sqs
                 return;
             }
 
-            DefaultAlertingGroupErrorSettings(alertingGroup);
+            SetErrorDefaultsOnAlertingGroup(alertingGroup);
 
             await _queueNamePopulator.PopulateSqsNames(alertingGroup);
 
@@ -88,7 +88,7 @@ namespace Watchman.Engine.Generation.Sqs
             await EnsureAllQueueAlarms(alertingGroup, queueResourceNames, snsTopic, dryRun);
         }
 
-        private static void DefaultAlertingGroupErrorSettings(AlertingGroup alertingGroup)
+        private static void SetErrorDefaultsOnAlertingGroup(AlertingGroup alertingGroup)
         {
             if (alertingGroup.Sqs.Errors == null)
             {
@@ -97,7 +97,7 @@ namespace Watchman.Engine.Generation.Sqs
             alertingGroup.Sqs.Errors.ReadDefaults(ErrorQueueDefaults);
         }
 
-        private static void DefaultQueueErrorSettings(AlertingGroup group, Queue queue)
+        private static void SetErrorDefaultsOnQueue(AlertingGroup group, Queue queue)
         {
             if (queue.Errors == null)
             {
@@ -115,7 +115,7 @@ namespace Watchman.Engine.Generation.Sqs
             {
                 if (queueResourceNames.Contains(configuredQueue.Name))
                 {
-                    DefaultQueueErrorSettings(alertingGroup, configuredQueue);
+                    SetErrorDefaultsOnQueue(alertingGroup, configuredQueue);
                     await EnsureQueueAlarms(alertingGroup, configuredQueue, snsTopic, dryRun);
 
                     if (!IsErrorQueue(configuredQueue) && (configuredQueue.Errors.Monitored ?? false))
