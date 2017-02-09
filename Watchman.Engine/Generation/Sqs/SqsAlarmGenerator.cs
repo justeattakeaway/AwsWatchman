@@ -118,7 +118,7 @@ namespace Watchman.Engine.Generation.Sqs
                     SetErrorDefaultsOnQueue(alertingGroup, configuredQueue);
                     await EnsureQueueAlarms(alertingGroup, configuredQueue, snsTopic, dryRun);
 
-                    if (!IsErrorQueue(configuredQueue) && (configuredQueue.Errors.Monitored ?? false))
+                    if (!configuredQueue.IsErrorQueue() && configuredQueue.ErrorsMonitored())
                     {
                         var errorQueueName = configuredQueue.Name + configuredQueue.Errors.Suffix;
 
@@ -158,7 +158,7 @@ namespace Watchman.Engine.Generation.Sqs
         {
             try
             {
-                if (!configuredQueue.Errors.Monitored.Value && IsErrorQueue(configuredQueue))
+                if (configuredQueue.IsErrorQueue() && !configuredQueue.ErrorsMonitored())
                 {
                     _logger.Info($"Skipping error queue {configuredQueue.Name}");
                     return;
@@ -195,7 +195,7 @@ namespace Watchman.Engine.Generation.Sqs
 
         private int QueueLengthThreshold(Queue queue, AlertingGroup group)
         {
-            if (IsErrorQueue(queue))
+            if (queue.IsErrorQueue())
             {
                 return queue.Errors.LengthThreshold.Value;
             }
@@ -205,19 +205,12 @@ namespace Watchman.Engine.Generation.Sqs
 
         private int? OldestMessageThreshold(Queue queue, AlertingGroup group)
         {
-            if (IsErrorQueue(queue))
+            if (queue.IsErrorQueue())
             {
                 return queue.Errors.OldestMessageThreshold;
             }
 
             return queue.OldestMessageThreshold ?? group.Sqs.OldestMessageThreshold ?? AwsConstants.OldestMessageThreshold;
-        }
-
-        private bool IsErrorQueue(Queue queue)
-        {
-            return
-                !string.IsNullOrWhiteSpace(queue.Name) &&
-                queue.Name.EndsWith(queue.Errors.Suffix);
         }
 
         private void ReportPutCounts(bool dryRun)
