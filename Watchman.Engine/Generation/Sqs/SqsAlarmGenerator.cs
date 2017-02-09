@@ -77,7 +77,7 @@ namespace Watchman.Engine.Generation.Sqs
                 return;
             }
 
-            SetErrorDefaultsOnAlertingGroup(alertingGroup);
+            SetErrorDefaults(alertingGroup);
 
             await _queueNamePopulator.PopulateSqsNames(alertingGroup);
 
@@ -86,6 +86,15 @@ namespace Watchman.Engine.Generation.Sqs
             var queueResourceNames = await _queueSource.GetResourceNamesAsync();
 
             await EnsureAllQueueAlarms(alertingGroup, queueResourceNames, snsTopic, dryRun);
+        }
+
+        private static void SetErrorDefaults(AlertingGroup alertingGroup)
+        {
+            SetErrorDefaultsOnAlertingGroup(alertingGroup);
+            foreach (var configuredQueue in alertingGroup.Sqs.Queues)
+            {
+                SetErrorDefaultsOnQueue(alertingGroup, configuredQueue);
+            }
         }
 
         private static void SetErrorDefaultsOnAlertingGroup(AlertingGroup alertingGroup)
@@ -115,42 +124,13 @@ namespace Watchman.Engine.Generation.Sqs
             {
                 if (queueResourceNames.Contains(configuredQueue.Name))
                 {
-                    SetErrorDefaultsOnQueue(alertingGroup, configuredQueue);
                     await EnsureQueueAlarms(alertingGroup, configuredQueue, snsTopic, dryRun);
-
-                    if (!configuredQueue.IsErrorQueue() && configuredQueue.ErrorsMonitored())
-                    {
-                        var errorQueueName = configuredQueue.Name + configuredQueue.Errors.Suffix;
-
-                        if (IsUnmatchedErrorQueue(errorQueueName, configuredQueues, queueResourceNames))
-                        {
-                            var matchingErrorQueue = new Queue
-                            {
-                                Name = errorQueueName,
-                                Errors = new ErrorQueue()
-                            };
-                            matchingErrorQueue.Errors.ReadDefaults(configuredQueue.Errors);
-
-                            await EnsureQueueAlarms(alertingGroup, matchingErrorQueue, snsTopic, dryRun);
-                        }
-                    }
                 }
                 else
                 {
                     _logger.Info($"No match in active queues for queue {configuredQueue.Name}");
                 }
             }
-        }
-
-        private bool IsUnmatchedErrorQueue(string errorQueueName,
-            List<Queue> configuredQueues, IList<string> queueResourceNames)
-        {
-            if (!queueResourceNames.Contains(errorQueueName))
-            {
-                return false;
-            }
-
-            return configuredQueues.All(q => q.Name != errorQueueName);
         }
 
         private async Task EnsureQueueAlarms(AlertingGroup group,

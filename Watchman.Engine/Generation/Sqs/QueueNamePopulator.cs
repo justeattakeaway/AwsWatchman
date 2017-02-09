@@ -29,17 +29,14 @@ namespace Watchman.Engine.Generation.Sqs
 
         private async Task<List<Queue>> ExpandPatterns(SqsConfig sqs, string alertingGroupName)
         {
-            var queuesWithoutPatterns = sqs.Queues
-                .Where(t => string.IsNullOrWhiteSpace(t.Pattern))
-                .ToList();
+            var namedQueues = sqs.Queues
+                .Where(t => string.IsNullOrWhiteSpace(t.Pattern));
 
-            var patterns = sqs.Queues
-                .Where(t => !string.IsNullOrWhiteSpace(t.Pattern))
-                .ToList();
+            NamesToPatterns(namedQueues);
 
             var queuesFromPatterns = new List<Queue>();
 
-            foreach (var queuePattern in patterns)
+            foreach (var queuePattern in sqs.Queues)
             {
                 var matches = await GetPatternMatches(queuePattern, alertingGroupName);
 
@@ -48,17 +45,21 @@ namespace Watchman.Engine.Generation.Sqs
                     .Where(match => queuesFromPatterns.All(t => t.Name != match.Name))
                     .ToList();
 
-                matches = matches
-                    .Where(match => queuesWithoutPatterns.All(t => t.Name != match.Name))
-                    .ToList();
-
                 queuesFromPatterns.AddRange(matches);
             }
 
-            return queuesWithoutPatterns
-                .Union(queuesFromPatterns)
-                .ToList();
+            return queuesFromPatterns.ToList();
         }
+
+        private static void NamesToPatterns(IEnumerable<Queue> namedQueues)
+        {
+            foreach (var namedQueue in namedQueues)
+            {
+                namedQueue.Pattern = $"^{namedQueue.Name}({namedQueue.Errors?.Suffix})?$";
+                namedQueue.Name = string.Empty;
+            }
+        }
+
         private async Task<IList<Queue>> GetPatternMatches(Queue queuePattern, string alertingGroupName)
         {
             var queueNames = await _queueSource.GetResourceNamesAsync();
