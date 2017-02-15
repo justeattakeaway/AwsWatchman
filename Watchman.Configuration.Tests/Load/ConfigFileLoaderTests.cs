@@ -214,6 +214,7 @@ namespace Watchman.Configuration.Tests.Load
 
             Assert.That(allTheOptions.Errors, Is.Not.Null);
             Assert.That(allTheOptions.Errors.Monitored, Is.True);
+            Assert.That(allTheOptions.ErrorsMonitored(), Is.True);
             Assert.That(allTheOptions.Errors.LengthThreshold, Is.EqualTo(12));
         }
 

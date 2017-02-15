@@ -24,5 +24,20 @@ namespace Watchman.Configuration
         {
             return Name ?? Pattern;
         }
+
+        public bool IsErrorQueue()
+        {
+            if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Errors?.Suffix))
+            {
+                return false;
+            }
+
+            return Name.EndsWith(Errors.Suffix);
+        }
+
+        public bool ErrorsMonitored()
+        {
+            return Errors?.Monitored ?? false;
+        }
     }
 }
