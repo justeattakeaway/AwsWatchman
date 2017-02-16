@@ -132,7 +132,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] {"FunctionName"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Maximum,
+                Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Lambda
             },
             new AlarmDefinition
@@ -149,7 +149,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] {"FunctionName"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Maximum,
+                Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Lambda
             },
             new AlarmDefinition
@@ -165,7 +165,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] {"FunctionName"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Maximum,
+                Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Lambda
             }
        };
