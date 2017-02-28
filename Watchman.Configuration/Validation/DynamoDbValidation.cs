@@ -41,6 +41,12 @@
             {
                 ValidTableThreshold(table.Threshold.Value);
             }
+
+            if (table.ThrottlingThreshold.HasValue && table.ThrottlingThreshold <= 0)
+            {
+                throw new ConfigException($"Throttling threshold of '{table.ThrottlingThreshold}' must be greater than zero");
+            }
+
         }
 
         private static void ValidTableThreshold(double threshold)

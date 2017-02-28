@@ -133,6 +133,19 @@ namespace Watchman.Configuration.Tests.Validation
         }
 
         [Test]
+        public void DynamoDbConfig_Fails_When_Throtting_Threshold_Is_Negative()
+        {
+            // arrange
+            _dynamoDb.Tables.First().ThrottlingThreshold = -1;
+
+            // act
+
+            // assert
+            ConfigAssert.NotValid(_config,
+                "Throttling threshold of '-1' must be greater than zero");
+        }
+
+        [Test]
         public void DynamoDbConfig_Full_Passes()
         {
             // arrange

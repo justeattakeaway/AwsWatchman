@@ -10,7 +10,9 @@
       "test-data",
       {
         "Name": "test-keys",
-        "Threshold": 0.5
+        "Threshold": 0.5,
+        "MonitorThrottling": true,
+        "ThrottlingThreshold": 12
       }
     ],
     "ExcludeTablesPrefixedWith": [ "exclude_all" ],
