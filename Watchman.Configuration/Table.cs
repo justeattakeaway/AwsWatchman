@@ -7,6 +7,10 @@ namespace Watchman.Configuration
         public double? Threshold { get; set; }
         public bool? MonitorWrites { get; set; }
 
+        public bool? MonitorThrottling { get; set; }
+
+        public double? ThrottlingThreshold { get; set; }
+
         public static implicit operator Table(string text)
         {
             return new Table
@@ -36,7 +40,9 @@ namespace Watchman.Configuration
                 string.Equals(Name, other.Name)
                 && string.Equals(Pattern, other.Pattern)
                 && Threshold.Equals(other.Threshold)
-                && MonitorWrites.Equals(other.MonitorWrites);
+                && MonitorWrites.Equals(other.MonitorWrites)
+                && MonitorThrottling.Equals(other.MonitorThrottling)
+                && ThrottlingThreshold.Equals(other.ThrottlingThreshold);
         }
 
         public override int GetHashCode()

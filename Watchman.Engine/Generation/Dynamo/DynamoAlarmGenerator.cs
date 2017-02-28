@@ -111,10 +111,13 @@ namespace Watchman.Engine.Generation.Dynamo
                 await _tableAlarmCreator.EnsureReadCapacityAlarm(tableDescription, alarmTables.AlarmNameSuffix,
                     threshold, alarmTables.SnsTopicArn, alarmTables.DryRun);
 
-                if (alarmTables.MonitorThrottling)
+                var monitorThrottling = table.MonitorThrottling ?? alarmTables.MonitorThrottling;
+                var throttlingThreshold = table.ThrottlingThreshold ?? alarmTables.ThrottlingThreshold;
+
+                if (monitorThrottling)
                 {
                     await _tableAlarmCreator.EnsureReadThrottleAlarm(tableDescription, alarmTables.AlarmNameSuffix,
-                        alarmTables.ThrottlingThreshold,
+                        throttlingThreshold,
                         alarmTables.SnsTopicArn, alarmTables.DryRun);
                 }
 
@@ -123,11 +126,10 @@ namespace Watchman.Engine.Generation.Dynamo
                     await _indexAlarmCreator.EnsureReadCapacityAlarm(tableDescription, index, alarmTables.AlarmNameSuffix, threshold,
                        alarmTables.SnsTopicArn, alarmTables.DryRun);
 
-                    if (alarmTables.MonitorThrottling)
+                    if (monitorThrottling)
                     {
                         await _indexAlarmCreator.EnsureReadThrottleAlarm(tableDescription, index, alarmTables.AlarmNameSuffix,
-                            alarmTables.ThrottlingThreshold,
-                            alarmTables.SnsTopicArn, alarmTables.DryRun);
+                            throttlingThreshold, alarmTables.SnsTopicArn, alarmTables.DryRun);
                     }
 
                 }
@@ -167,10 +169,13 @@ namespace Watchman.Engine.Generation.Dynamo
                 await _tableAlarmCreator.EnsureWriteCapacityAlarm(tableDescription, alarmTables.AlarmNameSuffix,
                     threshold, alarmTables.SnsTopicArn, alarmTables.DryRun);
 
-                if (alarmTables.MonitorThrottling)
+                var monitorThrottling = table.MonitorThrottling ?? alarmTables.MonitorThrottling;
+                var throttlingThreshold = table.ThrottlingThreshold ?? alarmTables.ThrottlingThreshold;
+
+                if (monitorThrottling)
                 {
                     await _tableAlarmCreator.EnsureWriteThrottleAlarm(tableDescription, alarmTables.AlarmNameSuffix,
-                        alarmTables.ThrottlingThreshold,
+                        throttlingThreshold,
                         alarmTables.SnsTopicArn, alarmTables.DryRun);
                 }
 
@@ -179,11 +184,10 @@ namespace Watchman.Engine.Generation.Dynamo
                     await _indexAlarmCreator.EnsureWriteCapacityAlarm(tableDescription, index, alarmTables.AlarmNameSuffix, threshold,
                         alarmTables.SnsTopicArn, alarmTables.DryRun);
 
-                    if (alarmTables.MonitorThrottling)
+                    if (monitorThrottling)
                     {
                         await _indexAlarmCreator.EnsureWriteThrottleAlarm(tableDescription, index, alarmTables.AlarmNameSuffix,
-                         alarmTables.ThrottlingThreshold,
-                         alarmTables.SnsTopicArn, alarmTables.DryRun);
+                         throttlingThreshold, alarmTables.SnsTopicArn, alarmTables.DryRun);
                     }
                 }
             }
