@@ -117,6 +117,26 @@ namespace Watchman.Configuration.Tests.Load
         }
 
         [Test]
+        public void DynamoGroup2TablesThrottlingAreDeserialized()
+        {
+            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "DynamoGroup2");
+
+            Assert.That(group, Is.Not.Null);
+
+            Assert.That(group.DynamoDb.Tables, Is.Not.Null);
+
+            var tables = group.DynamoDb.Tables;
+
+            Assert.That(tables[0].MonitorThrottling, Is.Null);
+            Assert.That(tables[0].ThrottlingThreshold, Is.Null);
+
+            Assert.That(tables[1].MonitorThrottling, Is.Not.Null);
+            Assert.That(tables[1].MonitorThrottling, Is.True);
+            Assert.That(tables[1].ThrottlingThreshold, Is.Not.Null);
+            Assert.That(tables[1].ThrottlingThreshold, Is.EqualTo(12));
+        }
+
+        [Test]
         public void DynamoGroup2ExclusionsAreDeserialized()
         {
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "DynamoGroup2");
