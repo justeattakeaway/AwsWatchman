@@ -31,6 +31,10 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
                 threshold: 42,
                 period: 60);
 
+            CloudwatchVerify.AlarmWasNotPutOnTable(mockery.Cloudwatch,
+                tableName: "other-table",
+                metricName: "ReadThrottleEvents");
+
             CloudwatchVerify.AlarmWasNotPutOnMetric(mockery.Cloudwatch,
                 "ConsumedWriteCapacityUnits");
         }
@@ -38,15 +42,16 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
         private static void ConfigureTables(DynamoAlarmGeneratorMockery mockery)
         {
             mockery.ValidSnsTopic();
-            mockery.GivenAListOfTables(new[] { "test-a-table" });
+            mockery.GivenAListOfTables(new[] { "test-a-table", "other-table" });
             mockery.GivenATable("test-a-table", 1300, 600);
+            mockery.GivenATable("other-table", 1300, 600);
         }
 
         private static WatchmanConfiguration Config()
         {
             var allTablesReadOnly = new DynamoDb
             {
-                // these should be overridden
+                // these should be overridden below for 1 of the 2 tables
                 MonitorThrottling = false,
                 ThrottlingThreshold = 123,
 
@@ -54,7 +59,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
                 {
                     new Table
                     {
-                        Pattern = ".*",
+                        Pattern = "test",
                         Threshold = 0.75,
                         MonitorWrites = false,
                         MonitorThrottling = true,
