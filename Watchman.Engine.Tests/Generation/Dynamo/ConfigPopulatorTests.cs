@@ -171,7 +171,42 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
         }
 
         [Test]
-        public async Task TablePatternCanCoExisitWithTableName()
+        public async Task TablePatternThrottlingDataIsKeptOnExpandedRows()
+        {
+            var alertingGroup = new AlertingGroup
+            {
+                Name = "test",
+                AlarmNameSuffix = "test",
+                DynamoDb = new DynamoDb
+                {
+                    Tables = new List<Table>
+                    {
+                        new Table { Pattern = "^Auto", MonitorThrottling = true, ThrottlingThreshold = 123 }
+                    }
+                }
+            };
+
+            var populator = CreatePopulator(false);
+
+            await populator.PopulateDynamoTableNames(alertingGroup);
+
+            Assert.That(alertingGroup.DynamoDb.Tables.Count, Is.EqualTo(2));
+
+            var autoTable1 = alertingGroup.DynamoDb.Tables[0];
+            Assert.That(autoTable1.Name, Is.EqualTo("AutoTable1"));
+            Assert.That(autoTable1.MonitorThrottling, Is.True);
+            Assert.That(autoTable1.ThrottlingThreshold, Is.EqualTo(123));
+
+            var autoTable2 = alertingGroup.DynamoDb.Tables[1];
+            Assert.That(autoTable2.Name, Is.EqualTo("AutoTable2"));
+            Assert.That(autoTable2.MonitorThrottling, Is.True);
+            Assert.That(autoTable2.ThrottlingThreshold, Is.EqualTo(123));
+
+            _tableLoaderMock.Verify(t => t.GetResourceNamesAsync(), Times.Once);
+        }
+
+        [Test]
+        public async Task TablePatternCanCoExistWithTableName()
         {
             var alertingGroup = new AlertingGroup
             {

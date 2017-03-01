@@ -60,6 +60,8 @@ Tables can either be added as strings or Table objects. If added as simple strin
 | Pattern | String | One of `Name` or `Pattern` must be specified | Regex to match multiple dynamo tables |
 | Threshold | Decimal | Default from the `Threshold` value of containing alerting group. | Used as a fraction of the capacity to work out the alarm threshold for this table *** |
 | MonitorWrites | Boolean | Default is `true` | If `false`, no alerts are generated for writes to the table or its indexes |
+| MonitorThrottling | bool | Default from the `MonitorThrottling` value of containing alerting group. | Enables or disables monitoring on throttled reads or writes. |
+| ThrottlingThreshold| int| Default from the `ThrottlingThreshold` value of containing alerting group. | Set the throttling threshold - the number of throttled reads or writes in a minute that causes an alarm. |
 
 
 *** The alerting Threshold is a value from 0.0 to 1.0 that specifies the fraction of the table's read or write capacity being used that triggers the cloudwatch alarm. The threshold for a table uses these fallbacks:

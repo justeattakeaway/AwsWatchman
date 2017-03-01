@@ -84,6 +84,8 @@
     <Compile Include="AlarmDefinitionTests.cs" />
     <Compile Include="Generation\CloudFormationAlarmCreatorTests.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\AlertingGroupData.cs" />
+    <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingThrottlingAlarmsPerTable.cs" />
+    <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingThrottlingWriteAlarmsForTables.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\DynamoAlarmGeneratorMockery.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingThrottlingReadAlarmsWithAThreshold.cs" />
     <Compile Include="Generation\Dynamo\Alarms\VerifyCloudwatch.cs" />
@@ -95,7 +97,7 @@
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingAlarmsWithACustomThreshold.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingASingleAlarm.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingMultipleIndexAlarmsAndOneFails.cs" />
-    <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingThrottlingReadAlarmsForATable.cs" />
+    <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingThrottlingReadAlarmsForTables.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingReadAlarmsForAllTables.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\AnErrorOccursCreatingASingleAlarm.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\NoTablesAreMatchedInTheConfig.cs" />

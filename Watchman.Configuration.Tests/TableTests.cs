@@ -69,6 +69,24 @@ namespace Watchman.Configuration.Tests
         }
 
         [Test]
+        public void WhenMonitorThrottlingDoesNotMatch()
+        {
+            var table1 = new Table { Name = "name1", MonitorThrottling = true };
+            var table2 = new Table { Name = "name1", MonitorThrottling = false };
+
+            Assert.That(table1.Equals(table2), Is.False);
+        }
+
+        [Test]
+        public void WhenThrottlingThresholdDoesNotMatch()
+        {
+            var table1 = new Table { Name = "name1", ThrottlingThreshold = 1.0 };
+            var table2 = new Table { Name = "name1", ThrottlingThreshold = 2.0 };
+
+            Assert.That(table1.Equals(table2), Is.False);
+        }
+
+        [Test]
         public void HasHashCodes()
         {
             var table1 = new Table { Name = "name1" };
