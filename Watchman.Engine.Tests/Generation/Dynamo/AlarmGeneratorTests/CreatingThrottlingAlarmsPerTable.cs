@@ -5,10 +5,10 @@ using Watchman.Configuration;
 namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
 {
     [TestFixture]
-    public class CreatingThrottlingReadAlarmsPerTable
+    public class CreatingThrottlingAlarmsPerTable
     {
         [Test]
-        public async void ReadAlarmsAreCreatedForEachTable()
+        public async void AlarmsAreCreatedForEnabledTable()
         {
             var mockery = new DynamoAlarmGeneratorMockery();
             var generator = mockery.AlarmGenerator;
@@ -31,9 +31,20 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
                 threshold: 42,
                 period: 60);
 
+            CloudwatchVerify.AlarmWasPutOnTable(mockery.Cloudwatch,
+                alarmName: "test-a-table-WriteThrottleEvents-TestGroup",
+                tableName: "test-a-table",
+                metricName: "WriteThrottleEvents",
+                threshold: 42,
+                period: 60);
+
             CloudwatchVerify.AlarmWasNotPutOnTable(mockery.Cloudwatch,
                 tableName: "other-table",
                 metricName: "ReadThrottleEvents");
+
+            CloudwatchVerify.AlarmWasNotPutOnTable(mockery.Cloudwatch,
+                tableName: "other-table",
+                metricName: "WriteThrottleEvents");
 
             CloudwatchVerify.AlarmWasNotPutOnMetric(mockery.Cloudwatch,
                 "ConsumedWriteCapacityUnits");
@@ -61,7 +72,6 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
                     {
                         Pattern = "test",
                         Threshold = 0.75,
-                        MonitorWrites = false,
                         MonitorThrottling = true,
                         ThrottlingThreshold = 42
                     }
