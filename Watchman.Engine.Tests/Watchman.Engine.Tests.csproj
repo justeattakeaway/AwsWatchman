@@ -85,6 +85,7 @@
     <Compile Include="Generation\CloudFormationAlarmCreatorTests.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\AlertingGroupData.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingThrottlingReadAlarmsPerTable.cs" />
+    <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingThrottlingWriteAlarmsForTables.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\DynamoAlarmGeneratorMockery.cs" />
     <Compile Include="Generation\Dynamo\AlarmGeneratorTests\CreatingThrottlingReadAlarmsWithAThreshold.cs" />
     <Compile Include="Generation\Dynamo\Alarms\VerifyCloudwatch.cs" />
