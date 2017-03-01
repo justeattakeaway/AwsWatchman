@@ -5,7 +5,7 @@ using Watchman.Configuration;
 namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
 {
     [TestFixture]
-    public class CreatingThrottlingReadAlarmsForTables
+    public class CreatingThrottlingReadAlarmsPerTable
     {
         [Test]
         public async void ReadAlarmsAreCreatedForEachTable()
@@ -28,7 +28,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
                 alarmName: "test-a-table-ReadThrottleEvents-TestGroup",
                 tableName: "test-a-table",
                 metricName: "ReadThrottleEvents",
-                threshold: 2,
+                threshold: 42,
                 period: 60);
 
             CloudwatchVerify.AlarmWasNotPutOnMetric(mockery.Cloudwatch,
@@ -46,10 +46,20 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
         {
             var allTablesReadOnly = new DynamoDb
             {
-                MonitorThrottling = true,
+                // these should be overridden
+                MonitorThrottling = false,
+                ThrottlingThreshold = 123,
+
                 Tables = new List<Table>
                 {
-                    new Table { Pattern = ".*", Threshold = 0.75, MonitorWrites = false }
+                    new Table
+                    {
+                        Pattern = ".*",
+                        Threshold = 0.75,
+                        MonitorWrites = false,
+                        MonitorThrottling = true,
+                        ThrottlingThreshold = 42
+                    }
                 }
             };
 
