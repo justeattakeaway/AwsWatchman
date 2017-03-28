@@ -4,6 +4,7 @@ using Amazon;
 using Amazon.CloudWatch;
 using Amazon.DynamoDBv2;
 using Amazon.Runtime;
+using Amazon.Runtime.CredentialManagement;
 using StructureMap;
 using Watchman.Configuration;
 
@@ -48,19 +49,36 @@ namespace Quartermaster
 
             if (!string.IsNullOrWhiteSpace(parameters.AwsProfile))
             {
-                return new StoredProfileAWSCredentials(parameters.AwsProfile);
+                return GetStoredProfile(parameters.AwsProfile);
             }
 
             // use implicit credentials from config or profile
             FallbackCredentialsFactory.CredentialsGenerators = new List<FallbackCredentialsFactory.CredentialsGenerator>
             {
                 () => new AppConfigAWSCredentials(),
-                () => new StoredProfileAWSCredentials(),
-                () => new StoredProfileFederatedCredentials(),
+                () => GetStoredProfile("default"),
                 () => new EnvironmentVariablesAWSCredentials()
             };
 
             return FallbackCredentialsFactory.GetCredentials(true);
+        }
+
+        private static AWSCredentials GetStoredProfile(string profileName)
+        {
+            CredentialProfile basicProfile;
+            var sharedFile = new SharedCredentialsFile();
+            var gotProfileByName = sharedFile.TryGetProfile(profileName, out basicProfile);
+
+            if (gotProfileByName)
+            {
+                AWSCredentials awsCredentials;
+                if (AWSCredentialsFactory.TryGetAWSCredentials(basicProfile, sharedFile, out awsCredentials))
+                {
+                    return awsCredentials;
+                }
+            }
+
+            return null;
         }
 
         private static bool CommandLineParamsHasAwsCreds(StartupParameters parameters)

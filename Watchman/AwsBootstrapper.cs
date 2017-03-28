@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Amazon;
 using Amazon.AutoScaling;
 using Amazon.CloudFormation;
@@ -11,11 +10,11 @@ using Amazon.ElasticLoadBalancing;
 using Amazon.Lambda;
 using Amazon.RDS;
 using Amazon.Runtime;
+using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
 using Amazon.SimpleNotificationService;
 using StructureMap;
 using Watchman.Configuration;
-using Watchman.Engine.Generation.Generic;
 
 namespace Watchman
 {
@@ -71,19 +70,36 @@ namespace Watchman
 
             if (! string.IsNullOrWhiteSpace(parameters.AwsProfile))
             {
-                return new StoredProfileAWSCredentials(parameters.AwsProfile);
+                return GetStoredProfile(parameters.AwsProfile);
             }
 
             // use implicit credentials from config or profile
             FallbackCredentialsFactory.CredentialsGenerators = new List<FallbackCredentialsFactory.CredentialsGenerator>
             {
                 () => new AppConfigAWSCredentials(),
-                () => new StoredProfileAWSCredentials(),
-                () => new StoredProfileFederatedCredentials(),
+                () => GetStoredProfile("default"),
                 () => new EnvironmentVariablesAWSCredentials()
             };
 
             return FallbackCredentialsFactory.GetCredentials(true);
+        }
+
+        private static AWSCredentials GetStoredProfile(string profileName)
+        {
+            CredentialProfile basicProfile;
+            var sharedFile = new SharedCredentialsFile();
+            var gotProfileByName = sharedFile.TryGetProfile(profileName, out basicProfile);
+
+            if (gotProfileByName)
+            {
+                AWSCredentials awsCredentials;
+                if (AWSCredentialsFactory.TryGetAWSCredentials(basicProfile, sharedFile, out awsCredentials))
+                {
+                    return awsCredentials;
+                }
+            }
+
+            return null;
         }
 
         private static bool CommandLineParamsHasAwsCreds(StartupParameters parameters)
