@@ -63,6 +63,7 @@
     <Compile Include="Alarms\AlarmThresholds.cs" />
     <Compile Include="Alarms\Defaults.cs" />
     <Compile Include="AwsConstants.cs" />
+    <Compile Include="AwsCredentialsHelper.cs" />
     <Compile Include="AwsMetrics.cs" />
     <Compile Include="Alarms\IAlarmFinder.cs" />
     <Compile Include="AwsNamespace.cs" />
