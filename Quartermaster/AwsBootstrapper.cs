@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using Amazon.CloudWatch;
+﻿using Amazon.CloudWatch;
 using Amazon.DynamoDBv2;
-using Amazon.Runtime;
 using StructureMap;
 using Watchman.Engine;
 
@@ -11,8 +9,8 @@ namespace Quartermaster
     {
         public static void Configure(IProfileRegistry registry, StartupParameters parameters)
         {
-            var region = AwsCredentialsHelper.ReadAwsRegion(parameters.AwsRegion);
-            var creds = AwsCredentialsHelper.ReadAwsCredentials(
+            var region = AwsStartup.ParseRegion(parameters.AwsRegion);
+            var creds = AwsStartup.CredentialsWithFallback(
                 parameters.AwsAccessKey, parameters.AwsSecretKey, parameters.AwsProfile);
 
             registry.For<IAmazonDynamoDB>()
