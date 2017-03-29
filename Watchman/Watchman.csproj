@@ -50,7 +50,7 @@
       <HintPath>..\packages\AWSSDK.DynamoDBv2.3.3.4.3\lib\net45\AWSSDK.DynamoDBv2.dll</HintPath>
     </Reference>
     <Reference Include="AWSSDK.EC2, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\packages\AWSSDK.EC2.3.3.11.3\lib\net45\AWSSDK.EC2.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.EC2.3.3.12\lib\net45\AWSSDK.EC2.dll</HintPath>
     </Reference>
     <Reference Include="AWSSDK.ElasticLoadBalancing, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>..\packages\AWSSDK.ElasticLoadBalancing.3.3.0.10\lib\net45\AWSSDK.ElasticLoadBalancing.dll</HintPath>
@@ -103,7 +103,7 @@
     <Analyzer Include="..\packages\AWSSDK.CloudFormation.3.3.3.9\analyzers\dotnet\cs\AWSSDK.CloudFormation.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.CloudWatch.3.3.1.7\analyzers\dotnet\cs\AWSSDK.CloudWatch.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.4.3\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />
-    <Analyzer Include="..\packages\AWSSDK.EC2.3.3.11.3\analyzers\dotnet\cs\AWSSDK.EC2.CodeAnalysis.dll" />
+    <Analyzer Include="..\packages\AWSSDK.EC2.3.3.12\analyzers\dotnet\cs\AWSSDK.EC2.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.ElasticLoadBalancing.3.3.0.10\analyzers\dotnet\cs\AWSSDK.ElasticLoadBalancing.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.Lambda.3.3.3\analyzers\dotnet\cs\AWSSDK.Lambda.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.RDS.3.3.8.3\analyzers\dotnet\cs\AWSSDK.RDS.CodeAnalysis.dll" />
