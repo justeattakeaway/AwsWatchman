@@ -30,7 +30,8 @@ namespace Watchman.Engine
         /// The commandline is expected to contain aws credential info, either
         /// - both of the AWS access key and secret key
         /// - the stored profile name
-        /// - none of that, in which case we fall back through app config, default profile, env vars
+        /// - none of that, in which case we fall back through sources of implicit creds
+        ///   i.e. app config, default profile, environment vars
         /// </summary>
         /// <param name="accessKey"></param>
         /// <param name="secretKey"></param>
