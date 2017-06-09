@@ -31,7 +31,7 @@ namespace Quartermaster
                 var reports = await reportGenerator.GetReports();
 
                 var reportSender = container.GetInstance<ReportSender>();
-                reportSender.SendReports(reports);
+                await reportSender.SendReports(reports);
 
                 return ExitCode.Success;
             }

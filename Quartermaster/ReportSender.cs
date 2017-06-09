@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using QuarterMaster.Models;
 using CsvHelper;
 
@@ -10,12 +12,26 @@ namespace Quartermaster
 {
     public class ReportSender
     {
-        public void SendReports(IList<ProvisioningReport> reports)
+        private string _smtpHost;
+
+        public async Task SendReports(IList<ProvisioningReport> reports)
         {
+            ReadSmtpHost();
+
             foreach (var provisionReport in reports)
             {
                 ConsoleReport(provisionReport);
-                SendReport(provisionReport);
+                await SendReport(provisionReport);
+            }
+        }
+
+        private void ReadSmtpHost()
+        {
+            _smtpHost = ConfigurationManager.AppSettings.Get("SmtpHost");
+
+            if (string.IsNullOrWhiteSpace(_smtpHost))
+            {
+                throw new ApplicationException("Cannot find app setting for SmtpHost");
             }
         }
 
@@ -29,45 +45,78 @@ namespace Quartermaster
                 Console.WriteLine(
                     $"Consumption: {reportRow.MaxConsumedReadPerMinute}, {reportRow.MaxConsumedWritePerMinute}");
             }
-            Console.WriteLine("Report done");
+            Console.WriteLine($"Report {provisionReport.Name} done");
         }
 
-        private static void SendReport(ProvisioningReport provisionReport)
+        private async Task SendReport(ProvisioningReport provisionReport)
         {
             try
             {
-                var targets = provisionReport.Targets.Select(x => x.Email).ToList();
+                var targets = EmailTargets(provisionReport);
 
-                var reportString = new StringWriter();
-                var csv = new CsvWriter(reportString);
-                csv.WriteRecords(provisionReport.Rows);
-                var report = reportString.ToString();
-
-                var reportDirectory = GetReportDirectory();
-                var reportFile = GetReportFile(provisionReport.Name, reportDirectory);
-                File.WriteAllText(reportFile.FullName, report);
-
-                if (!targets.Any()) return;
-
-                var smtpHost = System.Configuration.ConfigurationManager.AppSettings.Get("SmtpHost");
-                var client = new SmtpClient(smtpHost);
-                var attachment = new Attachment(reportFile.FullName);
-                var mailMessage = new MailMessage
+                if (!targets.Any())
                 {
-                    From = new MailAddress("quartermaster@just-eat.com"),
-                    Body = $"Attached is the {provisionReport.Name} dynamo provisioning report",
-                    Subject = $"{provisionReport.Name} dynamo provisioning report",
-                    Attachments = {attachment}
-                };
-                mailMessage.To.Add(string.Join(",", targets));
-                client.Send(mailMessage);
+                    Console.Error.WriteLine($"No mail targets for report {provisionReport.Name}. Will not send.");
+                    return;
+                }
+
+                var reportData = WriteCsvToString(provisionReport);
+                var reportFile = WriteReportToFile(provisionReport.Name, reportData);
+                await MailReport(provisionReport.Name, reportFile.FullName, targets);
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine("Failed to save and mail report");
+                Console.Error.WriteLine($"Failed to save and mail report {provisionReport.Name}");
                 Console.Error.WriteLine(ex.ToString());
                 throw;
             }
+        }
+
+        private static List<string> EmailTargets(ProvisioningReport provisionReport)
+        {
+            return provisionReport.Targets
+                .Select(x => x.Email)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .ToList();
+        }
+
+        private static string WriteCsvToString(ProvisioningReport provisionReport)
+        {
+            var reportString = new StringWriter();
+
+            var csv = new CsvWriter(reportString);
+            csv.WriteRecords(provisionReport.Rows);
+            return reportString.ToString();
+        }
+
+        private static FileInfo WriteReportToFile(string reportName, string reportText)
+        {
+            var reportDirectory = GetReportDirectory();
+            var reportFile = GetReportFile(reportName, reportDirectory);
+            File.WriteAllText(reportFile.FullName, reportText);
+            return reportFile;
+        }
+
+        private async Task MailReport(string reportName, string reportFileName, List<string> targets)
+        {
+            Console.WriteLine($"Sending report {reportName} to: {string.Join(",", targets)}");
+
+            var client = new SmtpClient(_smtpHost);
+            var attachment = new Attachment(reportFileName);
+            var mailMessage = new MailMessage
+                {
+                    From = new MailAddress("quartermaster@just-eat.com"),
+                    Body = $"Attached is the {reportName} dynamo provisioning report",
+                    Subject = $"{reportName} dynamo provisioning report",
+                    Attachments = { attachment }
+                };
+
+            foreach (var target in targets)
+            {
+                mailMessage.To.Add(target);
+            }
+
+            await client.SendMailAsync(mailMessage);
         }
 
         private static DirectoryInfo GetReportDirectory()
@@ -79,18 +128,24 @@ namespace Quartermaster
 
         private static FileInfo GetReportFile(string reportName, DirectoryInfo reportDirectory)
         {
-            var sourceFileName = string.Join("_", reportName.Split(Path.GetInvalidFileNameChars()));
+            var baseFileName = string.Join("_", reportName.Split(Path.GetInvalidFileNameChars()));
 
-            var suffix = "";
             var count = 0;
+            var proposedName = $"{baseFileName}.csv";
             var reportDirectoryFiles = reportDirectory.GetFiles();
-            while (
-                reportDirectoryFiles.Any(
-                    file => file.Name.Equals($"{sourceFileName}{suffix}.csv", StringComparison.InvariantCultureIgnoreCase)))
+
+            while (FileExistsWithName(reportDirectoryFiles, proposedName))
             {
-                suffix = count++.ToString();
+                count++;
+                proposedName = $"{baseFileName}_{count}.csv";
             }
-            return new FileInfo(Path.Combine(reportDirectory.FullName, $"{sourceFileName}{suffix}.csv"));
+
+            return new FileInfo(Path.Combine(reportDirectory.FullName, proposedName));
+        }
+
+        private static bool FileExistsWithName(FileInfo[] files, string name)
+        {
+            return files.Any(file => file.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
