@@ -12,25 +12,26 @@ namespace Quartermaster
 {
     public class ReportSender
     {
-        private readonly string _smtpHost;
+        private string _smtpHost;
 
-        public ReportSender()
+        public async Task SendReports(IList<ProvisioningReport> reports)
+        {
+            ReadSmtpHost();
+
+            foreach (var provisionReport in reports)
+            {
+                ConsoleReport(provisionReport);
+                await SendReport(provisionReport);
+            }
+        }
+
+        private void ReadSmtpHost()
         {
             _smtpHost = ConfigurationManager.AppSettings.Get("SmtpHost");
 
             if (string.IsNullOrWhiteSpace(_smtpHost))
             {
                 throw new ApplicationException("Cannot find app setting for SmtpHost");
-            }
-        }
-
-
-        public async Task SendReports(IList<ProvisioningReport> reports)
-        {
-            foreach (var provisionReport in reports)
-            {
-                ConsoleReport(provisionReport);
-                await SendReport(provisionReport);
             }
         }
 
