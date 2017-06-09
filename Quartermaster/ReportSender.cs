@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
@@ -10,6 +11,19 @@ namespace Quartermaster
 {
     public class ReportSender
     {
+        private readonly string _smtpHost;
+
+        public ReportSender()
+        {
+            _smtpHost = ConfigurationManager.AppSettings.Get("SmtpHost");
+
+            if (string.IsNullOrWhiteSpace(_smtpHost))
+            {
+                throw new ApplicationException("Cannot find app setting for SmtpHost");
+            }
+        }
+
+
         public void SendReports(IList<ProvisioningReport> reports)
         {
             foreach (var provisionReport in reports)
@@ -29,10 +43,10 @@ namespace Quartermaster
                 Console.WriteLine(
                     $"Consumption: {reportRow.MaxConsumedReadPerMinute}, {reportRow.MaxConsumedWritePerMinute}");
             }
-            Console.WriteLine("Report done");
+            Console.WriteLine($"Report {provisionReport.Name} done");
         }
 
-        private static void SendReport(ProvisioningReport provisionReport)
+        private void SendReport(ProvisioningReport provisionReport)
         {
             try
             {
@@ -43,11 +57,11 @@ namespace Quartermaster
 
                 if (!targets.Any())
                 {
-                    Console.Error.WriteLine("No mail targets for report. Will not send.");
+                    Console.Error.WriteLine($"No mail targets for report {provisionReport.Name}. Will not send.");
                     return;
                 }
 
-                Console.WriteLine("Sending report to: " + string.Join(",", targets));
+                Console.WriteLine($"Sending report {provisionReport.Name} to: " + string.Join(",", targets));
 
                 var reportString = new StringWriter();
                 var csv = new CsvWriter(reportString);
@@ -58,9 +72,7 @@ namespace Quartermaster
                 var reportFile = GetReportFile(provisionReport.Name, reportDirectory);
                 File.WriteAllText(reportFile.FullName, report);
 
-
-                var smtpHost = System.Configuration.ConfigurationManager.AppSettings.Get("SmtpHost");
-                var client = new SmtpClient(smtpHost);
+                var client = new SmtpClient(_smtpHost);
                 var attachment = new Attachment(reportFile.FullName);
                 var mailMessage = new MailMessage
                 {
@@ -79,7 +91,7 @@ namespace Quartermaster
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine("Failed to save and mail report");
+                Console.Error.WriteLine($"Failed to save and mail report {provisionReport.Name}");
                 Console.Error.WriteLine(ex.ToString());
                 throw;
             }
