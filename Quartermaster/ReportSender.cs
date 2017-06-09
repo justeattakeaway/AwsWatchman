@@ -36,7 +36,18 @@ namespace Quartermaster
         {
             try
             {
-                var targets = provisionReport.Targets.Select(x => x.Email).ToList();
+                var targets = provisionReport.Targets
+                    .Select(x => x.Email)
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToList();
+
+                if (!targets.Any())
+                {
+                    Console.Error.WriteLine("No mail targets for report. Will not send.");
+                    return;
+                }
+
+                Console.WriteLine("Sending report to: " + string.Join(",", targets));
 
                 var reportString = new StringWriter();
                 var csv = new CsvWriter(reportString);
@@ -47,7 +58,6 @@ namespace Quartermaster
                 var reportFile = GetReportFile(provisionReport.Name, reportDirectory);
                 File.WriteAllText(reportFile.FullName, report);
 
-                if (!targets.Any()) return;
 
                 var smtpHost = System.Configuration.ConfigurationManager.AppSettings.Get("SmtpHost");
                 var client = new SmtpClient(smtpHost);
@@ -59,7 +69,12 @@ namespace Quartermaster
                     Subject = $"{provisionReport.Name} dynamo provisioning report",
                     Attachments = {attachment}
                 };
-                mailMessage.To.Add(string.Join(",", targets));
+
+                foreach (var target in targets)
+                {
+                    mailMessage.To.Add(target);
+                }
+
                 client.Send(mailMessage);
             }
             catch (Exception ex)
