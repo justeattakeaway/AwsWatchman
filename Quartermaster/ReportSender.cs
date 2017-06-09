@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using QuarterMaster.Models;
 using CsvHelper;
 
@@ -24,12 +25,12 @@ namespace Quartermaster
         }
 
 
-        public void SendReports(IList<ProvisioningReport> reports)
+        public async Task SendReports(IList<ProvisioningReport> reports)
         {
             foreach (var provisionReport in reports)
             {
                 ConsoleReport(provisionReport);
-                SendReport(provisionReport);
+                await SendReport(provisionReport);
             }
         }
 
@@ -46,7 +47,7 @@ namespace Quartermaster
             Console.WriteLine($"Report {provisionReport.Name} done");
         }
 
-        private void SendReport(ProvisioningReport provisionReport)
+        private async Task SendReport(ProvisioningReport provisionReport)
         {
             try
             {
@@ -87,7 +88,7 @@ namespace Quartermaster
                     mailMessage.To.Add(target);
                 }
 
-                client.Send(mailMessage);
+                await client.SendMailAsync(mailMessage);
             }
             catch (Exception ex)
             {
