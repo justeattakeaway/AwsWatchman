@@ -81,7 +81,7 @@
                 throw new ConfigException($"Queue length of '{length}' must be greater than zero");
             }
 
-            if (length > 10000)
+            if (length > 100000)
             {
                 throw new ConfigException($"Queue length of '{length}' is ridiculously high");
             }
