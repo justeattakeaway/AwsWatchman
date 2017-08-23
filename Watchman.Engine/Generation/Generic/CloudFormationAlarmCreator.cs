@@ -242,7 +242,7 @@ namespace Watchman.Engine.Generation.Generic
         {
             if (_s3Location == null)
             {
-                throw new Exception("Cannot create large cloudformation stack without s3 configuration");
+                throw new Exception($"Cannot create large cloudformation stack '{stackName}' of size {body.Length} without s3 configuration");
             }
 
             // would be good if we could use some hash to check the remote version before uploading
