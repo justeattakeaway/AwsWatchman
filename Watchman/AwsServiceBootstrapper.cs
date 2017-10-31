@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Amazon.AutoScaling.Model;
 using Amazon.ElasticLoadBalancing.Model;
 using Amazon.Lambda.Model;
@@ -7,6 +7,7 @@ using StructureMap;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.AutoScaling;
 using Watchman.AwsResources.Services.Elb;
+using Watchman.AwsResources.Services.Kinesis;
 using Watchman.AwsResources.Services.Lambda;
 using Watchman.AwsResources.Services.Rds;
 using Watchman.AwsResources.Services.VpcSubnet;
@@ -42,6 +43,10 @@ namespace Watchman
             AddService<LoadBalancerDescription, ElbSource, ElbAlarmDataProvider, ElbAlarmDataProvider>(
                 registry, WatchmanServiceConfigurationMapper.MapElb
                 );
+
+            AddService<KinesisStreamData, KinesisStreamSource, KinesisStreamAlarmDataProvider, KinesisStreamAlarmDataProvider>(
+                registry, WatchmanServiceConfigurationMapper.MapStream
+            );
         }
 
         private static void AddService<TServiceModel, TSource, TDimensionProvider, TAttributeProvider>(

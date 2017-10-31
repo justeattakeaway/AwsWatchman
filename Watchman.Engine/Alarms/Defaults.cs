@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Amazon.CloudWatch;
 using Watchman.Configuration;
@@ -167,8 +167,24 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Lambda
+            },
+            new AlarmDefinition
+            {
+                Name = "IteratorAgeHigh",
+                Metric = "IteratorAge",
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 300000
+                },
+                DimensionNames = new[] {"FunctionName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Lambda
             }
-       };
+        };
 
         public static IList<AlarmDefinition> VpcSubnets = new List<AlarmDefinition>
         {
@@ -190,7 +206,7 @@ namespace Watchman.Engine.Alarms
                 Namespace = "JUSTEAT/PlatformLimits",
                 AlertOnInsufficientData = true
             }
-       };
+        };
 
         public static IList<AlarmDefinition> Elb = new List<AlarmDefinition>
         {
@@ -275,7 +291,7 @@ namespace Watchman.Engine.Alarms
                 Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Elb
             },
-             new AlarmDefinition
+            new AlarmDefinition
             {
                 Name = "UnHealthyHostCountHigh",
                 Metric = "UnHealthyHostCount",
@@ -291,6 +307,42 @@ namespace Watchman.Engine.Alarms
                 Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Elb
             }
-       };
+        };
+
+        public static IList<AlarmDefinition> KinesisStream = new List<AlarmDefinition>
+        {
+            new AlarmDefinition
+            {
+                Name = "ReadProvisionedThroughputExceededHigh",
+                Metric = "ReadProvisionedThroughputExceeded",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 1
+                },
+                DimensionNames = new[] {"StreamName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Kinesis
+            },
+            new AlarmDefinition
+            {
+                Name = "WriteProvisionedThroughputExceededHigh",
+                Metric = "WriteProvisionedThroughputExceeded",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 1
+                },
+                DimensionNames = new[] {"StreamName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Kinesis
+            }
+        };
     }
 }

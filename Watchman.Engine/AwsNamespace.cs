@@ -1,4 +1,4 @@
-﻿namespace Watchman.Engine
+namespace Watchman.Engine
 {
     public static class AwsNamespace
     {
@@ -9,5 +9,6 @@
         public const string AutoScaling = "AWS/AutoScaling";
         public const string Lambda = "AWS/Lambda";
         public const string Elb = "AWS/ELB";
+        public const string Kinesis = "AWS/Kinesis";
     }
 }
