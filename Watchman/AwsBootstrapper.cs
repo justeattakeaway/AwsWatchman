@@ -1,4 +1,4 @@
-﻿using Amazon.AutoScaling;
+using Amazon.AutoScaling;
 using Amazon.CloudFormation;
 using Amazon.CloudWatch;
 using Amazon.DynamoDBv2;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 using Amazon.DynamoDBv2.Model;
 using StructureMap;
@@ -13,7 +13,6 @@ using Watchman.Engine.Generation.Sqs;
 using Watchman.Engine.Logging;
 using Watchman.Engine.Sns;
 using Amazon.CloudFormation;
-using Amazon.Runtime.SharedInterfaces;
 using Amazon.S3;
 using Watchman.Engine.Generation.Generic;
 

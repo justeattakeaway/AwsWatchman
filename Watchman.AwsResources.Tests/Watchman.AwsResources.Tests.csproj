@@ -78,6 +78,8 @@
     <Compile Include="Services\DynamoDb\TableDescriptionSourceTests.cs" />
     <Compile Include="Services\Elb\ElbAlarmDataProviderTests.cs" />
     <Compile Include="Services\Elb\ElbSourceTests.cs" />
+    <Compile Include="Services\Kinesis\KinesisStreamAlarmDataProviderTests.cs" />
+    <Compile Include="Services\Kinesis\KinesisStreamSourceTests.cs" />
     <Compile Include="Services\Sqs\SqsSourceTests.cs" />
     <Compile Include="Services\Lambda\LambdaAlarmDataProviderTests.cs" />
     <Compile Include="Services\Lambda\LambdaSourceTests.cs" />

@@ -62,6 +62,7 @@ The following services are supported
 - `Rds`
 - `AutoScaling`
 - `Lambda`
+- `Kinesis`
 - `Elb`
 - `VpcSubnet` (this is a custom service using JUST EAT custom metrics)
 
@@ -86,6 +87,11 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `ErrorsHigh`: 3 (count)
 - `DurationHigh`: 50 (% of defined Timeout)
 - `ThrottlesHigh`: 5 (count)
+
+### Kinesis
+
+- `ReadProvisionedThroughputExceededHigh`: 1 (count)
+- `WriteProvisionedThroughputExceededHigh`: 1 (count)
 
 ### VpcSubnets
 

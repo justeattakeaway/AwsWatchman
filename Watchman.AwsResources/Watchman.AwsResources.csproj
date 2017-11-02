@@ -72,6 +72,9 @@
     <Compile Include="Services\AutoScaling\AutoScalingGroupAlarmDataProvider.cs" />
     <Compile Include="Services\AutoScaling\AutoScalingGroupSource.cs" />
     <Compile Include="Services\DynamoDb\TableDescriptionSource.cs" />
+    <Compile Include="Services\Kinesis\KinesisStreamAlarmDataProvider.cs" />
+    <Compile Include="Services\Kinesis\KinesisStreamSource.cs" />
+    <Compile Include="Services\Kinesis\KinesisStreamData.cs" />
     <Compile Include="Services\Lambda\LambdaAlarmDataProvider.cs" />
     <Compile Include="Services\Lambda\LambdaSource.cs" />
     <Compile Include="Services\Rds\RdsAlarmDataProvider.cs" />

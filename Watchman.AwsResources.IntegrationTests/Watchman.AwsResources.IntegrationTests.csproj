@@ -73,6 +73,7 @@
     <Compile Include="Service\AutoScaling\AutoScalingSourceTests.cs" />
     <Compile Include="Service\DynamoDb\TableDescriptionSourceTests.cs" />
     <Compile Include="Service\Elb\ElbSourceTests.cs" />
+    <Compile Include="Service\Kinesis\KinesisStreamSourceTests.cs" />
     <Compile Include="Service\Rds\RdsSourceTests.cs" />
     <Compile Include="Service\Lambda\LambdaSourceTests.cs" />
     <Compile Include="Service\Sqs\QueueSourceTests.cs" />
