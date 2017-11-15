@@ -62,7 +62,8 @@ namespace Watchman.Engine.Sns
         {
             if (string.IsNullOrWhiteSpace(alert.Url))
             {
-                throw new ArgumentNullException(nameof(alert.Url));
+                return;
+                //throw new ArgumentNullException(nameof(alert.Url));
             }
 
             var protocol = alert.Url.Split(':').First();
