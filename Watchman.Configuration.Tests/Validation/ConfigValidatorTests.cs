@@ -85,7 +85,7 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config,"AlertingGroup must have a name");
+            ConfigAssert.NotValid(_config, "AlertingGroup must have a name");
         }
 
         [Test]
@@ -194,6 +194,21 @@ namespace Watchman.Configuration.Tests.Validation
         }
 
         [Test]
+        public void AlertingGroup_Fails_With_Empty_Email_Target()
+        {
+            // arrange
+            _config.AlertingGroups.First().Targets = new List<AlertTarget>
+            {
+                new AlertEmail { Email = string.Empty }
+            };
+
+            // act
+
+            // assert
+            ConfigAssert.NotValid(_config, "Email target for AlertingGroup 'someName' must have an email address");
+        }
+
+        [Test]
         public void AlertingGroup_Succeeds_With_Valid_Url_Target()
         {
             // arrange
@@ -206,6 +221,36 @@ namespace Watchman.Configuration.Tests.Validation
 
             // assert
             ConfigAssert.IsValid(_config);
+        }
+
+        [Test]
+        public void AlertingGroup_Fails_With_Empty_Url_Target()
+        {
+            // arrange
+            _config.AlertingGroups.First().Targets = new List<AlertTarget>
+            {
+                new AlertUrl { Url = string.Empty }
+            };
+
+            // act
+
+            // assert
+            ConfigAssert.NotValid(_config, "Url target for AlertingGroup 'someName' must have a url");
+        }
+
+        [Test]
+        public void AlertingGroup_Fails_With_Invalid_Url_Target()
+        {
+            // arrange
+            _config.AlertingGroups.First().Targets = new List<AlertTarget>
+            {
+                new AlertUrl { Url = "fish" }
+            };
+
+            // act
+
+            // assert
+            ConfigAssert.NotValid(_config, "Url target 'fish' for AlertingGroup 'someName' is not valid");
         }
 
         [Test]

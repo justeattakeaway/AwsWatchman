@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -45,10 +46,7 @@ namespace Watchman.Configuration.Validation
                 throw new ConfigException($"AlertingGroup '{alertingGroup.Name}' must have a suffix valid in SNS topics. '{alertingGroup.AlarmNameSuffix}' is not.");
             }
 
-            if (alertingGroup.Targets == null)
-            {
-                throw new ConfigException($"AlertingGroup '{alertingGroup.Name}' must have targets");
-            }
+            ValidateTargets(alertingGroup);
 
             var hasAtLeastOneResource = false;
 
@@ -80,6 +78,48 @@ namespace Watchman.Configuration.Validation
             {
                 throw new ConfigException($"AlertingGroup '{alertingGroup.Name}' must contain resources to monitor. " +
                     "Specify one or more of DynamoDb, Sqs or other resources");
+            }
+        }
+
+        private static void ValidateTargets(AlertingGroup alertingGroup)
+        {
+            if (alertingGroup.Targets == null)
+            {
+                throw new ConfigException($"AlertingGroup '{alertingGroup.Name}' must have targets");
+            }
+
+            foreach (var target in alertingGroup.Targets)
+            {
+                if (target is AlertEmail)
+                {
+                    var emailTarget = target as AlertEmail;
+                    if (string.IsNullOrWhiteSpace(emailTarget.Email))
+                    {
+                        throw new ConfigException($"Email target for AlertingGroup '{alertingGroup.Name}' must have an email address");
+                    }
+                }
+                else if (target is AlertUrl)
+                {
+                    var urlTarget = target as AlertUrl;
+                    if (string.IsNullOrWhiteSpace(urlTarget.Url))
+                    {
+                        throw new ConfigException($"Url target for AlertingGroup '{alertingGroup.Name}' must have a url");
+                    }
+
+                    try
+                    {
+                        new Uri(urlTarget.Url);
+
+                    }
+                    catch (UriFormatException e)
+                    {
+                        throw new ConfigException($"Url target '{urlTarget.Url}' for AlertingGroup '{alertingGroup.Name}' is not valid", e);
+                    }
+                }
+                else
+                {
+                    throw new ConfigException("Unknown target type");
+                }
             }
         }
 
