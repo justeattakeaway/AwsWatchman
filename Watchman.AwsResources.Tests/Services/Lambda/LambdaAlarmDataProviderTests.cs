@@ -4,6 +4,7 @@ using System.Linq;
 using Amazon.CloudWatch.Model;
 using Amazon.Lambda.Model;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using Watchman.AwsResources.Services.Lambda;
 
 namespace Watchman.AwsResources.Tests.Services.Lambda
@@ -48,10 +49,11 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
             //arange
 
             //act
-            List<Dimension> TestDelegate() => _lambdaDataProvider.GetDimensions(_functionConfig, new List<string> { "UnknownDimension" });
+            ActualValueDelegate<List<Dimension>> testDelegate =
+                () => _lambdaDataProvider.GetDimensions(_functionConfig, new List<string> { "UnknownDimension" });
 
             //assert
-            Assert.That(TestDelegate, Throws.TypeOf<Exception>()
+            Assert.That(testDelegate, Throws.TypeOf<Exception>()
                 .With.Message.EqualTo("Unsupported dimension UnknownDimension"));
         }
 
@@ -74,10 +76,11 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
             //arange
 
             //act
-            decimal TestDelegate() => _lambdaDataProvider.GetValue(_functionConfig, "Unknown Attribute");
+            ActualValueDelegate<decimal> testDelegate =
+                () => _lambdaDataProvider.GetValue(_functionConfig, "Unknown Attribute");
 
             //assert
-            Assert.That(TestDelegate, Throws.TypeOf<Exception>()
+            Assert.That(testDelegate, Throws.TypeOf<Exception>()
                 .With.Message.EqualTo("Unsupported Lambda property name"));
         }
     }

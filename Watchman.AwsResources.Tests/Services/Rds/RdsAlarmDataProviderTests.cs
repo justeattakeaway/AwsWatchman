@@ -4,6 +4,7 @@ using System.Linq;
 using Amazon.CloudWatch.Model;
 using Amazon.RDS.Model;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using Watchman.AwsResources.Services.Rds;
 
 namespace Watchman.AwsResources.Tests.Services.Rds
@@ -48,10 +49,11 @@ namespace Watchman.AwsResources.Tests.Services.Rds
             //arange
 
             //act
-            List<Dimension> TestDelegate() => _rdsDataProvider.GetDimensions(_dbInstance, new List<string> { "UnknownDimension" });
+            ActualValueDelegate<List<Dimension>> testDelegate =
+                () => _rdsDataProvider.GetDimensions(_dbInstance, new List<string> { "UnknownDimension" });
 
             //assert
-            Assert.That(TestDelegate, Throws.TypeOf<Exception>()
+            Assert.That(testDelegate, Throws.TypeOf<Exception>()
                 .With.Message.EqualTo("Unsupported dimension UnknownDimension"));
         }
 
@@ -74,10 +76,11 @@ namespace Watchman.AwsResources.Tests.Services.Rds
             //arange
 
             //act
-            decimal TestDelegate() => _rdsDataProvider.GetValue(_dbInstance, "Unknown Attribute");
+            ActualValueDelegate<decimal> testDelegate =
+                () => _rdsDataProvider.GetValue(_dbInstance, "Unknown Attribute");
 
             //assert
-            Assert.That(TestDelegate, Throws.TypeOf<Exception>()
+            Assert.That(testDelegate, Throws.TypeOf<Exception>()
                 .With.Message.EqualTo("Unsupported RDS property name"));
         }
     }
