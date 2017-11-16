@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Watchman.Configuration.Generic;
@@ -163,11 +163,11 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config,"AlertingGroup 'someName' must have targets");
+            ConfigAssert.NotValid(_config, "AlertingGroup 'someName' must have targets");
         }
 
         [Test]
-        public void AlertingGroup_Fails_When_Targets_Is_Empty()
+        public void AlertingGroup_Succeeds_When_Targets_Is_Empty()
         {
             // arrange
             _config.AlertingGroups.First().Targets = new List<AlertTarget>();
@@ -175,7 +175,37 @@ namespace Watchman.Configuration.Tests.Validation
             // act
 
             // assert
-            ConfigAssert.NotValid(_config,"AlertingGroup 'someName' must have targets");
+            ConfigAssert.IsValid(_config);
+        }
+
+        [Test]
+        public void AlertingGroup_Succeeds_With_Valid_Email_Target()
+        {
+            // arrange
+            _config.AlertingGroups.First().Targets = new List<AlertTarget>
+            {
+                new AlertEmail { Email = "homer.j.simpson@springfieldnuclear.com" }
+            };
+
+            // act
+
+            // assert
+            ConfigAssert.IsValid(_config);
+        }
+
+        [Test]
+        public void AlertingGroup_Succeeds_With_Valid_Url_Target()
+        {
+            // arrange
+            _config.AlertingGroups.First().Targets = new List<AlertTarget>
+            {
+                new AlertUrl { Url = "http://api.example.com/foo/bar" }
+            };
+
+            // act
+
+            // assert
+            ConfigAssert.IsValid(_config);
         }
 
         [Test]
