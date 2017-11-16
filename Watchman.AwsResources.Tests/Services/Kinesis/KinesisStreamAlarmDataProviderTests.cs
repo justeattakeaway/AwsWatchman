@@ -65,8 +65,7 @@ namespace Watchman.AwsResources.Tests.Services.Kinesis
                 () => _streamDataProvider.GetValue(_streamData, "Unknown Attribute");
 
             //assert
-            Assert.That(testDelegate, Throws.TypeOf<NotImplementedException>()
-                .With.Message.EqualTo("Unsupported Lambda property name"));
+            Assert.That(testDelegate, Throws.TypeOf<NotImplementedException>());
         }
     }
 }

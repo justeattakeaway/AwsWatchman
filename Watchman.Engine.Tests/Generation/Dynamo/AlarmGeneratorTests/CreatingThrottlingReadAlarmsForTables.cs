@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Watchman.Configuration;
 
@@ -8,7 +9,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
     public class CreatingThrottlingReadAlarmsForTables
     {
         [Test]
-        public async void ReadAlarmsAreCreatedForEachTable()
+        public async Task ReadAlarmsAreCreatedForEachTable()
         {
             var mockery = new DynamoAlarmGeneratorMockery();
             var generator = mockery.AlarmGenerator;
