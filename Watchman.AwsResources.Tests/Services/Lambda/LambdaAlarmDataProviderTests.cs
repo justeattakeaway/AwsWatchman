@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using Amazon.CloudWatch.Model;
 using Amazon.Lambda.Model;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using Watchman.AwsResources.Services.Lambda;
 
 namespace Watchman.AwsResources.Tests.Services.Lambda
@@ -12,7 +15,7 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
         private FunctionConfiguration _functionConfig;
         private LambdaAlarmDataProvider _lambdaDataProvider;
 
-        [TestFixtureSetUp]
+        [SetUp]
         public void Setup()
         {
             _functionConfig = new FunctionConfiguration
@@ -41,15 +44,17 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
         }
 
         [Test]
-        [ExpectedException(UserMessage = "Unsupported dimension UnknownDimension")]
         public void GetDimensions_UnknownDimension_ThrowException()
         {
             //arange
 
             //act
-            var result = _lambdaDataProvider.GetDimensions(_functionConfig, new List<string> { "UnknownDimension" });
+            ActualValueDelegate<List<Dimension>> testDelegate =
+                () => _lambdaDataProvider.GetDimensions(_functionConfig, new List<string> { "UnknownDimension" });
 
             //assert
+            Assert.That(testDelegate, Throws.TypeOf<Exception>()
+                .With.Message.EqualTo("Unsupported dimension UnknownDimension"));
         }
 
         [Test]
@@ -66,15 +71,17 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
         }
 
         [Test]
-        [ExpectedException(UserMessage = "Unsupported Lambda property name")]
         public void GetAttribute_UnknownAttribute_ThrowException()
         {
             //arange
 
             //act
-            var result = _lambdaDataProvider.GetValue(_functionConfig, "Unknown Attribute");
+            ActualValueDelegate<decimal> testDelegate =
+                () => _lambdaDataProvider.GetValue(_functionConfig, "Unknown Attribute");
 
             //assert
+            Assert.That(testDelegate, Throws.TypeOf<Exception>()
+                .With.Message.EqualTo("Unsupported Lambda property name"));
         }
     }
 }

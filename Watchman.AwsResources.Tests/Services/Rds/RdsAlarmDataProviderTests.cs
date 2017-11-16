@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amazon.CloudWatch.Model;
 using Amazon.RDS.Model;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using Watchman.AwsResources.Services.Rds;
 
 namespace Watchman.AwsResources.Tests.Services.Rds
@@ -13,7 +15,7 @@ namespace Watchman.AwsResources.Tests.Services.Rds
         private DBInstance _dbInstance;
         private RdsAlarmDataProvider _rdsDataProvider;
 
-        [TestFixtureSetUp]
+        [SetUp]
         public void Setup()
         {
             _dbInstance = new DBInstance
@@ -42,15 +44,17 @@ namespace Watchman.AwsResources.Tests.Services.Rds
         }
 
         [Test]
-        [ExpectedException(UserMessage = "Unsupported dimension UnknownDimension")]
         public void GetDimensions_UnknownDimension_ThrowException()
         {
             //arange
 
             //act
-            var result = _rdsDataProvider.GetDimensions(_dbInstance, new List<string> { "UnknownDimension" });
+            ActualValueDelegate<List<Dimension>> testDelegate =
+                () => _rdsDataProvider.GetDimensions(_dbInstance, new List<string> { "UnknownDimension" });
 
             //assert
+            Assert.That(testDelegate, Throws.TypeOf<Exception>()
+                .With.Message.EqualTo("Unsupported dimension UnknownDimension"));
         }
 
         [Test]
@@ -67,15 +71,17 @@ namespace Watchman.AwsResources.Tests.Services.Rds
         }
 
         [Test]
-        [ExpectedException(UserMessage = "Unsupported RDS property name")]
         public void GetAttribute_UnknownAttribute_ThrowException()
         {
             //arange
 
             //act
-            var result = _rdsDataProvider.GetValue(_dbInstance, "Unknown Attribute");
+            ActualValueDelegate<decimal> testDelegate =
+                () => _rdsDataProvider.GetValue(_dbInstance, "Unknown Attribute");
 
             //assert
+            Assert.That(testDelegate, Throws.TypeOf<Exception>()
+                .With.Message.EqualTo("Unsupported RDS property name"));
         }
     }
 }
