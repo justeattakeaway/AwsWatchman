@@ -68,8 +68,10 @@
     <Compile Include="AwsNamespace.cs" />
     <Compile Include="Generation\Alarm.cs" />
     <Compile Include="Generation\Generic\CloudFormationAlarmCreator.cs" />
+    <Compile Include="Generation\Generic\CloudformationStackDeployer.cs" />
     <Compile Include="Generation\Generic\CloudWatchCloudFormationTemplate.cs" />
     <Compile Include="Generation\Generic\IAlarmCreator.cs" />
+    <Compile Include="Generation\Generic\ICloudformationStackDeployer.cs" />
     <Compile Include="Generation\Generic\OrphanResourcesFinder.cs" />
     <Compile Include="Generation\Generic\OrphanResourcesReporter.cs" />
     <Compile Include="Generation\Generic\OrphansModel.cs" />
