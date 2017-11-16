@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amazon.ElasticLoadBalancing.Model;
@@ -13,7 +13,7 @@ namespace Watchman.AwsResources.Tests.Services.Elb
         private LoadBalancerDescription _elbDescription;
         private ElbAlarmDataProvider _elbDataProvider;
 
-        [TestFixtureSetUp]
+        [SetUp]
         public void Setup()
         {
             _elbDescription = new LoadBalancerDescription

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amazon.CloudWatch.Model;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Kinesis;
 
@@ -11,7 +13,7 @@ namespace Watchman.AwsResources.Tests.Services.Kinesis
         private KinesisStreamData _streamData;
         private KinesisStreamAlarmDataProvider _streamDataProvider;
 
-        [TestFixtureSetUp]
+        [SetUp]
         public void Setup()
         {
             _streamData = new KinesisStreamData
@@ -39,27 +41,28 @@ namespace Watchman.AwsResources.Tests.Services.Kinesis
         }
 
         [Test]
-        [ExpectedException(UserMessage = "Unsupported dimension UnknownDimension")]
         public void GetDimensions_UnknownDimension_ThrowException()
         {
             //arange
 
             //act
-            var result = _streamDataProvider.GetDimensions(_streamData, new List<string> { "UnknownDimension" });
+            List<Dimension> TestDelegate() => _streamDataProvider.GetDimensions(_streamData, new List<string> { "UnknownDimension" });
 
             //assert
+            Assert.That(TestDelegate, Throws.TypeOf<Exception>()
+                .With.Message.EqualTo("Unsupported dimension UnknownDimension"));
         }
 
         [Test]
-        [ExpectedException(UserMessage = "Unsupported Lambda property name")]
         public void GetAttribute_UnknownAttribute_ThrowException()
         {
             //arange
 
             //act
-            var result = _streamDataProvider.GetValue(_streamData, "Unknown Attribute");
+            decimal TestDelegate() => _streamDataProvider.GetValue(_streamData, "Unknown Attribute");
 
             //assert
+            Assert.That(TestDelegate, Throws.TypeOf<NotImplementedException>());
         }
     }
 }
