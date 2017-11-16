@@ -33,7 +33,8 @@ namespace Watchman.Engine.Sns
 
             if (alertingTargets == null || !alertingTargets.Any())
             {
-                throw new ArgumentNullException(nameof(alertingTargets));
+                _logger.Info($"No targets. No Sns Subscriptions will be created for {snsTopicArn}");
+                return;
             }
 
             foreach (var target in alertingTargets)
