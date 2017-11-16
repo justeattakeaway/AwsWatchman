@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Watchman.Configuration.Validation
@@ -45,7 +45,7 @@ namespace Watchman.Configuration.Validation
                 throw new ConfigException($"AlertingGroup '{alertingGroup.Name}' must have a suffix valid in SNS topics. '{alertingGroup.AlarmNameSuffix}' is not.");
             }
 
-            if (!HasAny(alertingGroup.Targets))
+            if (alertingGroup.Targets == null)
             {
                 throw new ConfigException($"AlertingGroup '{alertingGroup.Name}' must have targets");
             }
