@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text.RegularExpressions;
 using Amazon.DynamoDBv2.Model;
 using StructureMap;
@@ -63,9 +63,16 @@ namespace Watchman
 
             var s3Location = GetS3Location(parameters);
 
-            registry.For<IAlarmCreator>().Use(ctx => new CloudFormationAlarmCreator(
-                ctx.GetInstance<IAlarmLogger>(), ctx.GetInstance<IAmazonCloudFormation>(), ctx.GetInstance<IAmazonS3>(), s3Location
-            )).Singleton();
+            registry
+                .For<ICloudformationStackDeployer>()
+                .Use(ctx => new CloudformationStackDeployer(
+                    ctx.GetInstance<IAlarmLogger>(), 
+                    ctx.GetInstance<IAmazonCloudFormation>(),
+                    ctx.GetInstance<IAmazonS3>(), 
+                    s3Location
+                ));
+
+            registry.For<IAlarmCreator>().Use<CloudFormationAlarmCreator>();
         }
 
         private static S3Location GetS3Location(StartupParameters parameters)

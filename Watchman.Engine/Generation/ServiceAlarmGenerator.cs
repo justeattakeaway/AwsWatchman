@@ -15,7 +15,6 @@ namespace Watchman.Engine.Generation
         private readonly ServiceAlarmBuilder<T> _serviceAlarmBuilder;
 
         public ServiceAlarmGenerator(
-            SnsCreator snsCreator,
             IAlarmCreator creator,
             ServiceAlarmBuilder<T> serviceAlarmBuilder)
         {
