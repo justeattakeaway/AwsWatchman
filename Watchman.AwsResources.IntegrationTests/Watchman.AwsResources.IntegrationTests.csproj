@@ -58,6 +58,7 @@
     <Reference Include="AWSSDK.RDS, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>..\packages\AWSSDK.RDS.3.3.18\lib\net45\AWSSDK.RDS.dll</HintPath>
     </Reference>
+    <Reference Include="AWSSDK.StepFunctions, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604" />
     <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
@@ -76,6 +77,7 @@
     <Compile Include="Service\Rds\RdsSourceTests.cs" />
     <Compile Include="Service\Lambda\LambdaSourceTests.cs" />
     <Compile Include="Service\Sqs\QueueSourceTests.cs" />
+    <Compile Include="Service\StepFunction\StepFunctionSourceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -56,6 +56,9 @@
     <Reference Include="AWSSDK.RDS, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>..\packages\AWSSDK.RDS.3.3.18\lib\net45\AWSSDK.RDS.dll</HintPath>
     </Reference>
+    <Reference Include="AWSSDK.StepFunctions, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.StepFunctions.3.3.2\lib\net45\AWSSDK.StepFunctions.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -83,6 +86,8 @@
     <Compile Include="Services\Sqs\QueueSource.cs" />
     <Compile Include="Services\Elb\ElbAlarmDataProvider.cs" />
     <Compile Include="Services\Elb\ElbSource.cs" />
+    <Compile Include="Services\StepFunction\StepFunctionAlarmDataProvider.cs" />
+    <Compile Include="Services\StepFunction\StepFunctionSource.cs" />
     <Compile Include="Services\VpcSubnet\VpcSubnetAlarmDataProvider.cs" />
     <Compile Include="Services\VpcSubnet\VpcSubnetSource.cs" />
   </ItemGroup>
@@ -93,6 +98,7 @@
     <Analyzer Include="..\packages\AWSSDK.EC2.3.3.38\analyzers\dotnet\cs\AWSSDK.EC2.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.Lambda.3.3.9\analyzers\dotnet\cs\AWSSDK.Lambda.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.RDS.3.3.18\analyzers\dotnet\cs\AWSSDK.RDS.CodeAnalysis.dll" />
+    <Analyzer Include="..\packages\AWSSDK.StepFunctions.3.3.2\analyzers\dotnet\cs\AWSSDK.StepFunctions.CodeAnalysis.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
