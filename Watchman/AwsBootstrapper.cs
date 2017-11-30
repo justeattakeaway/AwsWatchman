@@ -8,6 +8,7 @@ using Amazon.Lambda;
 using Amazon.RDS;
 using Amazon.S3;
 using Amazon.SimpleNotificationService;
+using Amazon.StepFunctions;
 using StructureMap;
 using Watchman.Engine;
 
@@ -37,6 +38,7 @@ namespace Watchman
             registry.For<IAmazonEC2>().Use(ctx => new AmazonEC2Client(creds, region));
             registry.For<IAmazonElasticLoadBalancing>().Use(ctx => new AmazonElasticLoadBalancingClient(creds, region));
             registry.For<IAmazonS3>().Use(ctx => new AmazonS3Client(creds, region));
+            registry.For<IAmazonStepFunctions>().Use(ctx => new AmazonStepFunctionsClient(creds, region));
         }
     }
 }

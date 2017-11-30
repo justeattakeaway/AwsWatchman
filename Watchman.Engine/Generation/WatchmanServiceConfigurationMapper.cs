@@ -55,6 +55,12 @@ namespace Watchman.Engine.Generation
             return Map(input, id, a => GetService(a, id), Defaults.KinesisStream);
         }
 
+        public static WatchmanServiceConfiguration MapStepFunction(WatchmanConfiguration input)
+        {
+            const string id = "StepFunction";
+            return Map(input, id, a => GetService(a, id), Defaults.StepFunction);
+        }
+
         private static WatchmanServiceConfiguration Map(WatchmanConfiguration input,
             string serviceName,
             Func<AlertingGroup, AwsServiceAlarms> readServiceFromGroup,

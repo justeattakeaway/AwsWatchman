@@ -344,5 +344,25 @@ namespace Watchman.Engine.Alarms
                 Namespace = AwsNamespace.Kinesis
             }
         };
+
+        public static IList<AlarmDefinition> StepFunction = new List<AlarmDefinition>
+        {
+            new AlarmDefinition
+            {
+                Name = "ExecutionsFailedHigh",
+                Metric = "ExecutionsFailed",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 1
+                },
+                DimensionNames = new[] {"StateMachineArn"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.StepFunction
+            }
+        };
     }
 }

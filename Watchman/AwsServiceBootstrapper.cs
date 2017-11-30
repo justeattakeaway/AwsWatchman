@@ -3,6 +3,7 @@ using Amazon.AutoScaling.Model;
 using Amazon.ElasticLoadBalancing.Model;
 using Amazon.Lambda.Model;
 using Amazon.RDS.Model;
+using Amazon.StepFunctions.Model;
 using StructureMap;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.AutoScaling;
@@ -10,6 +11,7 @@ using Watchman.AwsResources.Services.Elb;
 using Watchman.AwsResources.Services.Kinesis;
 using Watchman.AwsResources.Services.Lambda;
 using Watchman.AwsResources.Services.Rds;
+using Watchman.AwsResources.Services.StepFunction;
 using Watchman.AwsResources.Services.VpcSubnet;
 using Watchman.Configuration;
 using Watchman.Engine;
@@ -46,6 +48,10 @@ namespace Watchman
 
             AddService<KinesisStreamData, KinesisStreamSource, KinesisStreamAlarmDataProvider, KinesisStreamAlarmDataProvider>(
                 registry, WatchmanServiceConfigurationMapper.MapStream
+            );
+
+            AddService<StateMachineListItem, StepFunctionSource, StepFunctionAlarmDataProvider, StepFunctionAlarmDataProvider>(
+                registry, WatchmanServiceConfigurationMapper.MapStepFunction
             );
         }
 
