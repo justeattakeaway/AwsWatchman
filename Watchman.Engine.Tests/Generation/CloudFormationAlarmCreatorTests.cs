@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,6 +16,7 @@ using Amazon.S3.Model;
 using Watchman.AwsResources;
 using Watchman.Configuration;
 using Watchman.Engine.Generation;
+using S3Location = Watchman.Engine.Generation.Generic.S3Location;
 
 namespace Watchman.Engine.Tests.Generation
 {
