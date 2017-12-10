@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using CommandLine;
 using QuarterMaster;
@@ -7,19 +7,16 @@ namespace Quartermaster
 {
     internal class Program
     {
-        private static int Main(string[] args)
+        private static Task<int> Main(string[] args)
         {
-            var startupParams = new StartupParameters();
-
-            if (!Parser.Default.ParseArguments(args, startupParams))
-            {
-                Console.WriteLine("Missing required arguments, exiting...");
-                return ExitCode.InvalidParams;
-            }
-
-            var task = GenerateReports(startupParams);
-            task.Wait();
-            return task.Result;
+            return Parser.Default.ParseArguments<StartupParameters>(args)
+                .MapResult(
+                    parsedFunc: GenerateReports,
+                    notParsedFunc: _ =>
+                    {
+                        Console.WriteLine("Missing required arguments, exiting...");
+                        return Task.FromResult(ExitCode.InvalidParams);
+                    });
         }
 
         private static async Task<int> GenerateReports(StartupParameters startupParams)

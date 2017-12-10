@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Watchman.Engine.Generation;
 
@@ -6,7 +6,7 @@ namespace Watchman
 {
     public class Program
     {
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
             var startParams = CommandLineParser.ToParameters(args);
             if (startParams == null)
@@ -14,9 +14,7 @@ namespace Watchman
                 return ExitCode.InvalidParams;
             }
 
-            var task = GenerateAlarms(startParams);
-            task.Wait();
-            return task.Result;
+            return await GenerateAlarms(startParams);
         }
 
         private static async Task<int> GenerateAlarms(StartupParameters startParams)

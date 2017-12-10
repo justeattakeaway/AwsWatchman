@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -96,8 +96,11 @@ namespace QuarterMaster
             try
             {
                 Console.WriteLine("Reading usage data");
-                reportRows.Add(GetBaseTableReport(table));
-                reportRows.AddRange(table.GlobalSecondaryIndexes.Select(index => GetIndexReport(table, index)));
+                reportRows.Add(await GetBaseTableReport(table));
+                foreach (var index in table.GlobalSecondaryIndexes)
+                {
+                    reportRows.Add(await GetIndexReport(table, index));
+                }
             }
             catch (Exception ex)
             {
@@ -107,19 +110,19 @@ namespace QuarterMaster
             return reportRows;
         }
 
-        private ProvisioningReportRow GetBaseTableReport(TableDescription table)
+        private async Task<ProvisioningReportRow> GetBaseTableReport(TableDescription table)
         {
             return new ProvisioningReportRow
             {
                 TableName = table.TableName,
                 ProvisionedReadCapacityUnits = table.ProvisionedThroughput.ReadCapacityUnits,
                 ProvisionedWriteCapacityUnits = table.ProvisionedThroughput.WriteCapacityUnits,
-                MaxConsumedReadPerMinute = GetConsumptionMetric(table.TableName, AwsMetrics.ConsumedReadCapacity),
-                MaxConsumedWritePerMinute = GetConsumptionMetric(table.TableName, AwsMetrics.ConsumedWriteCapacity )
+                MaxConsumedReadPerMinute = await GetConsumptionMetric(table.TableName, AwsMetrics.ConsumedReadCapacity),
+                MaxConsumedWritePerMinute = await GetConsumptionMetric(table.TableName, AwsMetrics.ConsumedWriteCapacity )
             };
         }
 
-        private ProvisioningReportRow GetIndexReport(TableDescription table, GlobalSecondaryIndexDescription index)
+        private async Task<ProvisioningReportRow> GetIndexReport(TableDescription table, GlobalSecondaryIndexDescription index)
         {
             return new ProvisioningReportRow
             {
@@ -127,12 +130,12 @@ namespace QuarterMaster
                 IndexName = index.IndexName,
                 ProvisionedReadCapacityUnits = index.ProvisionedThroughput.ReadCapacityUnits,
                 ProvisionedWriteCapacityUnits = index.ProvisionedThroughput.WriteCapacityUnits,
-                MaxConsumedReadPerMinute = GetConsumptionMetric(table.TableName, AwsMetrics.ConsumedReadCapacity, index.IndexName),
-                MaxConsumedWritePerMinute = GetConsumptionMetric(table.TableName, AwsMetrics.ConsumedWriteCapacity, index.IndexName)
+                MaxConsumedReadPerMinute = await GetConsumptionMetric(table.TableName, AwsMetrics.ConsumedReadCapacity, index.IndexName),
+                MaxConsumedWritePerMinute = await GetConsumptionMetric(table.TableName, AwsMetrics.ConsumedWriteCapacity, index.IndexName)
             };
         }
 
-        private double GetConsumptionMetric(string tableName, string metricName, string indexName = null)
+        private async Task<double> GetConsumptionMetric(string tableName, string metricName, string indexName = null)
         {
             var getMetricsRequest = new GetMetricStatisticsRequest
             {
@@ -157,7 +160,7 @@ namespace QuarterMaster
             {
                 getMetricsRequest.StartTime = DateTime.UtcNow.AddDays(-(i + 1));
                 getMetricsRequest.EndTime = DateTime.UtcNow.AddDays(-i);
-                allDataPoints.AddRange(_cloudwatch.GetMetricStatistics(getMetricsRequest).Datapoints);
+                allDataPoints.AddRange((await _cloudwatch.GetMetricStatisticsAsync(getMetricsRequest)).Datapoints);
             }
             return allDataPoints.Count > 0 ? allDataPoints.Max(x => x.Sum) : 0;
         }

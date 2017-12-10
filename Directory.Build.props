@@ -1,0 +1,8 @@
+<Project>
+    <PropertyGroup>
+        <Authors>Just Eat</Authors>
+        <Copyright>Copyright (c) Just Eat $([System.DateTime]::Now.ToString(yyyy))</Copyright>
+        <LangVersion>latest</LangVersion>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+</Project>

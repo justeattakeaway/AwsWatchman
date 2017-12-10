@@ -1,12 +1,11 @@
-﻿using CommandLine;
-using CommandLine.Text;
+using CommandLine;
 using Watchman.Engine;
 
 namespace Watchman
 {
     public class StartupParameters
     {
-        [Option("RunMode", DefaultValue = RunMode.DryRun,
+        [Option("RunMode", Default = RunMode.DryRun,
             HelpText = "RunMode is one of 'TestConfig', 'DryRun' or 'GenerateAlarms'")]
         public RunMode RunMode { get; set; }
 
@@ -25,16 +24,10 @@ namespace Watchman
         [Option("ConfigFolder", HelpText = "The location of the config files", Required = true)]
         public string ConfigFolderLocation { get; set; }
 
-        [Option("Verbose", HelpText = "Detailed output", DefaultValue = false)]
+        [Option("Verbose", HelpText = "Detailed output", Default = false)]
         public bool Verbose { get; set; }
 
         [Option("TemplateS3Path", HelpText = "Base s3 path for cloudformation template deployment")]
         public string TemplateS3Path { get; set; }
-
-        [HelpOption]
-        public string GetUsage()
-        {
-            return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
-        }
     }
 }

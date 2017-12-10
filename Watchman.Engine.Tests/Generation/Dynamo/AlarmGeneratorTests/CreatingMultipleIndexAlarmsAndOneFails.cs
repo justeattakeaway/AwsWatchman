@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Watchman.Configuration;
@@ -46,8 +46,8 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
         {
             ConfigureTables(mockery);
             var generator = mockery.AlarmGenerator;
-            Assert.Throws<AggregateException>(() =>
-                generator.GenerateAlarmsFor(Config(), RunMode.GenerateAlarms).Wait());
+            Assert.That(async () => await generator.GenerateAlarmsFor(Config(), RunMode.GenerateAlarms),
+                Throws.Exception);
         }
 
         private static void ConfigureTables(DynamoAlarmGeneratorMockery mockery)

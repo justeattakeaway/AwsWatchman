@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Watchman.Configuration;
@@ -15,9 +15,8 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
             var generator = mockery.AlarmGenerator;
             ConfigureTables(mockery);
 
-            // todo, use ThrowsAsync when nunit is updated
-            Assert.Throws<AggregateException>(
-                () => generator.GenerateAlarmsFor(Config(), RunMode.GenerateAlarms).Wait());
+            Assert.That(async () => await generator.GenerateAlarmsFor(Config(), RunMode.GenerateAlarms),
+                Throws.Exception);
 
             CloudwatchVerify.AlarmWasPutOnTable(mockery.Cloudwatch,
                 "test-a-table-ConsumedReadCapacityUnits-TestGroup",
@@ -31,10 +30,9 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
             var generator = mockery.AlarmGenerator;
             ConfigureTables(mockery);
 
-            // todo, use ThrowsAsync when nunit is updated
-            Assert.Throws<AggregateException>(
-                () => generator.GenerateAlarmsFor(Config(), RunMode.GenerateAlarms).Wait());
-
+            Assert.That(async () => await generator.GenerateAlarmsFor(Config(), RunMode.GenerateAlarms),
+                Throws.Exception);
+            
             CloudwatchVerify.AlarmWasNotPutOnTable(mockery.Cloudwatch,"my-orders");
         }
 
