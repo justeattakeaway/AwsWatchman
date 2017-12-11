@@ -5,13 +5,13 @@
 
 ### What 
 
-AWSWatchman creates and maintains cloudwatch alerts.
+AWSWatchman creates and maintains AWS CloudWatch alerts.
 
-Dynamic monitoring. This program creates and maintains cloudwatch  alerts for infrastructure in AWS. It covers DynamoDB tables and SQS queues. And maybe more soon. 
+Dynamic monitoring. This program creates and maintains CloudWatch alerts for infrastructure in AWS. It covers DynamoDB tables and SQS queues and more.  
 
 The details of who to alert and what tables to alert on must be stored in config files.
 
-**NB: be careful** This code, when used correctly, will modify your AWS account by adding Cloudwatch alerts to multiple resources. By default it will do a dry run which will tell you what alarms would be added. You must add `--RunMode GenerateAlarms` to enable writes.
+**NB: be careful** This code, when used correctly, will modify your AWS account by adding CloudWatch alerts to multiple resources. By default it will do a dry run which will tell you what alarms would be added. You must add `--RunMode GenerateAlarms` to enable writes.
 
 ## Why
 
@@ -23,7 +23,9 @@ Unmonitored infrastructure is a problem waiting to happen, so all infrastructure
 
 ## Run
 
-Run the exe specifying a config folder for config files (see [Configuration file format](ConfigurationFileFormat.md)) and optionally aws credentials.
+`Watchman` is written in c# and .Net core version 2. [You can download the `dotnet` runtime for Windows, mac or linux here](http://dot.net)
+
+Run the `Watchman` specifying a config folder for config files (see [Configuration file format](ConfigurationFileFormat.md)) and optionally aws credentials.
 
 
 e.g.
@@ -102,7 +104,7 @@ The user associated with the keys needs to be in several roles. These are all do
 
 ## Alerts on
 
-Alerts are generated at configurable thresholds on the following cloudwatch metrics:
+Alerts are generated at configurable thresholds on the following CloudWatch metrics:
 
 * DynamoDb:
   * ConsumedReadCapacityUnits 
@@ -141,4 +143,4 @@ The percentage use can be used to track which tables and indexes are approaching
 - [Configuration file examples](ConfigurationExamples.md)
 - [Supported Services](SupportedServices.md)
 
-Our production configuration files are kept seperately, in an internal repository.
+Our production configuration files are kept separately, in an internal repository.
