@@ -23,7 +23,7 @@ Unmonitored infrastructure is a problem waiting to happen, so all infrastructure
 
 ## Run
 
-`Watchman` is written in c# and .Net core version 2. [You can download the `dotnet` runtime for Windows, mac or linux here](http://dot.net)
+`Watchman` is written in C# and .NET Core version 2. [You can download the `dotnet` runtime for Windows, mac or linux here](http://dot.net)
 
 Run the `Watchman` specifying a config folder for config files (see [Configuration file format](ConfigurationFileFormat.md)) and optionally aws credentials.
 
