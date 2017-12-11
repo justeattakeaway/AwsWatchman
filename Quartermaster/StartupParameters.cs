@@ -1,5 +1,4 @@
-﻿using CommandLine;
-using CommandLine.Text;
+using CommandLine;
 
 namespace Quartermaster
 {
@@ -20,15 +19,8 @@ namespace Quartermaster
         [Option("ConfigFolder", HelpText = "The location of the config files", Required = true)]
         public string ConfigFolderLocation { get; set; }
 
-        [Option("Verbose", HelpText = "Detailed output", DefaultValue = false)]
+        [Option("Verbose", HelpText = "Detailed output", Default = false)]
         public bool Verbose { get; set; }
-
-
-        [HelpOption]
-        public string GetUsage()
-        {
-            return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
-        }
     }
 }
 

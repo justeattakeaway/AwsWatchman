@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Watchman.Configuration;
 
 namespace Watchman.Engine.Sns

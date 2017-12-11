@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -70,39 +70,39 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
         public static void AlarmWasNotPutOnTable(Mock<IAmazonCloudWatch> cloudwatch, string tableName)
         {
             cloudwatch.Verify(x =>
-                x.PutMetricAlarm(It.Is<PutMetricAlarmRequest>(request =>
+                x.PutMetricAlarmAsync(It.Is<PutMetricAlarmRequest>(request =>
                 request.Statistic.Value == "Sum"
                 && IsForTable(request, tableName)
-                && request.Namespace == "AWS/DynamoDB")), Times.Never);
+                && request.Namespace == "AWS/DynamoDB"), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         public static void AlarmWasNotPutOnTable(Mock<IAmazonCloudWatch> cloudwatch,
             string tableName, string metricName)
         {
             cloudwatch.Verify(x =>
-                x.PutMetricAlarm(It.Is<PutMetricAlarmRequest>(request =>
+                x.PutMetricAlarmAsync(It.Is<PutMetricAlarmRequest>(request =>
                 request.MetricName == metricName
                 && request.Statistic.Value == "Sum"
                 && IsForTable(request, tableName)
-                && request.Namespace == "AWS/DynamoDB")), Times.Never);
+                && request.Namespace == "AWS/DynamoDB"), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         public static void AlarmWasNotPutonIndex(Mock<IAmazonCloudWatch> cloudwatch,
             string tableName, string indexName)
         {
             cloudwatch.Verify(x =>
-                x.PutMetricAlarm(It.Is<PutMetricAlarmRequest>(request =>
+                x.PutMetricAlarmAsync(It.Is<PutMetricAlarmRequest>(request =>
                 request.Statistic.Value == "Sum"
                 && IsForTable(request, tableName)
                 && IsForIndex(request, indexName)
-                && request.Namespace == "AWS/DynamoDB")), Times.Never);
+                && request.Namespace == "AWS/DynamoDB"), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         public static void AlarmWasNotPutOnMetric(Mock<IAmazonCloudWatch> cloudwatch, string metric)
         {
             cloudwatch.Verify(x =>
-                x.PutMetricAlarm(It.Is<PutMetricAlarmRequest>(
-                    request => request.MetricName == metric)),
+                x.PutMetricAlarmAsync(It.Is<PutMetricAlarmRequest>(
+                    request => request.MetricName == metric), It.IsAny<CancellationToken>()),
                     Times.Never);
         }
 

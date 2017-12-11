@@ -30,23 +30,23 @@ e.g.
 
 With AWS credentials on the command line.
 ```
-Watchman.exe --RunMode GenerateAlarms --ConfigFolder ".\Configs"  --AwsAccessKey AKABC123 --AwsSecretKey abcd1234
+dotnet .\Watchman.dll --RunMode GenerateAlarms --ConfigFolder ".\Configs"  --AwsAccessKey AKABC123 --AwsSecretKey abcd1234
 ```
 
 With AWS credentials from a profile.
 ```
-Watchman.exe --RunMode GenerateAlarms --ConfigFolder ".\Configs"  --AwsProfile prod
+dotnet .\Watchman.dll --RunMode GenerateAlarms --ConfigFolder ".\Configs"  --AwsProfile prod
 ```
 
 With default AWS credentials.
 ```
-Watchman.exe --RunMode GenerateAlarms --ConfigFolder ".\Configs" 
+dotnet .\Watchman.dll --RunMode GenerateAlarms --ConfigFolder ".\Configs" 
 ```
 
 If you are using the new resource types and have a high number of alarms you will need to specify and s3 bucket/path that the cloudformation template can be deployed to. The AWS credentials will need permissions to put objects into that location.
 
 ```
-Watchman.exe --RunMode GenerateAlarms --ConfigFolder ".\Configs --TemplateS3Path s3://je-deployments-qa21/watchman" 
+dotnet .\Watchman.dll --RunMode GenerateAlarms --ConfigFolder ".\Configs --TemplateS3Path s3://je-deployments-qa21/watchman" 
 ```
 
 ### Commandline Parameters
@@ -74,7 +74,7 @@ Test that the configs can be read and pass validation. AWS credentials are not r
 
 e.g.
 ```
-Watchman.exe --RunMode TestConfig --ConfigFolder ".\Configs"
+dotnet .\Watchman.dll --RunMode TestConfig --ConfigFolder ".\Configs"
 ```
 
 #### Dry run
@@ -83,7 +83,7 @@ Shows what would happen - It does all the reads but none of the writes. AWS cred
 
 e.g.
 ```
-Watchman.exe --RunMode DryRun --ConfigFolder ".\Configs" --AwsAccessKey AKABC123 --AwsSecretKey abc123 --Verbose true
+dotnet .\Watchman.dll --RunMode DryRun --ConfigFolder ".\Configs" --AwsAccessKey AKABC123 --AwsSecretKey abc123 --Verbose true
 ```
 #### Full run
 
@@ -91,7 +91,7 @@ A full read and write run. AWS credentials are required for this.
 
 e.g.
 ```
-Watchman.exe --RunMode GenerateAlarms --ConfigFolder ".\Configs" --AwsAccessKey AKABC123 --AwsSecretKey abc123
+dotnet .\Watchman.dll --RunMode GenerateAlarms --ConfigFolder ".\Configs" --AwsAccessKey AKABC123 --AwsSecretKey abc123
 ```
 
 

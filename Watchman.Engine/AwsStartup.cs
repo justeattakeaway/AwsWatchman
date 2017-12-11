@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Amazon;
 using Amazon.Runtime;
@@ -53,8 +53,7 @@ namespace Watchman.Engine
             // use implicit credentials from config or profile
             FallbackCredentialsFactory.CredentialsGenerators = new List<FallbackCredentialsFactory.CredentialsGenerator>
             {
-                () => new AppConfigAWSCredentials(),
-                () => GetDefaultStoredProfile(),
+                GetDefaultStoredProfile,
                 () => new EnvironmentVariablesAWSCredentials()
             };
 
@@ -64,24 +63,17 @@ namespace Watchman.Engine
         private static AWSCredentials GetNamedStoredProfile(string profileName)
         {
             var credentialProfileStoreChain = new CredentialProfileStoreChain();
-            AWSCredentials credentials;
-            if (credentialProfileStoreChain.TryGetAWSCredentials(profileName, out credentials))
-            {
-                return credentials;
-            }
-            return null;
+            return credentialProfileStoreChain.TryGetAWSCredentials(profileName, out var credentials)
+                ? credentials
+                : null;
         }
 
         private static AWSCredentials GetDefaultStoredProfile()
         {
             var credentialProfileStoreChain = new CredentialProfileStoreChain();
-            AWSCredentials credentials;
-            if (credentialProfileStoreChain.TryGetAWSCredentials("default", out credentials))
-            {
-                return credentials;
-            }
-
-            throw new AmazonClientException("Unable to find a default profile in CredentialProfileStoreChain.");
+            return credentialProfileStoreChain.TryGetAWSCredentials("default", out var credentials)
+                ? credentials
+                : throw new AmazonClientException("Unable to find a default profile in CredentialProfileStoreChain.");
         }
 
         private static bool AwsCredsAreNotEmpty(string accessKey, string secretKey)
