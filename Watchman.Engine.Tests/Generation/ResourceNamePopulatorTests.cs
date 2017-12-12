@@ -216,5 +216,37 @@ namespace Watchman.Engine.Tests.Generation
             // assert
             Assert.That(group.Service.Resources.Count, Is.EqualTo(1));
         }
+
+        [Test]
+        public async Task PopulateResourceNames_NonExistantResourceSpecified_Ingnored()
+        {
+            // arrange
+            var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
+            resourceSourceStub
+                .Setup(x => x.GetResourceNamesAsync())
+                .ReturnsAsync(new List<string>
+                {
+                    "ItemY"
+                });
+
+            var sut = new ResourceNamePopulator<ExampleServiceModel>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+
+            var group = new ServiceAlertingGroup
+            {
+                Service = new AwsServiceAlarms
+                {
+                    Resources = new List<ResourceThresholds>
+                    {
+                        new ResourceThresholds { Name = "DoesNotExist" }
+                    }
+                }
+            };
+
+            // act
+            await sut.PopulateResourceNames(group);
+
+            // assert
+            Assert.That(group.Service.Resources.Count, Is.EqualTo(0));
+        }
     }
 }

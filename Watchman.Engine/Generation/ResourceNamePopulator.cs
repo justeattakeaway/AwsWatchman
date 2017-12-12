@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Watchman.AwsResources;
 using Watchman.Configuration.Generic;
@@ -40,6 +41,7 @@ namespace Watchman.Engine.Generation
         {
             var named = service.Resources
                 .Where(t => string.IsNullOrWhiteSpace(t.Pattern))
+                .Select(NameToPattern)
                 .ToList();
 
             var patterns = service.Resources
@@ -48,14 +50,16 @@ namespace Watchman.Engine.Generation
 
             var matchedPatterns = new List<ResourceThresholds>();
 
-            foreach (var pattern in patterns)
+            var combined = named.Concat(patterns);
+
+            foreach (var pattern in combined)
             {
                 var matches = await GetPatternMatches(pattern, alertingGroupName);
 
                 matchedPatterns.AddRange(matches);
             }
 
-            var all = Distinct(named.Union(matchedPatterns));
+            var all = Distinct(matchedPatterns);
 
             if (service.ExcludeResourcesPrefixedWith == null)
             {
@@ -65,6 +69,17 @@ namespace Watchman.Engine.Generation
             return all.Where(
                 a => !service.ExcludeResourcesPrefixedWith.Any(prefix => a.Name.StartsWith(prefix))
             ).ToList();
+        }
+
+        private static ResourceThresholds NameToPattern(ResourceThresholds named)
+        {
+            var name = Regex.Escape(named.Name);
+
+            return new ResourceThresholds()
+            {
+                Pattern = $"^{name}$",
+                Values = named.Values
+            };
         }
 
         private async Task<IList<ResourceThresholds>> GetPatternMatches(ResourceThresholds resourcePattern, string alertingGroupName)
