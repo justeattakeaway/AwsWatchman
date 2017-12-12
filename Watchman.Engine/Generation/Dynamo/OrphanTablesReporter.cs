@@ -4,7 +4,7 @@ using Watchman.Engine.Generation.Generic;
 
 namespace Watchman.Engine.Generation.Dynamo
 {
-    public class OrphanTablesReporter
+    public class OrphanTablesReporter : IOrphanTablesReporter
     {
         private readonly OrphanTablesFinder _orphanTablesFinder;
         private readonly OrphansLogger _logger;

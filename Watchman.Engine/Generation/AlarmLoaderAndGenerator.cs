@@ -15,10 +15,10 @@ namespace Watchman.Engine.Generation
     {
         private readonly IAlarmLogger _logger;
         private readonly IConfigLoader _configLoader;
-        private readonly DynamoAlarmGenerator _dynamoGenerator;
-        private readonly OrphanTablesReporter _orphanTablesReporter;
-        private readonly SqsAlarmGenerator _sqsGenerator;
-        private readonly OrphanQueuesReporter _orphanQueuesReporter;
+        private readonly IDynamoAlarmGenerator _dynamoGenerator;
+        private readonly IOrphanTablesReporter _orphanTablesReporter;
+        private readonly ISqsAlarmGenerator _sqsGenerator;
+        private readonly IOrphanQueuesReporter _orphanQueuesReporter;
 
         private readonly IAlarmCreator _creator;
 
@@ -27,10 +27,10 @@ namespace Watchman.Engine.Generation
         public AlarmLoaderAndGenerator(
             IAlarmLogger logger,
             IConfigLoader configLoader,
-            DynamoAlarmGenerator dynamoGenerator,
-            OrphanTablesReporter orphanTablesReporter,
-            SqsAlarmGenerator sqsGenerator,
-            OrphanQueuesReporter orphanQueuesReporter,
+            IDynamoAlarmGenerator dynamoGenerator,
+            IOrphanTablesReporter orphanTablesReporter,
+            ISqsAlarmGenerator sqsGenerator,
+            IOrphanQueuesReporter orphanQueuesReporter,
             IAlarmCreator creator,
             IEnumerable<IServiceAlarmTasks> otherServices)
         {

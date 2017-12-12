@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using Amazon.AutoScaling.Model;
+using Amazon.DynamoDBv2.Model;
 using Amazon.ElasticLoadBalancing.Model;
 using Amazon.Lambda.Model;
 using Amazon.RDS.Model;
@@ -7,6 +8,7 @@ using Amazon.StepFunctions.Model;
 using StructureMap;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.AutoScaling;
+using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.AwsResources.Services.Elb;
 using Watchman.AwsResources.Services.Kinesis;
 using Watchman.AwsResources.Services.Lambda;
@@ -53,6 +55,9 @@ namespace Watchman
             AddService<StateMachineListItem, StepFunctionSource, StepFunctionAlarmDataProvider, StepFunctionAlarmDataProvider>(
                 registry, WatchmanServiceConfigurationMapper.MapStepFunction
             );
+            
+            AddService<TableDescription, TableDescriptionSource, DynamoDbDataProvider, DynamoDbDataProvider>(
+                registry, WatchmanServiceConfigurationMapper.MapDynamoDb);
         }
 
         private static void AddService<TServiceModel, TSource, TDimensionProvider, TAttributeProvider>(

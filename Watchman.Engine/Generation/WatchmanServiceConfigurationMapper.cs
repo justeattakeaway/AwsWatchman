@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Watchman.Configuration;
@@ -59,6 +59,12 @@ namespace Watchman.Engine.Generation
         {
             const string id = "StepFunction";
             return Map(input, id, a => GetService(a, id), Defaults.StepFunction);
+        }
+
+        public static WatchmanServiceConfiguration MapDynamoDb(WatchmanConfiguration input)
+        {
+            const string id = "DynamoDb";
+            return Map(input, id, a => GetService(a, id), Defaults.DynamoDb);
         }
 
         private static WatchmanServiceConfiguration Map(WatchmanConfiguration input,

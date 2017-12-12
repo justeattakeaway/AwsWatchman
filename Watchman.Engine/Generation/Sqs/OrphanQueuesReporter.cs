@@ -4,7 +4,7 @@ using Watchman.Engine.Generation.Generic;
 
 namespace Watchman.Engine.Generation.Sqs
 {
-    public class OrphanQueuesReporter
+    public class OrphanQueuesReporter : IOrphanQueuesReporter
     {
         private readonly OrphanQueuesFinder _orphanQueuesFinder;
         private readonly OrphansLogger _logger;

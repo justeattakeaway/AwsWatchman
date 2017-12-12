@@ -10,7 +10,7 @@ using Watchman.Engine.Sns;
 
 namespace Watchman.Engine.Generation.Sqs
 {
-    public class SqsAlarmGenerator
+    public class SqsAlarmGenerator : ISqsAlarmGenerator
     {
         private readonly IAlarmLogger _logger;
         private readonly IResourceSource<QueueData> _queueSource;
