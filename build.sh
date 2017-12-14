@@ -46,6 +46,5 @@ dotnet build ./AwsWatchman.sln --output $artifacts --configuration $configuratio
 if [ $skipTests == 0 ]; then
     dotnet test ./Quartermaster.Tests/Quartermaster.Tests.csproj || exit 1
     dotnet test ./Watchman.AwsResources.Tests/Watchman.AwsResources.Tests.csproj || exit 1
-    dotnet test ./Watchman.Configuration.Tests/Watchman.Configuration.Tests.csproj || exit 1
     dotnet test ./Watchman.Engine.Tests/Watchman.Engine.Tests.csproj --framework || exit 1
 fi
