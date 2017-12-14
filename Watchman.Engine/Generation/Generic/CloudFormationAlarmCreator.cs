@@ -56,14 +56,14 @@ namespace Watchman.Engine.Generation.Generic
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e, "Failed to deploy stack " + stackName);
+                    _logger.Error(e, $"Error deploying stack {stackName}");
                     failedStacks++;
                 }
             }
 
             if (failedStacks > 0)
             {
-                throw new WatchmanException(failedStacks + " stacks failed");
+                throw new WatchmanException(failedStacks + " stacks failed to deploy");
             }
         }
 

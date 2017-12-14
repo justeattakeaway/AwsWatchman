@@ -44,6 +44,13 @@ namespace Watchman.Engine.Tests.Generation
                 });
         }
 
+        private void SetupCreateStackAsyncToFail()
+        {
+            _cloudFormationMock
+                .Setup(x => x.CreateStackAsync(It.IsAny<CreateStackRequest>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception("all gon rong"));
+        }
+
         private void SetStatusForStackName(string stackName, string status)
         {
             SetupStackStatusSequence(stackName, new List<string> { status });
@@ -165,6 +172,29 @@ namespace Watchman.Engine.Tests.Generation
                     It.Is<CreateStackRequest>(s => s.StackName == stackName),
                     It.IsAny<CancellationToken>()));
         }
+
+        [Test]
+        public void SaveChanges_CloudformationFails_Throws()
+        {
+            // arrange
+            var alarm = Alarm();
+
+            SetupListStacksToReturnStackNames();
+            SetupCreateStackAsyncToFail();
+
+            var deployer = MakeDeployer();
+
+            var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
+
+            sut.AddAlarm(alarm);
+
+            // act
+            var ex = Assert.ThrowsAsync<WatchmanException>(() => sut.SaveChanges(false));
+
+            Assert.That(ex.Message, Is.EqualTo("1 stacks failed to deploy"));
+        }
+
+
 
         [Test]
         public async Task SaveChanges_NoAlarms_NoStackChangesMade()
