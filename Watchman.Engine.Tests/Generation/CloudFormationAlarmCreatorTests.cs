@@ -277,7 +277,7 @@ namespace Watchman.Engine.Tests.Generation
         {
             // arrange
 
-            var alarms = Enumerable.Range(0, 100)
+            var alarms = Enumerable.Range(0, 120)
                 .Select(x => Alarm($"alarm-{x}"))
                 .ToList();
 

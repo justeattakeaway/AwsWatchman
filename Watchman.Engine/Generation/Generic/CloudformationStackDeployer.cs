@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -154,6 +154,7 @@ namespace Watchman.Engine.Generation.Generic
                 else
                 {
                     templateUrl = await CopyTemplateToS3(stackName, body);
+                    _logger.Info($"Uploaded to S3 at {templateUrl}");
                 }
             }
             else
