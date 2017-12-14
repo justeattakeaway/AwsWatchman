@@ -182,6 +182,7 @@ namespace Watchman.Engine.Generation.Generic
             else
             {
                 _logger.Info($"Stack {stackName} does not exist, creating");
+                _logger.Info($"Url {templateUrl} body {body.Length} {templateBody}");
 
                 if (isDryRun)
                 {
