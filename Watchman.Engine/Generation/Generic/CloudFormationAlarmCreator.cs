@@ -48,11 +48,11 @@ namespace Watchman.Engine.Generation.Generic
 
             foreach (var group in groupedBySuffix)
             {
-                var stackName = "Watchman-" + group.Name;
                 var alarms = group.Alarms;
+                var stackName = "Watchman-" + group.Name;
                 try
                 {
-                    await GenerateAndDeployStack(dryRun, alarms, stackName);
+                    await GenerateAndDeployStack(alarms, stackName, dryRun);
                 }
                 catch (Exception e)
                 {
@@ -67,7 +67,8 @@ namespace Watchman.Engine.Generation.Generic
             }
         }
 
-        private async Task GenerateAndDeployStack(bool dryRun, IEnumerable<Alarm> alarms, string stackName)
+        private async Task GenerateAndDeployStack(IEnumerable<Alarm> alarms,
+            string stackName, bool dryRun)
         {
             var template = new CloudWatchCloudFormationTemplate();
             template.AddAlarms(alarms);
