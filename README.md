@@ -1,5 +1,11 @@
 # AWSWatchman
 
+| | Linux  |
+|:-:|:-:|
+| **Build Status** | [![Build status](https://img.shields.io/travis/justeat/AwsWatchman/master.svg)](https://travis-ci.org/justeat/AwsWatchman)  |
+| **Build History** | [![Build history](https://buildstats.info/travisci/chart/justeat/AwsWatchman?branch=master&includeBuildsFromPullRequest=false)](https://travis-ci.org/justeat/AwsWatchman)  |
+
+
 **Because unmonitored infrastructure will bite you**
 
 
