@@ -101,7 +101,7 @@ Write-Host "Packaging solution..." -ForegroundColor Green
 
 if ($SkipTests -eq $false) {
     Write-Host "Running tests..." -ForegroundColor Green
-    unit_test.bat
+    .\unit_test.bat
 }
 
 if ($PatchVersion -eq $true) {
