@@ -3,7 +3,7 @@
 | | Linux | Windows |
 |:-:|:-:|:-:|
 | **Build Status** | [![Build status](https://img.shields.io/travis/justeat/AwsWatchman/master.svg)](https://travis-ci.org/justeat/AwsWatchman) | [![Build status](https://img.shields.io/appveyor/ci/justeattech/awswatchman/master.svg)](https://ci.appveyor.com/project/justeattech/awswatchman) |
-| **Build History** | [![Build history](https://buildstats.info/travisci/chart/justeat/AwsWatchman?branch=master&includeBuildsFromPullRequest=false)](https://travis-ci.org/justeat/AwsWatchman) |  [![Build history](https://buildstats.info/appveyor/chart/justeattech/nlog-structuredlogging-json?branch=master&includeBuildsFromPullRequest=false)](https://ci.appveyor.com/project/justeattech/awswatchman) |
+| **Build History** | [![Build history](https://buildstats.info/travisci/chart/justeat/AwsWatchman?branch=master&includeBuildsFromPullRequest=false)](https://travis-ci.org/justeat/AwsWatchman) |  [![Build history](https://buildstats.info/appveyor/chart/justeattech/awswatchman?branch=master&includeBuildsFromPullRequest=false)](https://ci.appveyor.com/project/justeattech/awswatchman) |
 
 **Because unmonitored infrastructure will bite you**
 
