@@ -1,5 +1,4 @@
 param(
-    [Parameter(Mandatory = $false)][switch] $RestorePackages,
     [Parameter(Mandatory = $false)][string] $Configuration = "Release",
     [Parameter(Mandatory = $false)][string] $VersionSuffix = "",
     [Parameter(Mandatory = $false)][string] $OutputPath = "",
@@ -67,36 +66,21 @@ function DotNetRestore {
     }
 }
 
-function DotNetPack {
+
+function DotNetBuild {
     param([string]$Project)
-
-    if ($VersionSuffix) {
-        & $dotnet pack $Project --output $OutputPath --configuration $Configuration --version-suffix "$VersionSuffix" --include-symbols --include-source
-    }
-    else {
-        & $dotnet pack $Project --output $OutputPath --configuration $Configuration --include-symbols --include-source
-    }
+    & $dotnet build $Project --verbosity minimal
     if ($LASTEXITCODE -ne 0) {
-        throw "dotnet pack failed with exit code $LASTEXITCODE"
+        throw "dotnet build failed with exit code $LASTEXITCODE"
     }
 }
 
-function DotNetTest {
-    param([string]$Project)
 
-    & $dotnet test $Project --output $OutputPath --framework net462
+Write-Host "Restoring NuGet packages for solution..." -ForegroundColor Green
+DotNetRestore $solutionFile
 
-    if ($LASTEXITCODE -ne 0) {
-        throw "dotnet test failed with exit code $LASTEXITCODE"
-    }
-}
-
-if ($RestorePackages -eq $true) {
-    Write-Host "Restoring NuGet packages for solution..." -ForegroundColor Green
-    DotNetRestore $solutionFile
-}
-
-Write-Host "Packaging solution..." -ForegroundColor Green
+Write-Host "Building solution..." -ForegroundColor Green
+DotNetBuild $solutionFile
 
 
 if ($SkipTests -eq $false) {

@@ -10,7 +10,7 @@ branches:
     - master
 
 build_script:
-  - ps: .\Build.ps1 -RestorePackages
+  - ps: .\Build.ps1
 
 
 skip_tags: false
