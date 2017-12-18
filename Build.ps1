@@ -1,8 +1,5 @@
 param(
     [Parameter(Mandatory = $false)][string] $Configuration = "Release",
-    [Parameter(Mandatory = $false)][string] $VersionSuffix = "",
-    [Parameter(Mandatory = $false)][string] $OutputPath = "",
-    [Parameter(Mandatory = $false)][switch] $PatchVersion,
     [Parameter(Mandatory = $false)][switch] $SkipTests
 )
 
@@ -12,20 +9,6 @@ $solutionPath = Split-Path $MyInvocation.MyCommand.Definition
 $solutionFile = Join-Path $solutionPath "AwsWatchman.sln"
 
 $dotnetVersion = "2.1.3"
-
-if ($OutputPath -eq "") {
-    $OutputPath = Join-Path "$(Convert-Path "$PSScriptRoot")" "artifacts"
-}
-
-if ($env:CI -ne $null) {
-
-    $PatchVersion = $true
-
-    if (($VersionSuffix -eq "" -and $env:APPVEYOR_REPO_TAG -eq "false" -and $env:APPVEYOR_BUILD_NUMBER -ne "") -eq $true) {
-        $ThisVersion = $env:APPVEYOR_BUILD_NUMBER -as [int]
-        $VersionSuffix = "beta" + $ThisVersion.ToString("0000")
-    }
-}
 
 $installDotNetSdk = $false;
 
@@ -60,7 +43,7 @@ else {
 
 function DotNetRestore {
     param([string]$Project)
-    & $dotnet restore $Project --verbosity minimal
+    & $dotnet restore $Project --verbosity quiet
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet restore failed with exit code $LASTEXITCODE"
     }
@@ -69,7 +52,7 @@ function DotNetRestore {
 
 function DotNetBuild {
     param([string]$Project)
-    & $dotnet build $Project --verbosity minimal
+    & $dotnet build $Project --verbosity quiet
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet build failed with exit code $LASTEXITCODE"
     }
@@ -86,8 +69,4 @@ DotNetBuild $solutionFile
 if ($SkipTests -eq $false) {
     Write-Host "Running tests..." -ForegroundColor Green
     .\unit_test.bat
-}
-
-if ($PatchVersion -eq $true) {
-    Set-Content ".\AssemblyVersion.cs" $assemblyVersion -Encoding utf8
 }
