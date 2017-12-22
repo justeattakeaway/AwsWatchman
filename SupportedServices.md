@@ -65,6 +65,7 @@ The following services are supported
 - `Kinesis`
 - `Elb`
 - `StepFunction`
+- `DynamoDb` (in-progress migration from the existing non-cloudformation mechanism, limited functionality - indexes are not yet monitored.)
 - `VpcSubnet` (this is a custom service using JUST EAT custom metrics)
 
 ## Alarm names and default thresholds
@@ -97,6 +98,12 @@ For each resource each of the default alarms will be applied. See [alarm definit
 ### StepFunction
 
 - `ExecutionsFailedHigh`: 1 (count)
+
+### DynamoDb
+
+- `ConsumedReadCapacityUnitsHigh`: 80 (%)
+- `ConsumedWriteCapacityUnitsHigh`: 80 (%)
+- `ThrottledRequestsHigh`: 2 
 
 ### VpcSubnets
 
