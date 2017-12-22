@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Amazon.CloudWatch;
 using Watchman.Configuration;
@@ -377,7 +377,7 @@ namespace Watchman.Engine.Alarms
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.PercentageOf,
-                    Value = 80,
+                    Value = AwsConstants.DefaultCapacityThreshold * 100,
                     SourceAttribute = "ProvisionedReadThroughput"
                 },
                 DimensionNames = new[] {"TableName"},
@@ -394,7 +394,7 @@ namespace Watchman.Engine.Alarms
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.PercentageOf,
-                    Value = 80,
+                    Value = AwsConstants.DefaultCapacityThreshold * 100,
                     SourceAttribute = "ProvisionedWriteThroughput"
                 },
                 DimensionNames = new[] {"TableName"},
@@ -411,7 +411,7 @@ namespace Watchman.Engine.Alarms
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
-                    Value = 5
+                    Value = AwsConstants.ThrottlingThreshold
                 },
                 DimensionNames = new[] {"TableName"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
