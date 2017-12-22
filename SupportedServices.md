@@ -64,7 +64,7 @@ The following services are supported
 - `Lambda`
 - `Kinesis`
 - `Elb`
-- `Step Function`
+- `StepFunction`
 - `VpcSubnet` (this is a custom service using JUST EAT custom metrics)
 
 ## Alarm names and default thresholds
@@ -94,7 +94,7 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `ReadProvisionedThroughputExceededHigh`: 1 (count)
 - `WriteProvisionedThroughputExceededHigh`: 1 (count)
 
-### Step Function
+### StepFunction
 
 - `ExecutionsFailedHigh`: 1 (count)
 
