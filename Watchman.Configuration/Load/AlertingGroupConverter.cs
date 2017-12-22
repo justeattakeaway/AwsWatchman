@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -45,13 +45,11 @@ namespace Watchman.Configuration.Load
 
         private static void ReadServiceDefinitions(JObject jsonObject, AlertingGroup result, JsonSerializer serializer)
         {
-            var readDynamo = false;
             var readSqs = false;
 
             if (jsonObject["DynamoDb"] != null)
             {
                 result.DynamoDb = jsonObject["DynamoDb"].ToObject<DynamoDb>(serializer);
-                readDynamo = true;
             }
 
             if (jsonObject["Sqs"] != null)
@@ -65,16 +63,8 @@ namespace Watchman.Configuration.Load
             {
                 foreach (var prop in allServices)
                 {
-                    if (prop.Key == "DynamoDb")
-                    {
-                        if (readDynamo)
-                        {
-                            throw new JsonReaderException("DynamoDb block can only defined once");
-                        }
-
-                        result.DynamoDb = prop.Value.ToObject<DynamoDb>(serializer);
-                    }
-                    else if (prop.Key == "Sqs")
+                 
+                    if (prop.Key == "Sqs")
                     {
                         if (readSqs)
                         {
