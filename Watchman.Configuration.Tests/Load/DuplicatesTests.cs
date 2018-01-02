@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Moq;
 using NUnit.Framework;
 using Watchman.Configuration.Load;
@@ -20,17 +20,6 @@ namespace Watchman.Configuration.Tests.Load
 
                 loader.LoadConfig();
             };
-        }
-
-        [Test]
-        public void LoadConfig_DuplicateDynamoBlocks_Throws()
-        {
-            var loader = GetLoader("data\\duplicates\\Dynamo");
-
-            var caught = Assert.Throws<ConfigException>(() => loader());
-
-            Assert.That(caught.InnerException, Is.Not.Null);
-            Assert.That(caught.InnerException.Message, Is.EqualTo("DynamoDb block can only defined once"));
         }
 
         [Test]
