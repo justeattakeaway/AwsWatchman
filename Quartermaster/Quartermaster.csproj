@@ -4,8 +4,8 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.5" />
-    <PackageReference Include="AWSSDK.Core" Version="3.3.21.1" />
+    <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.5.1" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.21.6" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.5" />
     <PackageReference Include="CommandLineParser" Version="2.1.1-beta" />
     <PackageReference Include="CsvHelper" Version="6.0.0" />
