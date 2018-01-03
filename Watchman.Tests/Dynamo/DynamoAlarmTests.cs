@@ -13,6 +13,7 @@ using Watchman.Configuration.Generic;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
 using Watchman.Engine.Generation.Generic;
+using Watchman.Engine.Logging;
 using Watchman.Tests.Fakes;
 
 namespace Watchman.Tests.Dynamo
@@ -69,7 +70,7 @@ namespace Watchman.Tests.Dynamo
 
             var source = new TableDescriptionSource(dynamoClient);
 
-            var creator = new CloudFormationAlarmCreator(stack.Object);
+            var creator = new CloudFormationAlarmCreator(stack.Object, new ConsoleAlarmLogger(true));
 
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", "DynamoDb", new List<ResourceThresholds>()
             {
@@ -125,7 +126,7 @@ namespace Watchman.Tests.Dynamo
             });
 
             var source = new TableDescriptionSource(dynamoClient);
-            var creator = new CloudFormationAlarmCreator(stack);
+            var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
 
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", "DynamoDb", new List<ResourceThresholds>()
             {
