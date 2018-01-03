@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 using Amazon.DynamoDBv2.Model;
 using StructureMap;
@@ -14,6 +14,7 @@ using Watchman.Engine.Logging;
 using Watchman.Engine.Sns;
 using Amazon.CloudFormation;
 using Amazon.S3;
+using Watchman.Engine.Generation.Dynamo;
 using Watchman.Engine.Generation.Generic;
 
 namespace Watchman
@@ -60,6 +61,12 @@ namespace Watchman
             registry.For<IConfigLoader>().Use<ConfigLoader>();
 
             registry.For<IQueueAlarmCreator>().Use<QueueAlarmCreator>();
+
+            registry.For<IDynamoAlarmGenerator>().Use<DynamoAlarmGenerator>();
+            registry.For<IOrphanTablesReporter>().Use<OrphanTablesReporter>();
+            registry.For<IOrphanQueuesReporter>().Use<OrphanQueuesReporter>();
+            registry.For<ISqsAlarmGenerator>().Use<SqsAlarmGenerator>();
+
 
             var s3Location = GetS3Location(parameters);
 

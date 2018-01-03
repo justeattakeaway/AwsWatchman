@@ -9,7 +9,7 @@ using Watchman.Engine.Sns;
 
 namespace Watchman.Engine.Generation.Dynamo
 {
-    public class DynamoAlarmGenerator
+    public class DynamoAlarmGenerator : IDynamoAlarmGenerator
     {
         private readonly IAlarmLogger _logger;
         private readonly TableNamePopulator _populator;

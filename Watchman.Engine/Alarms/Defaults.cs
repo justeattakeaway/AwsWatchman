@@ -345,6 +345,7 @@ namespace Watchman.Engine.Alarms
             }
         };
 
+
         public static IList<AlarmDefinition> StepFunction = new List<AlarmDefinition>
         {
             new AlarmDefinition
@@ -362,6 +363,60 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.StepFunction
+            }
+        };
+
+        public static IList<AlarmDefinition> DynamoDb = new List<AlarmDefinition>
+        {
+            new AlarmDefinition
+            {
+                Name = "ConsumedReadCapacityUnitsHigh",
+                Metric = "ConsumedReadCapacityUnits",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.PercentageOf,
+                    Value = AwsConstants.DefaultCapacityThreshold * 100,
+                    SourceAttribute = "ProvisionedReadThroughput"
+                },
+                DimensionNames = new[] {"TableName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            },
+            new AlarmDefinition
+            {
+                Name = "ConsumedWriteCapacityUnitsHigh",
+                Metric = "ConsumedWriteCapacityUnits",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.PercentageOf,
+                    Value = AwsConstants.DefaultCapacityThreshold * 100,
+                    SourceAttribute = "ProvisionedWriteThroughput"
+                },
+                DimensionNames = new[] {"TableName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            },
+            new AlarmDefinition
+            {
+                Name = "ThrottledRequestsHigh",
+                Metric = "ThrottledRequests",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.ThrottlingThreshold
+                },
+                DimensionNames = new[] {"TableName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
             }
         };
     }
