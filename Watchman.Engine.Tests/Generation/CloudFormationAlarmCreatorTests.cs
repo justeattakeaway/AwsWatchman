@@ -44,6 +44,13 @@ namespace Watchman.Engine.Tests.Generation
                 });
         }
 
+        private void SetupCreateStackAsyncToFail()
+        {
+            _cloudFormationMock
+                .Setup(x => x.CreateStackAsync(It.IsAny<CreateStackRequest>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception("all gon rong"));
+        }
+
         private void SetStatusForStackName(string stackName, string status)
         {
             SetupStackStatusSequence(stackName, new List<string> { status });
@@ -120,15 +127,11 @@ namespace Watchman.Engine.Tests.Generation
             SetupListStacksToReturnStackNames(stackName);
             SetStatusForStackName(stackName, "UPDATE_COMPLETE");
 
-            var sut = new CloudFormationAlarmCreator(
-                new CloudformationStackDeployer(
-                    new ConsoleAlarmLogger(false), 
-                    _cloudFormationMock.Object, 
-                    _s3Mock.Object, 
-                    null,
-                    TimeSpan.FromMilliseconds(5), 
-                    TimeSpan.FromMilliseconds(5))
-                );
+            var deployer = MakeDeployer(null,
+                TimeSpan.FromMilliseconds(5),
+                TimeSpan.FromMilliseconds(5));
+
+            var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
             sut.AddAlarm(alarm);
 
@@ -152,15 +155,11 @@ namespace Watchman.Engine.Tests.Generation
             SetupListStacksToReturnStackNames();
             SetStatusForStackName(stackName, "CREATE_COMPLETE");
 
-            var sut = new CloudFormationAlarmCreator(
-                new CloudformationStackDeployer(
-                    new ConsoleAlarmLogger(false), 
-                    _cloudFormationMock.Object, 
-                    _s3Mock.Object, 
-                    null,
-                    TimeSpan.FromMilliseconds(5), 
-                    TimeSpan.FromMilliseconds(5)
-                    ));
+            var deployer = MakeDeployer(null,
+                TimeSpan.FromMilliseconds(5),
+                TimeSpan.FromMilliseconds(5));
+
+            var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
             sut.AddAlarm(alarm);
 
@@ -175,16 +174,34 @@ namespace Watchman.Engine.Tests.Generation
         }
 
         [Test]
+        public void SaveChanges_CloudformationFails_Throws()
+        {
+            // arrange
+            var alarm = Alarm();
+
+            SetupListStacksToReturnStackNames();
+            SetupCreateStackAsyncToFail();
+
+            var deployer = MakeDeployer();
+
+            var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
+
+            sut.AddAlarm(alarm);
+
+            // act
+            var ex = Assert.ThrowsAsync<WatchmanException>(() => sut.SaveChanges(false));
+
+            Assert.That(ex.Message, Is.EqualTo("1 stacks failed to deploy"));
+        }
+
+
+
+        [Test]
         public async Task SaveChanges_NoAlarms_NoStackChangesMade()
         {
             // arrange
-            var sut = new CloudFormationAlarmCreator(
-                new CloudformationStackDeployer(
-                    new ConsoleAlarmLogger(false), 
-                    _cloudFormationMock.Object,
-                    _s3Mock.Object, 
-                    null
-                    ));
+            var deployer = MakeDeployer();
+            var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
             // act
             await sut.SaveChanges(false);
@@ -209,12 +226,8 @@ namespace Watchman.Engine.Tests.Generation
 
             SetupListStacksToReturnStackNames();
 
-            var sut = new CloudFormationAlarmCreator(
-                new CloudformationStackDeployer(
-                    new ConsoleAlarmLogger(false), 
-                    _cloudFormationMock.Object, 
-                    _s3Mock.Object, 
-                    null));
+            var deployer = MakeDeployer();
+            var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
             sut.AddAlarm(alarm);
 
@@ -240,14 +253,11 @@ namespace Watchman.Engine.Tests.Generation
             SetupStackStatusSequence(stackName, new List<string> { "CREATE_IN_PROGRESS", "CREATE_IN_PROGRESS", "CREATE_COMPLETE" });
 
             var statusCheckDelay = TimeSpan.FromMilliseconds(200);
-            var sut = new CloudFormationAlarmCreator(
-                new CloudformationStackDeployer(
-                    new ConsoleAlarmLogger(false), 
-                    _cloudFormationMock.Object, 
-                    _s3Mock.Object, 
-                    null,
-                    statusCheckDelay, 
-                    TimeSpan.FromMinutes(5)));
+
+            var deployer = MakeDeployer(null,
+                statusCheckDelay, TimeSpan.FromMinutes(5));
+            var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
+
             sut.AddAlarm(alarm);
 
             var start = DateTime.UtcNow;
@@ -288,15 +298,9 @@ namespace Watchman.Engine.Tests.Generation
 
             var s3Location = new S3Location("bucket", "s3/path");
 
-            var sut = new CloudFormationAlarmCreator(
-                new CloudformationStackDeployer(
-                    new ConsoleAlarmLogger(false), 
-                    _cloudFormationMock.Object, 
-                    _s3Mock.Object, 
-                    s3Location,
-                    TimeSpan.Zero,
-                    TimeSpan.FromMinutes(1)
-                    ));
+            var deployer = MakeDeployer(s3Location, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+
+            var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
             foreach (var alarm in alarms)
             {
@@ -334,14 +338,9 @@ namespace Watchman.Engine.Tests.Generation
 
             var s3Location = new S3Location("bucket", "s3/path");
 
-            var sut = new CloudFormationAlarmCreator(
-                new CloudformationStackDeployer(
-                    new ConsoleAlarmLogger(false), 
-                    _cloudFormationMock.Object, 
-                    _s3Mock.Object, 
-                    s3Location,
-                    TimeSpan.Zero,
-                    TimeSpan.FromMinutes(1)));
+            var deployer = MakeDeployer(s3Location, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+
+            var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
             sut.AddAlarm(alarm);
 
@@ -360,6 +359,26 @@ namespace Watchman.Engine.Tests.Generation
                         && s.TemplateURL == null
                         && !string.IsNullOrWhiteSpace(s.TemplateBody)),
                    It.IsAny<CancellationToken>()), Times.Exactly(1));
+        }
+
+        private CloudformationStackDeployer MakeDeployer(
+            S3Location s3Location, TimeSpan wait, TimeSpan waitTimeout)
+        {
+            return new CloudformationStackDeployer(
+                new ConsoleAlarmLogger(false),
+                _cloudFormationMock.Object,
+                _s3Mock.Object,
+                s3Location,
+                wait, waitTimeout);
+        }
+
+        private CloudformationStackDeployer MakeDeployer()
+        {
+            return new CloudformationStackDeployer(
+                new ConsoleAlarmLogger(false),
+                _cloudFormationMock.Object,
+                _s3Mock.Object,
+                null);
         }
     }
 }

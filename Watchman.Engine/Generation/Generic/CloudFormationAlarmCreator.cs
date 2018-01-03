@@ -1,11 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Amazon.CloudFormation;
-using Amazon.CloudFormation.Model;
-using Amazon.S3;
-using Amazon.S3.Model;
 using Watchman.Configuration;
 using Watchman.Engine.Logging;
 
@@ -14,11 +10,15 @@ namespace Watchman.Engine.Generation.Generic
     public class CloudFormationAlarmCreator : IAlarmCreator
     {
         private readonly ICloudformationStackDeployer _stack;
+        private readonly IAlarmLogger _logger;
         private readonly List<Alarm> _alarms = new List<Alarm>();
 
-        public CloudFormationAlarmCreator(ICloudformationStackDeployer stack)
+        public CloudFormationAlarmCreator(
+            ICloudformationStackDeployer stack,
+            IAlarmLogger logger)
         {
             _stack = stack;
+            _logger = logger;
         }
 
         public void AddAlarm(Alarm alarm)
@@ -44,15 +44,37 @@ namespace Watchman.Engine.Generation.Generic
                         Alarms = x
                     });
 
+            var failedStacks = 0;
+
             foreach (var group in groupedBySuffix)
             {
+                var alarms = group.Alarms;
                 var stackName = "Watchman-" + group.Name;
-                var template = new CloudWatchCloudFormationTemplate();
-                template.AddAlarms(group.Alarms);
-                var json = template.WriteJson();
-
-                await _stack.DeployStack(stackName, json, dryRun);
+                try
+                {
+                    await GenerateAndDeployStack(alarms, stackName, dryRun);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, $"Error deploying stack {stackName}");
+                    failedStacks++;
+                }
             }
+
+            if (failedStacks > 0)
+            {
+                throw new WatchmanException(failedStacks + " stacks failed to deploy");
+            }
+        }
+
+        private async Task GenerateAndDeployStack(IEnumerable<Alarm> alarms,
+            string stackName, bool dryRun)
+        {
+            var template = new CloudWatchCloudFormationTemplate();
+            template.AddAlarms(alarms);
+            var json = template.WriteJson();
+
+            await _stack.DeployStack(stackName, json, dryRun);
         }
     }
 }
