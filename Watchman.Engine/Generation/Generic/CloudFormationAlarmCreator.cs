@@ -11,7 +11,7 @@ namespace Watchman.Engine.Generation.Generic
     {
         private readonly ICloudformationStackDeployer _stack;
         private readonly IAlarmLogger _logger;
-        private readonly List<Alarm> _alarms = new List<Alarm>();
+        private readonly List<Tuple<ServiceAlertingGroup, IList<Alarm>>> _alarms = new List<Tuple<ServiceAlertingGroup, IList<Alarm>>>();
 
         public CloudFormationAlarmCreator(
             ICloudformationStackDeployer stack,
@@ -20,39 +20,42 @@ namespace Watchman.Engine.Generation.Generic
             _stack = stack;
             _logger = logger;
         }
-
-        public void AddAlarm(Alarm alarm)
+        
+        public void AddAlarms(ServiceAlertingGroup group, IList<Alarm> alarms)
         {
-            if (alarm.AlarmDefinition.Threshold.ThresholdType != ThresholdType.Absolute)
+
+            foreach (var alarm in alarms)
             {
-                throw new Exception("Threshold type must be absolute for creation");
+
+                if (alarm.AlarmDefinition.Threshold.ThresholdType != ThresholdType.Absolute)
+                {
+                    throw new Exception("Threshold type must be absolute for creation");
+                }
             }
 
-            _alarms.Add(alarm);
+            _alarms.Add(Tuple.Create(group, alarms));
         }
 
         public async Task SaveChanges(bool dryRun)
         {
-            var groupedBySuffix = _alarms
-                .GroupBy(x => x.AlertingGroup.Name,
-                    x => x,
-                    (g, x) => new
-                    {
-                        // this is because a lot of the group suffixes are lower(group name)
-                        // and it reduces the impact of moving stack naming from suffix to name
-                        Name = g.ToLowerInvariant(),
-                        Alarms = x
-                    });
-
             var failedStacks = 0;
 
-            foreach (var group in groupedBySuffix)
+            foreach (var group in _alarms)
             {
-                var alarms = group.Alarms;
-                var stackName = "Watchman-" + group.Name;
+                var alarms = group.Item2;
+                var alertingGroup = group.Item1;
+
+                var suffix = alertingGroup.Name.ToLowerInvariant();
+
+                var stackName = "Watchman-" + suffix;
                 try
                 {
-                    await GenerateAndDeployStack(alarms, stackName, dryRun);
+                    await GenerateAndDeployStack(
+                        alarms,
+                        alertingGroup.Targets,
+                        alertingGroup.Name,
+                        stackName,
+                        dryRun);
                 }
                 catch (Exception e)
                 {
@@ -67,10 +70,19 @@ namespace Watchman.Engine.Generation.Generic
             }
         }
 
-        private async Task GenerateAndDeployStack(IEnumerable<Alarm> alarms,
+        private async Task GenerateAndDeployStack(IEnumerable<Alarm> alarms, IEnumerable<AlertTarget> targets,
+            string groupName,
             string stackName, bool dryRun)
         {
-            var template = new CloudWatchCloudFormationTemplate();
+            alarms = alarms.ToList();
+            if (!alarms.Any())
+            {
+                // todo, we should actually continue here but will change in later PR as want to keep behaviour same during refactor
+                _logger.Info($"{stackName} would have no alarms, skipping");
+                return;
+            }
+
+            var template = new CloudWatchCloudFormationTemplate(groupName, targets.ToList());
             template.AddAlarms(alarms);
             var json = template.WriteJson();
 

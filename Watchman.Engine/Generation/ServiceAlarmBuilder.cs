@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -87,28 +87,36 @@ namespace Watchman.Engine.Generation
             return new AlarmValues(matchedThresholdValue, matchedEvalPeriods);
         }
 
-        public async Task<IList<Alarm>>  GenerateAlarmsFor(ServiceAlertingGroup alertingGroup, IList<AlarmDefinition> defaults)
+        public async Task<IList<Alarm>>  GenerateAlarmsFor(
+            AwsServiceAlarms service,
+            IList<AlarmDefinition> defaults,
+            string alarmSuffix)
         {
-            var service = alertingGroup.Service;
-
             if (service?.Resources == null || service.Resources.Count == 0)
             {
                 return new List<Alarm>();
             }
 
             var allAlarms = await Task.WhenAll(service.Resources
-                .Select(r => ExpandAlarmsToResources(alertingGroup, defaults, r, service)));
+                .Select(r => ExpandAlarmsToResources(
+                    defaults,
+                    r,
+                    service,
+                    alarmSuffix)));
 
             return allAlarms.SelectMany(x => x).ToList();
         }
 
-        private async Task<IList<Alarm>> ExpandAlarmsToResources(ServiceAlertingGroup alertingGroup,
+        private async Task<IList<Alarm>> ExpandAlarmsToResources(
             IList<AlarmDefinition> defaults,
-            ResourceThresholds resource, AwsServiceAlarms service)
+            ResourceThresholds resource,
+            AwsServiceAlarms service,
+            string groupSuffix)
         {
             // apply thresholds from resource or alerting group
             var expanded = ExpandDefaultAlarmsForResource(defaults, resource.Values, service.Values);
-            return await GetAlarms(expanded, resource, alertingGroup);
+            
+            return await GetAlarms(expanded, resource, groupSuffix);
         }
 
         private string GetAlarmName(AwsResource<T> resource, string alertName, string groupSuffix)
@@ -118,7 +126,7 @@ namespace Watchman.Engine.Generation
 
         private async Task<IList<Alarm>> GetAlarms(IList<AlarmDefinition> alarms,
             ResourceThresholds awsResource,
-            ServiceAlertingGroup group)
+            string groupSuffix)
         {
             var result = new List<Alarm>();
 
@@ -137,11 +145,10 @@ namespace Watchman.Engine.Generation
 
                 var model = new Alarm
                 {
-                    AlarmName = GetAlarmName(entity, alarm.Name, group.AlarmNameSuffix),
+                    AlarmName = GetAlarmName(entity, alarm.Name, groupSuffix),
                     Resource = entity,
-                    AlarmDefinition = alarm,
-                    AlertingGroup = group,
-                    Dimensions = dimensions
+                    Dimensions = dimensions,
+                    AlarmDefinition = alarm
                 };
                 result.Add(model);
             }

@@ -9,12 +9,25 @@ namespace Watchman.Engine.Generation.Generic
 {
     public class CloudWatchCloudFormationTemplate
     {
+        private readonly string _groupName;
+        private readonly IList<AlertTarget> _targets;
         private static readonly Regex NonAlpha = new Regex("[^a-zA-Z0-9]+");
 
         private readonly List<Alarm> _alarms = new List<Alarm>();
 
         private string _emailTopicResourceName;
         private string _urlTopicResourceName;
+
+        public CloudWatchCloudFormationTemplate(string groupName, IList<AlertTarget> targets)
+        {
+            if (targets == null)
+            {
+                throw new ArgumentNullException(nameof(targets));
+            }
+
+            _groupName = groupName;
+            _targets = targets;
+        }
 
         public void AddAlarms(IEnumerable<Alarm> alarms)
         {
@@ -29,7 +42,7 @@ namespace Watchman.Engine.Generation.Generic
 
             var resources = new JObject();
 
-            AddSnsTopics(_alarms, resources);
+            AddSnsTopics(_groupName, _alarms, resources);
 
             foreach (var alarm in _alarms)
             {
@@ -60,26 +73,9 @@ namespace Watchman.Engine.Generation.Generic
             return sns;
         }
 
-        private void AddSnsTopics(IList<Alarm> alarms, JObject resources)
+        private void AddSnsTopics(string groupName, IList<Alarm> alarms, JObject resources)
         {
-            // this is making an assumption that all alarms within an alerting group have the same targets. this is true and makes sense, but doesn't quite
-            // seem right because in actual fact each alarm is supplying its own copy (the same) of the service-specific alerting group (which each defines the targets),
-            // so the representation of the alarm that arrives here probably needs some future attention
-
-            var targets = alarms
-                .SelectMany(a => a.AlertingGroup.Targets ?? new List<AlertTarget>())
-                .Distinct()
-                .ToList();
-
-            // again, we want the group which is the same for every alarm, but the way we get it is annoying
-
-            var groupName = alarms
-                .Select(a => a.AlertingGroup.Name)
-                .Distinct()
-                .Single();
-
-
-            var emails = targets.OfType<AlertEmail>().ToList();
+            var emails = _targets.OfType<AlertEmail>().ToList();
 
             if (emails.Any())
             {
@@ -96,7 +92,7 @@ namespace Watchman.Engine.Generation.Generic
                 resources[_emailTopicResourceName] = sns;
             }
 
-            var urls = targets.OfType<AlertUrl>().ToList();
+            var urls = _targets.OfType<AlertUrl>().ToList();
             if (urls.Any())
             {
                 var sns = CreateSnsTopic($"AwsWatchman_Url_{groupName}",
