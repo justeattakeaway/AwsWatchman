@@ -87,6 +87,19 @@ namespace Watchman.Engine.Tests.Generation
         {
             return $"Watchman-{group.Name.ToLowerInvariant()}";
         }
+
+        private ServiceAlertingGroup Group()
+        {
+            return new ServiceAlertingGroup
+            {
+                Name = "group-name",
+                AlarmNameSuffix = "group-suffix",
+                Targets = new List<AlertTarget>()
+                {
+                    new AlertEmail() { Email = "test@test.com" }
+                }
+            };
+        }
         private static Alarm Alarm(string name = "Test alarm")
         {
             return new Alarm
@@ -99,11 +112,6 @@ namespace Watchman.Engine.Tests.Generation
                     DimensionNames = new List<string>(),
                     Statistic = Statistic.Average,
                     Period = TimeSpan.FromMinutes(3)
-                },
-                AlertingGroup = new ServiceAlertingGroup
-                {
-                    Name = "group-name",
-                    AlarmNameSuffix = "group-suffix"
                 },
                 Resource = new Resource { Name = $"resource-for-{name}"},
                 Dimensions = new List<Dimension>()
@@ -122,7 +130,8 @@ namespace Watchman.Engine.Tests.Generation
         {
             // arrange
             var alarm = Alarm();
-            var stackName = ExpectedStackName(alarm.AlertingGroup);
+            var group = Group();
+            var stackName = ExpectedStackName(group);
 
             SetupListStacksToReturnStackNames(stackName);
             SetStatusForStackName(stackName, "UPDATE_COMPLETE");
@@ -133,7 +142,7 @@ namespace Watchman.Engine.Tests.Generation
 
             var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
-            sut.AddAlarm(alarm);
+            sut.AddAlarms(group, new[] { alarm });
 
             // act
             await sut.SaveChanges(false);
@@ -150,7 +159,8 @@ namespace Watchman.Engine.Tests.Generation
         {
             // arrange
             var alarm = Alarm();
-            var stackName = ExpectedStackName(alarm.AlertingGroup);
+            var group = Group();
+            var stackName = ExpectedStackName(group);
 
             SetupListStacksToReturnStackNames();
             SetStatusForStackName(stackName, "CREATE_COMPLETE");
@@ -161,7 +171,7 @@ namespace Watchman.Engine.Tests.Generation
 
             var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
-            sut.AddAlarm(alarm);
+            sut.AddAlarms(group, new[] { alarm });
 
             // act
             await sut.SaveChanges(false);
@@ -186,7 +196,7 @@ namespace Watchman.Engine.Tests.Generation
 
             var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
-            sut.AddAlarm(alarm);
+            sut.AddAlarms(Group(), new[] { alarm });
 
             // act
             var ex = Assert.ThrowsAsync<WatchmanException>(() => sut.SaveChanges(false));
@@ -229,7 +239,7 @@ namespace Watchman.Engine.Tests.Generation
             var deployer = MakeDeployer();
             var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
-            sut.AddAlarm(alarm);
+            sut.AddAlarms(Group(), new[] { alarm });
 
             // act
             await sut.SaveChanges(true);
@@ -246,7 +256,8 @@ namespace Watchman.Engine.Tests.Generation
         {
             // arrange
             var alarm = Alarm();
-            var stackName = ExpectedStackName(alarm.AlertingGroup);
+            var group = Group();
+            var stackName = ExpectedStackName(group);
 
             SetupListStacksToReturnStackNames();
 
@@ -258,7 +269,7 @@ namespace Watchman.Engine.Tests.Generation
                 statusCheckDelay, TimeSpan.FromMinutes(5));
             var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
-            sut.AddAlarm(alarm);
+            sut.AddAlarms(Group(), new[] { alarm });
 
             var start = DateTime.UtcNow;
 
@@ -291,7 +302,8 @@ namespace Watchman.Engine.Tests.Generation
                 .Select(x => Alarm($"alarm-{x}"))
                 .ToList();
 
-            var stackName = ExpectedStackName(alarms.First().AlertingGroup);
+            var group = Group();
+            var stackName = ExpectedStackName(group);
 
             SetupListStacksToReturnStackNames();
             SetupStackStatusSequence(stackName, new List<string> { "CREATE_COMPLETE" });
@@ -302,12 +314,8 @@ namespace Watchman.Engine.Tests.Generation
 
             var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
-            foreach (var alarm in alarms)
-            {
-                sut.AddAlarm(alarm);
-            }
-
             // act
+            sut.AddAlarms(group, alarms);
             await sut.SaveChanges(false);
 
             // assert
@@ -331,7 +339,8 @@ namespace Watchman.Engine.Tests.Generation
         {
             // arrange
             var alarm = Alarm();
-            var stackName = ExpectedStackName(alarm.AlertingGroup);
+            var group = Group();
+            var stackName = ExpectedStackName(group);
 
             SetupListStacksToReturnStackNames();
             SetupStackStatusSequence(stackName, new List<string> { "CREATE_COMPLETE" });
@@ -342,9 +351,8 @@ namespace Watchman.Engine.Tests.Generation
 
             var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
 
-            sut.AddAlarm(alarm);
-
             // act
+            sut.AddAlarms(group, new[] { alarm });
             await sut.SaveChanges(false);
 
             // assert
