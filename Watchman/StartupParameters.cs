@@ -30,7 +30,7 @@ namespace Watchman
         [Option("TemplateS3Path", HelpText = "Base s3 path for cloudformation template deployment")]
         public string TemplateS3Path { get; set; }
 
-        [Option("WriteCloudformationTemplatesToDirectory", HelpText = "Output cloudformation templates to folder instead of deploying")]
-        public string WriteCloudformationTemplatesToDirectory { get; set; }
+        [Option("WriteCloudFormationTemplatesToDirectory", HelpText = "Output cloudformation templates to folder instead of deploying")]
+        public string WriteCloudFormationTemplatesToDirectory { get; set; }
     }
 }

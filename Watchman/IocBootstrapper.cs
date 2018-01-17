@@ -67,13 +67,13 @@ namespace Watchman
             registry.For<IOrphanQueuesReporter>().Use<OrphanQueuesReporter>();
             registry.For<ISqsAlarmGenerator>().Use<SqsAlarmGenerator>();
 
-            if (!string.IsNullOrWhiteSpace(parameters.WriteCloudformationTemplatesToDirectory))
+            if (!string.IsNullOrWhiteSpace(parameters.WriteCloudFormationTemplatesToDirectory))
             {
                 registry
                     .For<ICloudformationStackDeployer>()
                     .Use(
                         ctx => new DummyCloudFormationStackDeployer(
-                            parameters.WriteCloudformationTemplatesToDirectory,
+                            parameters.WriteCloudFormationTemplatesToDirectory,
                             ctx.GetInstance<IAlarmLogger>()));
             }
             else
