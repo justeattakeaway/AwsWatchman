@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.CloudWatch;
@@ -24,46 +26,6 @@ namespace Watchman.Tests
 {
     public class MultipleServiceAlarmTests
     {
-        private IAmazonDynamoDB CreateDynamoClientForTables(IEnumerable<TableDescription> tables)
-        {
-            tables = tables.ToList();
-
-            var fakeDynamo = new Mock<IAmazonDynamoDB>();
-
-            fakeDynamo
-                .Setup(x => x.ListTablesAsync((string)null, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ListTablesResponse()
-                {
-                    TableNames = tables.Select(t => t.TableName).ToList()
-                });
-
-            foreach (var table in tables)
-            {
-                fakeDynamo
-                    .Setup(x => x.DescribeTableAsync(table.TableName, It.IsAny<CancellationToken>()))
-                    .ReturnsAsync(new DescribeTableResponse()
-                    {
-                        Table = table
-                    });
-
-            }
-
-            return fakeDynamo.Object;
-        }
-
-        private IAmazonLambda CreateLambdaClientForFunctions(IEnumerable<FunctionConfiguration> functions)
-        {
-            var fakeLambda = new Mock<IAmazonLambda>();
-            fakeLambda
-                .Setup(l => l.ListFunctionsAsync(It.IsAny<ListFunctionsRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ListFunctionsResponse()
-                {
-                    Functions = functions.ToList()
-                });
-
-            return fakeLambda.Object;
-        }
-
         [Test]
         public async Task AlarmCreatedWithCorrectProperties()
         {
@@ -71,7 +33,7 @@ namespace Watchman.Tests
 
             var fakeStackDeployer = new FakeStackDeployer();
 
-            var dynamoClient = CreateDynamoClientForTables(new[]
+            var dynamoClient = FakeAwsClients.CreateDynamoClientForTables(new[]
             {
                 new TableDescription()
                 {
@@ -84,7 +46,7 @@ namespace Watchman.Tests
                 }
             });
 
-            var lambdaClient = CreateLambdaClientForFunctions(new[]
+            var lambdaClient = FakeAwsClients.CreateLambdaClientForFunctions(new[]
             {
                 new FunctionConfiguration()
                 {
