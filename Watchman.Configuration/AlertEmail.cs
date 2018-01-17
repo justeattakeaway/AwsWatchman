@@ -1,8 +1,8 @@
-﻿namespace Watchman.Configuration
+namespace Watchman.Configuration
 {
     public class AlertEmail : AlertTarget
     {
-        public string Email { get; set; }
+        public string Email { get; }
 
         protected bool Equals(AlertEmail other)
         {
@@ -31,6 +31,11 @@
         public override int GetHashCode()
         {
             return Email?.GetHashCode() ?? 0;
+        }
+
+        public AlertEmail(string email)
+        {
+            Email = email;
         }
     }
 }

@@ -1,0 +1,15 @@
+{
+  "Name": "TestGroupName",
+  "AlarmNameSuffix": "Suffix2",
+  "Targets": [
+    { "Email": "DynamoGroup2@example.com" }
+  ],
+  "Services": {
+    "AutoScaling": {
+      "Resources": [
+        "foo2",
+        { "Pattern": "bar2" }
+      ]
+    }
+  }
+}

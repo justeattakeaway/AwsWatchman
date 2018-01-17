@@ -1,4 +1,6 @@
-﻿namespace Watchman.Configuration
+using Newtonsoft.Json;
+
+namespace Watchman.Configuration
 {
     public class AlertUrl : AlertTarget
     {
@@ -29,6 +31,12 @@
             return Url?.GetHashCode() ?? 0;
         }
 
-        public string Url { get; set; }
+        public string Url { get; }
+
+        [JsonConstructor]
+        public AlertUrl(string url)
+        {
+            Url = url;
+        }
     }
 }

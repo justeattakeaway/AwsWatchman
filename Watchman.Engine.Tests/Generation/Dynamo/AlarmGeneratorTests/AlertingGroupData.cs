@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Watchman.Configuration;
 
 namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
@@ -22,7 +22,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
                 IsCatchAll = true,
                 Targets = new List<AlertTarget>
                 {
-                    new AlertEmail {Email = "test.user@test-org.com" }
+                    new AlertEmail("test.user@test-org.com")
                 },
                 DynamoDb = dynamo
             };
