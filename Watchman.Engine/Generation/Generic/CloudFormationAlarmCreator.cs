@@ -41,16 +41,37 @@ namespace Watchman.Engine.Generation.Generic
             }
         }
 
+        private void CheckForDuplicateStackNames()
+        {
+            var hasDuplicates = _alarms
+                .Keys
+                .Select(StackName)
+                .GroupBy(_ => _)
+                .Any(g => g.Count() > 1);
+
+            if (hasDuplicates)
+            {
+                throw new Exception("Cannot deploy: multiple stacks would be created with the same name");
+            }
+        }
+
+        private string StackName(AlertingGroupParameters group)
+        {
+            return "Watchman-" + group.Name.ToLowerInvariant();
+        }
+
         public async Task SaveChanges(bool dryRun)
         {
             var failedStacks = 0;
+
+            CheckForDuplicateStackNames();
 
             foreach (var group in _alarms)
             {
                 var alarms = group.Value;
                 var alertingGroup = group.Key;
-                
-                var stackName = "Watchman-" + alertingGroup.Name.ToLowerInvariant();
+
+                var stackName = StackName(alertingGroup);
 
                 try
                 {

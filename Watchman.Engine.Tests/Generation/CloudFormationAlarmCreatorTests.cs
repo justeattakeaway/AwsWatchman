@@ -88,10 +88,10 @@ namespace Watchman.Engine.Tests.Generation
             return $"Watchman-{group.Name.ToLowerInvariant()}";
         }
 
-        private AlertingGroupParameters Group()
+        private AlertingGroupParameters Group(string name = "group-name", string suffix = "group-suffix")
         {
-            return new AlertingGroupParameters("group-name",
-                "group-suffix",
+            return new AlertingGroupParameters(name,
+                suffix,
                 new List<AlertTarget>()
                 {
                     new AlertEmail("test@test.com")
@@ -367,6 +367,47 @@ namespace Watchman.Engine.Tests.Generation
                         && s.TemplateURL == null
                         && !string.IsNullOrWhiteSpace(s.TemplateBody)),
                    It.IsAny<CancellationToken>()), Times.Exactly(1));
+        }
+
+        [Test]
+        public async Task SaveChanges_ConfigResultsInMultipleStacks_Aborts()
+        {
+            //arrange
+            var alarm1 = Alarm("alarm 1");
+            var alarm2 = Alarm("alarm 2");
+
+            // two groups with the same name but different suffix, so that the equality/hash compares will fail
+            // but would result in two cloudformation stacks with the same name
+            var group1 = Group("name", "suffix1");
+            var group2 = Group("name", "suffix2");
+
+            SetupListStacksToReturnStackNames();
+            SetupStackStatusSequence(ExpectedStackName(group1), new List<string> { "CREATE_COMPLETE", "CREATE_COMPLETE" });
+
+            var s3Location = new S3Location("bucket", "s3/path");
+
+            var deployer = MakeDeployer(s3Location, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+
+            var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
+            
+            //act
+
+            Exception caught = null;
+            try
+            {
+                sut.AddAlarms(group1, new[] { alarm1 });
+                sut.AddAlarms(group2, new[] { alarm2 });
+                await sut.SaveChanges(false); ;
+            }
+            catch (Exception ex)
+            {
+                caught = ex;
+            }
+
+            //assert
+
+            Assert.That(caught, Is.Not.Null);
+            Assert.That(caught.Message, Contains.Substring("Cannot deploy: multiple stacks would be created with the same name"));
         }
 
         private CloudformationStackDeployer MakeDeployer(
