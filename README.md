@@ -69,6 +69,7 @@ The allowed commandline parameters are:
 * `AwsRegion` The AWS region to use. Optional, default is `eu-west-1`.
 * `ConfigFolder`: path to config files. Required.
 * `Verbose`: One of `true` or `false`. Give more detailed output. Optional, default is `false`.
+* `WriteCloudformationTemplatesToDirectory`. If set, alarms deployed via CloudFormation will be written to this folder instead of deployed. Note that this does not affect SQS and DynamoDb alarms which currently use a different deployment method.
 
 AWS connection credentials will be found in the following order:
 * If `AwsAccessKey` and `AwsSecretKey` are specified, these will be used.

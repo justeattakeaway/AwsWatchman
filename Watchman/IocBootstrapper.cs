@@ -67,17 +67,28 @@ namespace Watchman
             registry.For<IOrphanQueuesReporter>().Use<OrphanQueuesReporter>();
             registry.For<ISqsAlarmGenerator>().Use<SqsAlarmGenerator>();
 
+            if (!string.IsNullOrWhiteSpace(parameters.WriteCloudFormationTemplatesToDirectory))
+            {
+                registry
+                    .For<ICloudformationStackDeployer>()
+                    .Use(
+                        ctx => new DummyCloudFormationStackDeployer(
+                            parameters.WriteCloudFormationTemplatesToDirectory,
+                            ctx.GetInstance<IAlarmLogger>()));
+            }
+            else
+            {
+                var s3Location = GetS3Location(parameters);
 
-            var s3Location = GetS3Location(parameters);
-
-            registry
-                .For<ICloudformationStackDeployer>()
-                .Use(ctx => new CloudformationStackDeployer(
-                    ctx.GetInstance<IAlarmLogger>(), 
-                    ctx.GetInstance<IAmazonCloudFormation>(),
-                    ctx.GetInstance<IAmazonS3>(), 
-                    s3Location
-                ));
+                registry
+                    .For<ICloudformationStackDeployer>()
+                    .Use(ctx => new CloudformationStackDeployer(
+                        ctx.GetInstance<IAlarmLogger>(), 
+                        ctx.GetInstance<IAmazonCloudFormation>(),
+                        ctx.GetInstance<IAmazonS3>(), 
+                        s3Location
+                    ));
+            }
 
             registry.For<IAlarmCreator>().Use<CloudFormationAlarmCreator>();
         }
