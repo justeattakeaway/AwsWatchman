@@ -16,9 +16,9 @@
     <PackageReference Include="AWSSDK.S3" Version="3.3.16.2" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.0.24" />
     <PackageReference Include="AWSSDK.StepFunctions" Version="3.3.2" />
-    <PackageReference Include="CommandLineParser" Version="2.1.1-beta" />
+    <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="StructureMap" Version="4.5.3" />
+    <PackageReference Include="StructureMap" Version="4.6.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
