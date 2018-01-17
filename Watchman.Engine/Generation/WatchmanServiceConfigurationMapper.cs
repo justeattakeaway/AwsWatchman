@@ -88,7 +88,6 @@ namespace Watchman.Engine.Generation
                     input.Name,
                     input.AlarmNameSuffix,
                     input.Targets,
-                    input.ReportTargets,
                     input.IsCatchAll
                 ),
                 Service = service

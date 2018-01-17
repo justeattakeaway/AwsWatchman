@@ -96,7 +96,6 @@ namespace Watchman.Engine.Tests.Generation
                 {
                     new AlertEmail("test@test.com")
                 },
-                new List<ReportTarget>(),
                 false
             );
         }

@@ -13,21 +13,17 @@ namespace Watchman.Engine
 
         public IReadOnlyCollection<AlertTarget> Targets { get; }
 
-        public IReadOnlyCollection<ReportTarget> ReportTargets { get; }
-
         public bool IsCatchAll { get; }
 
         public AlertingGroupParameters(
             string name,
             string alarmNameSuffix,
             List<AlertTarget> targets = null,
-            List<ReportTarget> reportTargets = null,
             bool isCatchAll = false)
         {
             Name = name;
             AlarmNameSuffix = alarmNameSuffix;
             Targets = (targets ?? new List<AlertTarget>()).AsReadOnly();
-            ReportTargets = (reportTargets ?? new List<ReportTarget>()).AsReadOnly();
             IsCatchAll = isCatchAll;
         }
         
@@ -43,11 +39,6 @@ namespace Watchman.Engine
                 foreach (var target in Targets)
                 {
                     hash = hash * 23 + target.GetHashCode();
-                }
-
-                foreach (var reportTarget in ReportTargets)
-                {
-                    hash = hash * 23 + reportTarget.GetHashCode();
                 }
 
                 hash = hash * 23 + IsCatchAll.GetHashCode();
@@ -69,7 +60,6 @@ namespace Watchman.Engine
             return compare.IsCatchAll == IsCatchAll
                 && compare.Name == Name
                 && compare.AlarmNameSuffix == AlarmNameSuffix
-                && compare.ReportTargets.SequenceEqual(ReportTargets)
                 && compare.Targets.SequenceEqual(Targets);
         }
     }
