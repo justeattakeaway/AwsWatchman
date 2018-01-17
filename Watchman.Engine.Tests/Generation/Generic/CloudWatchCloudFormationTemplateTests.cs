@@ -55,8 +55,8 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var alarms = new List<Alarm>();
             alarms.Add(CreateExampleAlarm(new List<AlertTarget>()
             {
-                new AlertEmail() {Email = "test@test.com"},
-                new AlertUrl() {Url = "url@url.com"}
+                new AlertEmail("test@test.com"),
+                new AlertUrl("url@url.com")
             }, resource));
 
             // act
@@ -105,8 +105,8 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var alarms = new List<Alarm>();
             alarms.Add(CreateExampleAlarm(new List<AlertTarget>()
             {
-                new AlertEmail() {Email = "test1@test.com"},
-                new AlertEmail() {Email = "test2@test.com"},
+                new AlertEmail("test1@test.com"),
+                new AlertEmail("test2@test.com")
             }, resource));
 
             // act
@@ -139,8 +139,8 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var alarms = new List<Alarm>();
             alarms.Add(CreateExampleAlarm(new List<AlertTarget>()
             {
-                new AlertUrl() {Url = "http://banana"},
-                new AlertUrl() {Url = "https://banana2"},
+                new AlertUrl("http://banana"),
+                new AlertUrl("https://banana2"),
             }, resource));
 
             // act
@@ -179,8 +179,8 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var alarms = new List<Alarm>();
             alarms.Add(CreateExampleAlarm(new List<AlertTarget>()
             {
-                new AlertUrl() {Url = "http://banana"},
-                new AlertEmail() {Email = "test@test.com"},
+                new AlertUrl("http://banana"),
+                new AlertEmail("test@test.com"),
             }, resource));
 
             // act

@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 
 namespace Watchman.Configuration.Tests
 {
@@ -8,7 +8,7 @@ namespace Watchman.Configuration.Tests
         [Test]
         public void EqualsIsFalseForNullEmail()
         {
-            var instance = new AlertEmail { Email = "a@b.com" };
+            var instance = new AlertEmail("a@b.com");
 
             Assert.That(instance, Is.Not.EqualTo(null));
         }
@@ -16,7 +16,7 @@ namespace Watchman.Configuration.Tests
         [Test]
         public void EqualsIsFalseForNullUrl()
         {
-            var instance = new AlertUrl { Url = "http://a.com/b" };
+            var instance = new AlertUrl("http://a.com/b");
 
             Assert.That(instance, Is.Not.EqualTo(null));
         }
@@ -24,8 +24,8 @@ namespace Watchman.Configuration.Tests
         [Test]
         public void SelfEqualIsTrue()
         {
-            var instance1 = new AlertUrl { Url = "http://a.com/b" };
-            var instance2 = new AlertEmail { Email = "abc" };
+            var instance1 = new AlertUrl("http://a.com/b");
+            var instance2 = new AlertEmail("abc");
 
             Assert.That(instance1, Is.EqualTo(instance1));
             Assert.That(instance2, Is.EqualTo(instance2));
@@ -37,8 +37,8 @@ namespace Watchman.Configuration.Tests
         [Test]
         public void DifferentEmailAndUrlAreNotEqual()
         {
-            var instance1 = new AlertUrl { Url = "a@b.c" };
-            var instance2 = new AlertEmail { Email = "http://abc" };
+            var instance1 = new AlertUrl("a@b.c");
+            var instance2 = new AlertEmail("http://abc");
 
             AssertInequalities(instance1, instance2);
         }
@@ -46,8 +46,8 @@ namespace Watchman.Configuration.Tests
         [Test]
         public void SameEmailAndUrlAreNotEqual()
         {
-            var instance1 = new AlertUrl { Url = "a.b.c" };
-            var instance2 = new AlertEmail { Email = "a.b.c" };
+            var instance1 = new AlertUrl("a.b.c");
+            var instance2 = new AlertEmail("a.b.c");
 
             // Can't call AssertInequalities because the hashcodes are same for same strings
             // This is ot a problem in practice
@@ -60,8 +60,8 @@ namespace Watchman.Configuration.Tests
         [Test]
         public void EqualsIsTrueForEquivalentEmails()
         {
-            var instance1 = new AlertEmail { Email = "a@b.com" };
-            var instance2 = new AlertEmail { Email = "a@b.com" };
+            var instance1 = new AlertEmail("a@b.com");
+            var instance2 = new AlertEmail("a@b.com");
 
             AssertEqualities(instance1, instance2);
         }
@@ -69,8 +69,8 @@ namespace Watchman.Configuration.Tests
         [Test]
         public void EqualsIsFalseForDifferentEmails()
         {
-            var instance1 = new AlertEmail { Email = "a@b.com" };
-            var instance2 = new AlertEmail { Email = "beee@ceee.org" };
+            var instance1 = new AlertEmail("a@b.com");
+            var instance2 = new AlertEmail("beee@ceee.org");
 
             AssertInequalities(instance1, instance2);
         }
@@ -78,8 +78,8 @@ namespace Watchman.Configuration.Tests
         [Test]
         public void EqualsIsTrueForEquivalentUrls()
         {
-            var instance1 = new AlertUrl { Url = "http://a.com/b" };
-            var instance2 = new AlertUrl { Url = "http://a.com/b" };
+            var instance1 = new AlertUrl("http://a.com/b");
+            var instance2 = new AlertUrl("http://a.com/b");
 
             AssertEqualities(instance1, instance2);
         }
@@ -87,8 +87,8 @@ namespace Watchman.Configuration.Tests
         [Test]
         public void EqualsIsFalseForDifferentUrls()
         {
-            var instance1 = new AlertUrl { Url = "http://a.com/b" };
-            var instance2 = new AlertUrl { Url = "https://beee.org/ceee" };
+            var instance1 = new AlertUrl("http://a.com/b");
+            var instance2 = new AlertUrl("https://beee.org/ceee");
 
             AssertInequalities(instance1, instance2);
         }

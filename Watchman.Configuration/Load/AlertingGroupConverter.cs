@@ -97,11 +97,11 @@ namespace Watchman.Configuration.Load
             {
                 if (item["Email"] != null)
                 {
-                    result.Targets.Add(new AlertEmail { Email = item["Email"].ToString() });
+                    result.Targets.Add(new AlertEmail(item["Email"].ToString()));
                 }
                 else if (item["Url"] != null)
                 {
-                    result.Targets.Add(new AlertUrl { Url = item["Url"].ToString() });
+                    result.Targets.Add(new AlertUrl(item["Url"].ToString()));
                 }
                 else
                 {

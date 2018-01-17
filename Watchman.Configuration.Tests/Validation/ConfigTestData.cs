@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Watchman.Configuration.Tests.Validation
 {
@@ -16,7 +16,7 @@ namespace Watchman.Configuration.Tests.Validation
                         AlarmNameSuffix = "someSuffix",
                         Targets = new List<AlertTarget>
                         {
-                            new AlertEmail { Email = "foo@bar.com" }
+                            new AlertEmail("foo@bar.com")
                         }
                     }
                 }

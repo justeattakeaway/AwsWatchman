@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Moq;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
@@ -25,10 +25,7 @@ namespace Watchman.Tests
                         AlarmNameSuffix = suffix,
                         Targets = new List<AlertTarget>()
                         {
-                            new AlertEmail()
-                            {
-                                Email = "test@example.com"
-                            }
+                            new AlertEmail("test@example.com")
                         },
                         Services = new Dictionary<string, AwsServiceAlarms>()
                         {

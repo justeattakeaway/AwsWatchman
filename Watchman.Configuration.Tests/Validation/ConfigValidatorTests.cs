@@ -184,7 +184,7 @@ namespace Watchman.Configuration.Tests.Validation
             // arrange
             _config.AlertingGroups.First().Targets = new List<AlertTarget>
             {
-                new AlertEmail { Email = "homer.j.simpson@springfieldnuclear.com" }
+                new AlertEmail("homer.j.simpson@springfieldnuclear.com")
             };
 
             // act
@@ -199,7 +199,7 @@ namespace Watchman.Configuration.Tests.Validation
             // arrange
             _config.AlertingGroups.First().Targets = new List<AlertTarget>
             {
-                new AlertEmail { Email = string.Empty }
+                new AlertEmail(string.Empty)
             };
 
             // act
@@ -214,7 +214,7 @@ namespace Watchman.Configuration.Tests.Validation
             // arrange
             _config.AlertingGroups.First().Targets = new List<AlertTarget>
             {
-                new AlertUrl { Url = "http://api.example.com/foo/bar" }
+                new AlertUrl("http://api.example.com/foo/bar")
             };
 
             // act
@@ -229,7 +229,7 @@ namespace Watchman.Configuration.Tests.Validation
             // arrange
             _config.AlertingGroups.First().Targets = new List<AlertTarget>
             {
-                new AlertUrl { Url = string.Empty }
+                new AlertUrl(string.Empty)
             };
 
             // act
@@ -244,7 +244,7 @@ namespace Watchman.Configuration.Tests.Validation
             // arrange
             _config.AlertingGroups.First().Targets = new List<AlertTarget>
             {
-                new AlertUrl { Url = "fish" }
+                new AlertUrl("fish")
             };
 
             // act

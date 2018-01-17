@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.SimpleNotificationService;
@@ -134,7 +134,7 @@ namespace Watchman.Engine.Tests.Sns
                 Name = "TestGroup",
                 Targets = new List<AlertTarget>
                 {
-                    new AlertUrl { Url = "http://foo.bar.com" }
+                    new AlertUrl("http://foo.bar.com")
                 }
             };
         }
@@ -146,7 +146,7 @@ namespace Watchman.Engine.Tests.Sns
                 Name = "TestGroup",
                 Targets = new List<AlertTarget>
                 {
-                    new AlertEmail { Email = "foo@bar.com" }
+                    new AlertEmail("foo@bar.com")
                 }
             };
         }
@@ -158,8 +158,8 @@ namespace Watchman.Engine.Tests.Sns
                 Name = "TestGroup",
                 Targets = new List<AlertTarget>
                 {
-                    new AlertUrl { Url = "http://foo.bar.com" },
-                    new AlertEmail { Email = "foo@bar.com" }
+                    new AlertUrl("http://foo.bar.com"),
+                    new AlertEmail("foo@bar.com")
                 }
             };
         }
