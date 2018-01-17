@@ -22,6 +22,18 @@ namespace Watchman.Configuration.Validation
             {
                 Validate(alertingGroup);
             }
+
+            var duplicateNames = config.AlertingGroups
+                .Select(g => g.Name)
+                .GroupBy(_ => _)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+            if (duplicateNames.Any())
+            {
+                throw new ConfigException($"The following alerting group names exist in multiple config files: {string.Join(", ", duplicateNames)}");
+            }
         }
 
         private static void Validate(AlertingGroup alertingGroup)
