@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
@@ -54,6 +54,7 @@ namespace Watchman.Engine.Tests.Generation
 
             var group = new ServiceAlertingGroup
             {
+                GroupParameters = new AlertingGroupParameters("name", "suffix"),
                 Service = new AwsServiceAlarms
                 {
                     Resources = new List<ResourceThresholds>
@@ -120,6 +121,7 @@ namespace Watchman.Engine.Tests.Generation
 
             var group = new ServiceAlertingGroup
             {
+                GroupParameters = new AlertingGroupParameters("name", "suffix"),
                 Service = new AwsServiceAlarms
                 {
                     Resources = new List<ResourceThresholds>
@@ -163,6 +165,7 @@ namespace Watchman.Engine.Tests.Generation
 
             var group = new ServiceAlertingGroup
             {
+                GroupParameters = new AlertingGroupParameters("name", "suffix"),
                 Service = new AwsServiceAlarms
                 {
                     Resources = new List<ResourceThresholds>
@@ -199,6 +202,7 @@ namespace Watchman.Engine.Tests.Generation
 
             var group = new ServiceAlertingGroup
             {
+                GroupParameters = new AlertingGroupParameters("name", "suffix"),
                 Service = new AwsServiceAlarms
                 {
                     Resources = new List<ResourceThresholds>
@@ -233,6 +237,7 @@ namespace Watchman.Engine.Tests.Generation
 
             var group = new ServiceAlertingGroup
             {
+                GroupParameters = new AlertingGroupParameters("name", "suffix"),
                 Service = new AwsServiceAlarms
                 {
                     Resources = new List<ResourceThresholds>

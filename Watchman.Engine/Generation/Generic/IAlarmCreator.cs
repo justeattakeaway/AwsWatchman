@@ -5,7 +5,7 @@ namespace Watchman.Engine.Generation.Generic
 {
     public interface IAlarmCreator
     {
-        void AddAlarms(ServiceAlertingGroup group, IList<Alarm> alarms);
+        void AddAlarms(AlertingGroupParameters group, IList<Alarm> alarms);
         Task SaveChanges(bool dryRun);
     }
 }

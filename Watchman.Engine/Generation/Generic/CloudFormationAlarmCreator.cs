@@ -11,7 +11,7 @@ namespace Watchman.Engine.Generation.Generic
     {
         private readonly ICloudformationStackDeployer _stack;
         private readonly IAlarmLogger _logger;
-        private readonly List<Tuple<ServiceAlertingGroup, IList<Alarm>>> _alarms = new List<Tuple<ServiceAlertingGroup, IList<Alarm>>>();
+        private readonly Dictionary<AlertingGroupParameters, List<Alarm>> _alarms = new Dictionary<AlertingGroupParameters, List<Alarm>>();
 
         public CloudFormationAlarmCreator(
             ICloudformationStackDeployer stack,
@@ -21,19 +21,24 @@ namespace Watchman.Engine.Generation.Generic
             _logger = logger;
         }
         
-        public void AddAlarms(ServiceAlertingGroup group, IList<Alarm> alarms)
+        public void AddAlarms(AlertingGroupParameters group, IList<Alarm> alarms)
         {
-
             foreach (var alarm in alarms)
             {
-
                 if (alarm.AlarmDefinition.Threshold.ThresholdType != ThresholdType.Absolute)
                 {
                     throw new Exception("Threshold type must be absolute for creation");
                 }
             }
 
-            _alarms.Add(Tuple.Create(group, alarms));
+            if (_alarms.ContainsKey(group))
+            {
+                _alarms[group].AddRange(alarms);
+            }
+            else
+            {
+                _alarms.Add(group, alarms.ToList());
+            }
         }
 
         public async Task SaveChanges(bool dryRun)
@@ -42,12 +47,11 @@ namespace Watchman.Engine.Generation.Generic
 
             foreach (var group in _alarms)
             {
-                var alarms = group.Item2;
-                var alertingGroup = group.Item1;
+                var alarms = group.Value;
+                var alertingGroup = group.Key;
+                
+                var stackName = "Watchman-" + alertingGroup.Name.ToLowerInvariant();
 
-                var suffix = alertingGroup.Name.ToLowerInvariant();
-
-                var stackName = "Watchman-" + suffix;
                 try
                 {
                     await GenerateAndDeployStack(

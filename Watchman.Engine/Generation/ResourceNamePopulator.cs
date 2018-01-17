@@ -22,7 +22,7 @@ namespace Watchman.Engine.Generation
 
         public async Task PopulateResourceNames(ServiceAlertingGroup alertingGroup)
         {
-            alertingGroup.Service.Resources = await ExpandTablePatterns(alertingGroup.Service, alertingGroup.Name);
+            alertingGroup.Service.Resources = await ExpandTablePatterns(alertingGroup.Service, alertingGroup.GroupParameters.Name);
         }
 
         private static IEnumerable<ResourceThresholds> Distinct(IEnumerable<ResourceThresholds> input)

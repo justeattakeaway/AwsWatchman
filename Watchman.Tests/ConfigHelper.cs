@@ -15,6 +15,25 @@ namespace Watchman.Tests
             List<ResourceThresholds> resources
         )
         {
+            return CreateBasicConfiguration(name,
+                suffix,
+                new Dictionary<string, AwsServiceAlarms>()
+                {
+                    {
+                        serviceName, new AwsServiceAlarms()
+                        {
+                            Resources = resources
+                        }
+                    }
+                });
+        }
+
+        public static WatchmanConfiguration CreateBasicConfiguration(
+            string name,
+            string suffix,
+            Dictionary<string, AwsServiceAlarms> services
+        )
+        {
             return new WatchmanConfiguration()
             {
                 AlertingGroups = new List<AlertingGroup>()
@@ -27,15 +46,7 @@ namespace Watchman.Tests
                         {
                             new AlertEmail("test@example.com")
                         },
-                        Services = new Dictionary<string, AwsServiceAlarms>()
-                        {
-                            {
-                                serviceName, new AwsServiceAlarms()
-                                {
-                                    Resources = resources
-                                }
-                            }
-                        }
+                        Services = services
                     }
                 }
             };

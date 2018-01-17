@@ -83,22 +83,22 @@ namespace Watchman.Engine.Tests.Generation
                     return Task.FromResult(result);
                 });
         }
-        private string ExpectedStackName(ServiceAlertingGroup group)
+        private string ExpectedStackName(AlertingGroupParameters group)
         {
             return $"Watchman-{group.Name.ToLowerInvariant()}";
         }
 
-        private ServiceAlertingGroup Group()
+        private AlertingGroupParameters Group()
         {
-            return new ServiceAlertingGroup
-            {
-                Name = "group-name",
-                AlarmNameSuffix = "group-suffix",
-                Targets = new List<AlertTarget>()
+            return new AlertingGroupParameters("group-name",
+                "group-suffix",
+                new List<AlertTarget>()
                 {
-                    new AlertEmail() { Email = "test@test.com" }
-                }
-            };
+                    new AlertEmail("test@test.com")
+                },
+                new List<ReportTarget>(),
+                false
+            );
         }
         private static Alarm Alarm(string name = "Test alarm")
         {

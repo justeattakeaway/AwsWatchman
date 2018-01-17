@@ -29,9 +29,9 @@ namespace Watchman.Engine.Generation
                 var alarmsForGroup = await _serviceAlarmBuilder.GenerateAlarmsFor(
                     alertingGroup.Service,
                     config.Defaults,
-                    alertingGroup.AlarmNameSuffix);
+                    alertingGroup.GroupParameters.AlarmNameSuffix);
 
-                _creator.AddAlarms(alertingGroup, alarmsForGroup);
+                _creator.AddAlarms(alertingGroup.GroupParameters, alarmsForGroup);
             }
         }
     }
