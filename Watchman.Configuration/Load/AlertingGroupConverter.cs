@@ -30,7 +30,7 @@ namespace Watchman.Configuration.Load
                 IsCatchAll = (bool)(jsonObject["IsCatchAll"] ?? false),
                 Name = (string)jsonObject["Name"],
                 ReportTargets = jsonObject["ReportTargets"]?.ToObject<List<ReportTarget>>(serializer) ?? new List<ReportTarget>(),
-                Services = new Dictionary<string, AwsServiceAlarms>()
+                Services = jsonObject["Services"]?.ToObject<AlertingGroupServices>(serializer)
             };
 
             if (jsonObject["Targets"] != null)
@@ -45,8 +45,6 @@ namespace Watchman.Configuration.Load
 
         private static void ReadServiceDefinitions(JObject jsonObject, AlertingGroup result, JsonSerializer serializer)
         {
-            var readSqs = false;
-
             if (jsonObject["DynamoDb"] != null)
             {
                 result.DynamoDb = jsonObject["DynamoDb"].ToObject<DynamoDb>(serializer);
@@ -55,29 +53,6 @@ namespace Watchman.Configuration.Load
             if (jsonObject["Sqs"] != null)
             {
                 result.Sqs = jsonObject["Sqs"].ToObject<Sqs>(serializer);
-                readSqs = true;
-            }
-
-            var allServices = (JObject) jsonObject["Services"];
-            if (allServices != null)
-            {
-                foreach (var prop in allServices)
-                {
-                 
-                    if (prop.Key == "Sqs")
-                    {
-                        if (readSqs)
-                        {
-                            throw new JsonReaderException("Sqs block can only defined once");
-                        }
-
-                        result.Sqs = prop.Value.ToObject<Sqs>(serializer);
-                    }
-                    else
-                    {
-                        result.Services[prop.Key] = prop.Value.ToObject<AwsServiceAlarms>(serializer);
-                    }
-                }
             }
         }
 

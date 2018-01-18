@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Watchman.Configuration.Generic;
 
 namespace Watchman.Configuration
 {
@@ -18,7 +17,7 @@ namespace Watchman.Configuration
         public DynamoDb DynamoDb { get; set; }
         public Sqs Sqs { get; set; }
 
-        public Dictionary<string, AwsServiceAlarms> Services { get; set; }
+        public AlertingGroupServices Services { get; set; }
 
         public AlertingGroup()
         {

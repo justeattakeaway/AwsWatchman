@@ -74,14 +74,18 @@ namespace Watchman.Configuration.Validation
                 SqsValidation.Validate(alertingGroup.Name, alertingGroup.Sqs);
             }
 
-            if (HasAny(alertingGroup.Services))
+            if (alertingGroup.Services != null)
             {
-                foreach (var service in alertingGroup.Services)
+                foreach (var service in alertingGroup.Services.AllServicesByName)
                 {
-                    if (HasAny(service.Value?.Resources))
+                    if (service.Value != null)
                     {
-                        hasAtLeastOneResource = true;
                         AwsServiceValidation.Validate(alertingGroup.Name, service.Key, service.Value);
+
+                        if (HasAny(service.Value.Resources))
+                        {
+                            hasAtLeastOneResource = true;
+                        }
                     }
                 }
             }

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.DynamoDb;
+using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
@@ -44,13 +45,20 @@ namespace Watchman.Tests.Dynamo
 
             var creator = new CloudFormationAlarmCreator(stack.Object, new ConsoleAlarmLogger(true));
 
-            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", "DynamoDb", new List<ResourceThresholds>()
-            {
-                new ResourceThresholds()
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
+                new AlertingGroupServices()
                 {
-                    Name = "non-existant-table"
-                }
-            });
+                    DynamoDb = new AwsServiceAlarms()
+                    {
+                        Resources = new List<ResourceThresholds>()
+                        {
+                            new ResourceThresholds()
+                            {
+                                Name = "non-existant-table"
+                            }
+                        }
+                    }
+                });
 
             var sut = IoCHelper.CreateSystemUnderTest(
                 source, 
@@ -100,11 +108,17 @@ namespace Watchman.Tests.Dynamo
             var source = new TableDescriptionSource(dynamoClient);
             var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
 
-            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", "DynamoDb", new List<ResourceThresholds>()
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
             {
-                new ResourceThresholds()
+                DynamoDb = new AwsServiceAlarms()
                 {
-                    Name = "first-dynamo-table"
+                    Resources = new List<ResourceThresholds>()
+                    {
+                        new ResourceThresholds()
+                        {
+                            Name = "first-dynamo-table"
+                        }
+                    }
                 }
             });
 

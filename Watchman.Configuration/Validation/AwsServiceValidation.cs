@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.Configuration.Validation
@@ -15,9 +15,12 @@ namespace Watchman.Configuration.Validation
                 }
             }
 
-            foreach (var resource in serviceAlarms.Resources)
+            if (serviceAlarms.Resources != null)
             {
-                ValidateResource(alertingGroupName, serviceName, resource);
+                foreach (var resource in serviceAlarms.Resources)
+                {
+                    ValidateResource(alertingGroupName, serviceName, resource);
+                }
             }
         }
 

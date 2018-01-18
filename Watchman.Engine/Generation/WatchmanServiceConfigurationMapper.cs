@@ -9,62 +9,52 @@ namespace Watchman.Engine.Generation
 {
     public static class WatchmanServiceConfigurationMapper
     {
-        private static AwsServiceAlarms GetService(AlertingGroup group, string serviceIdentifier)
-        {
-            if (!group.Services.ContainsKey(serviceIdentifier))
-            {
-                return null;
-            }
-
-            return group.Services[serviceIdentifier];
-        }
-
         public static WatchmanServiceConfiguration MapRds(WatchmanConfiguration input)
         {
             const string id = "Rds";
-            return Map(input, id, a => GetService(a, id), Defaults.Rds);
+            return Map(input, id, a => a?.Services?.Rds, Defaults.Rds);
         }
 
         public static WatchmanServiceConfiguration MapAutoScaling(WatchmanConfiguration input)
         {
             const string id = "AutoScaling";
-            return Map(input, id, a => GetService(a, id), Defaults.AutoScaling);
+            return Map(input, id, a => a?.Services?.AutoScaling, Defaults.AutoScaling);
         }
 
         public static WatchmanServiceConfiguration MapLambda(WatchmanConfiguration input)
         {
             const string id = "Lambda";
-            return Map(input,id, a => GetService(a, id), Defaults.Lambda);
+            return Map(input,id, a => a?.Services?.Lambda, Defaults.Lambda);
         }
 
         public static WatchmanServiceConfiguration MapVpcSubnet(WatchmanConfiguration input)
         {
             const string id = "VpcSubnet";
-            return Map(input, id, a => GetService(a, id), Defaults.VpcSubnets);
+            return Map(input, id, a => a?.Services?.VpcSubnet, Defaults.VpcSubnets);
         }
 
         public static WatchmanServiceConfiguration MapElb(WatchmanConfiguration input)
         {
             const string id = "Elb";
-            return Map(input, id, a => GetService(a, id), Defaults.Elb);
+            return Map(input, id, a => a?.Services?.Elb, Defaults.Elb);
         }
 
         public static WatchmanServiceConfiguration MapStream(WatchmanConfiguration input)
         {
             const string id = "KinesisStream";
-            return Map(input, id, a => GetService(a, id), Defaults.KinesisStream);
+            return Map(input, id, a => a?.Services?.KinesisStream, Defaults.KinesisStream);
         }
 
         public static WatchmanServiceConfiguration MapStepFunction(WatchmanConfiguration input)
         {
             const string id = "StepFunction";
-            return Map(input, id, a => GetService(a, id), Defaults.StepFunction);
+            return Map(input, id, a => a?.Services?.StepFunction, Defaults.StepFunction);
         }
 
         public static WatchmanServiceConfiguration MapDynamoDb(WatchmanConfiguration input)
         {
             const string id = "DynamoDb";
-            return Map(input, id, a => GetService(a, id), Defaults.DynamoDb);
+            return Map(input, id, a => a?.Services?.DynamoDb, Defaults.DynamoDb);
         }
 
         private static WatchmanServiceConfiguration Map(WatchmanConfiguration input,
