@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Amazon.AutoScaling.Model;
 using Amazon.CloudWatch.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.AutoScaling
 {
-    public class AutoScalingGroupAlarmDataProvider : IAlarmDimensionProvider<AutoScalingGroup>,
+    public class AutoScalingGroupAlarmDataProvider : IAlarmDimensionProvider<AutoScalingGroup, AutoScalingResourceConfig>,
         IResourceAttributesProvider<AutoScalingGroup>
     {
         private static string GetAttribute(AutoScalingGroup resource, string property)
@@ -42,7 +43,7 @@ namespace Watchman.AwsResources.Services.AutoScaling
                 };
         }
 
-        public List<Dimension> GetDimensions(AutoScalingGroup resource, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(AutoScalingGroup resource, AutoScalingResourceConfig config, IList<string> dimensionNames)
         {
             return dimensionNames
                 .Select(x => GetDimension(resource, x))

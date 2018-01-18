@@ -16,19 +16,19 @@ namespace Watchman.Engine.Tests.Generation
         public class FakeResource { }
 
         private Mock<IResourceSource<FakeResource>> _fakeTableSource;
-        private Mock<IAlarmDimensionProvider<FakeResource>> _fakeDimensionProvider;
+        private Mock<IAlarmDimensionProvider<FakeResource, ResourceConfig>> _fakeDimensionProvider;
         private Mock<IResourceAttributesProvider<FakeResource>> _fakeAttributeProvider;
 
-        private ServiceAlarmBuilder<FakeResource> _generator;
+        private ServiceAlarmBuilder<FakeResource, ResourceConfig> _generator;
 
         [SetUp]
         public void SetUp()
         {
             _fakeTableSource = new Mock<IResourceSource<FakeResource>>();
-            _fakeDimensionProvider = new Mock<IAlarmDimensionProvider<FakeResource>>();
+            _fakeDimensionProvider = new Mock<IAlarmDimensionProvider<FakeResource, ResourceConfig>>();
             _fakeAttributeProvider = new Mock<IResourceAttributesProvider<FakeResource>>();
 
-            _generator = new ServiceAlarmBuilder<FakeResource>(
+            _generator = new ServiceAlarmBuilder<FakeResource, ResourceConfig>(
                 _fakeTableSource.Object,
                 _fakeDimensionProvider.Object,
                 _fakeAttributeProvider.Object);
@@ -52,18 +52,18 @@ namespace Watchman.Engine.Tests.Generation
             // arrange
             var defaults = DefineOneAlarm();
 
-            var alertingGroup = new ServiceAlertingGroup
+            var alertingGroup = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("TestAlarm", "Suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds
+                        new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceA"
                         },
-                         new ResourceThresholds
+                         new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceB"
                         }
@@ -96,14 +96,14 @@ namespace Watchman.Engine.Tests.Generation
             // arrange
             var defaults = DefineOneAlarm();
 
-            var alertingGroup = new ServiceAlertingGroup
+            var alertingGroup = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("TestAlarm", "Suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds
+                        new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceA",
                             Values = new Dictionary<string, AlarmValues>
@@ -111,7 +111,7 @@ namespace Watchman.Engine.Tests.Generation
                                 {"AlarmName", 200}
                             }
                         },
-                         new ResourceThresholds
+                         new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceB"
                         }
@@ -144,14 +144,14 @@ namespace Watchman.Engine.Tests.Generation
             // arrange
             var defaults = DefineOneAlarm();
 
-            var alertingGroup = new ServiceAlertingGroup
+            var alertingGroup = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("TestAlarm", "Suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds
+                        new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceA",
                             Values = new Dictionary<string, AlarmValues>
@@ -159,7 +159,7 @@ namespace Watchman.Engine.Tests.Generation
                                 {"AlarmName", 200}
                             }
                         },
-                         new ResourceThresholds
+                         new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceB"
                         }
@@ -195,18 +195,18 @@ namespace Watchman.Engine.Tests.Generation
             // arrange
             var defaults = DefineOneAlarm();
 
-            var alertingGroup = new ServiceAlertingGroup
+            var alertingGroup = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("TestAlarm", "Suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds
+                        new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceA"
                         },
-                         new ResourceThresholds
+                         new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceB"
                         }
@@ -239,14 +239,14 @@ namespace Watchman.Engine.Tests.Generation
             // arrange
             var defaults = DefineOneAlarm();
 
-            var alertingGroup = new ServiceAlertingGroup
+            var alertingGroup = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("TestAlarm", "Suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds
+                        new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceA",
                             Values = new Dictionary<string, AlarmValues>
@@ -254,7 +254,7 @@ namespace Watchman.Engine.Tests.Generation
                                 {"AlarmName", new AlarmValues(200, 3)}
                             }
                         },
-                         new ResourceThresholds
+                         new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceB"
                         }
@@ -321,14 +321,14 @@ namespace Watchman.Engine.Tests.Generation
                 }
             };
 
-            var alertingGroup = new ServiceAlertingGroup
+            var alertingGroup = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("TestAlarm", "Suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds
+                        new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceA",
                             Values = new Dictionary<string, AlarmValues>
@@ -379,14 +379,14 @@ namespace Watchman.Engine.Tests.Generation
                 }
             };
 
-            var alertingGroup = new ServiceAlertingGroup
+            var alertingGroup = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("TestAlarm", "Suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds
+                        new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceA",
                             Values = new Dictionary<string, AlarmValues>
@@ -433,14 +433,14 @@ namespace Watchman.Engine.Tests.Generation
                 }
             };
 
-            var alertingGroup = new ServiceAlertingGroup
+            var alertingGroup = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("TestAlarm", "Suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds
+                        new ResourceThresholds<ResourceConfig>
                         {
                             Name = "ResourceA",
                             Values = new Dictionary<string, AlarmValues>

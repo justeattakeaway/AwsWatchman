@@ -8,15 +8,17 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine.Generation
 {
-    public class ServiceAlarmBuilder<T> where T:class
+    public class ServiceAlarmBuilder<T, TAlarmConfig>
+        where T:class
+        where TAlarmConfig : class
     {
         private readonly IResourceSource<T> _tableSource;
-        private readonly IAlarmDimensionProvider<T> _dimensions;
+        private readonly IAlarmDimensionProvider<T, TAlarmConfig> _dimensions;
         private readonly IResourceAttributesProvider<T> _attributes;
 
         public ServiceAlarmBuilder(
             IResourceSource<T> tableSource,
-            IAlarmDimensionProvider<T> dimensionProvider,
+            IAlarmDimensionProvider<T, TAlarmConfig> dimensionProvider,
             IResourceAttributesProvider<T> attributeProvider)
         {
             _tableSource = tableSource;
@@ -88,7 +90,7 @@ namespace Watchman.Engine.Generation
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
-            AwsServiceAlarms service,
+            AwsServiceAlarms<TAlarmConfig> service,
             IList<AlarmDefinition> defaults,
             string alarmSuffix)
         {
@@ -109,8 +111,8 @@ namespace Watchman.Engine.Generation
 
         private async Task<IList<Alarm>> ExpandAlarmsToResources(
             IList<AlarmDefinition> defaults,
-            ResourceThresholds resource,
-            AwsServiceAlarms service,
+            ResourceThresholds<TAlarmConfig> resource,
+            AwsServiceAlarms<TAlarmConfig> service,
             string groupSuffix)
         {
             // apply thresholds from resource or alerting group
@@ -125,7 +127,7 @@ namespace Watchman.Engine.Generation
         }
 
         private async Task<IList<Alarm>> GetAlarms(IList<AlarmDefinition> alarms,
-            ResourceThresholds awsResource,
+            ResourceThresholds<TAlarmConfig> awsResource,
             string groupSuffix)
         {
             var result = new List<Alarm>();
@@ -141,7 +143,7 @@ namespace Watchman.Engine.Generation
             foreach (var alarm in alarms)
             {
                 alarm.Threshold = ExpandThreshold(entity.Resource, alarm.Threshold);
-                var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
+                var dimensions = _dimensions.GetDimensions(entity.Resource, null, alarm.DimensionNames);
 
                 var model = new Alarm
                 {

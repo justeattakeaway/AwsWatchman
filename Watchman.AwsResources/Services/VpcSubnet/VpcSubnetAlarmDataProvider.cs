@@ -1,15 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Amazon.CloudWatch.Model;
 using Amazon.EC2.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.VpcSubnet
 {
-    public class VpcSubnetAlarmDataProvider : IAlarmDimensionProvider<Subnet>, IResourceAttributesProvider<Subnet>
+    public class VpcSubnetAlarmDataProvider : IAlarmDimensionProvider<Subnet, ResourceConfig>, IResourceAttributesProvider<Subnet>
     {
-        public List<Dimension> GetDimensions(Subnet resource, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(Subnet resource, ResourceConfig config, IList<string> dimensionNames)
         {
             return dimensionNames.Select(d => GetDimension(resource, d)).ToList();
         }

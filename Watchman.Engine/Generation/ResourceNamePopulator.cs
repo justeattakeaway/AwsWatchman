@@ -8,7 +8,9 @@ using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Generation
 {
-    public class ResourceNamePopulator<T> where T: class
+    public class ResourceNamePopulator<T, TConfig>
+        where T: class
+        where TConfig: class
     {
         private readonly IAlarmLogger _logger;
         private readonly IResourceSource<T>  _resourceSource;
@@ -20,12 +22,12 @@ namespace Watchman.Engine.Generation
             _resourceSource = resourceSource;
         }
 
-        public async Task PopulateResourceNames(ServiceAlertingGroup alertingGroup)
+        public async Task PopulateResourceNames(ServiceAlertingGroup<TConfig> alertingGroup)
         {
             alertingGroup.Service.Resources = await ExpandTablePatterns(alertingGroup.Service, alertingGroup.GroupParameters.Name);
         }
 
-        private static IEnumerable<ResourceThresholds> Distinct(IEnumerable<ResourceThresholds> input)
+        private static IEnumerable<ResourceThresholds<TConfig>> Distinct(IEnumerable<ResourceThresholds<TConfig>> input)
         {
             var names = new HashSet<string>();
             foreach (var resource in input)
@@ -37,7 +39,10 @@ namespace Watchman.Engine.Generation
             }
         }
 
-        private async Task<List<ResourceThresholds>> ExpandTablePatterns(AwsServiceAlarms service, string alertingGroupName)
+        private async Task<List<ResourceThresholds<TConfig>>> ExpandTablePatterns(
+            AwsServiceAlarms<TConfig> service,
+            string alertingGroupName
+            )
         {
             var named = service.Resources
                 .Where(t => string.IsNullOrWhiteSpace(t.Pattern))
@@ -48,7 +53,7 @@ namespace Watchman.Engine.Generation
                 .Where(t => !string.IsNullOrWhiteSpace(t.Pattern))
                 .ToList();
 
-            var matchedPatterns = new List<ResourceThresholds>();
+            var matchedPatterns = new List<ResourceThresholds<TConfig>>();
 
             var combined = named.Concat(patterns);
 
@@ -71,18 +76,19 @@ namespace Watchman.Engine.Generation
             ).ToList();
         }
 
-        private static ResourceThresholds NameToPattern(ResourceThresholds named)
+        private static ResourceThresholds<TConfig> NameToPattern(ResourceThresholds<TConfig> named)
         {
             var name = Regex.Escape(named.Name);
 
-            return new ResourceThresholds()
+            return new ResourceThresholds<TConfig>()
             {
                 Pattern = $"^{name}$",
-                Values = named.Values
+                Values = named.Values,
+                Parameters = named.Parameters
             };
         }
 
-        private async Task<IList<ResourceThresholds>> GetPatternMatches(ResourceThresholds resourcePattern, string alertingGroupName)
+        private async Task<IList<ResourceThresholds<TConfig>>> GetPatternMatches(ResourceThresholds<TConfig> resourcePattern, string alertingGroupName)
         {
             var tableNames = await _resourceSource.GetResourceNamesAsync();
 
@@ -107,9 +113,9 @@ namespace Watchman.Engine.Generation
             return matches;
         }
 
-        private static ResourceThresholds PatternToTable(ResourceThresholds pattern, string tableName)
+        private static ResourceThresholds<TConfig> PatternToTable(ResourceThresholds<TConfig> pattern, string tableName)
         {
-            return new ResourceThresholds
+            return new ResourceThresholds<TConfig>
             {
                 Name = tableName,
                 Pattern = null,

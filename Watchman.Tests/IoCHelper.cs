@@ -16,14 +16,16 @@ namespace Watchman.Tests
 {
     class IoCHelper
     {
-        public static AlarmLoaderAndGenerator CreateSystemUnderTest<T>(
+        public static AlarmLoaderAndGenerator CreateSystemUnderTest<T, TAlarmConfig>(
             IResourceSource<T> source,
-            IAlarmDimensionProvider<T> dimensionProvider, 
+            IAlarmDimensionProvider<T, TAlarmConfig> dimensionProvider, 
             IResourceAttributesProvider<T> attributeProvider,
-            Func<WatchmanConfiguration, WatchmanServiceConfiguration> mapper,
+            Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> mapper,
             IAlarmCreator creator,
             IConfigLoader loader
-        ) where T: class
+        )
+            where T: class
+            where TAlarmConfig : class
         {
             var builder = new Builder(loader, creator);
             builder.AddService(source, dimensionProvider, attributeProvider, mapper);
@@ -62,17 +64,20 @@ namespace Watchman.Tests
             );
         }
 
-        public void AddService<T>(IResourceSource<T> source,
-            IAlarmDimensionProvider<T> dimensionProvider,
+        public void AddService<T, TAlarmConfig>(IResourceSource<T> source,
+            IAlarmDimensionProvider<T, TAlarmConfig> dimensionProvider,
             IResourceAttributesProvider<T> attributeProvider,
-            Func<WatchmanConfiguration, WatchmanServiceConfiguration> mapper) where T : class
+            Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> mapper)
+            where T : class
+            where TAlarmConfig : class
         {
-            var task = new ServiceAlarmTasks<T>(
+            
+            var task = new ServiceAlarmTasks<T, TAlarmConfig>(
                 _logger,
-                new ResourceNamePopulator<T>(_logger, source),
-                new ServiceAlarmGenerator<T>(
+                new ResourceNamePopulator<T, TAlarmConfig>(_logger, source),
+                new ServiceAlarmGenerator<T, TAlarmConfig>(
                     _creator,
-                    new ServiceAlarmBuilder<T>(source, dimensionProvider, attributeProvider)),
+                    new ServiceAlarmBuilder<T, TAlarmConfig>(source, dimensionProvider, attributeProvider)),
                 new OrphanResourcesReporter<T>(
                     new OrphanResourcesFinder<T>(source),
                     new OrphansLogger(_logger)),

@@ -1,14 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amazon.CloudWatch.Model;
 using Amazon.ElasticLoadBalancing.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Elb
 {
-    public class ElbAlarmDataProvider : IAlarmDimensionProvider<LoadBalancerDescription>, IResourceAttributesProvider<LoadBalancerDescription>
+    public class ElbAlarmDataProvider : IAlarmDimensionProvider<LoadBalancerDescription, ResourceConfig>, IResourceAttributesProvider<LoadBalancerDescription>
     {
-        public List<Dimension> GetDimensions(LoadBalancerDescription resource, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(LoadBalancerDescription resource, ResourceConfig config, IList<string> dimensionNames)
         {
             return dimensionNames
                 .Select(d => GetDimension(resource, d))

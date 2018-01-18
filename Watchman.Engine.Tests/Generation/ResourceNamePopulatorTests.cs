@@ -29,9 +29,9 @@ namespace Watchman.Engine.Tests.Generation
                     "ItemZ"
                 });
 
-            var sut = new ResourceNamePopulator<ExampleServiceModel>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
 
-            var namedItem = new ResourceThresholds
+            var namedItem = new ResourceThresholds<ResourceConfig>
             {
                 Name = "ItemX",
                 Values = new Dictionary<string, AlarmValues>
@@ -42,7 +42,7 @@ namespace Watchman.Engine.Tests.Generation
                 }
             };
 
-            var patternMatchedItem = new ResourceThresholds {
+            var patternMatchedItem = new ResourceThresholds<ResourceConfig> {
                 Pattern = "Item",
                 Values = new Dictionary<string, AlarmValues>
                 {
@@ -52,12 +52,12 @@ namespace Watchman.Engine.Tests.Generation
                 }
             };
 
-            var group = new ServiceAlertingGroup
+            var group = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("name", "suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
                         namedItem,
                         patternMatchedItem
@@ -95,9 +95,9 @@ namespace Watchman.Engine.Tests.Generation
                     "ItemZ"
                 });
 
-            var sut = new ResourceNamePopulator<ExampleServiceModel>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
 
-            var namedItem = new ResourceThresholds
+            var namedItem = new ResourceThresholds<ResourceConfig>
             {
                 Name = "ItemX",
                 Values = new Dictionary<string, AlarmValues>
@@ -108,7 +108,7 @@ namespace Watchman.Engine.Tests.Generation
                 }
             };
 
-            var patternMatchedItem = new ResourceThresholds
+            var patternMatchedItem = new ResourceThresholds<ResourceConfig>
             {
                 Pattern = "Item",
                 Values = new Dictionary<string, AlarmValues>
@@ -119,12 +119,12 @@ namespace Watchman.Engine.Tests.Generation
                 }
             };
 
-            var group = new ServiceAlertingGroup
+            var group = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("name", "suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
                         namedItem,
                         patternMatchedItem
@@ -161,18 +161,18 @@ namespace Watchman.Engine.Tests.Generation
                     "Something"
                 });
 
-            var sut = new ResourceNamePopulator<ExampleServiceModel>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig> (new ConsoleAlarmLogger(false), resourceSourceStub.Object);
 
-            var group = new ServiceAlertingGroup
+            var group = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("name", "suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds { Name = "ItemY" },
-                        new ResourceThresholds { Pattern = "Item" },
-                        new ResourceThresholds { Name = "Something" }
+                        new ResourceThresholds<ResourceConfig> { Name = "ItemY" },
+                        new ResourceThresholds<ResourceConfig> { Pattern = "Item" },
+                        new ResourceThresholds<ResourceConfig> { Name = "Something" }
                     },
                     ExcludeResourcesPrefixedWith = new List<string> { "Item" }
                 }
@@ -198,18 +198,19 @@ namespace Watchman.Engine.Tests.Generation
                     "ItemY"
                 });
 
-            var sut = new ResourceNamePopulator<ExampleServiceModel>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(
+                new ConsoleAlarmLogger(false), resourceSourceStub.Object);
 
-            var group = new ServiceAlertingGroup
+            var group = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("name", "suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds { Name = "ItemY" },
-                        new ResourceThresholds { Pattern = "ItemY" },
-                        new ResourceThresholds { Pattern = "Item" }
+                        new ResourceThresholds<ResourceConfig> { Name = "ItemY" },
+                        new ResourceThresholds<ResourceConfig> { Pattern = "ItemY" },
+                        new ResourceThresholds<ResourceConfig> { Pattern = "Item" }
                     }
                 }
             };
@@ -233,16 +234,16 @@ namespace Watchman.Engine.Tests.Generation
                     "ItemY"
                 });
 
-            var sut = new ResourceNamePopulator<ExampleServiceModel>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
 
-            var group = new ServiceAlertingGroup
+            var group = new ServiceAlertingGroup<ResourceConfig>
             {
                 GroupParameters = new AlertingGroupParameters("name", "suffix"),
-                Service = new AwsServiceAlarms
+                Service = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds { Name = "DoesNotExist" }
+                        new ResourceThresholds<ResourceConfig> { Name = "DoesNotExist" }
                     }
                 }
             };

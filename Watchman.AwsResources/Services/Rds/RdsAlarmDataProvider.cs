@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Amazon.CloudWatch.Model;
 using Amazon.RDS.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Rds
 {
-    public class RdsAlarmDataProvider : IAlarmDimensionProvider<DBInstance>, IResourceAttributesProvider<DBInstance>
+    public class RdsAlarmDataProvider : IAlarmDimensionProvider<DBInstance, ResourceConfig>, IResourceAttributesProvider<DBInstance>
     {
         public decimal GetValue(DBInstance resource, string property)
         {
@@ -20,7 +21,7 @@ namespace Watchman.AwsResources.Services.Rds
             throw new Exception("Unsupported RDS property name");
         }
 
-        public List<Dimension> GetDimensions(DBInstance resource, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(DBInstance resource, ResourceConfig config, IList<string> dimensionNames)
         {
             return dimensionNames
                 .Select(x => GetDimension(resource, x))

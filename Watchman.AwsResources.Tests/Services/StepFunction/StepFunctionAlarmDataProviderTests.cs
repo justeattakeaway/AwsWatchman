@@ -33,7 +33,7 @@ namespace Watchman.AwsResources.Tests.Services.StepFunction
             // Arrange
 
             // Act
-            var result = _dataProvider.GetDimensions(_resource, new List<string> {"StateMachineArn"});
+            var result = _dataProvider.GetDimensions(_resource, null, new List<string> {"StateMachineArn"});
 
             // Assert
             Assert.That(result.Count, Is.EqualTo(1));
@@ -50,7 +50,7 @@ namespace Watchman.AwsResources.Tests.Services.StepFunction
 
             // Act
             ActualValueDelegate<List<Dimension>> testDelegate =
-                () => _dataProvider.GetDimensions(_resource, new List<string> { "UnknownDimension" });
+                () => _dataProvider.GetDimensions(_resource, null, new List<string> { "UnknownDimension" });
 
             // Assert
             Assert.That(testDelegate, Throws.TypeOf<Exception>()

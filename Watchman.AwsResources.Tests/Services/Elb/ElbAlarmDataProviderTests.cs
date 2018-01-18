@@ -31,7 +31,7 @@ namespace Watchman.AwsResources.Tests.Services.Elb
             const string dimName = "LoadBalancerName";
 
             //act
-            var result = _elbDataProvider.GetDimensions(_elbDescription, new List<string> { dimName });
+            var result = _elbDataProvider.GetDimensions(_elbDescription, null, new List<string> { dimName });
 
             //assert
             Assert.That(result.Count, Is.EqualTo(1));
@@ -50,7 +50,7 @@ namespace Watchman.AwsResources.Tests.Services.Elb
             //act
 
             //assert
-            var ex = Assert.Throws<Exception>(() => _elbDataProvider.GetDimensions(_elbDescription, new List<string> { dimName }));
+            var ex = Assert.Throws<Exception>(() => _elbDataProvider.GetDimensions(_elbDescription, null, new List<string> { dimName }));
             Assert.That(ex.Message, Is.EqualTo($"Unsupported dimension {dimName}"));
         }
 

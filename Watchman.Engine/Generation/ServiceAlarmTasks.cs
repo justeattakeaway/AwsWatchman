@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Watchman.Configuration;
@@ -7,20 +7,22 @@ using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Generation
 {
-    public class ServiceAlarmTasks<T> : IServiceAlarmTasks<T> where T: class
+    public class ServiceAlarmTasks<T, TAlarmConfig> : IServiceAlarmTasks<T, TAlarmConfig>
+        where T: class
+        where TAlarmConfig : class
     {
         private readonly IAlarmLogger _logger;
-        private readonly ResourceNamePopulator<T> _populator;
-        private readonly ServiceAlarmGenerator<T> _generator;
+        private readonly ResourceNamePopulator<T, TAlarmConfig> _populator;
+        private readonly ServiceAlarmGenerator<T, TAlarmConfig> _generator;
         private readonly OrphanResourcesReporter<T> _orphansReporter;
-        private readonly Func<WatchmanConfiguration, WatchmanServiceConfiguration> _serviceConfigMapper;
+        private readonly Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> _serviceConfigMapper;
 
         public ServiceAlarmTasks(
             IAlarmLogger logger,
-            ResourceNamePopulator<T> populator,
-            ServiceAlarmGenerator<T> generator,
+            ResourceNamePopulator<T, TAlarmConfig> populator,
+            ServiceAlarmGenerator<T, TAlarmConfig> generator,
             OrphanResourcesReporter<T> orphansReporter,
-            Func<WatchmanConfiguration, WatchmanServiceConfiguration> serviceConfigMapper)
+            Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> serviceConfigMapper)
         {
             _populator = populator;
             _generator = generator;
@@ -45,7 +47,7 @@ namespace Watchman.Engine.Generation
             await ReportOrphans(serviceConfig);
         }
 
-        private bool ServiceConfigIsPopulated(WatchmanServiceConfiguration serviceConfig)
+        private bool ServiceConfigIsPopulated(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig)
         {
             if (serviceConfig == null || ! serviceConfig.AlertingGroups.Any())
             {
@@ -57,7 +59,7 @@ namespace Watchman.Engine.Generation
             return resources.Any();
         }
 
-        private async Task PopulateResourceNames(WatchmanServiceConfiguration serviceConfig)
+        private async Task PopulateResourceNames(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig)
         {
             foreach (var group in serviceConfig.AlertingGroups)
             {
@@ -65,12 +67,12 @@ namespace Watchman.Engine.Generation
             }
         }
 
-        private Task GenerateAlarms(WatchmanServiceConfiguration serviceConfig, RunMode mode)
+        private Task GenerateAlarms(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig, RunMode mode)
         {
             return _generator.GenerateAlarmsFor(serviceConfig, mode);
         }
 
-        private Task ReportOrphans(WatchmanServiceConfiguration serviceConfig)
+        private Task ReportOrphans(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig)
         {
             return _orphansReporter.FindAndReport(serviceConfig.ServiceName, serviceConfig.AlertingGroups);
         }

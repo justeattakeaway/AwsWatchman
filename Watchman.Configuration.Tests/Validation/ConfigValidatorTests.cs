@@ -28,11 +28,11 @@ namespace Watchman.Configuration.Tests.Validation
             };
             _config.AlertingGroups.First().Services = new AlertingGroupServices()
             {
-                AutoScaling = new AwsServiceAlarms
+                AutoScaling = new AwsServiceAlarms<AutoScalingResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<AutoScalingResourceConfig>>
                     {
-                        new ResourceThresholds {Pattern = "ResourceName"}
+                        new ResourceThresholds<AutoScalingResourceConfig> {Pattern = "ResourceName"}
                     }
                 }
             };
@@ -292,7 +292,7 @@ namespace Watchman.Configuration.Tests.Validation
             _config.AlertingGroups.First().Sqs = new Sqs();
             _config.AlertingGroups.First().Services = new AlertingGroupServices()
             {
-                Lambda = new AwsServiceAlarms()
+                Lambda = new AwsServiceAlarms<ResourceConfig>()
             };
 
             // act
@@ -311,9 +311,9 @@ namespace Watchman.Configuration.Tests.Validation
             _config.AlertingGroups.First().Sqs.Queues = new List<Queue>();
             _config.AlertingGroups.First().Services = new AlertingGroupServices()
             {
-                Rds = new AwsServiceAlarms()
+                Rds = new AwsServiceAlarms<ResourceConfig>()
                 {
-                    Resources = new List<ResourceThresholds>()
+                    Resources = new List<ResourceThresholds<ResourceConfig>>()
                 }
             };
 

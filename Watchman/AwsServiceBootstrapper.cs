@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Amazon.AutoScaling.Model;
 using Amazon.DynamoDBv2.Model;
 using Amazon.ElasticLoadBalancing.Model;
@@ -16,6 +16,7 @@ using Watchman.AwsResources.Services.Rds;
 using Watchman.AwsResources.Services.StepFunction;
 using Watchman.AwsResources.Services.VpcSubnet;
 using Watchman.Configuration;
+using Watchman.Configuration.Generic;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
 using Subnet = Amazon.EC2.Model.Subnet;
@@ -26,58 +27,58 @@ namespace Watchman
     {
         public static void Configure(IProfileRegistry registry)
         {
-            AddService<DBInstance, RdsSource, RdsAlarmDataProvider, RdsAlarmDataProvider>(
+
+            AddService<DBInstance, RdsSource, RdsAlarmDataProvider, ResourceConfig>(
                 registry, WatchmanServiceConfigurationMapper.MapRds
                 );
 
             AddService
-                <AutoScalingGroup, AutoScalingGroupSource, AutoScalingGroupAlarmDataProvider,
-                    AutoScalingGroupAlarmDataProvider>(
+                <AutoScalingGroup, AutoScalingGroupSource, AutoScalingGroupAlarmDataProvider, AutoScalingResourceConfig>(
                         registry, WatchmanServiceConfigurationMapper.MapAutoScaling
                 );
 
-            AddService<Subnet, VpcSubnetSource, VpcSubnetAlarmDataProvider, VpcSubnetAlarmDataProvider>(
+            AddService<Subnet, VpcSubnetSource, VpcSubnetAlarmDataProvider, ResourceConfig>(
                 registry, WatchmanServiceConfigurationMapper.MapVpcSubnet
                 );
 
-            AddService<FunctionConfiguration, LambdaSource, LambdaAlarmDataProvider, LambdaAlarmDataProvider>(
+            AddService<FunctionConfiguration, LambdaSource, LambdaAlarmDataProvider, ResourceConfig>(
                 registry, WatchmanServiceConfigurationMapper.MapLambda
                 );
 
-            AddService<LoadBalancerDescription, ElbSource, ElbAlarmDataProvider, ElbAlarmDataProvider>(
+            AddService<LoadBalancerDescription, ElbSource, ElbAlarmDataProvider, ResourceConfig>(
                 registry, WatchmanServiceConfigurationMapper.MapElb
                 );
 
-            AddService<KinesisStreamData, KinesisStreamSource, KinesisStreamAlarmDataProvider, KinesisStreamAlarmDataProvider>(
+            AddService<KinesisStreamData, KinesisStreamSource, KinesisStreamAlarmDataProvider, ResourceConfig>(
                 registry, WatchmanServiceConfigurationMapper.MapStream
             );
 
-            AddService<StateMachineListItem, StepFunctionSource, StepFunctionAlarmDataProvider, StepFunctionAlarmDataProvider>(
+            AddService<StateMachineListItem, StepFunctionSource, StepFunctionAlarmDataProvider, ResourceConfig>(
                 registry, WatchmanServiceConfigurationMapper.MapStepFunction
             );
             
-            AddService<TableDescription, TableDescriptionSource, DynamoDbDataProvider, DynamoDbDataProvider>(
+            AddService<TableDescription, TableDescriptionSource, DynamoDbDataProvider, ResourceConfig>(
                 registry, WatchmanServiceConfigurationMapper.MapDynamoDb);
         }
 
-        private static void AddService<TServiceModel, TSource, TDimensionProvider, TAttributeProvider>(
+        private static void AddService<TServiceModel, TSource, TDataProvider, TResourceAlarmConfig>(
             IProfileRegistry registry,
-            Func<WatchmanConfiguration, WatchmanServiceConfiguration> mapper)
+            Func<WatchmanConfiguration, WatchmanServiceConfiguration<TResourceAlarmConfig>> mapper)
             where TServiceModel : class
             where TSource : IResourceSource<TServiceModel>
-            where TDimensionProvider : IAlarmDimensionProvider<TServiceModel>
-            where TAttributeProvider : IResourceAttributesProvider<TServiceModel>
+            where TDataProvider : IAlarmDimensionProvider<TServiceModel, TResourceAlarmConfig>, IResourceAttributesProvider<TServiceModel>
+            where TResourceAlarmConfig: class
         {
             registry.For<IResourceSource<TServiceModel>>().Use<TSource>();
-            registry.For<IAlarmDimensionProvider<TServiceModel>>().Use<TDimensionProvider>();
-            registry.For<IResourceAttributesProvider<TServiceModel>>().Use<TAttributeProvider>();
+            registry.For<IAlarmDimensionProvider<TServiceModel, TResourceAlarmConfig>>().Use<TDataProvider>();
+            registry.For<IResourceAttributesProvider<TServiceModel>>().Use<TDataProvider>();
 
-            registry.For<IServiceAlarmTasks<TServiceModel>>()
-                .Use<ServiceAlarmTasks<TServiceModel>>()
-                .Ctor<Func<WatchmanConfiguration, WatchmanServiceConfiguration>>()
+            registry.For<IServiceAlarmTasks<TServiceModel, TResourceAlarmConfig>>()
+                .Use<ServiceAlarmTasks<TServiceModel, TResourceAlarmConfig>>()
+                .Ctor<Func<WatchmanConfiguration, WatchmanServiceConfiguration<TResourceAlarmConfig>>>()
                 .Is(mapper);
 
-            registry.For<IServiceAlarmTasks>().Use(ctx => ctx.GetInstance<IServiceAlarmTasks<TServiceModel>>());
+            registry.For<IServiceAlarmTasks>().Use(ctx => ctx.GetInstance<IServiceAlarmTasks<TServiceModel, TResourceAlarmConfig>>());
         }
     }
 }

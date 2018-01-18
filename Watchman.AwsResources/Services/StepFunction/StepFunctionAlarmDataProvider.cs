@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Amazon.CloudWatch.Model;
 using Amazon.StepFunctions.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.StepFunction
 {
-    public class StepFunctionAlarmDataProvider : IAlarmDimensionProvider<StateMachineListItem>, IResourceAttributesProvider<StateMachineListItem>
+    public class StepFunctionAlarmDataProvider : IAlarmDimensionProvider<StateMachineListItem, ResourceConfig>,
+        IResourceAttributesProvider<StateMachineListItem>
     {
-        public List<Dimension> GetDimensions(StateMachineListItem resource, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(StateMachineListItem resource, ResourceConfig config, IList<string> dimensionNames)
         {
             return dimensionNames
                 .Select(x => GetDimension(resource, x))

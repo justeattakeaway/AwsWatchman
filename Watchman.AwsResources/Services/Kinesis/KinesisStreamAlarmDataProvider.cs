@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amazon.CloudWatch.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Kinesis
 {
-    public class KinesisStreamAlarmDataProvider : IAlarmDimensionProvider<KinesisStreamData>, IResourceAttributesProvider<KinesisStreamData>
+    public class KinesisStreamAlarmDataProvider : IAlarmDimensionProvider<KinesisStreamData, ResourceConfig>, IResourceAttributesProvider<KinesisStreamData>
     {
-        public List<Dimension> GetDimensions(KinesisStreamData resource, IList<string> dimensionNames) =>
+        public List<Dimension> GetDimensions(KinesisStreamData resource, ResourceConfig config, IList<string> dimensionNames) =>
             dimensionNames.Select(x => GetDimension(resource, x))
                 .ToList();
 

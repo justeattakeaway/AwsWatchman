@@ -25,7 +25,7 @@ namespace Watchman.Engine.Sns
             return snsTopicArn;
         }
 
-        public async Task<string> EnsureSnsTopic(ServiceAlertingGroup alertingGroup, bool dryRun)
+        public async Task<string> EnsureSnsTopic(IServiceAlertingGroup alertingGroup, bool dryRun)
         {
             var snsTopicArn = await _snsTopicCreator.EnsureSnsTopic(alertingGroup.GroupParameters.Name, dryRun);
 

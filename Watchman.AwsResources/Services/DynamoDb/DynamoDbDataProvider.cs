@@ -1,16 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.DynamoDBv2.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.DynamoDb
 {
-    public class DynamoDbDataProvider : IAlarmDimensionProvider<TableDescription>, IResourceAttributesProvider<TableDescription>
+    public class DynamoDbDataProvider : IAlarmDimensionProvider<TableDescription, ResourceConfig>, IResourceAttributesProvider<TableDescription>
     {
-        public List<Dimension> GetDimensions(TableDescription resource, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(TableDescription resource, ResourceConfig config, IList<string> dimensionNames)
         {
             var allowed = new List<Dimension>()
             {

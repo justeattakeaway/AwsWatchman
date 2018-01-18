@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.VpcSubnet;
@@ -19,7 +19,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
             var result = sut.GetDimensions(new Subnet
             {
                 SubnetId = "Abcd"
-            }, new List<string> {"Subnet"});
+            }, null, new List<string> {"Subnet"});
 
             // assert
             Assert.That(result.Count, Is.EqualTo(1));

@@ -9,20 +9,22 @@ using Watchman.Engine.Sns;
 
 namespace Watchman.Engine.Generation
 {
-    public class ServiceAlarmGenerator<T> where T:class
+    public class ServiceAlarmGenerator<T, TAlarmConfig>
+        where T:class
+        where TAlarmConfig : class
     {
         private readonly IAlarmCreator _creator;
-        private readonly ServiceAlarmBuilder<T> _serviceAlarmBuilder;
+        private readonly ServiceAlarmBuilder<T, TAlarmConfig> _serviceAlarmBuilder;
 
         public ServiceAlarmGenerator(
             IAlarmCreator creator,
-            ServiceAlarmBuilder<T> serviceAlarmBuilder)
+            ServiceAlarmBuilder<T, TAlarmConfig> serviceAlarmBuilder)
         {
             _creator = creator;
             _serviceAlarmBuilder = serviceAlarmBuilder;
         }
 
-        public async Task GenerateAlarmsFor(WatchmanServiceConfiguration config, RunMode mode)
+        public async Task GenerateAlarmsFor(WatchmanServiceConfiguration<TAlarmConfig> config, RunMode mode)
         {
             foreach (var alertingGroup in config.AlertingGroups)
             {

@@ -33,7 +33,7 @@ namespace Watchman.AwsResources.Tests.Services.Rds
             //arange
 
             //act
-            var result = _rdsDataProvider.GetDimensions(_dbInstance, new List<string> { "DBInstanceIdentifier" });
+            var result = _rdsDataProvider.GetDimensions(_dbInstance, null, new List<string> { "DBInstanceIdentifier" });
 
             //assert
             Assert.That(result.Count, Is.EqualTo(1));
@@ -50,7 +50,7 @@ namespace Watchman.AwsResources.Tests.Services.Rds
 
             //act
             ActualValueDelegate<List<Dimension>> testDelegate =
-                () => _rdsDataProvider.GetDimensions(_dbInstance, new List<string> { "UnknownDimension" });
+                () => _rdsDataProvider.GetDimensions(_dbInstance, null, new List<string> { "UnknownDimension" });
 
             //assert
             Assert.That(testDelegate, Throws.TypeOf<Exception>()

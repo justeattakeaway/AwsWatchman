@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Amazon.CloudWatch.Model;
 using Amazon.Lambda.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Lambda
 {
-    public class LambdaAlarmDataProvider : IAlarmDimensionProvider<FunctionConfiguration>, IResourceAttributesProvider<FunctionConfiguration>
+    public class LambdaAlarmDataProvider : IAlarmDimensionProvider<FunctionConfiguration, ResourceConfig>, IResourceAttributesProvider<FunctionConfiguration>
     {
-        public List<Dimension> GetDimensions(FunctionConfiguration resource, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(FunctionConfiguration resource, ResourceConfig config, IList<string> dimensionNames)
         {
             return dimensionNames
                 .Select(x => GetDimension(resource, x))
