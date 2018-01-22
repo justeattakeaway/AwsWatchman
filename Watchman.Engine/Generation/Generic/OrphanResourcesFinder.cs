@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Watchman.AwsResources;
@@ -18,7 +18,7 @@ namespace Watchman.Engine.Generation.Generic
             IEnumerable<ServiceAlertingGroup> alertingGroups)
         {
             var monitoredResources = alertingGroups
-                .Where(ag => !ag.IsCatchAll)
+                .Where(ag => !ag.GroupParameters.IsCatchAll)
                 .SelectMany(ag => ag.Service.Resources)
                 .Select(t => t.Name)
                 .Distinct();

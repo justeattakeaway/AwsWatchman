@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +22,7 @@ namespace Watchman.Engine.Tests.Generation.Generic
     {
         private const string AlertingGroupName = "AlertingGroupName";
 
-        private static Alarm CreateExampleAlarm(List<AlertTarget> targets, AwsResource<FakeResourceType> resource)
+        private static Alarm CreateExampleAlarm(AwsResource<FakeResourceType> resource)
         {
             return new Alarm()
             {
@@ -35,11 +35,6 @@ namespace Watchman.Engine.Tests.Generation.Generic
                     AlertOnOk = true
                 },
                 AlarmName = "",
-                AlertingGroup = new ServiceAlertingGroup()
-                {
-                    Name = AlertingGroupName,
-                    Targets = targets
-                },
                 Dimensions = new List<Dimension>(),
                 Resource = resource
             };
@@ -53,14 +48,16 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var resource = new AwsResource<FakeResourceType>("name", new FakeResourceType());
 
             var alarms = new List<Alarm>();
-            alarms.Add(CreateExampleAlarm(new List<AlertTarget>()
+            alarms.Add(CreateExampleAlarm(resource));
+
+            var targets = new List<AlertTarget>()
             {
                 new AlertEmail("test@test.com"),
                 new AlertUrl("url@url.com")
-            }, resource));
+            };
 
             // act
-            var template = new CloudWatchCloudFormationTemplate();
+            var template = new CloudWatchCloudFormationTemplate("group-name", targets);
             template.AddAlarms(alarms);
             var result = template.WriteJson();
 
@@ -80,10 +77,10 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var resource = new AwsResource<FakeResourceType>("name", new FakeResourceType());
 
             var alarms = new List<Alarm>();
-            alarms.Add(CreateExampleAlarm(new List<AlertTarget>(), resource));
+            alarms.Add(CreateExampleAlarm(resource));
 
             // act
-            var template = new CloudWatchCloudFormationTemplate();
+            var template = new CloudWatchCloudFormationTemplate("group-name", new List<AlertTarget>());
             template.AddAlarms(alarms);
             var result = template.WriteJson();
 
@@ -101,16 +98,16 @@ namespace Watchman.Engine.Tests.Generation.Generic
         {
             // arrange
             var resource = new AwsResource<FakeResourceType>("name", new FakeResourceType());
-
-            var alarms = new List<Alarm>();
-            alarms.Add(CreateExampleAlarm(new List<AlertTarget>()
+            var targets = new List<AlertTarget>()
             {
                 new AlertEmail("test1@test.com"),
                 new AlertEmail("test2@test.com")
-            }, resource));
+            };
+            var alarms = new List<Alarm>();
+            alarms.Add(CreateExampleAlarm(resource));
 
             // act
-            var template = new CloudWatchCloudFormationTemplate();
+            var template = new CloudWatchCloudFormationTemplate(AlertingGroupName, targets);
             template.AddAlarms(alarms);
             var result = template.WriteJson();
 
@@ -137,14 +134,15 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var resource = new AwsResource<FakeResourceType>("name", new FakeResourceType());
 
             var alarms = new List<Alarm>();
-            alarms.Add(CreateExampleAlarm(new List<AlertTarget>()
+            var targets = new List<AlertTarget>()
             {
                 new AlertUrl("http://banana"),
                 new AlertUrl("https://banana2"),
-            }, resource));
+            };
+            alarms.Add(CreateExampleAlarm(resource));
 
             // act
-            var template = new CloudWatchCloudFormationTemplate();
+            var template = new CloudWatchCloudFormationTemplate(AlertingGroupName, targets);
             template.AddAlarms(alarms);
             var result = template.WriteJson();
 
@@ -177,14 +175,15 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var resource = new AwsResource<FakeResourceType>("name", new FakeResourceType());
 
             var alarms = new List<Alarm>();
-            alarms.Add(CreateExampleAlarm(new List<AlertTarget>()
+            var targets = new List<AlertTarget>()
             {
                 new AlertUrl("http://banana"),
                 new AlertEmail("test@test.com"),
-            }, resource));
+            };
+            alarms.Add(CreateExampleAlarm(resource));
 
             // act
-            var template = new CloudWatchCloudFormationTemplate();
+            var template = new CloudWatchCloudFormationTemplate("group-name", targets);
             template.AddAlarms(alarms);
             var result = template.WriteJson();
 

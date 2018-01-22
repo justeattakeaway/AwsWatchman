@@ -20,34 +20,6 @@ namespace Watchman.Tests.Dynamo
 {
     public class DynamoAlarmTests
     {
-        private IAmazonDynamoDB CreateDynamoClientForTables(IEnumerable<TableDescription> tables)
-        {
-            tables = tables.ToList();
-
-            var fakeDynamo = new Mock<IAmazonDynamoDB>();
-
-
-            fakeDynamo
-                .Setup(x => x.ListTablesAsync((string)null, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ListTablesResponse()
-                {
-                    TableNames = tables.Select(t => t.TableName).ToList()
-                });
-
-            foreach (var table in tables)
-            {
-                fakeDynamo
-                    .Setup(x => x.DescribeTableAsync(table.TableName, It.IsAny<CancellationToken>()))
-                    .ReturnsAsync(new DescribeTableResponse()
-                    {
-                        Table = table
-                    });
-
-            }
-
-            return fakeDynamo.Object;
-        }
-
         [Test]
         public async Task IgnoresNamedEntitiesThatDoNotExist()
         {
@@ -55,7 +27,7 @@ namespace Watchman.Tests.Dynamo
 
             var stack = new Mock<ICloudformationStackDeployer>();
 
-            var dynamoClient = CreateDynamoClientForTables(new[]
+            var dynamoClient = FakeAwsClients.CreateDynamoClientForTables(new[]
             {
                 new TableDescription()
                 {
@@ -112,7 +84,7 @@ namespace Watchman.Tests.Dynamo
 
             var stack = new FakeStackDeployer();
 
-            var dynamoClient = CreateDynamoClientForTables(new[]
+            var dynamoClient =  FakeAwsClients.CreateDynamoClientForTables(new[]
             {
                 new TableDescription()
                 {
@@ -164,6 +136,7 @@ namespace Watchman.Tests.Dynamo
                 alarm => 
                     alarm.Properties["MetricName"].Value<string>() == "ConsumedReadCapacityUnits"
                     && alarm.Properties["AlarmName"].Value<string>().Contains("ConsumedReadCapacityUnitsHigh")
+                    && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                     && alarm.Properties["Threshold"].Value<int>() == 100 * defaultCapacityThresholdFraction
                     && alarm.Properties["Period"].Value<int>() == 60
                     && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
@@ -176,6 +149,7 @@ namespace Watchman.Tests.Dynamo
                 alarm =>
                     alarm.Properties["MetricName"].Value<string>() == "ConsumedWriteCapacityUnits"
                     && alarm.Properties["AlarmName"].Value<string>().Contains("ConsumedWriteCapacityUnitsHigh")
+                    && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                     && alarm.Properties["Threshold"].Value<int>() == 200 * defaultCapacityThresholdFraction
                     && alarm.Properties["Period"].Value<int>() == 60
                     && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
@@ -188,6 +162,7 @@ namespace Watchman.Tests.Dynamo
                 alarm =>
                     alarm.Properties["MetricName"].Value<string>() == "ThrottledRequests"
                     && alarm.Properties["AlarmName"].Value<string>().Contains("ThrottledRequestsHigh")
+                    && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                     && alarm.Properties["Threshold"].Value<int>() == defaultThrottleThreshold
                     && alarm.Properties["Period"].Value<int>() == 60
                     && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Watchman.Configuration;
@@ -84,12 +84,13 @@ namespace Watchman.Engine.Generation
         {
             return new ServiceAlertingGroup
             {
-                AlarmNameSuffix = input.AlarmNameSuffix,
-                IsCatchAll = input.IsCatchAll,
-                Name = input.Name,
-                ReportTargets = input.ReportTargets,
-                Service = service,
-                Targets = input.Targets
+                GroupParameters = new AlertingGroupParameters(
+                    input.Name,
+                    input.AlarmNameSuffix,
+                    input.Targets,
+                    input.IsCatchAll
+                ),
+                Service = service
             };
         }
 

@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Watchman.Engine.Generation.Generic
 {
     public interface IAlarmCreator
     {
-        void AddAlarm(Alarm alarm);
+        void AddAlarms(AlertingGroupParameters group, IList<Alarm> alarms);
         Task SaveChanges(bool dryRun);
     }
 }

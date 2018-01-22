@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
@@ -26,7 +26,9 @@ namespace Watchman.Tests.Fakes
 
         public static string Dimension(this Resource r, string dimension)
         {
-            return r.Dimensions().Single(d => d.Name == dimension).Value;
+            return r.Dimensions()
+                .SingleOrDefault(d => d.Name == dimension)
+                ?.Value;
         }
 
         public static Dictionary<string, List<Resource>> AlarmsByDimension(this Template t, string dimension)
@@ -34,9 +36,15 @@ namespace Watchman.Tests.Fakes
             return t
                 .Alarms()
                 .Values
+                .Select(z => new
+                {
+                    dimension = z.Dimension(dimension),
+                    resource = z
+                })
+                .Where(z => z.dimension != null)
                 .GroupBy(
-                    z => z.Dimension("TableName"),
-                    z => z,
+                    z => z.dimension,
+                    z => z.resource,
                     (table, alarms) => new { table, alarms })
                 .ToDictionary(z => z.table, z => z.alarms.ToList());
         }

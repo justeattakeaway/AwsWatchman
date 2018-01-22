@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Watchman.AwsResources;
@@ -26,11 +26,12 @@ namespace Watchman.Engine.Generation
         {
             foreach (var alertingGroup in config.AlertingGroups)
             {
-                var alarms = await _serviceAlarmBuilder.GenerateAlarmsFor(alertingGroup, config.Defaults);
-                foreach (var alarm in alarms)
-                {
-                    _creator.AddAlarm(alarm);
-                }
+                var alarmsForGroup = await _serviceAlarmBuilder.GenerateAlarmsFor(
+                    alertingGroup.Service,
+                    config.Defaults,
+                    alertingGroup.GroupParameters.AlarmNameSuffix);
+
+                _creator.AddAlarms(alertingGroup.GroupParameters, alarmsForGroup);
             }
         }
     }
