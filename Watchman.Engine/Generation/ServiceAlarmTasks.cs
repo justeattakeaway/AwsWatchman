@@ -7,7 +7,7 @@ using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Generation
 {
-    public class ServiceAlarmTasks<T, TAlarmConfig> : IServiceAlarmTasks<T, TAlarmConfig>
+    public class ServiceAlarmTasks<T, TAlarmConfig> : IServiceAlarmTasks
         where T: class
         where TAlarmConfig : class
     {

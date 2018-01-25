@@ -73,12 +73,10 @@ namespace Watchman
             registry.For<IAlarmDimensionProvider<TServiceModel, TResourceAlarmConfig>>().Use<TDataProvider>();
             registry.For<IResourceAttributesProvider<TServiceModel>>().Use<TDataProvider>();
 
-            registry.For<IServiceAlarmTasks<TServiceModel, TResourceAlarmConfig>>()
+            registry.For<IServiceAlarmTasks>()
                 .Use<ServiceAlarmTasks<TServiceModel, TResourceAlarmConfig>>()
                 .Ctor<Func<WatchmanConfiguration, WatchmanServiceConfiguration<TResourceAlarmConfig>>>()
                 .Is(mapper);
-
-            registry.For<IServiceAlarmTasks>().Use(ctx => ctx.GetInstance<IServiceAlarmTasks<TServiceModel, TResourceAlarmConfig>>());
         }
     }
 }

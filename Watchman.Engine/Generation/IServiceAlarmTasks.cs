@@ -7,11 +7,4 @@ namespace Watchman.Engine.Generation
     {
         Task GenerateAlarmsForService(WatchmanConfiguration config, RunMode mode);
     }
-
-    public interface IServiceAlarmTasks<T, TAlarmConfig> : IServiceAlarmTasks
-        where T : class
-        where TAlarmConfig : class
-    {
-
-    }
 }
