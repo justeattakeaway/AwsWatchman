@@ -13,7 +13,7 @@ namespace Watchman.Configuration.Generic
 
         public Dictionary<string, AlarmValues> Values { get; set; }
 
-        public ResourceConfig Parameters { get; set; }
+        public TResourceConfig Parameters { get; set; }
 
         List<IResource> IAwsServiceAlarms.Resources => Resources?.Select(r => (IResource) r).ToList();
     }

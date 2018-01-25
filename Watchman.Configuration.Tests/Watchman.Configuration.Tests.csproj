@@ -15,6 +15,7 @@
     <Content Include="data\**\*.json" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="data\CustomParameters.json" />
     <None Remove="data\duplicates\duplicateGroups\first.json" />
     <None Remove="data\duplicates\duplicateGroups\second.json" />
   </ItemGroup>
