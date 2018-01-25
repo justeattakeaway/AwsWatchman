@@ -25,7 +25,7 @@ namespace Watchman.Configuration
             {"Rds", Rds},
             {"AutoScaling", AutoScaling},
             {"Lambda", Lambda},
-            {"VpsSubnet", VpcSubnet},
+            {"VpcSubnet", VpcSubnet},
             {"Elb", Elb},
             {"KinesisStream", KinesisStream},
             {"StepFunction", StepFunction},
