@@ -23,7 +23,8 @@ namespace Watchman.Configuration.Load
                 Converters = new List<JsonConverter>
                 {
                     new AlertingGroupConverter(_logger),
-                    new AlarmValuesConverter()
+                    new AlarmValuesConverter(),
+                    new ResourceThresholdsConverter()
                 }
             };
         }

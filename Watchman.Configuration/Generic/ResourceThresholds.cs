@@ -9,7 +9,7 @@ namespace Watchman.Configuration.Generic
         Dictionary<string, AlarmValues> Values { get; set; }
     }
 
-    public class ResourceThresholds<TConfig> : IResource
+    public sealed class ResourceThresholds<TConfig> : IResource
         where TConfig : class
     {
         public string Name { get; set; }
@@ -17,15 +17,6 @@ namespace Watchman.Configuration.Generic
         public Dictionary<string, AlarmValues> Values { get; set; }
 
         public TConfig Parameters { get; set; }
-
-        // todo: replace with json parser
-        /*public static implicit operator ResourceThresholds(string text)
-        {
-            return new ResourceThresholds
-            {
-                Name = text
-            };
-        }*/
 
         public override string ToString()
         {
