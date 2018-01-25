@@ -14,23 +14,35 @@ namespace Watchman.Configuration.Load
             throw new NotImplementedException();
         }
 
+        private static object CreateInstance(JsonReader reader, Type objectType, JsonSerializer serializer)
+        {
+            // serializer.Deserialize() would cause infinite loop
+            var instance = Activator.CreateInstance(objectType);
+            serializer.Populate(reader, instance);
+            return instance;
+        }
+
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             if (reader.TokenType != JsonToken.StartObject)
             {
-                return ReadSimpleValue(reader, objectType);
+                return ReadSimpleValue(reader, objectType, serializer);
             }
 
-            return ReadStructuredValue(reader, objectType);
+            return CreateInstance(reader, objectType, serializer);
         }
-        private static object ReadSimpleValue(JsonReader reader, Type objectType)
+        
+        private static object ReadSimpleValue(JsonReader reader, Type objectType, JsonSerializer serializer)
         {
             var name = (string)JToken.Load(reader);
 
             var input = new JObject();
             input.Add("Name", name);
 
-            return input.ToObject(objectType);
+            using (var r = input.CreateReader())
+            {
+                return CreateInstance(r, objectType, serializer);
+            }
         }
 
         private static object ReadStructuredValue(JsonReader reader, Type objectType)

@@ -15,11 +15,6 @@ namespace Watchman.Configuration.Generic
 
         public ResourceConfig Parameters { get; set; }
 
-        List<IResource> IAwsServiceAlarms.Resources
-        {
-            // todo: why
-            get => this.Resources.Select(r => (IResource) r).ToList();
-        }
-
+        List<IResource> IAwsServiceAlarms.Resources => Resources?.Select(r => (IResource) r).ToList();
     }
 }
