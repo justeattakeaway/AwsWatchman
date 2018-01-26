@@ -21,7 +21,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
             var result = sut.GetDimensions(new Subnet
             {
                 SubnetId = "Abcd"
-            }, new ResourceConfig(), new List<string> {"Subnet"});
+            }, new List<string> {"Subnet"});
 
             // assert
             Assert.That(result.Count, Is.EqualTo(1));

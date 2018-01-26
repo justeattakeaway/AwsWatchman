@@ -13,12 +13,12 @@ namespace Watchman.Engine.Generation
         where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
     {
         private readonly IResourceSource<T> _tableSource;
-        private readonly IAlarmDimensionProvider<T, TAlarmConfig> _dimensions;
+        private readonly IAlarmDimensionProvider<T> _dimensions;
         private readonly IResourceAttributesProvider<T, TAlarmConfig> _attributes;
 
         public ServiceAlarmBuilder(
             IResourceSource<T> tableSource,
-            IAlarmDimensionProvider<T, TAlarmConfig> dimensionProvider,
+            IAlarmDimensionProvider<T> dimensionProvider,
             IResourceAttributesProvider<T, TAlarmConfig> attributeProvider)
         {
             _tableSource = tableSource;
@@ -147,7 +147,7 @@ namespace Watchman.Engine.Generation
             {
                 alarm.Threshold = await ExpandThreshold(entity.Resource, configuration, alarm.Threshold);
                 
-                var dimensions = _dimensions.GetDimensions(entity.Resource, configuration, alarm.DimensionNames);
+                var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
 
                 var model = new Alarm
                 {

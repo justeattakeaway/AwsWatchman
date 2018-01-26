@@ -8,7 +8,7 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Rds
 {
-    public class RdsAlarmDataProvider : IAlarmDimensionProvider<DBInstance, ResourceConfig>,
+    public class RdsAlarmDataProvider : IAlarmDimensionProvider<DBInstance>,
         IResourceAttributesProvider<DBInstance, ResourceConfig>
     {
         public Task<decimal> GetValue(DBInstance resource, ResourceConfig config, string property)
@@ -24,7 +24,7 @@ namespace Watchman.AwsResources.Services.Rds
             throw new Exception("Unsupported RDS property name");
         }
 
-        public List<Dimension> GetDimensions(DBInstance resource, ResourceConfig config, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(DBInstance resource, IList<string> dimensionNames)
         {
             return dimensionNames
                 .Select(x => GetDimension(resource, x))

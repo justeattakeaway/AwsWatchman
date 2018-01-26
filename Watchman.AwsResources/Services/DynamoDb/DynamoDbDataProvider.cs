@@ -9,10 +9,10 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.DynamoDb
 {
-    public class DynamoDbDataProvider : IAlarmDimensionProvider<TableDescription, ResourceConfig>,
+    public class DynamoDbDataProvider : IAlarmDimensionProvider<TableDescription>,
         IResourceAttributesProvider<TableDescription, ResourceConfig>
     {
-        public List<Dimension> GetDimensions(TableDescription resource, ResourceConfig config, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(TableDescription resource, IList<string> dimensionNames)
         {
             var allowed = new List<Dimension>()
             {

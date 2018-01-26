@@ -33,7 +33,7 @@ namespace Watchman.AwsResources.Tests.Services.Kinesis
             //arange
 
             //act
-            var result = _streamDataProvider.GetDimensions(_streamData, new ResourceConfig(), new List<string> { "StreamName" });
+            var result = _streamDataProvider.GetDimensions(_streamData, new List<string> { "StreamName" });
 
             //assert
             Assert.That(result.Count, Is.EqualTo(1));
@@ -50,7 +50,7 @@ namespace Watchman.AwsResources.Tests.Services.Kinesis
 
             //act
             ActualValueDelegate<List<Dimension>> testDelegate =
-                () => _streamDataProvider.GetDimensions(_streamData, new ResourceConfig(), new List<string> { "UnknownDimension" });
+                () => _streamDataProvider.GetDimensions(_streamData, new List<string> { "UnknownDimension" });
 
             //assert
             Assert.That(testDelegate, Throws.TypeOf<Exception>()

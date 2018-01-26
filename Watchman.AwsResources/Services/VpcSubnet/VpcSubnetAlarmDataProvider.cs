@@ -9,10 +9,10 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.VpcSubnet
 {
-    public class VpcSubnetAlarmDataProvider : IAlarmDimensionProvider<Subnet, ResourceConfig>,
+    public class VpcSubnetAlarmDataProvider : IAlarmDimensionProvider<Subnet>,
         IResourceAttributesProvider<Subnet, ResourceConfig>
     {
-        public List<Dimension> GetDimensions(Subnet resource, ResourceConfig config, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(Subnet resource, IList<string> dimensionNames)
         {
             return dimensionNames.Select(d => GetDimension(resource, d)).ToList();
         }

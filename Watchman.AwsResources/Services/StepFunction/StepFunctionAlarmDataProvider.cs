@@ -8,10 +8,10 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.StepFunction
 {
-    public class StepFunctionAlarmDataProvider : IAlarmDimensionProvider<StateMachineListItem, ResourceConfig>,
+    public class StepFunctionAlarmDataProvider : IAlarmDimensionProvider<StateMachineListItem>,
         IResourceAttributesProvider<StateMachineListItem, ResourceConfig>
     {
-        public List<Dimension> GetDimensions(StateMachineListItem resource, ResourceConfig config, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(StateMachineListItem resource, IList<string> dimensionNames)
         {
             return dimensionNames
                 .Select(x => GetDimension(resource, x))

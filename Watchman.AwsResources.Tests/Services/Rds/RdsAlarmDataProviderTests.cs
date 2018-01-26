@@ -35,7 +35,7 @@ namespace Watchman.AwsResources.Tests.Services.Rds
             //arange
 
             //act
-            var result = _rdsDataProvider.GetDimensions(_dbInstance, new ResourceConfig(), new List<string> { "DBInstanceIdentifier" });
+            var result = _rdsDataProvider.GetDimensions(_dbInstance, new List<string> { "DBInstanceIdentifier" });
 
             //assert
             Assert.That(result.Count, Is.EqualTo(1));
@@ -52,7 +52,7 @@ namespace Watchman.AwsResources.Tests.Services.Rds
 
             //act
             ActualValueDelegate<List<Dimension>> testDelegate =
-                () => _rdsDataProvider.GetDimensions(_dbInstance, new ResourceConfig(), new List<string> { "UnknownDimension" });
+                () => _rdsDataProvider.GetDimensions(_dbInstance, new List<string> { "UnknownDimension" });
 
             //assert
             Assert.That(testDelegate, Throws.TypeOf<Exception>()
@@ -65,7 +65,7 @@ namespace Watchman.AwsResources.Tests.Services.Rds
             //arange
 
             //act
-            var result = await _rdsDataProvider.GetValue(_dbInstance, new ResourceConfig(),  "AllocatedStorage");
+            var result = await _rdsDataProvider.GetValue(_dbInstance, new ResourceConfig(), "AllocatedStorage");
 
             //assert
             var expected = _dbInstance.AllocatedStorage * (long) Math.Pow(10, 9);

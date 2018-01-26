@@ -3,8 +3,8 @@ using Amazon.CloudWatch.Model;
 
 namespace Watchman.AwsResources
 {
-    public interface IAlarmDimensionProvider<in TAwsResourceType, in TAlarmConfig> where TAlarmConfig: class
+    public interface IAlarmDimensionProvider<in TAwsResourceType>
     {
-        List<Dimension> GetDimensions(TAwsResourceType resource, TAlarmConfig config, IList<string> dimensionNames);
+        List<Dimension> GetDimensions(TAwsResourceType resource, IList<string> dimensionNames);
     }
 }

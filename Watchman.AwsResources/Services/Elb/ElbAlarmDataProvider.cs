@@ -8,10 +8,10 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Elb
 {
-    public class ElbAlarmDataProvider : IAlarmDimensionProvider<LoadBalancerDescription, ResourceConfig>,
+    public class ElbAlarmDataProvider : IAlarmDimensionProvider<LoadBalancerDescription>,
         IResourceAttributesProvider<LoadBalancerDescription, ResourceConfig>
     {
-        public List<Dimension> GetDimensions(LoadBalancerDescription resource, ResourceConfig config, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(LoadBalancerDescription resource, IList<string> dimensionNames)
         {
             return dimensionNames
                 .Select(d => GetDimension(resource, d))

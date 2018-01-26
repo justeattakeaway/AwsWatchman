@@ -8,10 +8,10 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Lambda
 {
-    public class LambdaAlarmDataProvider : IAlarmDimensionProvider<FunctionConfiguration, ResourceConfig>,
+    public class LambdaAlarmDataProvider : IAlarmDimensionProvider<FunctionConfiguration>,
         IResourceAttributesProvider<FunctionConfiguration, ResourceConfig>
     {
-        public List<Dimension> GetDimensions(FunctionConfiguration resource, ResourceConfig config, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(FunctionConfiguration resource, IList<string> dimensionNames)
         {
             return dimensionNames
                 .Select(x => GetDimension(resource, x))

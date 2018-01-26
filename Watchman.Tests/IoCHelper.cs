@@ -19,7 +19,7 @@ namespace Watchman.Tests
     {
         public static AlarmLoaderAndGenerator CreateSystemUnderTest<T, TAlarmConfig>(
             IResourceSource<T> source,
-            IAlarmDimensionProvider<T, TAlarmConfig> dimensionProvider, 
+            IAlarmDimensionProvider<T> dimensionProvider, 
             IResourceAttributesProvider<T, TAlarmConfig> attributeProvider,
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> mapper,
             IAlarmCreator creator,
@@ -66,7 +66,7 @@ namespace Watchman.Tests
         }
 
         public void AddService<T, TAlarmConfig>(IResourceSource<T> source,
-            IAlarmDimensionProvider<T, TAlarmConfig> dimensionProvider,
+            IAlarmDimensionProvider<T> dimensionProvider,
             IResourceAttributesProvider<T, TAlarmConfig> attributeProvider,
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> mapper)
             where T : class

@@ -35,7 +35,7 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
             //arange
 
             //act
-            var result = _lambdaDataProvider.GetDimensions(_functionConfig, new ResourceConfig(), new List<string> { "FunctionName" });
+            var result = _lambdaDataProvider.GetDimensions(_functionConfig, new List<string> { "FunctionName" });
 
             //assert
             Assert.That(result.Count, Is.EqualTo(1));
@@ -52,7 +52,7 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
 
             //act
             ActualValueDelegate<List<Dimension>> testDelegate =
-                () => _lambdaDataProvider.GetDimensions(_functionConfig, new ResourceConfig(), new List<string> { "UnknownDimension" });
+                () => _lambdaDataProvider.GetDimensions(_functionConfig, new List<string> { "UnknownDimension" });
 
             //assert
             Assert.That(testDelegate, Throws.TypeOf<Exception>()

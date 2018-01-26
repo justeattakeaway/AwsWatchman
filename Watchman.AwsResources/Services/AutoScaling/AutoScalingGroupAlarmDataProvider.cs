@@ -9,7 +9,7 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.AutoScaling
 {
-    public class AutoScalingGroupAlarmDataProvider : IAlarmDimensionProvider<AutoScalingGroup, AutoScalingResourceConfig>,
+    public class AutoScalingGroupAlarmDataProvider : IAlarmDimensionProvider<AutoScalingGroup>,
         IResourceAttributesProvider<AutoScalingGroup, AutoScalingResourceConfig>
     {
         private readonly IAmazonCloudWatch _cloudWatch;
@@ -99,12 +99,8 @@ namespace Watchman.AwsResources.Services.AutoScaling
                 };
         }
 
-        public List<Dimension> GetDimensions(AutoScalingGroup resource, AutoScalingResourceConfig config, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(AutoScalingGroup resource, IList<string> dimensionNames)
         {
-            if (config == null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
 
             return dimensionNames
                 .Select(x => GetDimension(resource, x))
