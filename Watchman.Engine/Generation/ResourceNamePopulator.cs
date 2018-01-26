@@ -119,7 +119,8 @@ namespace Watchman.Engine.Generation
             {
                 Name = tableName,
                 Pattern = null,
-                Values = pattern.Values
+                Values = pattern.Values,
+                Parameters = pattern.Parameters
             };
         }
     }
