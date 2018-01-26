@@ -58,7 +58,9 @@ namespace Watchman.Engine.Generation
                 return false;
             }
 
-            var resources = serviceConfig.AlertingGroups.SelectMany(ag => ag.Service?.Resources);
+            var resources = serviceConfig.AlertingGroups
+                .Where(ag => ag.Service?.Resources != null)
+                .SelectMany(ag => ag.Service?.Resources);
 
             return resources.Any();
         }
