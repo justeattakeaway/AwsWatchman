@@ -11,14 +11,14 @@
         { "Pattern": "bar" },
         {
           "Pattern": "baz",
-          "Parameters": {
-            "ScaleUpDelay":  20 
+          "Options": {
+            "ScaleUpDelay": 20
           }
         }
       ],
-      "Parameters": {
-        "ScaleUpDelay": 50 
-      }  
+      "Options": {
+        "ScaleUpDelay": 50
+      }
     }
   }
 }

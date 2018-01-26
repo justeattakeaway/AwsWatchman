@@ -16,7 +16,7 @@ namespace Watchman.Configuration.Generic
         public string Pattern { get; set; }
         public Dictionary<string, AlarmValues> Values { get; set; }
 
-        public TConfig Parameters { get; set; }
+        public TConfig Options { get; set; }
 
         public override string ToString()
         {

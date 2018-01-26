@@ -84,7 +84,7 @@ namespace Watchman.Engine.Generation
             {
                 Pattern = $"^{name}$",
                 Values = named.Values,
-                Parameters = named.Parameters
+                Options = named.Options
             };
         }
 
@@ -120,7 +120,7 @@ namespace Watchman.Engine.Generation
                 Name = tableName,
                 Pattern = null,
                 Values = pattern.Values,
-                Parameters = pattern.Parameters
+                Options = pattern.Options
             };
         }
     }

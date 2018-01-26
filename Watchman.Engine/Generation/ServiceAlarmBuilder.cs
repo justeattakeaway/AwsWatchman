@@ -118,7 +118,7 @@ namespace Watchman.Engine.Generation
             // apply thresholds from resource or alerting group
             var expanded = ExpandDefaultAlarmsForResource(defaults, resource.Values, service.Values);
 
-            var config = MergeConfiguration(service.Parameters, resource.Parameters);
+            var config = MergeConfiguration(service.Options, resource.Options);
             
             return await GetAlarms(expanded, resource, config, groupSuffix);
         }
