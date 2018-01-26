@@ -41,14 +41,14 @@ namespace Watchman.AwsResources.Services.DynamoDb
             return requested;
         }
 
-        public decimal GetValue(TableDescription resource, ResourceConfig config, string property)
+        public Task<decimal> GetValue(TableDescription resource, ResourceConfig config, string property)
         {
             switch (property)
             {
                 case "ProvisionedReadThroughput":
-                    return resource.ProvisionedThroughput.ReadCapacityUnits;
+                    return Task.FromResult((decimal) resource.ProvisionedThroughput.ReadCapacityUnits);
                 case "ProvisionedWriteThroughput":
-                    return resource.ProvisionedThroughput.WriteCapacityUnits;
+                    return Task.FromResult((decimal) resource.ProvisionedThroughput.WriteCapacityUnits);
             }
 
             throw new ArgumentOutOfRangeException(nameof(property));

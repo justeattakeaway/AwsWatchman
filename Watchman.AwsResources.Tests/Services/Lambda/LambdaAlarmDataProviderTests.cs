@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.Lambda.Model;
 using NUnit.Framework;
@@ -59,12 +60,12 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
         }
 
         [Test]
-        public void GetAttribute_KnownAttribute_ReturnsValue()
+        public async Task GetAttribute_KnownAttribute_ReturnsValue()
         {
             //arange
 
             //act
-            var result = _lambdaDataProvider.GetValue(_functionConfig, new ResourceConfig(), "Timeout");
+            var result = await _lambdaDataProvider.GetValue(_functionConfig, new ResourceConfig(), "Timeout");
 
             //assert
             var expected = _functionConfig.Timeout * 1000;
@@ -77,7 +78,7 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
             //arange
 
             //act
-            ActualValueDelegate<decimal> testDelegate =
+            ActualValueDelegate<Task> testDelegate =
                 () => _lambdaDataProvider.GetValue(_functionConfig, new ResourceConfig(), "Unknown Attribute");
 
             //assert

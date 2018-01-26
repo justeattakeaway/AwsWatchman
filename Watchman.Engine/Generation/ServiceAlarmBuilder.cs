@@ -26,12 +26,12 @@ namespace Watchman.Engine.Generation
             _attributes = attributeProvider;
         }
 
-        private Threshold ExpandThreshold(T resource, TAlarmConfig config, Threshold threshold)
+        private async Task<Threshold> ExpandThreshold(T resource, TAlarmConfig config, Threshold threshold)
         {
             if (threshold.ThresholdType == ThresholdType.PercentageOf)
             {
                 var fraction = threshold.Value / 100;
-                var property = _attributes.GetValue(resource, config, threshold.SourceAttribute);
+                var property = await _attributes.GetValue(resource, config, threshold.SourceAttribute);
 
                 threshold = new Threshold
                 {
@@ -145,7 +145,7 @@ namespace Watchman.Engine.Generation
             // expand dynamic thresholds
             foreach (var alarm in alarms)
             {
-                alarm.Threshold = ExpandThreshold(entity.Resource, configuration, alarm.Threshold);
+                alarm.Threshold = await ExpandThreshold(entity.Resource, configuration, alarm.Threshold);
                 
                 var dimensions = _dimensions.GetDimensions(entity.Resource, configuration, alarm.DimensionNames);
 

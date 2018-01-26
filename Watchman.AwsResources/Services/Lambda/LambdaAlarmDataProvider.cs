@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.Lambda.Model;
 using Watchman.Configuration.Generic;
@@ -37,13 +38,14 @@ namespace Watchman.AwsResources.Services.Lambda
             return dim;
         }
 
-        public decimal GetValue(FunctionConfiguration resource, ResourceConfig config, string property)
+        public Task<decimal> GetValue(FunctionConfiguration resource, ResourceConfig config, string property)
         {
             switch (property)
             {
                 case "Timeout":
                     // alarm needs timeout in milliseconds
-                    return resource.Timeout * 1000;
+                    decimal result = resource.Timeout * 1000;
+                    return Task.FromResult(result);
             }
 
             throw new Exception("Unsupported Lambda property name");

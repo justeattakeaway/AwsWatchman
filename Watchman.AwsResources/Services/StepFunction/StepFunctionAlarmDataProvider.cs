@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.StepFunctions.Model;
 using Watchman.Configuration.Generic;
@@ -38,7 +39,7 @@ namespace Watchman.AwsResources.Services.StepFunction
             }
         }
 
-        public decimal GetValue(StateMachineListItem resource, ResourceConfig config, string property)
+        public Task<decimal> GetValue(StateMachineListItem resource, ResourceConfig config, string property)
         {
             throw new NotImplementedException();
         }

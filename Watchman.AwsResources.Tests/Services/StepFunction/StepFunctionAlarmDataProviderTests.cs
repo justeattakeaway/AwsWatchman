@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.StepFunctions.Model;
 using NUnit.Framework;
@@ -64,7 +65,7 @@ namespace Watchman.AwsResources.Tests.Services.StepFunction
             // Arrange
 
             // Act
-            ActualValueDelegate<decimal> testDelegate =
+            ActualValueDelegate<Task> testDelegate =
                 () => _dataProvider.GetValue(_resource, new ResourceConfig(), "Unknown Attribute");
 
             // Assert

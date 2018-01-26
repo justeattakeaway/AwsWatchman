@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.VpcSubnet;
 using Amazon.EC2.Model;
@@ -30,7 +31,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
 
         [TestCase("10.10.10.10/23", ExpectedResult = 510d)]
         [TestCase("10.10.10.10/19", ExpectedResult = 8190d)]
-        public decimal GetValue_NumberOfIpAddresses_CalculatesSizeCorrectly(string cidrBlock)
+        public async Task<decimal> GetValue_NumberOfIpAddresses_CalculatesSizeCorrectly(string cidrBlock)
         {
             // arrange
             var sut = new VpcSubnetAlarmDataProvider();
@@ -40,7 +41,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
             };
 
             // act
-            var result = sut.GetValue(subnet, new ResourceConfig(), "NumberOfIpAddresses");
+            var result = await sut.GetValue(subnet, new ResourceConfig(), "NumberOfIpAddresses");
 
             return result;
         }

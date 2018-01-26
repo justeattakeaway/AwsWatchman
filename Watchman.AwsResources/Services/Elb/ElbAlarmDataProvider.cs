@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.ElasticLoadBalancing.Model;
 using Watchman.Configuration.Generic;
@@ -37,7 +38,7 @@ namespace Watchman.AwsResources.Services.Elb
             return dim;
         }
 
-        public decimal GetValue(LoadBalancerDescription resource, ResourceConfig config, string property)
+        public Task<decimal> GetValue(LoadBalancerDescription resource, ResourceConfig config, string property)
         {
             throw new NotImplementedException();
         }

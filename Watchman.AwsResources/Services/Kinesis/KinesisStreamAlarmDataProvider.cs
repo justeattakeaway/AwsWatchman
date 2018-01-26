@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Watchman.Configuration.Generic;
 
@@ -25,7 +26,7 @@ namespace Watchman.AwsResources.Services.Kinesis
             }
         }
 
-        public decimal GetValue(KinesisStreamData resource, ResourceConfig config, string property)
+        public Task<decimal> GetValue(KinesisStreamData resource, ResourceConfig config, string property)
         {
             throw new NotImplementedException();
         }
