@@ -4,6 +4,7 @@ using System.Linq;
 using Amazon.ElasticLoadBalancing.Model;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Elb;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Tests.Services.Elb
 {
@@ -31,7 +32,7 @@ namespace Watchman.AwsResources.Tests.Services.Elb
             const string dimName = "LoadBalancerName";
 
             //act
-            var result = _elbDataProvider.GetDimensions(_elbDescription, null, new List<string> { dimName });
+            var result = _elbDataProvider.GetDimensions(_elbDescription, new ResourceConfig(), new List<string> { dimName });
 
             //assert
             Assert.That(result.Count, Is.EqualTo(1));
@@ -50,7 +51,7 @@ namespace Watchman.AwsResources.Tests.Services.Elb
             //act
 
             //assert
-            var ex = Assert.Throws<Exception>(() => _elbDataProvider.GetDimensions(_elbDescription, null, new List<string> { dimName }));
+            var ex = Assert.Throws<Exception>(() => _elbDataProvider.GetDimensions(_elbDescription, new ResourceConfig(), new List<string> { dimName }));
             Assert.That(ex.Message, Is.EqualTo($"Unsupported dimension {dimName}"));
         }
 

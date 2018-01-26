@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.VpcSubnet;
 using Amazon.EC2.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Tests.Services.VpcSubnet
 {
@@ -19,7 +20,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
             var result = sut.GetDimensions(new Subnet
             {
                 SubnetId = "Abcd"
-            }, null, new List<string> {"Subnet"});
+            }, new ResourceConfig(), new List<string> {"Subnet"});
 
             // assert
             Assert.That(result.Count, Is.EqualTo(1));

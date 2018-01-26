@@ -4,6 +4,7 @@ using Moq;
 using StructureMap.Diagnostics;
 using Watchman.AwsResources;
 using Watchman.Configuration;
+using Watchman.Configuration.Generic;
 using Watchman.Configuration.Load;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
@@ -25,7 +26,7 @@ namespace Watchman.Tests
             IConfigLoader loader
         )
             where T: class
-            where TAlarmConfig : class
+            where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
         {
             var builder = new Builder(loader, creator);
             builder.AddService(source, dimensionProvider, attributeProvider, mapper);
@@ -69,18 +70,16 @@ namespace Watchman.Tests
             IResourceAttributesProvider<T> attributeProvider,
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> mapper)
             where T : class
-            where TAlarmConfig : class
+            where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
         {
-            
             var task = new ServiceAlarmTasks<T, TAlarmConfig>(
                 _logger,
                 new ResourceNamePopulator<T, TAlarmConfig>(_logger, source),
-                new ServiceAlarmGenerator<T, TAlarmConfig>(
-                    _creator,
-                    new ServiceAlarmBuilder<T, TAlarmConfig>(source, dimensionProvider, attributeProvider)),
                 new OrphanResourcesReporter<T>(
                     new OrphanResourcesFinder<T>(source),
                     new OrphansLogger(_logger)),
+                _creator,
+                new ServiceAlarmBuilder<T, TAlarmConfig>(source, dimensionProvider, attributeProvider),
                 mapper
             );
 

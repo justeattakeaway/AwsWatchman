@@ -67,7 +67,7 @@ namespace Watchman
             where TServiceModel : class
             where TSource : IResourceSource<TServiceModel>
             where TDataProvider : IAlarmDimensionProvider<TServiceModel, TResourceAlarmConfig>, IResourceAttributesProvider<TServiceModel>
-            where TResourceAlarmConfig: class
+            where TResourceAlarmConfig: class, IServiceAlarmConfig<TResourceAlarmConfig>, new()
         {
             registry.For<IResourceSource<TServiceModel>>().Use<TSource>();
             registry.For<IAlarmDimensionProvider<TServiceModel, TResourceAlarmConfig>>().Use<TDataProvider>();

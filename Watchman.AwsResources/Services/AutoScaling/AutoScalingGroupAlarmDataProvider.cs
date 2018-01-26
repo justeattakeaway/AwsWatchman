@@ -33,7 +33,6 @@ namespace Watchman.AwsResources.Services.AutoScaling
             throw new Exception("Unsupported property name");
         }
 
-
         private static Dimension GetDimension(AutoScalingGroup resource, string dimensionName)
         {
             return new Dimension
@@ -45,6 +44,11 @@ namespace Watchman.AwsResources.Services.AutoScaling
 
         public List<Dimension> GetDimensions(AutoScalingGroup resource, AutoScalingResourceConfig config, IList<string> dimensionNames)
         {
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
             return dimensionNames
                 .Select(x => GetDimension(resource, x))
                 .ToList();

@@ -3,6 +3,7 @@ using System.Linq;
 using Amazon.AutoScaling.Model;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.AutoScaling;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Tests.Services.AutoScaling
 {
@@ -21,7 +22,7 @@ namespace Watchman.AwsResources.Tests.Services.AutoScaling
             };
 
             //act
-            var result = sut.GetDimensions(autoScalingGroup, null, new List<string> { "AutoScalingGroupName" });
+            var result = sut.GetDimensions(autoScalingGroup, new AutoScalingResourceConfig(), new List<string> { "AutoScalingGroupName" });
 
             //assert
             Assert.That(result.Count, Is.EqualTo(1));

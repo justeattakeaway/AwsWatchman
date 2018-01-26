@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Watchman.Configuration;
+using Watchman.Configuration.Generic;
 using Watchman.Engine.Generation.Generic;
 using Watchman.Engine.Logging;
 
@@ -9,24 +10,27 @@ namespace Watchman.Engine.Generation
 {
     public class ServiceAlarmTasks<T, TAlarmConfig> : IServiceAlarmTasks
         where T: class
-        where TAlarmConfig : class
+        where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
     {
         private readonly IAlarmLogger _logger;
         private readonly ResourceNamePopulator<T, TAlarmConfig> _populator;
-        private readonly ServiceAlarmGenerator<T, TAlarmConfig> _generator;
         private readonly OrphanResourcesReporter<T> _orphansReporter;
+        private readonly IAlarmCreator _creator;
+        private readonly ServiceAlarmBuilder<T, TAlarmConfig> _serviceAlarmBuilder;
         private readonly Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> _serviceConfigMapper;
 
         public ServiceAlarmTasks(
             IAlarmLogger logger,
             ResourceNamePopulator<T, TAlarmConfig> populator,
-            ServiceAlarmGenerator<T, TAlarmConfig> generator,
             OrphanResourcesReporter<T> orphansReporter,
+            IAlarmCreator creator,
+            ServiceAlarmBuilder<T, TAlarmConfig> serviceAlarmBuilder,
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> serviceConfigMapper)
         {
             _populator = populator;
-            _generator = generator;
             _orphansReporter = orphansReporter;
+            _creator = creator;
+            _serviceAlarmBuilder = serviceAlarmBuilder;
             _serviceConfigMapper = serviceConfigMapper;
             _logger = logger;
         }
@@ -67,9 +71,17 @@ namespace Watchman.Engine.Generation
             }
         }
 
-        private Task GenerateAlarms(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig, RunMode mode)
+        private async Task GenerateAlarms(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig, RunMode mode)
         {
-            return _generator.GenerateAlarmsFor(serviceConfig, mode);
+            foreach (var alertingGroup in serviceConfig.AlertingGroups)
+            {
+                var alarmsForGroup = await _serviceAlarmBuilder.GenerateAlarmsFor(
+                    alertingGroup.Service,
+                    serviceConfig.Defaults,
+                    alertingGroup.GroupParameters.AlarmNameSuffix);
+
+                _creator.AddAlarms(alertingGroup.GroupParameters, alarmsForGroup);
+            }
         }
 
         private Task ReportOrphans(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig)
