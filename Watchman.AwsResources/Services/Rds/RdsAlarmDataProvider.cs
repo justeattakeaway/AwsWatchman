@@ -7,9 +7,10 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Rds
 {
-    public class RdsAlarmDataProvider : IAlarmDimensionProvider<DBInstance, ResourceConfig>, IResourceAttributesProvider<DBInstance>
+    public class RdsAlarmDataProvider : IAlarmDimensionProvider<DBInstance, ResourceConfig>,
+        IResourceAttributesProvider<DBInstance, ResourceConfig>
     {
-        public decimal GetValue(DBInstance resource, string property)
+        public decimal GetValue(DBInstance resource, ResourceConfig config, string property)
         {
             switch (property)
             {

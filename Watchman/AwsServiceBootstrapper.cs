@@ -66,12 +66,13 @@ namespace Watchman
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TResourceAlarmConfig>> mapper)
             where TServiceModel : class
             where TSource : IResourceSource<TServiceModel>
-            where TDataProvider : IAlarmDimensionProvider<TServiceModel, TResourceAlarmConfig>, IResourceAttributesProvider<TServiceModel>
+            where TDataProvider : IAlarmDimensionProvider<TServiceModel, TResourceAlarmConfig>,
+                IResourceAttributesProvider<TServiceModel, TResourceAlarmConfig>
             where TResourceAlarmConfig: class, IServiceAlarmConfig<TResourceAlarmConfig>, new()
         {
             registry.For<IResourceSource<TServiceModel>>().Use<TSource>();
             registry.For<IAlarmDimensionProvider<TServiceModel, TResourceAlarmConfig>>().Use<TDataProvider>();
-            registry.For<IResourceAttributesProvider<TServiceModel>>().Use<TDataProvider>();
+            registry.For<IResourceAttributesProvider<TServiceModel, TResourceAlarmConfig>>().Use<TDataProvider>();
 
             registry.For<IServiceAlarmTasks>()
                 .Use<ServiceAlarmTasks<TServiceModel, TResourceAlarmConfig>>()

@@ -65,7 +65,7 @@ namespace Watchman.AwsResources.Tests.Services.StepFunction
 
             // Act
             ActualValueDelegate<decimal> testDelegate =
-                () => _dataProvider.GetValue(_resource, "Unknown Attribute");
+                () => _dataProvider.GetValue(_resource, new ResourceConfig(), "Unknown Attribute");
 
             // Assert
             Assert.That(testDelegate, Throws.TypeOf<NotImplementedException>());

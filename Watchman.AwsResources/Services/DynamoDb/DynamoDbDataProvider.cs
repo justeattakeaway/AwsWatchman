@@ -9,7 +9,8 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.DynamoDb
 {
-    public class DynamoDbDataProvider : IAlarmDimensionProvider<TableDescription, ResourceConfig>, IResourceAttributesProvider<TableDescription>
+    public class DynamoDbDataProvider : IAlarmDimensionProvider<TableDescription, ResourceConfig>,
+        IResourceAttributesProvider<TableDescription, ResourceConfig>
     {
         public List<Dimension> GetDimensions(TableDescription resource, ResourceConfig config, IList<string> dimensionNames)
         {
@@ -40,7 +41,7 @@ namespace Watchman.AwsResources.Services.DynamoDb
             return requested;
         }
 
-        public decimal GetValue(TableDescription resource, string property)
+        public decimal GetValue(TableDescription resource, ResourceConfig config, string property)
         {
             switch (property)
             {

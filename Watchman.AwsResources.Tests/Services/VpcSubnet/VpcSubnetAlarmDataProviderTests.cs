@@ -40,7 +40,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
             };
 
             // act
-            var result = sut.GetValue(subnet, "NumberOfIpAddresses");
+            var result = sut.GetValue(subnet, new ResourceConfig(), "NumberOfIpAddresses");
 
             return result;
         }

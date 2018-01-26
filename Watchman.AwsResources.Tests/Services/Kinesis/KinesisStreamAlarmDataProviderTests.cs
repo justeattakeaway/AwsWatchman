@@ -63,7 +63,7 @@ namespace Watchman.AwsResources.Tests.Services.Kinesis
 
             //act
             ActualValueDelegate<decimal> testDelegate =
-                () => _streamDataProvider.GetValue(_streamData, "Unknown Attribute");
+                () => _streamDataProvider.GetValue(_streamData, new ResourceConfig(), "Unknown Attribute");
 
             //assert
             Assert.That(testDelegate, Throws.TypeOf<NotImplementedException>());

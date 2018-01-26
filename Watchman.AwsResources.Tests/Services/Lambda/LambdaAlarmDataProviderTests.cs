@@ -64,7 +64,7 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
             //arange
 
             //act
-            var result = _lambdaDataProvider.GetValue(_functionConfig, "Timeout");
+            var result = _lambdaDataProvider.GetValue(_functionConfig, new ResourceConfig(), "Timeout");
 
             //assert
             var expected = _functionConfig.Timeout * 1000;
@@ -78,7 +78,7 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
 
             //act
             ActualValueDelegate<decimal> testDelegate =
-                () => _lambdaDataProvider.GetValue(_functionConfig, "Unknown Attribute");
+                () => _lambdaDataProvider.GetValue(_functionConfig, new ResourceConfig(), "Unknown Attribute");
 
             //assert
             Assert.That(testDelegate, Throws.TypeOf<Exception>()

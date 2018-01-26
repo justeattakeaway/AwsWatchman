@@ -43,7 +43,7 @@ namespace Watchman.AwsResources.Tests.Services.AutoScaling
             };
 
             //act
-            var result = sut.GetValue(autoScalingGroup, "GroupDesiredCapacity");
+            var result = sut.GetValue(autoScalingGroup, new AutoScalingResourceConfig(), "GroupDesiredCapacity");
 
             //assert
             Assert.That(result, Is.EqualTo(autoScalingGroup.DesiredCapacity));

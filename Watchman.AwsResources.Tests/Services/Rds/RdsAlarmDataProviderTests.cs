@@ -64,7 +64,7 @@ namespace Watchman.AwsResources.Tests.Services.Rds
             //arange
 
             //act
-            var result = _rdsDataProvider.GetValue(_dbInstance, "AllocatedStorage");
+            var result = _rdsDataProvider.GetValue(_dbInstance, new ResourceConfig(),  "AllocatedStorage");
 
             //assert
             var expected = _dbInstance.AllocatedStorage * (long) Math.Pow(10, 9);
@@ -78,7 +78,7 @@ namespace Watchman.AwsResources.Tests.Services.Rds
 
             //act
             ActualValueDelegate<decimal> testDelegate =
-                () => _rdsDataProvider.GetValue(_dbInstance, "Unknown Attribute");
+                () => _rdsDataProvider.GetValue(_dbInstance, new ResourceConfig(), "Unknown Attribute");
 
             //assert
             Assert.That(testDelegate, Throws.TypeOf<Exception>()

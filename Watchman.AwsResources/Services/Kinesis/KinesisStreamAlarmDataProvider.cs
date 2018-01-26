@@ -6,7 +6,8 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Kinesis
 {
-    public class KinesisStreamAlarmDataProvider : IAlarmDimensionProvider<KinesisStreamData, ResourceConfig>, IResourceAttributesProvider<KinesisStreamData>
+    public class KinesisStreamAlarmDataProvider : IAlarmDimensionProvider<KinesisStreamData, ResourceConfig>,
+        IResourceAttributesProvider<KinesisStreamData, ResourceConfig>
     {
         public List<Dimension> GetDimensions(KinesisStreamData resource, ResourceConfig config, IList<string> dimensionNames) =>
             dimensionNames.Select(x => GetDimension(resource, x))
@@ -24,7 +25,7 @@ namespace Watchman.AwsResources.Services.Kinesis
             }
         }
 
-        public decimal GetValue(KinesisStreamData resource, string property)
+        public decimal GetValue(KinesisStreamData resource, ResourceConfig config, string property)
         {
             throw new NotImplementedException();
         }

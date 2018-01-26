@@ -14,24 +14,24 @@ namespace Watchman.Engine.Generation
     {
         private readonly IResourceSource<T> _tableSource;
         private readonly IAlarmDimensionProvider<T, TAlarmConfig> _dimensions;
-        private readonly IResourceAttributesProvider<T> _attributes;
+        private readonly IResourceAttributesProvider<T, TAlarmConfig> _attributes;
 
         public ServiceAlarmBuilder(
             IResourceSource<T> tableSource,
             IAlarmDimensionProvider<T, TAlarmConfig> dimensionProvider,
-            IResourceAttributesProvider<T> attributeProvider)
+            IResourceAttributesProvider<T, TAlarmConfig> attributeProvider)
         {
             _tableSource = tableSource;
             _dimensions = dimensionProvider;
             _attributes = attributeProvider;
         }
 
-        private Threshold ExpandThreshold(T resource, Threshold threshold)
+        private Threshold ExpandThreshold(T resource, TAlarmConfig config, Threshold threshold)
         {
             if (threshold.ThresholdType == ThresholdType.PercentageOf)
             {
                 var fraction = threshold.Value / 100;
-                var property = _attributes.GetValue(resource, threshold.SourceAttribute);
+                var property = _attributes.GetValue(resource, config, threshold.SourceAttribute);
 
                 threshold = new Threshold
                 {
@@ -145,7 +145,7 @@ namespace Watchman.Engine.Generation
             // expand dynamic thresholds
             foreach (var alarm in alarms)
             {
-                alarm.Threshold = ExpandThreshold(entity.Resource, alarm.Threshold);
+                alarm.Threshold = ExpandThreshold(entity.Resource, configuration, alarm.Threshold);
                 
                 var dimensions = _dimensions.GetDimensions(entity.Resource, configuration, alarm.DimensionNames);
 

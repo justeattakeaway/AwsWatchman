@@ -7,7 +7,8 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Elb
 {
-    public class ElbAlarmDataProvider : IAlarmDimensionProvider<LoadBalancerDescription, ResourceConfig>, IResourceAttributesProvider<LoadBalancerDescription>
+    public class ElbAlarmDataProvider : IAlarmDimensionProvider<LoadBalancerDescription, ResourceConfig>,
+        IResourceAttributesProvider<LoadBalancerDescription, ResourceConfig>
     {
         public List<Dimension> GetDimensions(LoadBalancerDescription resource, ResourceConfig config, IList<string> dimensionNames)
         {
@@ -36,7 +37,7 @@ namespace Watchman.AwsResources.Services.Elb
             return dim;
         }
 
-        public decimal GetValue(LoadBalancerDescription resource, string property)
+        public decimal GetValue(LoadBalancerDescription resource, ResourceConfig config, string property)
         {
             throw new NotImplementedException();
         }

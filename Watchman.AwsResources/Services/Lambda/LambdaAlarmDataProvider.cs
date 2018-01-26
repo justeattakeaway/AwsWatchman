@@ -7,7 +7,8 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Lambda
 {
-    public class LambdaAlarmDataProvider : IAlarmDimensionProvider<FunctionConfiguration, ResourceConfig>, IResourceAttributesProvider<FunctionConfiguration>
+    public class LambdaAlarmDataProvider : IAlarmDimensionProvider<FunctionConfiguration, ResourceConfig>,
+        IResourceAttributesProvider<FunctionConfiguration, ResourceConfig>
     {
         public List<Dimension> GetDimensions(FunctionConfiguration resource, ResourceConfig config, IList<string> dimensionNames)
         {
@@ -36,7 +37,7 @@ namespace Watchman.AwsResources.Services.Lambda
             return dim;
         }
 
-        public decimal GetValue(FunctionConfiguration resource, string property)
+        public decimal GetValue(FunctionConfiguration resource, ResourceConfig config, string property)
         {
             switch (property)
             {

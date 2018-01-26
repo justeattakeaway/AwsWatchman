@@ -8,7 +8,8 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.VpcSubnet
 {
-    public class VpcSubnetAlarmDataProvider : IAlarmDimensionProvider<Subnet, ResourceConfig>, IResourceAttributesProvider<Subnet>
+    public class VpcSubnetAlarmDataProvider : IAlarmDimensionProvider<Subnet, ResourceConfig>,
+        IResourceAttributesProvider<Subnet, ResourceConfig>
     {
         public List<Dimension> GetDimensions(Subnet resource, ResourceConfig config, IList<string> dimensionNames)
         {
@@ -27,7 +28,7 @@ namespace Watchman.AwsResources.Services.VpcSubnet
             }
         }
 
-        public decimal GetValue(Subnet resource, string property)
+        public decimal GetValue(Subnet resource, ResourceConfig config, string property)
         {
             switch (property)
             {

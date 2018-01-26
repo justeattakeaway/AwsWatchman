@@ -8,7 +8,7 @@ using Watchman.Configuration.Generic;
 namespace Watchman.AwsResources.Services.AutoScaling
 {
     public class AutoScalingGroupAlarmDataProvider : IAlarmDimensionProvider<AutoScalingGroup, AutoScalingResourceConfig>,
-        IResourceAttributesProvider<AutoScalingGroup>
+        IResourceAttributesProvider<AutoScalingGroup, AutoScalingResourceConfig>
     {
         private static string GetAttribute(AutoScalingGroup resource, string property)
         {
@@ -22,7 +22,7 @@ namespace Watchman.AwsResources.Services.AutoScaling
             }
         }
 
-        public decimal GetValue(AutoScalingGroup resource, string property)
+        public decimal GetValue(AutoScalingGroup resource, AutoScalingResourceConfig config, string property)
         {
             switch (property)
             {

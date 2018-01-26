@@ -63,7 +63,7 @@ namespace Watchman.AwsResources.Tests.Services.Elb
             //act
 
             //assert
-            Assert.Throws<NotImplementedException>(() => _elbDataProvider.GetValue(_elbDescription, "SomeAttribute"));
+            Assert.Throws<NotImplementedException>(() => _elbDataProvider.GetValue(_elbDescription, new ResourceConfig(), "SomeAttribute"));
         }
     }
 }
