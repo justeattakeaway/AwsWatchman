@@ -39,6 +39,7 @@ namespace Watchman
             registry.For<IAmazonElasticLoadBalancing>().Use(ctx => new AmazonElasticLoadBalancingClient(creds, region));
             registry.For<IAmazonS3>().Use(ctx => new AmazonS3Client(creds, region));
             registry.For<IAmazonStepFunctions>().Use(ctx => new AmazonStepFunctionsClient(creds, region));
+            registry.For<IAmazonCloudWatch>().Use(ctx => new AmazonCloudWatchClient(creds, region));
         }
     }
 }
