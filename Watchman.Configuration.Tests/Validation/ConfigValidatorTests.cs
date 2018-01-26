@@ -26,18 +26,17 @@ namespace Watchman.Configuration.Tests.Validation
                     new Queue {Name = "QueueName"}
                 }
             };
-            _config.AlertingGroups.First().Services = new Dictionary<string, AwsServiceAlarms>
+            _config.AlertingGroups.First().Services = new AlertingGroupServices()
             {
+                AutoScaling = new AwsServiceAlarms
                 {
-                    "ServiceName", new AwsServiceAlarms
+                    Resources = new List<ResourceThresholds>
                     {
-                        Resources = new List<ResourceThresholds>
-                        {
-                            new ResourceThresholds {Pattern = "ResourceName"}
-                        }
+                        new ResourceThresholds {Pattern = "ResourceName"}
                     }
                 }
             };
+
         }
 
         [Test]
@@ -275,7 +274,7 @@ namespace Watchman.Configuration.Tests.Validation
             // arrange
             _config.AlertingGroups.First().DynamoDb.Tables = null;
             _config.AlertingGroups.First().Sqs = null;
-            _config.AlertingGroups.First().Services.Clear();
+            _config.AlertingGroups.First().Services = new AlertingGroupServices();
 
             // act
 
@@ -291,10 +290,11 @@ namespace Watchman.Configuration.Tests.Validation
             // arrange
             _config.AlertingGroups.First().DynamoDb = new DynamoDb();
             _config.AlertingGroups.First().Sqs = new Sqs();
-            _config.AlertingGroups.First().Services = new Dictionary<string, AwsServiceAlarms>
+            _config.AlertingGroups.First().Services = new AlertingGroupServices()
             {
-                {"someService", new AwsServiceAlarms()}
+                Lambda = new AwsServiceAlarms()
             };
+
             // act
 
             // assert
@@ -309,7 +309,13 @@ namespace Watchman.Configuration.Tests.Validation
             // arrange
             _config.AlertingGroups.First().DynamoDb.Tables = new List<Table>();
             _config.AlertingGroups.First().Sqs.Queues = new List<Queue>();
-            _config.AlertingGroups.First().Services.First().Value.Resources = new List<ResourceThresholds>();
+            _config.AlertingGroups.First().Services = new AlertingGroupServices()
+            {
+                Rds = new AwsServiceAlarms()
+                {
+                    Resources = new List<ResourceThresholds>()
+                }
+            };
 
             // act
 

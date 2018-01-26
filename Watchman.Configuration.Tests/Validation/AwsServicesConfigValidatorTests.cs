@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Watchman.Configuration.Generic;
@@ -38,9 +38,9 @@ namespace Watchman.Configuration.Tests.Validation
             };
 
             _config = ConfigTestData.ValidConfig();
-            _config.AlertingGroups.First().Services = new Dictionary<string, AwsServiceAlarms>
+            _config.AlertingGroups.First().Services = new AlertingGroupServices()
             {
-                {"Lambda", _awsServiceAlarms}
+                Lambda = _awsServiceAlarms
             };
         }
 
@@ -137,14 +137,16 @@ namespace Watchman.Configuration.Tests.Validation
         public void AwsServicesConfig_OnlyResource_Passes()
         {
             // arrange
-            _config.AlertingGroups.First().Services.Clear();
-            _config.AlertingGroups.First().Services.Add("Lambda", new AwsServiceAlarms
+            _config.AlertingGroups.First().Services = new AlertingGroupServices()
             {
-                Resources = new List<ResourceThresholds>
+                Lambda = new AwsServiceAlarms
                 {
-                    new ResourceThresholds {Pattern = "ResourcePattern"}
+                    Resources = new List<ResourceThresholds>
+                    {
+                        new ResourceThresholds {Pattern = "ResourcePattern"}
+                    }
                 }
-            });
+            };
 
             // act
 

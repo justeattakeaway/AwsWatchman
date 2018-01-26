@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.AwsResources.Services.Lambda;
+using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
@@ -59,29 +60,25 @@ namespace Watchman.Tests
             var config = ConfigHelper.CreateBasicConfiguration(
                 "test",
                 "group-suffix",
-                new Dictionary<string, AwsServiceAlarms>()
+                new AlertingGroupServices()
                 {
+                    DynamoDb = new AwsServiceAlarms()
                     {
-                        "DynamoDb", new AwsServiceAlarms()
+                        Resources = new List<ResourceThresholds>()
                         {
-                            Resources = new List<ResourceThresholds>()
+                            new ResourceThresholds()
                             {
-                                new ResourceThresholds()
-                                {
-                                    Name = "first-dynamo-table"
-                                }
+                                Name = "first-dynamo-table"
                             }
                         }
                     },
+                    Lambda = new AwsServiceAlarms()
                     {
-                        "Lambda", new AwsServiceAlarms()
+                        Resources = new List<ResourceThresholds>()
                         {
-                            Resources = new List<ResourceThresholds>()
+                            new ResourceThresholds()
                             {
-                                new ResourceThresholds()
-                                {
-                                    Name = "first-lambda-function"
-                                }
+                                Name = "first-lambda-function"
                             }
                         }
                     }

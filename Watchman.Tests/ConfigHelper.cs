@@ -11,27 +11,7 @@ namespace Watchman.Tests
         public static WatchmanConfiguration CreateBasicConfiguration(
             string name,
             string suffix,
-            string serviceName,
-            List<ResourceThresholds> resources
-        )
-        {
-            return CreateBasicConfiguration(name,
-                suffix,
-                new Dictionary<string, AwsServiceAlarms>()
-                {
-                    {
-                        serviceName, new AwsServiceAlarms()
-                        {
-                            Resources = resources
-                        }
-                    }
-                });
-        }
-
-        public static WatchmanConfiguration CreateBasicConfiguration(
-            string name,
-            string suffix,
-            Dictionary<string, AwsServiceAlarms> services
+            AlertingGroupServices services
         )
         {
             return new WatchmanConfiguration()

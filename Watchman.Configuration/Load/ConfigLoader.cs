@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -126,7 +126,7 @@ namespace Watchman.Configuration.Load
         {
             var tableCount = group.DynamoDb.Tables?.Count ?? 0;
             var queueCount = group.Sqs.Queues?.Count ?? 0;
-            var serviceCount = CountGenericServices(group);
+            var serviceCount = group.Services?.AllServices?.Count ?? 0;
 
             if ((tableCount == 0) && (queueCount == 0) && (serviceCount == 0))
             {
@@ -152,19 +152,6 @@ namespace Watchman.Configuration.Load
 
             return string.Join(", ", items);
         }
-
-        private static int CountGenericServices(AlertingGroup group)
-        {
-            if (group.Services == null)
-            {
-                return 0;
-            }
-
-            return group.Services.Values
-                .Select(v => v.Resources?.Count ?? 0)
-                .Sum();
-        }
-
         private static string DescribeTable(Table table)
         {
             string description;

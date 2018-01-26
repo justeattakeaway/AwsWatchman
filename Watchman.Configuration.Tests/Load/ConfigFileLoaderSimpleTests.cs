@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Watchman.Configuration.Load;
 using Moq;
@@ -132,7 +132,7 @@ namespace Watchman.Configuration.Tests.Load
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "AutoscalingOnly");
 
             Assert.That(group, Is.Not.Null);
-            AssertSectionIsPopulated(group.Services["AutoScaling"]);
+            AssertSectionIsPopulated(group.Services.AutoScaling);
         }
 
         [Test]
@@ -141,7 +141,7 @@ namespace Watchman.Configuration.Tests.Load
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "LambdaOnly");
 
             Assert.That(group, Is.Not.Null);
-            AssertSectionIsPopulated(group.Services["Lambda"]);
+            AssertSectionIsPopulated(group.Services.Lambda);
         }
 
         [Test]
@@ -150,7 +150,7 @@ namespace Watchman.Configuration.Tests.Load
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "RdsOnly");
 
             Assert.That(group, Is.Not.Null);
-            AssertSectionIsPopulated(group.Services["Rds"]);
+            AssertSectionIsPopulated(group.Services.Rds);
         }
 
         private static void AssertSectionIsPopulated(AwsServiceAlarms section)

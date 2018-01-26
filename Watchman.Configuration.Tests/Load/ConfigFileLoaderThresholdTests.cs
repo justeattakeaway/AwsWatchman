@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Watchman.Configuration.Load;
 using Moq;
@@ -73,7 +73,7 @@ namespace Watchman.Configuration.Tests.Load
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "LambdaTest");
 
             Assert.That(group, Is.Not.Null);
-            var section = group.Services["Lambda"];
+            var section = group.Services.Lambda;
 
             Assert.That(section, Is.Not.Null);
             Assert.That(section.ExcludeResourcesPrefixedWith, Is.Not.Null);
@@ -89,7 +89,7 @@ namespace Watchman.Configuration.Tests.Load
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "LambdaTest");
 
             Assert.That(group, Is.Not.Null);
-            var section = group.Services["Lambda"];
+            var section = group.Services.Lambda;
 
             Assert.That(section, Is.Not.Null);
             Assert.That(section.ExcludeResourcesPrefixedWith, Is.Not.Null);
@@ -106,7 +106,7 @@ namespace Watchman.Configuration.Tests.Load
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "LambdaTest");
 
             Assert.That(group, Is.Not.Null);
-            var values = group.Services["Lambda"].Values;
+            var values = group.Services.Lambda.Values;
 
             var errrorsHigh = values["ErrorsHigh"];
             var durationHigh = values["DurationHigh"];

@@ -24,17 +24,6 @@ namespace Watchman.Configuration.Tests.Load
         }
 
         [Test]
-        public void LoadConfig_DuplicateSqsBlocks_Throws()
-        {
-            var loader = GetLoader("data\\duplicates\\Sqs");
-
-            var caught = Assert.Throws<ConfigException>(() => loader());
-
-            Assert.That(caught.InnerException, Is.Not.Null);
-            Assert.That(caught.InnerException.Message, Is.EqualTo("Sqs block can only defined once"));
-        }
-
-        [Test]
         public void LoadConfig_DuplicateGroupNames_Throws()
         {
             var loader = GetLoader("data\\duplicates\\duplicateGroups");
