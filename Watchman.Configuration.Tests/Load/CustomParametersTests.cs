@@ -36,12 +36,12 @@ namespace Watchman.Configuration.Tests.Load
 
             var autoscaling = customConfig.Services.AutoScaling;
 
-            Assert.That(autoscaling.Options.ScaleUpDelay, Is.EqualTo(50));
+            Assert.That(autoscaling.Options.InstanceCountIncreaseDelayMinutes, Is.EqualTo(50));
 
             var resourceWithParameters = autoscaling.Resources.SingleOrDefault(r => r.Options != null);
 
             Assert.That(resourceWithParameters, Is.Not.Null);
-            Assert.That(resourceWithParameters.Options.ScaleUpDelay, Is.EqualTo(20));
+            Assert.That(resourceWithParameters.Options.InstanceCountIncreaseDelayMinutes, Is.EqualTo(20));
         }
     }
 }

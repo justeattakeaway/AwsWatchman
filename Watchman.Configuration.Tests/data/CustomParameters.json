@@ -12,12 +12,12 @@
         {
           "Pattern": "baz",
           "Options": {
-            "ScaleUpDelay": 20
+            "InstanceCountIncreaseDelayMinutes": 20
           }
         }
       ],
       "Options": {
-        "ScaleUpDelay": 50
+        "InstanceCountIncreaseDelayMinutes": 50
       }
     }
   }

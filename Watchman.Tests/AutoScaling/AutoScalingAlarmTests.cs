@@ -97,7 +97,7 @@ namespace Watchman.Tests.AutoScaling
                                 Name = "group-delay-20",
                                 Options = new AutoScalingResourceConfig()
                                 {
-                                    ScaleUpDelay = 20
+                                    InstanceCountIncreaseDelayMinutes = 20
                                 }
                             },
                             new ResourceThresholds<AutoScalingResourceConfig>()
@@ -108,7 +108,7 @@ namespace Watchman.Tests.AutoScaling
 
                         Options = new AutoScalingResourceConfig()
                         {
-                            ScaleUpDelay = 100
+                            InstanceCountIncreaseDelayMinutes = 100
                         }
                     }
                 });

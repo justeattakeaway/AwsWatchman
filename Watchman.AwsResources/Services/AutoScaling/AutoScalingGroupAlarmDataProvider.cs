@@ -51,12 +51,12 @@ namespace Watchman.AwsResources.Services.AutoScaling
 
         private async Task<decimal> GetGroupDesiredValue(AutoScalingGroup resource, AutoScalingResourceConfig config)
         {
-            if (config.ScaleUpDelay == null)
+            if (config.InstanceCountIncreaseDelayMinutes == null)
             {
                 return resource.DesiredCapacity;
             }
 
-            var delaySeconds = config.ScaleUpDelay.Value * 60;
+            var delaySeconds = config.InstanceCountIncreaseDelayMinutes.Value * 60;
             var now = _timeProvider.Now;
 
             var metric = await _cloudWatch.GetMetricStatisticsAsync(
