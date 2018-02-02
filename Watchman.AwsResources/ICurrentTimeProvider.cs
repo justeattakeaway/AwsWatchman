@@ -6,6 +6,6 @@ namespace Watchman.AwsResources
 {
     public interface ICurrentTimeProvider
     {
-        DateTime Now { get; }
+        DateTime UtcNow { get; }
     }
 }

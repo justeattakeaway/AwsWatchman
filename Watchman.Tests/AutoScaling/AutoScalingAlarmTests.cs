@@ -116,7 +116,7 @@ namespace Watchman.Tests.AutoScaling
             var now = DateTime.Parse("2018-01-26");
 
             var fakeTime = new Mock<ICurrentTimeProvider>();
-            fakeTime.Setup(f => f.Now).Returns(now);
+            fakeTime.Setup(f => f.UtcNow).Returns(now);
 
             var cloudWatch = new Mock<IAmazonCloudWatch>();
 
@@ -220,6 +220,84 @@ namespace Watchman.Tests.AutoScaling
             var defaultAlarmThreshold = 0.5m;
 
             Assert.That((decimal)alarm.Properties["Threshold"], Is.EqualTo(40 * defaultAlarmThreshold));
+        }
+
+        [Test]
+        public async Task TimesSuppliedToCloudWatchAreUtc()
+        {
+            // arrange
+
+            var stack = new FakeStackDeployer();
+
+            var autoScalingClient = FakeAwsClients.CreateAutoScalingClientForGroups(new[]
+            {
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-1",
+                    DesiredCapacity = 40
+                }
+            });
+
+            var source = new AutoScalingGroupSource(autoScalingClient);
+
+            var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
+
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
+                new AlertingGroupServices()
+                {
+                    AutoScaling = new AwsServiceAlarms<AutoScalingResourceConfig>()
+                    {
+                        Resources = new List<ResourceThresholds<AutoScalingResourceConfig>>()
+                        {
+                            new ResourceThresholds<AutoScalingResourceConfig>()
+                            {
+                                Name = "group-1",
+                                Options = new AutoScalingResourceConfig()
+                                {
+                                    InstanceCountIncreaseDelayMinutes = 5
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+            var cloudWatch = new Mock<IAmazonCloudWatch>();
+            cloudWatch
+                .Setup(c => c.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new GetMetricStatisticsResponse()
+                {
+                    Datapoints = new List<Datapoint>()
+                    {
+                        new Datapoint() {Minimum = 5}
+                    }
+                });
+                
+
+            var provider = new AutoScalingGroupAlarmDataProvider(cloudWatch.Object, new CurrentTimeProvider());
+
+            var sut = IoCHelper.CreateSystemUnderTest(
+                source,
+                provider,
+                provider,
+                WatchmanServiceConfigurationMapper.MapAutoScaling,
+                creator,
+                ConfigHelper.ConfigLoaderFor(config)
+                );
+
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+            cloudWatch.Verify(x => x.GetMetricStatisticsAsync(
+                It.Is<GetMetricStatisticsRequest>(
+                    r => r.StartTime.Kind == DateTimeKind.Utc
+                    && r.EndTime.Kind == DateTimeKind.Utc
+                    ), It.IsAny<CancellationToken>())
+                );
         }
     }
 }

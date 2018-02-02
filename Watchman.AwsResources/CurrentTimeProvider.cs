@@ -4,6 +4,6 @@ namespace Watchman.AwsResources
 {
     public class CurrentTimeProvider : ICurrentTimeProvider
     {
-        public DateTime Now => DateTime.Now;
+        public DateTime UtcNow => DateTime.UtcNow;
     }
 }

@@ -57,7 +57,7 @@ namespace Watchman.AwsResources.Services.AutoScaling
             }
 
             var delaySeconds = config.InstanceCountIncreaseDelayMinutes.Value * 60;
-            var now = _timeProvider.Now;
+            var now = _timeProvider.UtcNow;
 
             var metric = await _cloudWatch.GetMetricStatisticsAsync(
                 new GetMetricStatisticsRequest()
