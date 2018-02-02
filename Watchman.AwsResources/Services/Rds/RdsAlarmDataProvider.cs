@@ -1,20 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.RDS.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Rds
 {
-    public class RdsAlarmDataProvider : IAlarmDimensionProvider<DBInstance>, IResourceAttributesProvider<DBInstance>
+    public class RdsAlarmDataProvider : IAlarmDimensionProvider<DBInstance>,
+        IResourceAttributesProvider<DBInstance, ResourceConfig>
     {
-        public decimal GetValue(DBInstance resource, string property)
+        public Task<decimal> GetValue(DBInstance resource, ResourceConfig config, string property)
         {
             switch (property)
             {
                 case "AllocatedStorage":
                     // alarm needs storage in bytes
-                    return resource.AllocatedStorage * (long)Math.Pow(10, 9);
+                    decimal result = resource.AllocatedStorage * (long)Math.Pow(10, 9);
+                    return Task.FromResult(result);
             }
 
             throw new Exception("Unsupported RDS property name");

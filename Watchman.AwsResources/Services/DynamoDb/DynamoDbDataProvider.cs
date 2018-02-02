@@ -1,14 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.DynamoDBv2.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.DynamoDb
 {
-    public class DynamoDbDataProvider : IAlarmDimensionProvider<TableDescription>, IResourceAttributesProvider<TableDescription>
+    public class DynamoDbDataProvider : IAlarmDimensionProvider<TableDescription>,
+        IResourceAttributesProvider<TableDescription, ResourceConfig>
     {
         public List<Dimension> GetDimensions(TableDescription resource, IList<string> dimensionNames)
         {
@@ -39,14 +41,14 @@ namespace Watchman.AwsResources.Services.DynamoDb
             return requested;
         }
 
-        public decimal GetValue(TableDescription resource, string property)
+        public Task<decimal> GetValue(TableDescription resource, ResourceConfig config, string property)
         {
             switch (property)
             {
                 case "ProvisionedReadThroughput":
-                    return resource.ProvisionedThroughput.ReadCapacityUnits;
+                    return Task.FromResult((decimal) resource.ProvisionedThroughput.ReadCapacityUnits);
                 case "ProvisionedWriteThroughput":
-                    return resource.ProvisionedThroughput.WriteCapacityUnits;
+                    return Task.FromResult((decimal) resource.ProvisionedThroughput.WriteCapacityUnits);
             }
 
             throw new ArgumentOutOfRangeException(nameof(property));

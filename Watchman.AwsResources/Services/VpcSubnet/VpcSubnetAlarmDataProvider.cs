@@ -1,13 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.EC2.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.VpcSubnet
 {
-    public class VpcSubnetAlarmDataProvider : IAlarmDimensionProvider<Subnet>, IResourceAttributesProvider<Subnet>
+    public class VpcSubnetAlarmDataProvider : IAlarmDimensionProvider<Subnet>,
+        IResourceAttributesProvider<Subnet, ResourceConfig>
     {
         public List<Dimension> GetDimensions(Subnet resource, IList<string> dimensionNames)
         {
@@ -26,12 +29,12 @@ namespace Watchman.AwsResources.Services.VpcSubnet
             }
         }
 
-        public decimal GetValue(Subnet resource, string property)
+        public Task<decimal> GetValue(Subnet resource, ResourceConfig config, string property)
         {
             switch (property)
             {
                 case "NumberOfIpAddresses":
-                    return GetNumberOfIpAddresses(resource);
+                    return Task.FromResult(GetNumberOfIpAddresses(resource));
 
                 default:
                     throw new Exception("Unsuported property " + property);
@@ -40,7 +43,7 @@ namespace Watchman.AwsResources.Services.VpcSubnet
 
         private static readonly Regex ReadCidrMask = new Regex(@"\d+$");
 
-        private long GetNumberOfIpAddresses(Subnet subnet)
+        private decimal GetNumberOfIpAddresses(Subnet subnet)
         {
             var match = ReadCidrMask.Match(subnet.CidrBlock);
 

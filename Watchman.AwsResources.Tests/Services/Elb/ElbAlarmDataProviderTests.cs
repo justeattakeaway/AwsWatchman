@@ -4,6 +4,7 @@ using System.Linq;
 using Amazon.ElasticLoadBalancing.Model;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Elb;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Tests.Services.Elb
 {
@@ -62,7 +63,7 @@ namespace Watchman.AwsResources.Tests.Services.Elb
             //act
 
             //assert
-            Assert.Throws<NotImplementedException>(() => _elbDataProvider.GetValue(_elbDescription, "SomeAttribute"));
+            Assert.Throws<NotImplementedException>(() => _elbDataProvider.GetValue(_elbDescription, new ResourceConfig(), "SomeAttribute"));
         }
     }
 }

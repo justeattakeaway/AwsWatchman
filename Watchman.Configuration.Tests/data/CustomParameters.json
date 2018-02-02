@@ -1,0 +1,24 @@
+{
+  "Name": "CustomParametersTest",
+  "AlarmNameSuffix": "CustomSuffix",
+  "Targets": [
+    { "Email": "autoscaling@example.com" }
+  ],
+  "Services": {
+    "AutoScaling": {
+      "Resources": [
+        "foo",
+        { "Pattern": "bar" },
+        {
+          "Pattern": "baz",
+          "Options": {
+            "InstanceCountIncreaseDelayMinutes": 20
+          }
+        }
+      ],
+      "Options": {
+        "InstanceCountIncreaseDelayMinutes": 50
+      }
+    }
+  }
+}

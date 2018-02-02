@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.RDS.Model;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using Watchman.AwsResources.Services.Rds;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Tests.Services.Rds
 {
@@ -58,12 +60,12 @@ namespace Watchman.AwsResources.Tests.Services.Rds
         }
 
         [Test]
-        public void GetAttribute_KnownAttribute_ReturnsValue()
+        public async Task GetAttribute_KnownAttribute_ReturnsValue()
         {
             //arange
 
             //act
-            var result = _rdsDataProvider.GetValue(_dbInstance, "AllocatedStorage");
+            var result = await _rdsDataProvider.GetValue(_dbInstance, new ResourceConfig(), "AllocatedStorage");
 
             //assert
             var expected = _dbInstance.AllocatedStorage * (long) Math.Pow(10, 9);
@@ -76,8 +78,8 @@ namespace Watchman.AwsResources.Tests.Services.Rds
             //arange
 
             //act
-            ActualValueDelegate<decimal> testDelegate =
-                () => _rdsDataProvider.GetValue(_dbInstance, "Unknown Attribute");
+            ActualValueDelegate<Task> testDelegate =
+                () => _rdsDataProvider.GetValue(_dbInstance, new ResourceConfig(), "Unknown Attribute");
 
             //assert
             Assert.That(testDelegate, Throws.TypeOf<Exception>()

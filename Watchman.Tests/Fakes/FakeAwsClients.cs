@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Amazon.AutoScaling;
+using Amazon.AutoScaling.Model;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Amazon.Lambda;
@@ -49,6 +51,20 @@ namespace Watchman.Tests.Fakes
                 });
 
             return fakeLambda.Object;
+        }
+
+        public static IAmazonAutoScaling CreateAutoScalingClientForGroups(IEnumerable<AutoScalingGroup> groups)
+        {
+            var fake = new Mock<IAmazonAutoScaling>();
+            fake
+                .Setup(a => a.DescribeAutoScalingGroupsAsync(It.IsAny<DescribeAutoScalingGroupsRequest>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new DescribeAutoScalingGroupsResponse()
+                {
+                    AutoScalingGroups = groups.ToList()
+                });
+
+            return fake.Object;
         }
     }
 }

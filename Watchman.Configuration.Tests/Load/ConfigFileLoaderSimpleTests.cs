@@ -153,7 +153,7 @@ namespace Watchman.Configuration.Tests.Load
             AssertSectionIsPopulated(group.Services.Rds);
         }
 
-        private static void AssertSectionIsPopulated(AwsServiceAlarms section)
+        private static void AssertSectionIsPopulated(IAwsServiceAlarms section)
         {
             Assert.That(section, Is.Not.Null);
             Assert.That(section.ExcludeResourcesPrefixedWith, Is.Not.Null);

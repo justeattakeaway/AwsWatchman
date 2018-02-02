@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using Watchman.AwsResources.Services.Kinesis;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Tests.Services.Kinesis
 {
@@ -61,8 +63,8 @@ namespace Watchman.AwsResources.Tests.Services.Kinesis
             //arange
 
             //act
-            ActualValueDelegate<decimal> testDelegate =
-                () => _streamDataProvider.GetValue(_streamData, "Unknown Attribute");
+            ActualValueDelegate<Task> testDelegate =
+                () => _streamDataProvider.GetValue(_streamData, new ResourceConfig(), "Unknown Attribute");
 
             //assert
             Assert.That(testDelegate, Throws.TypeOf<NotImplementedException>());

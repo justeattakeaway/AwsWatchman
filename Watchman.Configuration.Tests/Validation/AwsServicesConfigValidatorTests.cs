@@ -8,21 +8,21 @@ namespace Watchman.Configuration.Tests.Validation
     [TestFixture]
     public class AwsServicesConfigValidatorTests
     {
-        private AwsServiceAlarms _awsServiceAlarms;
+        private AwsServiceAlarms<ResourceConfig> _awsServiceAlarms;
         private WatchmanConfiguration _config;
 
         [SetUp]
         public void Setup()
         {
-            _awsServiceAlarms = new AwsServiceAlarms
+            _awsServiceAlarms = new AwsServiceAlarms<ResourceConfig>
             {
                 ExcludeResourcesPrefixedWith = new List<string>
                 {
                     "ExcludePrefix"
                 },
-                Resources = new List<ResourceThresholds>
+                Resources = new List<ResourceThresholds<ResourceConfig>>
                 {
-                    new ResourceThresholds
+                    new ResourceThresholds<ResourceConfig>
                     {
                         Name = "ResourceName",
                         Values = new Dictionary<string, AlarmValues>
@@ -139,11 +139,11 @@ namespace Watchman.Configuration.Tests.Validation
             // arrange
             _config.AlertingGroups.First().Services = new AlertingGroupServices()
             {
-                Lambda = new AwsServiceAlarms
+                Lambda = new AwsServiceAlarms<ResourceConfig>
                 {
-                    Resources = new List<ResourceThresholds>
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
                     {
-                        new ResourceThresholds {Pattern = "ResourcePattern"}
+                        new ResourceThresholds<ResourceConfig> {Pattern = "ResourcePattern"}
                     }
                 }
             };

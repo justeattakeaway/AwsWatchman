@@ -2,19 +2,14 @@ using System.Collections.Generic;
 
 namespace Watchman.Configuration.Generic
 {
-    public class ResourceThresholds
+    public sealed class ResourceThresholds<TConfig> : IResource
+        where TConfig : class
     {
         public string Name { get; set; }
         public string Pattern { get; set; }
         public Dictionary<string, AlarmValues> Values { get; set; }
 
-        public static implicit operator ResourceThresholds(string text)
-        {
-            return new ResourceThresholds
-            {
-                Name = text
-            };
-        }
+        public TConfig Options { get; set; }
 
         public override string ToString()
         {

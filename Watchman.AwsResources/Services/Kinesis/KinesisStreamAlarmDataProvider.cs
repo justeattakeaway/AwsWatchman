@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Kinesis
 {
-    public class KinesisStreamAlarmDataProvider : IAlarmDimensionProvider<KinesisStreamData>, IResourceAttributesProvider<KinesisStreamData>
+    public class KinesisStreamAlarmDataProvider : IAlarmDimensionProvider<KinesisStreamData>,
+        IResourceAttributesProvider<KinesisStreamData, ResourceConfig>
     {
         public List<Dimension> GetDimensions(KinesisStreamData resource, IList<string> dimensionNames) =>
             dimensionNames.Select(x => GetDimension(resource, x))
@@ -23,7 +26,7 @@ namespace Watchman.AwsResources.Services.Kinesis
             }
         }
 
-        public decimal GetValue(KinesisStreamData resource, string property)
+        public Task<decimal> GetValue(KinesisStreamData resource, ResourceConfig config, string property)
         {
             throw new NotImplementedException();
         }

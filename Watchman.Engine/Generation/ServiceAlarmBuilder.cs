@@ -8,28 +8,30 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine.Generation
 {
-    public class ServiceAlarmBuilder<T> where T:class
+    public class ServiceAlarmBuilder<T, TAlarmConfig>
+        where T:class
+        where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
     {
         private readonly IResourceSource<T> _tableSource;
         private readonly IAlarmDimensionProvider<T> _dimensions;
-        private readonly IResourceAttributesProvider<T> _attributes;
+        private readonly IResourceAttributesProvider<T, TAlarmConfig> _attributes;
 
         public ServiceAlarmBuilder(
             IResourceSource<T> tableSource,
             IAlarmDimensionProvider<T> dimensionProvider,
-            IResourceAttributesProvider<T> attributeProvider)
+            IResourceAttributesProvider<T, TAlarmConfig> attributeProvider)
         {
             _tableSource = tableSource;
             _dimensions = dimensionProvider;
             _attributes = attributeProvider;
         }
 
-        private Threshold ExpandThreshold(T resource, Threshold threshold)
+        private async Task<Threshold> ExpandThreshold(T resource, TAlarmConfig config, Threshold threshold)
         {
             if (threshold.ThresholdType == ThresholdType.PercentageOf)
             {
                 var fraction = threshold.Value / 100;
-                var property = _attributes.GetValue(resource, threshold.SourceAttribute);
+                var property = await _attributes.GetValue(resource, config, threshold.SourceAttribute);
 
                 threshold = new Threshold
                 {
@@ -88,7 +90,7 @@ namespace Watchman.Engine.Generation
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
-            AwsServiceAlarms service,
+            AwsServiceAlarms<TAlarmConfig> service,
             IList<AlarmDefinition> defaults,
             string alarmSuffix)
         {
@@ -109,14 +111,16 @@ namespace Watchman.Engine.Generation
 
         private async Task<IList<Alarm>> ExpandAlarmsToResources(
             IList<AlarmDefinition> defaults,
-            ResourceThresholds resource,
-            AwsServiceAlarms service,
+            ResourceThresholds<TAlarmConfig> resource,
+            AwsServiceAlarms<TAlarmConfig> service,
             string groupSuffix)
         {
             // apply thresholds from resource or alerting group
             var expanded = ExpandDefaultAlarmsForResource(defaults, resource.Values, service.Values);
+
+            var config = MergeConfiguration(service.Options, resource.Options);
             
-            return await GetAlarms(expanded, resource, groupSuffix);
+            return await GetAlarms(expanded, resource, config, groupSuffix);
         }
 
         private string GetAlarmName(AwsResource<T> resource, string alertName, string groupSuffix)
@@ -125,7 +129,8 @@ namespace Watchman.Engine.Generation
         }
 
         private async Task<IList<Alarm>> GetAlarms(IList<AlarmDefinition> alarms,
-            ResourceThresholds awsResource,
+            ResourceThresholds<TAlarmConfig> awsResource,
+            TAlarmConfig configuration,
             string groupSuffix)
         {
             var result = new List<Alarm>();
@@ -140,7 +145,8 @@ namespace Watchman.Engine.Generation
             // expand dynamic thresholds
             foreach (var alarm in alarms)
             {
-                alarm.Threshold = ExpandThreshold(entity.Resource, alarm.Threshold);
+                alarm.Threshold = await ExpandThreshold(entity.Resource, configuration, alarm.Threshold);
+                
                 var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
 
                 var model = new Alarm
@@ -154,6 +160,21 @@ namespace Watchman.Engine.Generation
             }
 
             return result;
+        }
+
+        private TAlarmConfig MergeConfiguration(TAlarmConfig serviceLevel, TAlarmConfig resourceLevel)
+        {
+            if (resourceLevel == null)
+            {
+                return serviceLevel ?? new TAlarmConfig();
+            }
+
+            if (serviceLevel == null)
+            {
+                return resourceLevel;
+            }
+
+            return resourceLevel.Merge(serviceLevel);
         }
     }
 }

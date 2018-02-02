@@ -67,6 +67,8 @@ namespace Watchman
             registry.For<IOrphanQueuesReporter>().Use<OrphanQueuesReporter>();
             registry.For<ISqsAlarmGenerator>().Use<SqsAlarmGenerator>();
 
+            registry.For<ICurrentTimeProvider>().Use<CurrentTimeProvider>();
+
             if (!string.IsNullOrWhiteSpace(parameters.WriteCloudFormationTemplatesToDirectory))
             {
                 registry

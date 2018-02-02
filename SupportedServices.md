@@ -32,6 +32,11 @@ They all require an object in this format:
   		"AlarmName": 31
   	},
 
+    // [optional] specific options for this service type
+    "Options": {
+        "InstanceCountIncreaseDelayMinutes": 10
+    },
+
   	// Resources for this service type
 	"Resources": [
 		// regular expression match of resource name
@@ -41,7 +46,12 @@ They all require an object in this format:
        		// [optional] override the thresholds defined elsewhere
         	"Values": {
         		"AlarmName": 11
-        	}
+        	},
+
+            // [optional] override specific options for this service type
+            "Options": {
+                "InstanceCountIncreaseDelayMinutes": 5
+            },
      	},
 
      	// exact match of resource name
@@ -79,10 +89,14 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `DatabaseConnectionsHigh`: 200 (count)
 
 ### AutoScaling
+#### Values
 
 - `CPUCreditBalanceLow`: 0.2 (credit balance)
 - `CPUUtilizationHigh`: 90 (%)
 - `GroupInServiceInstancesLow`: 50 (% of desired)
+
+#### Options
+- `InstanceCountIncreaseDelayMinutes` Use to delay increasing the minimum threshold when the instance count increases (e.g. when scaling). The value used it then obtained from CloudWatch - using the minimum of `GroupDesiredCapacity` over the time period specified.
 
 ### Lambda
 

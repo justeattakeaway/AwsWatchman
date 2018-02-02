@@ -5,7 +5,7 @@ namespace Watchman.Configuration.Validation
 {
     public static class AwsServiceValidation
     {
-        public static void Validate(string alertingGroupName, string serviceName, AwsServiceAlarms serviceAlarms)
+        public static void Validate(string alertingGroupName, string serviceName, IAwsServiceAlarms serviceAlarms)
         {
             if (serviceAlarms.Values != null)
             {
@@ -24,7 +24,7 @@ namespace Watchman.Configuration.Validation
             }
         }
 
-        private static void ValidateResource(string agName, string serviceName, ResourceThresholds resource)
+        private static void ValidateResource(string agName, string serviceName, IResource resource)
         {
             if (resource == null)
             {

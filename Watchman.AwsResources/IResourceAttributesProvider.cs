@@ -1,7 +1,9 @@
-﻿namespace Watchman.AwsResources
+using System.Threading.Tasks;
+
+namespace Watchman.AwsResources
 {
-    public interface IResourceAttributesProvider<in T>
+    public interface IResourceAttributesProvider<in T, in TAlarmConfig> where TAlarmConfig : class
     {
-        decimal GetValue(T resource, string property);
+        Task<decimal> GetValue(T resource, TAlarmConfig config, string property);
     }
 }

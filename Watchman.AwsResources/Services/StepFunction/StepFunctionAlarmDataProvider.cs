@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
 using Amazon.StepFunctions.Model;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.StepFunction
 {
-    public class StepFunctionAlarmDataProvider : IAlarmDimensionProvider<StateMachineListItem>, IResourceAttributesProvider<StateMachineListItem>
+    public class StepFunctionAlarmDataProvider : IAlarmDimensionProvider<StateMachineListItem>,
+        IResourceAttributesProvider<StateMachineListItem, ResourceConfig>
     {
         public List<Dimension> GetDimensions(StateMachineListItem resource, IList<string> dimensionNames)
         {
@@ -36,7 +39,7 @@ namespace Watchman.AwsResources.Services.StepFunction
             }
         }
 
-        public decimal GetValue(StateMachineListItem resource, string property)
+        public Task<decimal> GetValue(StateMachineListItem resource, ResourceConfig config, string property)
         {
             throw new NotImplementedException();
         }

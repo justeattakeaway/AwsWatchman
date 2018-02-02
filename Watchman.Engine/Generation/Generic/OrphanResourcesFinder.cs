@@ -15,7 +15,7 @@ namespace Watchman.Engine.Generation.Generic
         }
 
         public async Task<OrphansModel> FindOrphans(string serviceName,
-            IEnumerable<ServiceAlertingGroup> alertingGroups)
+            IEnumerable<IServiceAlertingGroup> alertingGroups)
         {
             var monitoredResources = alertingGroups
                 .Where(ag => !ag.GroupParameters.IsCatchAll)

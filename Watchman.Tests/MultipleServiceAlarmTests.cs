@@ -62,21 +62,21 @@ namespace Watchman.Tests
                 "group-suffix",
                 new AlertingGroupServices()
                 {
-                    DynamoDb = new AwsServiceAlarms()
+                    DynamoDb = new AwsServiceAlarms<ResourceConfig>()
                     {
-                        Resources = new List<ResourceThresholds>()
+                        Resources = new List<ResourceThresholds<ResourceConfig>>()
                         {
-                            new ResourceThresholds()
+                            new ResourceThresholds<ResourceConfig>()
                             {
                                 Name = "first-dynamo-table"
                             }
                         }
                     },
-                    Lambda = new AwsServiceAlarms()
+                    Lambda = new AwsServiceAlarms<ResourceConfig>()
                     {
-                        Resources = new List<ResourceThresholds>()
+                        Resources = new List<ResourceThresholds<ResourceConfig>>()
                         {
-                            new ResourceThresholds()
+                            new ResourceThresholds<ResourceConfig>()
                             {
                                 Name = "first-lambda-function"
                             }

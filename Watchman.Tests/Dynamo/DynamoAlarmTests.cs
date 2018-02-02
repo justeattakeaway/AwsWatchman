@@ -8,6 +8,7 @@ using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using Watchman.AwsResources;
 using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
@@ -48,11 +49,11 @@ namespace Watchman.Tests.Dynamo
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
                 new AlertingGroupServices()
                 {
-                    DynamoDb = new AwsServiceAlarms()
+                    DynamoDb = new AwsServiceAlarms<ResourceConfig>()
                     {
-                        Resources = new List<ResourceThresholds>()
+                        Resources = new List<ResourceThresholds<ResourceConfig>>()
                         {
-                            new ResourceThresholds()
+                            new ResourceThresholds<ResourceConfig>()
                             {
                                 Name = "non-existant-table"
                             }
@@ -110,11 +111,11 @@ namespace Watchman.Tests.Dynamo
 
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
             {
-                DynamoDb = new AwsServiceAlarms()
+                DynamoDb = new AwsServiceAlarms<ResourceConfig>()
                 {
-                    Resources = new List<ResourceThresholds>()
+                    Resources = new List<ResourceThresholds<ResourceConfig>>()
                     {
-                        new ResourceThresholds()
+                        new ResourceThresholds<ResourceConfig>()
                         {
                             Name = "first-dynamo-table"
                         }

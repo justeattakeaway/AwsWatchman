@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Watchman.Engine.Generation.Generic
@@ -16,7 +16,7 @@ namespace Watchman.Engine.Generation.Generic
             _logger = logger;
         }
 
-        public async Task FindAndReport(string serviceName, IEnumerable<ServiceAlertingGroup> alertingGroups)
+        public async Task FindAndReport(string serviceName, IEnumerable<IServiceAlertingGroup> alertingGroups)
         {
             var orphans = await _orphansFinder.FindOrphans(serviceName, alertingGroups);
             _logger.Log(orphans);
