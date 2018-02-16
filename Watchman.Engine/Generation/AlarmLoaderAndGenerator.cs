@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Watchman.Configuration;
 using Watchman.Configuration.Load;
@@ -75,14 +76,26 @@ namespace Watchman.Engine.Generation
             await _sqsGenerator.GenerateAlarmsFor(config, mode);
             await _orphanQueuesReporter.FindAndReport(config);
 
+            var failed = new List<IList<string>>();
+
             foreach (var service in _otherServices)
             {
-                await service.GenerateAlarmsForService(config, mode);
+                var result = await service.GenerateAlarmsForService(config, mode);
+
+                failed.Add(result.FailingGroups);
             }
+
+            var allFailed = failed.SelectMany(_ => _).Distinct().ToArray();
 
             if (mode == RunMode.DryRun || mode == RunMode.GenerateAlarms)
             {
                 await _creator.SaveChanges(mode == RunMode.DryRun);
+            }
+
+            if (allFailed.Any())
+            {
+                throw new Exception("The following groups reported errors and were not deployed: " +
+                                    $"{string.Join(", ", allFailed)}. please see logs.");
             }
         }
     }
