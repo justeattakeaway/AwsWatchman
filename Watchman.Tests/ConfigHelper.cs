@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
@@ -38,6 +39,16 @@ namespace Watchman.Tests
             fake
                 .Setup(x => x.LoadConfig())
                 .Returns(config);
+
+            return fake.Object;
+        }
+
+        public static IConfigLoader ConfigLoaderFor(params AlertingGroup[] groups)
+        {
+            var fake = new Mock<IConfigLoader>();
+            fake
+                .Setup(x => x.LoadConfig())
+                .Returns(new WatchmanConfiguration() { AlertingGroups = groups.ToList() });
 
             return fake.Object;
         }

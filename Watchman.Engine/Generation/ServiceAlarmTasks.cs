@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Watchman.Configuration;
@@ -35,7 +37,7 @@ namespace Watchman.Engine.Generation
             _logger = logger;
         }
 
-        public async Task GenerateAlarmsForService(
+        public async Task<GenerateAlarmsResult> GenerateAlarmsForService(
         WatchmanConfiguration config, RunMode mode)
         {
             var serviceConfig = _serviceConfigMapper(config);
@@ -43,12 +45,14 @@ namespace Watchman.Engine.Generation
             if (!ServiceConfigIsPopulated(serviceConfig))
             {
                 _logger.Info($"No resources for {serviceConfig.ServiceName}. No action taken for this resource type");
-                return;
+                return new GenerateAlarmsResult();
             }
 
             await PopulateResourceNames(serviceConfig);
-            await GenerateAlarms(serviceConfig, mode);
+            var failures = await GenerateAlarms(serviceConfig, mode);
             await ReportOrphans(serviceConfig);
+
+            return new GenerateAlarmsResult(failures);
         }
 
         private bool ServiceConfigIsPopulated(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig)
@@ -73,17 +77,29 @@ namespace Watchman.Engine.Generation
             }
         }
 
-        private async Task GenerateAlarms(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig, RunMode mode)
+        private async Task<List<string>> GenerateAlarms(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig, RunMode mode)
         {
+            var failures = new List<string>();
+
             foreach (var alertingGroup in serviceConfig.AlertingGroups)
             {
-                var alarmsForGroup = await _serviceAlarmBuilder.GenerateAlarmsFor(
-                    alertingGroup.Service,
-                    serviceConfig.Defaults,
-                    alertingGroup.GroupParameters.AlarmNameSuffix);
+                try
+                {
+                    var alarmsForGroup = await _serviceAlarmBuilder.GenerateAlarmsFor(
+                        alertingGroup.Service,
+                        serviceConfig.Defaults,
+                        alertingGroup.GroupParameters.AlarmNameSuffix);
 
-                _creator.AddAlarms(alertingGroup.GroupParameters, alarmsForGroup);
+                    _creator.AddAlarms(alertingGroup.GroupParameters, alarmsForGroup);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex, $"Failed to generate alarms for group {alertingGroup.GroupParameters.Name}");
+                    failures.Add(alertingGroup.GroupParameters.Name);
+                }
             }
+
+            return failures;
         }
 
         private Task ReportOrphans(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig)
