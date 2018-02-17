@@ -84,7 +84,7 @@ namespace Watchman.AwsResources.Services.AutoScaling
             if (threshold == null)
             {
                 throw new Exception(
-                    $"Could not retreive desired capacity from CloudWatch for {resource.AutoScalingGroupName}");
+                    $"No datapoints returned when requesting desired capacity from CloudWatch for {resource.AutoScalingGroupName}");
             }
 
             return (decimal)threshold.Minimum;
