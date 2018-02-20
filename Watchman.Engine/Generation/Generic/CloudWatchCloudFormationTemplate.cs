@@ -134,11 +134,19 @@ namespace Watchman.Engine.Generation.Generic
                 ComparisonOperator = definition.ComparisonOperator.Value,
                 EvaluationPeriods = definition.EvaluationPeriods,
                 Period = (int) definition.Period.TotalSeconds,
-                Statistic = definition.Statistic.Value,
                 Threshold = definition.Threshold.Value
             };
 
             var result = JObject.FromObject(propsObject);
+
+            if (string.IsNullOrEmpty(definition.ExtendedStatistic))
+            {
+                result["Statistic"] = definition.Statistic.Value;
+            }
+            else
+            {
+                result["ExtendedStatistic"] = definition.ExtendedStatistic;
+            }
 
             if (definition.AlertOnInsufficientData)
             {

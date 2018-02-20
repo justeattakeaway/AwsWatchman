@@ -286,5 +286,18 @@ namespace Watchman.Configuration.Tests.Load
             Assert.That(queues[1].Errors, Is.Not.Null);
             Assert.That(queues[1].Errors.LengthThreshold, Is.EqualTo(7));
         }
+
+        [Test]
+        public void ExtendedStatisticDeserialised()
+        {
+            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "ExtendedStatisticTest");
+
+            Assert.That(group, Is.Not.Null);
+
+            var elb = group.Services.Elb;
+
+            Assert.That(elb.Values["LatencyHigh"].ExtendedStatistic, Is.EqualTo("p90"));
+            Assert.That(elb.Resources.First().Values["LatencyHigh"].ExtendedStatistic, Is.EqualTo("p95"));
+        }
     }
 }

@@ -5,14 +5,33 @@ using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Amazon.ElasticLoadBalancing;
+using Amazon.ElasticLoadBalancing.Model;
 using Amazon.Lambda;
 using Amazon.Lambda.Model;
 using Moq;
+using DescribeLoadBalancersResponse = Amazon.ElasticLoadBalancing.Model.DescribeLoadBalancersResponse;
 
 namespace Watchman.Tests.Fakes
 {
     internal static class FakeAwsClients
     {
+        public static IAmazonElasticLoadBalancing CreateElbClientForLoadBalancers(
+            IEnumerable<LoadBalancerDescription> loadBalancers)
+        {
+            var fakeClient = new Mock<IAmazonElasticLoadBalancing>();
+            fakeClient.Setup(x => x.DescribeLoadBalancersAsync(
+                    It.Is<Amazon.ElasticLoadBalancing.Model.DescribeLoadBalancersRequest>(req => req.Marker == null),
+                    It.IsAny<CancellationToken>()
+                ))
+                .ReturnsAsync(new DescribeLoadBalancersResponse()
+                {
+                    LoadBalancerDescriptions = loadBalancers.ToList()
+                });
+
+            return fakeClient.Object;
+        }
+
         public static IAmazonDynamoDB CreateDynamoClientForTables(IEnumerable<TableDescription> tables)
         {
             tables = tables.ToList();

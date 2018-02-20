@@ -1,0 +1,26 @@
+{
+  "Name": "ExtendedStatisticTest",
+  "AlarmNameSuffix": "CustomSuffix",
+  "Targets": [
+    { "Email": "elb@example.com" }
+  ],
+  "Services": {
+    "Elb": {
+      "Resources": [
+        {
+          "Pattern": "elb",
+          "Values": {
+            "LatencyHigh": {
+              "ExtendedStatistic": "p95"
+            }
+          }
+        }
+      ],
+      "Values": {
+        "LatencyHigh": {
+          "ExtendedStatistic": "p90"
+        }
+      }
+    }
+  }
+}

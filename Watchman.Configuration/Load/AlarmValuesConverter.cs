@@ -25,7 +25,7 @@ namespace Watchman.Configuration.Load
         private static AlarmValues ReadSimpleValue(JsonReader reader)
         {
             var simpleThreshold = (double)JToken.Load(reader);
-            return new AlarmValues(simpleThreshold, null);
+            return new AlarmValues(simpleThreshold, null, null);
         }
 
         private static AlarmValues ReadStructuredValue(JsonReader reader)
@@ -33,10 +33,11 @@ namespace Watchman.Configuration.Load
             var jsonObject = JObject.Load(reader);
             var thresholdProp = jsonObject["Threshold"];
             var evalPeriodsProp = jsonObject["EvaluationPeriods"];
+            var extendedStatistic = jsonObject["ExtendedStatistic"];
 
-            if ((thresholdProp == null) && (evalPeriodsProp == null))
+            if (thresholdProp == null && evalPeriodsProp == null && extendedStatistic == null)
             {
-                throw new JsonReaderException("Must be number or contain a 'Threshold' or 'EvaluationPeriods' property");
+                throw new JsonReaderException("Must be number or contain a 'Threshold', 'EvaluationPeriods' or 'ExtendedStatistic' property");
             }
 
             double? thresholdValue = null;
@@ -51,8 +52,7 @@ namespace Watchman.Configuration.Load
             {
                 evalPeriods = evalPeriodsProp.ToObject<int>();
             }
-
-            return new AlarmValues(thresholdValue, evalPeriods);
+            return new AlarmValues(thresholdValue, evalPeriods, extendedStatistic?.ToString());
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
