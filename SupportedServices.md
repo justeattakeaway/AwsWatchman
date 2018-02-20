@@ -131,7 +131,7 @@ Note that using the defaults here for all alarms is probably not that useful.
 - `Http5xxErrorsHigh`: 500 (count)
 - `SurgeQueueLengthHigh`: 200 (count)
 - `SpilloverCountHigh`: 10 (count)
-- `LatencyHigh`: 500 (ms)
+- `LatencyHigh`: 0.5 (average in seconds)
 - `UnHealthyHostCountHigh`: 1 (count)
 
 ## Full example
