@@ -251,7 +251,7 @@ namespace Watchman.Engine.Tests.Generation
                             Name = "ResourceA",
                             Values = new Dictionary<string, AlarmValues>
                             {
-                                {"AlarmName", new AlarmValues(200, 3)}
+                                {"AlarmName", new AlarmValues(200, 3, null)}
                             }
                         },
                          new ResourceThresholds<ResourceConfig>
@@ -261,7 +261,7 @@ namespace Watchman.Engine.Tests.Generation
                     },
                     Values = new Dictionary<string, AlarmValues>
                     {
-                        { "AlarmName", new AlarmValues(300, 4) }
+                        { "AlarmName", new AlarmValues(300, 4, null) }
                     }
                 }
             };
@@ -333,13 +333,13 @@ namespace Watchman.Engine.Tests.Generation
                             Name = "ResourceA",
                             Values = new Dictionary<string, AlarmValues>
                             {
-                                {"AlarmName", new AlarmValues(200, null) }
+                                {"AlarmName", new AlarmValues(200, null, null) }
                             }
                         }
                     },
                     Values = new Dictionary<string, AlarmValues>
                     {
-                        { "AlarmName", new AlarmValues(100, 5) }
+                        { "AlarmName", new AlarmValues(100, 5, null) }
                     }
                 }
             };
@@ -391,7 +391,7 @@ namespace Watchman.Engine.Tests.Generation
                             Name = "ResourceA",
                             Values = new Dictionary<string, AlarmValues>
                             {
-                                {"AlarmName", new AlarmValues(200, null) }
+                                {"AlarmName", new AlarmValues(200, null, null) }
                             }
                         }
                     }
@@ -445,13 +445,13 @@ namespace Watchman.Engine.Tests.Generation
                             Name = "ResourceA",
                             Values = new Dictionary<string, AlarmValues>
                             {
-                                {"AlarmName", new AlarmValues(null, 17) }
+                                {"AlarmName", new AlarmValues(null, 17, null) }
                             }
                         }
                     },
                     Values = new Dictionary<string, AlarmValues>
                     {
-                        { "AlarmName", new AlarmValues(125, 5) }
+                        { "AlarmName", new AlarmValues(125, 5, null) }
                     }
                 }
             };
