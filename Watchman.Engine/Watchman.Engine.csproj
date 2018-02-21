@@ -9,7 +9,7 @@
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.6" />
     <PackageReference Include="AWSSDK.S3" Version="3.3.17" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.0.24" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Watchman.AwsResources\Watchman.AwsResources.csproj" />
