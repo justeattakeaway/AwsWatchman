@@ -68,6 +68,10 @@ namespace Watchman.Engine.Generation
 
             copy.EvaluationPeriods = mergedThreshold.EvaluationPeriods ?? alarm.EvaluationPeriods;
 
+            copy.ExtendedStatistic = !string.IsNullOrEmpty(mergedThreshold.ExtendedStatistic)
+                ? mergedThreshold.ExtendedStatistic
+                : alarm.ExtendedStatistic;
+
             return copy;
         }
 
@@ -86,7 +90,11 @@ namespace Watchman.Engine.Generation
                 .Select(t => t.Threshold)
                 .FirstOrDefault(t => t.HasValue);
 
-            return new AlarmValues(matchedThresholdValue, matchedEvalPeriods);
+            var matchedExtendedStatistic = matchesForKey
+                .Select(t => t.ExtendedStatistic)
+                .FirstOrDefault(t => !string.IsNullOrEmpty(t));
+
+            return new AlarmValues(matchedThresholdValue, matchedEvalPeriods, matchedExtendedStatistic);
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(

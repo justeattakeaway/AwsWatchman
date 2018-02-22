@@ -4,6 +4,7 @@ namespace Watchman.Configuration.Generic
     {
         public double? Threshold { get; }
         public int? EvaluationPeriods { get; }
+        public string ExtendedStatistic { get; }
 
         public AlarmValues()
         {
@@ -11,15 +12,16 @@ namespace Watchman.Configuration.Generic
             EvaluationPeriods = null;
         }
 
-        public AlarmValues(double? value, int? evaluationPeriods)
+        public AlarmValues(double? value, int? evaluationPeriods, string extendedStatistic)
         {
             Threshold = value;
             EvaluationPeriods = evaluationPeriods;
+            ExtendedStatistic = extendedStatistic;
         }
 
         public static implicit operator AlarmValues(double? threshold)
         {
-            return new AlarmValues(threshold, null);
+            return new AlarmValues(threshold, null, null);
         }
     }
 }

@@ -65,6 +65,35 @@ They all require an object in this format:
 }
 ```
 
+# Overriding threshold and other default attributes
+
+As in the above example, the threshold can be overriden by including the following (at either resource or service level):
+
+```
+  "Values": {
+     "LatencyHigh": 11
+  }
+```
+
+Other attributes can also be overridden if an object is specified:
+
+- `EvaluationPeriods` (number of periods for which the threshold must be breached, in order to trigger the alarm)
+- `ExtendedStatistic` (instead of the default statistic (e.g. average, max, etc.) use a percentile e.g. "p99"). See [AWS documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Percentiles).
+
+For example:
+
+```
+  "Values": {
+     "LatencyHigh": {
+        "Threshold": 11,
+        "EvaluationPeriods": 2,
+        "ExtendedStatistic": "p99.9"
+      }
+  }
+```
+
+Note that only the values you want to override need to be defined.
+
 # Resource types
 
 The following services are supported

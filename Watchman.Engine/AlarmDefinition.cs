@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Amazon.CloudWatch;
 using Watchman.Configuration;
@@ -13,6 +13,7 @@ namespace Watchman.Engine
         public string Name { get; set; }
         public string Metric { get; set; }
         public Statistic Statistic { get; set; }
+        public string ExtendedStatistic { get; set; }
         public TimeSpan Period { get; set; }
         public int EvaluationPeriods { get; set; }
         public Threshold Threshold { get; set; }
@@ -49,7 +50,8 @@ namespace Watchman.Engine
                 DimensionNames = DimensionNames,
                 Namespace = Namespace,
                 AlertOnInsufficientData = AlertOnInsufficientData,
-                AlertOnOk = AlertOnOk
+                AlertOnOk = AlertOnOk,
+                ExtendedStatistic = ExtendedStatistic
             };
         }
     }
