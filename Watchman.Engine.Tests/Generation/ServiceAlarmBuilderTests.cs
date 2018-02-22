@@ -19,7 +19,7 @@ namespace Watchman.Engine.Tests.Generation
         private Mock<IAlarmDimensionProvider<FakeResource>> _fakeDimensionProvider;
         private Mock<IResourceAttributesProvider<FakeResource, ResourceConfig>> _fakeAttributeProvider;
 
-        private ServiceAlarmBuilder<FakeResource, ResourceConfig> _generator;
+        private ResourceAlarmGenerator<FakeResource, ResourceConfig> _generator;
 
         [SetUp]
         public void SetUp()
@@ -28,7 +28,7 @@ namespace Watchman.Engine.Tests.Generation
             _fakeDimensionProvider = new Mock<IAlarmDimensionProvider<FakeResource>>();
             _fakeAttributeProvider = new Mock<IResourceAttributesProvider<FakeResource, ResourceConfig>>();
 
-            _generator = new ServiceAlarmBuilder<FakeResource, ResourceConfig>(
+            _generator = new ResourceAlarmGenerator<FakeResource, ResourceConfig>(
                 _fakeTableSource.Object,
                 _fakeDimensionProvider.Object,
                 _fakeAttributeProvider.Object);
