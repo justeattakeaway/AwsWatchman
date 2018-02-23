@@ -18,7 +18,7 @@ namespace Watchman.Engine.Generation
         private readonly ResourceNamePopulator<T, TAlarmConfig> _populator;
         private readonly OrphanResourcesReporter<T> _orphansReporter;
         private readonly IAlarmCreator _creator;
-        private readonly ServiceAlarmBuilder<T, TAlarmConfig> _serviceAlarmBuilder;
+        private readonly ResourceAlarmGenerator<T, TAlarmConfig> _resourceAlarmGenerator;
         private readonly Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> _serviceConfigMapper;
 
         public ServiceAlarmTasks(
@@ -26,13 +26,13 @@ namespace Watchman.Engine.Generation
             ResourceNamePopulator<T, TAlarmConfig> populator,
             OrphanResourcesReporter<T> orphansReporter,
             IAlarmCreator creator,
-            ServiceAlarmBuilder<T, TAlarmConfig> serviceAlarmBuilder,
+            ResourceAlarmGenerator<T, TAlarmConfig> resourceAlarmGenerator,
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> serviceConfigMapper)
         {
             _populator = populator;
             _orphansReporter = orphansReporter;
             _creator = creator;
-            _serviceAlarmBuilder = serviceAlarmBuilder;
+            _resourceAlarmGenerator = resourceAlarmGenerator;
             _serviceConfigMapper = serviceConfigMapper;
             _logger = logger;
         }
@@ -85,7 +85,7 @@ namespace Watchman.Engine.Generation
             {
                 try
                 {
-                    var alarmsForGroup = await _serviceAlarmBuilder.GenerateAlarmsFor(
+                    var alarmsForGroup = await _resourceAlarmGenerator.GenerateAlarmsFor(
                         alertingGroup.Service,
                         serviceConfig.Defaults,
                         alertingGroup.GroupParameters.AlarmNameSuffix);

@@ -79,7 +79,7 @@ namespace Watchman.Tests
                     new OrphanResourcesFinder<T>(source),
                     new OrphansLogger(_logger)),
                 _creator,
-                new ServiceAlarmBuilder<T, TAlarmConfig>(source, dimensionProvider, attributeProvider),
+                new ResourceAlarmGenerator<T, TAlarmConfig>(source, dimensionProvider, attributeProvider),
                 mapper
             );
 
