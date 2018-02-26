@@ -69,7 +69,7 @@ namespace Watchman.Engine.Generation
 
                 var model = new Alarm
                 {
-                    AlarmName = _builder.GetAlarmName(entity, alarm.Name, groupSuffix),
+                    AlarmName = $"{resource.Name}-{alarm.Name}-{groupSuffix}",
                     Resource = entity,
                     Dimensions = dimensions,
                     AlarmDefinition = alarm

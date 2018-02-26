@@ -87,7 +87,7 @@ namespace Watchman.Tests
 
             var sutBuilder = new Builder(ConfigHelper.ConfigLoaderFor(config), creator);
 
-            sutBuilder.AddService(
+            sutBuilder.AddDynamoDbService(
                 new TableDescriptionSource(dynamoClient), 
                 new DynamoDbDataProvider(),
                 new DynamoDbDataProvider(),

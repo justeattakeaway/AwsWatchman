@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Amazon.DynamoDBv2.Model;
 using Moq;
 using StructureMap.Diagnostics;
 using Watchman.AwsResources;
@@ -23,7 +24,8 @@ namespace Watchman.Tests
             IResourceAttributesProvider<T, TAlarmConfig> attributeProvider,
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> mapper,
             IAlarmCreator creator,
-            IConfigLoader loader
+            IConfigLoader loader,
+            IResourceAlarmGenerator<TAlarmConfig> generator = null
         )
             where T: class
             where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
@@ -72,6 +74,16 @@ namespace Watchman.Tests
             where T : class
             where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
         {
+            // ugly ugly ugly
+            // we should start using real IoC in the end to end tests instead and get rid of some of this duplicated wiring
+            if (typeof(T) == typeof(TableDescription))
+            {
+                throw new InvalidOperationException("Dynamo DB service requires use of DynamoResourceAlarmGenerator");
+            }
+
+            var generator = new ResourceAlarmGenerator<T, TAlarmConfig>(source, dimensionProvider, attributeProvider);
+
+
             var task = new ServiceAlarmTasks<T, TAlarmConfig>(
                 _logger,
                 new ResourceNamePopulator<T, TAlarmConfig>(_logger, source),
@@ -79,7 +91,33 @@ namespace Watchman.Tests
                     new OrphanResourcesFinder<T>(source),
                     new OrphansLogger(_logger)),
                 _creator,
-                new ResourceAlarmGenerator<T, TAlarmConfig>(source, dimensionProvider, attributeProvider),
+                generator,
+                mapper
+            );
+
+            _serviceAlarmTasks.Add(task);
+        }
+
+        public void AddDynamoDbService<TAlarmConfig>(IResourceSource<TableDescription> source,
+            IAlarmDimensionProvider<TableDescription> dimensionProvider,
+            IResourceAttributesProvider<TableDescription, TAlarmConfig> attributeProvider,
+            Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> mapper)
+            where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
+        {
+            var generator = (IResourceAlarmGenerator<TAlarmConfig>) new DynamoResourceAlarmGenerator(
+                source,
+                dimensionProvider,
+                (IResourceAttributesProvider<TableDescription, ResourceConfig>) attributeProvider
+            );
+
+            var task = new ServiceAlarmTasks<TableDescription, TAlarmConfig>(
+                _logger,
+                new ResourceNamePopulator<TableDescription, TAlarmConfig>(_logger, source),
+                new OrphanResourcesReporter<TableDescription>(
+                    new OrphanResourcesFinder<TableDescription>(source),
+                    new OrphansLogger(_logger)),
+                _creator,
+                generator,
                 mapper
             );
 

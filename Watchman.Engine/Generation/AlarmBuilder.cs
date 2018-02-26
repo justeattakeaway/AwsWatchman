@@ -115,10 +115,5 @@ namespace Watchman.Engine.Generation
 
             return threshold;
         }
-
-        public string GetAlarmName(AwsResource<T> resource, string alertName, string groupSuffix)
-        {
-            return $"{resource.Name}-{alertName}-{groupSuffix}";
-        }
     }
 }
