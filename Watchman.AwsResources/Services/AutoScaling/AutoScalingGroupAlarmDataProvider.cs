@@ -51,12 +51,19 @@ namespace Watchman.AwsResources.Services.AutoScaling
 
         private async Task<decimal> GetGroupDesiredValue(AutoScalingGroup resource, AutoScalingResourceConfig config)
         {
-            if (config.InstanceCountIncreaseDelayMinutes == null)
+            decimal? result = null;
+
+            if (config.InstanceCountIncreaseDelayMinutes != null)
             {
-                return resource.DesiredCapacity;
+                result = await FetchLaggedGroupDesiredValueFromCloudWatch(resource, config.InstanceCountIncreaseDelayMinutes.Value);
             }
 
-            var delaySeconds = config.InstanceCountIncreaseDelayMinutes.Value * 60;
+            return result ?? resource.DesiredCapacity;
+        }
+
+        private async Task<decimal?> FetchLaggedGroupDesiredValueFromCloudWatch(AutoScalingGroup resource, int delayMinutes)
+        {
+            var delaySeconds = delayMinutes * 60;
             var now = _timeProvider.UtcNow;
 
             var metric = await _cloudWatch.GetMetricStatisticsAsync(
@@ -64,13 +71,13 @@ namespace Watchman.AwsResources.Services.AutoScaling
                 {
                     Dimensions = new List<Dimension>()
                     {
-                                new Dimension()
-                                {
-                                    Name = "AutoScalingGroupName",
-                                    Value = resource.AutoScalingGroupName
-                                }
+                        new Dimension()
+                        {
+                            Name = "AutoScalingGroupName",
+                            Value = resource.AutoScalingGroupName
+                        }
                     },
-                    Statistics = new List<string>() { "Minimum" },
+                    Statistics = new List<string>() {"Minimum"},
                     Namespace = "AWS/AutoScaling",
                     Period = delaySeconds,
                     MetricName = "GroupDesiredCapacity",
@@ -83,11 +90,14 @@ namespace Watchman.AwsResources.Services.AutoScaling
 
             if (threshold == null)
             {
-                throw new Exception(
+                // ILogger isn't available in this project yet
+                Console.WriteLine(
                     $"No datapoints returned when requesting desired capacity from CloudWatch for {resource.AutoScalingGroupName}");
+
+                return null;
             }
 
-            return (decimal)threshold.Minimum;
+            return (decimal) threshold.Minimum;
         }
 
         private static Dimension GetDimension(AutoScalingGroup resource, string dimensionName)

@@ -27,7 +27,6 @@ namespace Watchman.Tests.AutoScaling
 {
     public class AutoScalingAlarmTests
     {
-
         private void SetupCloudWatchDesiredMetric(Mock<IAmazonCloudWatch> client,
             int lagSeconds,
             DateTime now,
@@ -192,6 +191,88 @@ namespace Watchman.Tests.AutoScaling
 
             var fakeTime = new Mock<ICurrentTimeProvider>();
             var cloudWatch = new Mock<IAmazonCloudWatch>();
+
+            var provider = new AutoScalingGroupAlarmDataProvider(cloudWatch.Object, fakeTime.Object);
+
+            var sut = IoCHelper.CreateSystemUnderTest(
+                source,
+                provider,
+                provider,
+                WatchmanServiceConfigurationMapper.MapAutoScaling,
+                creator,
+                ConfigHelper.ConfigLoaderFor(config)
+                );
+
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var alarms = stack
+                .Stack("Watchman-test")
+                .AlarmsByDimension("AutoScalingGroupName");
+
+            var alarm = alarms["group-1"].Single(a => a.Properties["AlarmName"].ToString().Contains("InService"));
+
+            var defaultAlarmThreshold = 0.5m;
+
+            Assert.That((decimal)alarm.Properties["Threshold"], Is.EqualTo(40 * defaultAlarmThreshold));
+        }
+
+        [Test]
+        public async Task UsesDesiredInstancesForThresholdIfCloudWatchMetricsDoNotExist()
+        {
+            // arrange
+
+            var stack = new FakeStackDeployer();
+
+            var autoScalingClient = FakeAwsClients.CreateAutoScalingClientForGroups(new[]
+            {
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-1",
+                    DesiredCapacity = 40
+                }
+            });
+
+            var source = new AutoScalingGroupSource(autoScalingClient);
+
+            var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
+
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
+                new AlertingGroupServices()
+                {
+                    AutoScaling = new AwsServiceAlarms<AutoScalingResourceConfig>()
+                    {
+                        Resources = new List<ResourceThresholds<AutoScalingResourceConfig>>()
+                        {
+                            new ResourceThresholds<AutoScalingResourceConfig>()
+                            {
+                                Name = "group-1",
+                                Options = new AutoScalingResourceConfig()
+                                {
+                                    InstanceCountIncreaseDelayMinutes = 10
+                                }
+                            }
+                        }
+                    }
+                });
+            
+            var now = DateTime.UtcNow;
+
+            var fakeTime = new Mock<ICurrentTimeProvider>();
+            fakeTime.Setup(a => a.UtcNow).Returns(now);
+
+            var cloudWatch = new Mock<IAmazonCloudWatch>();
+
+            cloudWatch.Setup(x =>
+                    x.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new GetMetricStatisticsResponse()
+                {
+                    Datapoints = new List<Datapoint>()
+                });
 
             var provider = new AutoScalingGroupAlarmDataProvider(cloudWatch.Object, fakeTime.Object);
 
