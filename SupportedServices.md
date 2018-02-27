@@ -125,7 +125,7 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `GroupInServiceInstancesLow`: 50 (% of desired)
 
 #### Options
-- `InstanceCountIncreaseDelayMinutes` Use to delay increasing the minimum threshold when the instance count increases (e.g. when scaling). The value used it then obtained from CloudWatch - using the minimum of `GroupDesiredCapacity` over the time period specified.
+- `InstanceCountIncreaseDelayMinutes` Use to delay increasing the minimum threshold when the instance count increases (e.g. when scaling). The value used it then obtained from CloudWatch - using the minimum of `GroupDesiredCapacity` over the time period specified. Note that if CloudWatch metrics are not present then the current Desired capacity is used, as it better to have a more sensitive alarm than none.
 
 ### Lambda
 
