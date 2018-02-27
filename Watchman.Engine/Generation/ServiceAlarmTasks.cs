@@ -18,7 +18,7 @@ namespace Watchman.Engine.Generation
         private readonly ResourceNamePopulator<T, TAlarmConfig> _populator;
         private readonly OrphanResourcesReporter<T> _orphansReporter;
         private readonly IAlarmCreator _creator;
-        private readonly IResourceAlarmGenerator<TAlarmConfig> _resourceAlarmGenerator;
+        private readonly IResourceAlarmGenerator<T, TAlarmConfig> _resourceAlarmGenerator;
         private readonly Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> _serviceConfigMapper;
 
         public ServiceAlarmTasks(
@@ -26,7 +26,7 @@ namespace Watchman.Engine.Generation
             ResourceNamePopulator<T, TAlarmConfig> populator,
             OrphanResourcesReporter<T> orphansReporter,
             IAlarmCreator creator,
-            IResourceAlarmGenerator<TAlarmConfig> resourceAlarmGenerator,
+            IResourceAlarmGenerator<T, TAlarmConfig> resourceAlarmGenerator,
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> serviceConfigMapper)
         {
             _populator = populator;

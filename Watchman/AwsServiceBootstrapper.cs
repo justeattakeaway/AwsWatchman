@@ -87,7 +87,7 @@ namespace Watchman
             where TDataProvider : IAlarmDimensionProvider<TServiceModel>,
             IResourceAttributesProvider<TServiceModel, TResourceAlarmConfig>
             where TResourceAlarmConfig : class, IServiceAlarmConfig<TResourceAlarmConfig>, new()
-            where TAlarmBuilder : IResourceAlarmGenerator<TResourceAlarmConfig>
+            where TAlarmBuilder : IResourceAlarmGenerator<TServiceModel, TResourceAlarmConfig>
         {
             registry.For<IResourceSource<TServiceModel>>().Use<TSource>();
             registry.For<IAlarmDimensionProvider<TServiceModel>>().Use<TDataProvider>();
@@ -98,7 +98,7 @@ namespace Watchman
                 .Ctor<Func<WatchmanConfiguration, WatchmanServiceConfiguration<TResourceAlarmConfig>>>()
                 .Is(mapper);
 
-            registry.For<IResourceAlarmGenerator<TResourceAlarmConfig>>().Use<TAlarmBuilder>();
+            registry.For<IResourceAlarmGenerator<TServiceModel, TResourceAlarmConfig>>().Use<TAlarmBuilder>();
         }
     }
 }

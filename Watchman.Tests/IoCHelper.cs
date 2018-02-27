@@ -25,7 +25,7 @@ namespace Watchman.Tests
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> mapper,
             IAlarmCreator creator,
             IConfigLoader loader,
-            IResourceAlarmGenerator<TAlarmConfig> generator = null
+            IResourceAlarmGenerator<T, TAlarmConfig> generator = null
         )
             where T: class
             where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
@@ -104,7 +104,7 @@ namespace Watchman.Tests
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> mapper)
             where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
         {
-            var generator = (IResourceAlarmGenerator<TAlarmConfig>) new DynamoResourceAlarmGenerator(
+            var generator = (IResourceAlarmGenerator<TableDescription, TAlarmConfig>) new DynamoResourceAlarmGenerator(
                 source,
                 dimensionProvider,
                 (IResourceAttributesProvider<TableDescription, ResourceConfig>) attributeProvider

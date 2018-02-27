@@ -10,7 +10,7 @@ using Watchman.Engine.Alarms;
 
 namespace Watchman.Engine.Generation.Dynamo
 {
-    public class DynamoResourceAlarmGenerator : IResourceAlarmGenerator<ResourceConfig>
+    public class DynamoResourceAlarmGenerator : IResourceAlarmGenerator<TableDescription, ResourceConfig>
     {
         private readonly IResourceSource<TableDescription> _tableSource;
         private readonly IAlarmDimensionProvider<TableDescription> _dimensions;

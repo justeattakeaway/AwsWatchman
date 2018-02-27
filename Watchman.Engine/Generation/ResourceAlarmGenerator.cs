@@ -6,7 +6,7 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine.Generation
 {
-    public class ResourceAlarmGenerator<T, TAlarmConfig> : IResourceAlarmGenerator<TAlarmConfig>
+    public class ResourceAlarmGenerator<T, TAlarmConfig> : IResourceAlarmGenerator<T, TAlarmConfig>
         where T:class
         where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
     {
