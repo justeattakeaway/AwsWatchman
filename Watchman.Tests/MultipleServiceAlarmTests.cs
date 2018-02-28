@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.CloudFormation;
 using Amazon.CloudWatch;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
@@ -17,11 +18,13 @@ using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.AwsResources.Services.Lambda;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
+using Watchman.Configuration.Load;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
 using Watchman.Engine.Generation.Generic;
 using Watchman.Engine.Logging;
 using Watchman.Tests.Fakes;
+using Watchman.Tests.IoC;
 
 namespace Watchman.Tests
 {
@@ -31,32 +34,6 @@ namespace Watchman.Tests
         public async Task AlarmCreatedWithCorrectProperties()
         {
             // arrange
-
-            var fakeStackDeployer = new FakeStackDeployer();
-
-            var dynamoClient = FakeAwsClients.CreateDynamoClientForTables(new[]
-            {
-                new TableDescription()
-                {
-                    TableName = "first-dynamo-table",
-                    ProvisionedThroughput = new ProvisionedThroughputDescription()
-                    {
-                        ReadCapacityUnits = 100,
-                        WriteCapacityUnits = 200
-                    }
-                }
-            });
-
-            var lambdaClient = FakeAwsClients.CreateLambdaClientForFunctions(new[]
-            {
-                new FunctionConfiguration()
-                {
-                    FunctionName = "first-lambda-function"
-                }
-            });
-
-            var creator = new CloudFormationAlarmCreator(fakeStackDeployer, new ConsoleAlarmLogger(true));
-
             var config = ConfigHelper.CreateBasicConfiguration(
                 "test",
                 "group-suffix",
@@ -85,23 +62,35 @@ namespace Watchman.Tests
                 }
             );
 
-            var sutBuilder = new Builder(ConfigHelper.ConfigLoaderFor(config), creator);
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
 
-            sutBuilder.AddDynamoDbService(
-                new TableDescriptionSource(dynamoClient), 
-                new DynamoDbDataProvider(),
-                new DynamoDbDataProvider(),
-                WatchmanServiceConfigurationMapper.MapDynamoDb
-                );
+            ioc.GetMock<IAmazonDynamoDB>().HasDynamoTables(new[]
+            {
+                new TableDescription()
+                {
+                    TableName = "first-dynamo-table",
+                    ProvisionedThroughput = new ProvisionedThroughputDescription()
+                    {
+                        ReadCapacityUnits = 100,
+                        WriteCapacityUnits = 200
+                    }
+                }
+            });
 
-            sutBuilder.AddService(
-                new LambdaSource(lambdaClient),
-                new LambdaAlarmDataProvider(),
-                new LambdaAlarmDataProvider(),
-                WatchmanServiceConfigurationMapper.MapLambda
-                );
+            ioc.GetMock<IAmazonLambda>().HasLambdaFunctions(new[]
+            {
+                new FunctionConfiguration()
+                {
+                    FunctionName = "first-lambda-function"
+                }
+            });
 
-            var sut = sutBuilder.Build();
+            ioc.GetMock<IConfigLoader>().HasConfig(config);
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
             
             // act
 
@@ -109,13 +98,13 @@ namespace Watchman.Tests
 
             // assert
 
-            var alarmsByTable = fakeStackDeployer
+            var alarmsByTable = cloudformation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("TableName");
 
             Assert.That(alarmsByTable.ContainsKey("first-dynamo-table"), Is.True);
 
-            var alarmsByFunction = fakeStackDeployer
+            var alarmsByFunction = cloudformation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("FunctionName");
 

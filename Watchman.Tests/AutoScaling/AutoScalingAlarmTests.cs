@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
+using Amazon.CloudFormation;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Amazon.DynamoDBv2;
@@ -17,11 +19,13 @@ using Watchman.AwsResources.Services.AutoScaling;
 using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
+using Watchman.Configuration.Load;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
 using Watchman.Engine.Generation.Generic;
 using Watchman.Engine.Logging;
 using Watchman.Tests.Fakes;
+using Watchman.Tests.IoC;
 
 namespace Watchman.Tests.AutoScaling
 {
@@ -65,25 +69,6 @@ namespace Watchman.Tests.AutoScaling
         public async Task UsesDelayedScalingThresholdFromCloudWatch()
         {
             // arrange
-
-            var stack = new FakeStackDeployer();
-
-            var autoScalingClient = FakeAwsClients.CreateAutoScalingClientForGroups(new[]
-            {
-                new AutoScalingGroup()
-                {
-                    AutoScalingGroupName = "group-delay-20"
-                },
-                new AutoScalingGroup()
-                {
-                    AutoScalingGroupName = "group-delay-100"
-                }
-            });
-
-            var source = new AutoScalingGroupSource(autoScalingClient);
-
-            var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
-
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
                 new AlertingGroupServices()
                 {
@@ -112,27 +97,38 @@ namespace Watchman.Tests.AutoScaling
                     }
                 });
 
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(new[]
+            {
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-delay-20"
+                },
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-delay-100"
+                }
+            });
+
+
             var now = DateTime.Parse("2018-01-26");
 
-            var fakeTime = new Mock<ICurrentTimeProvider>();
-            fakeTime.Setup(f => f.UtcNow).Returns(now);
+            ioc.GetMock<ICurrentTimeProvider>()
+                .Setup(f => f.UtcNow)
+                .Returns(now);
 
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
+            var cloudWatch = ioc.GetMock<IAmazonCloudWatch>();
 
             SetupCloudWatchDesiredMetric(cloudWatch, 100 * 60, now, "group-delay-100", 90);
             SetupCloudWatchDesiredMetric(cloudWatch, 20 * 60, now, "group-delay-20", 80);
 
-            var provider = new AutoScalingGroupAlarmDataProvider(cloudWatch.Object, fakeTime.Object);
+            ioc.GetMock<IConfigLoader>().HasConfig(config);
 
-            var sut = IoCHelper.CreateSystemUnderTest(
-                source,
-                provider,
-                provider,
-                WatchmanServiceConfigurationMapper.MapAutoScaling,
-                creator, 
-                ConfigHelper.ConfigLoaderFor(config)
-                );
-           
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
             
@@ -140,7 +136,7 @@ namespace Watchman.Tests.AutoScaling
 
             // assert
 
-            var alarms = stack
+            var alarms = cloudformation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("AutoScalingGroupName");
 
@@ -157,22 +153,6 @@ namespace Watchman.Tests.AutoScaling
         public async Task UsesDesiredInstancesForThresholdByDefault()
         {
             // arrange
-
-            var stack = new FakeStackDeployer();
-
-            var autoScalingClient = FakeAwsClients.CreateAutoScalingClientForGroups(new[]
-            {
-                new AutoScalingGroup()
-                {
-                    AutoScalingGroupName = "group-1",
-                    DesiredCapacity = 40
-                }
-            });
-
-            var source = new AutoScalingGroupSource(autoScalingClient);
-
-            var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
-
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
                 new AlertingGroupServices()
                 {
@@ -188,21 +168,25 @@ namespace Watchman.Tests.AutoScaling
                     }
                 });
 
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
 
-            var fakeTime = new Mock<ICurrentTimeProvider>();
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
+            ioc.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(new[]
+            {
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-1",
+                    DesiredCapacity = 40
+                }
+            });
 
-            var provider = new AutoScalingGroupAlarmDataProvider(cloudWatch.Object, fakeTime.Object);
+            ioc.GetMock<IConfigLoader>().HasConfig(config);
 
-            var sut = IoCHelper.CreateSystemUnderTest(
-                source,
-                provider,
-                provider,
-                WatchmanServiceConfigurationMapper.MapAutoScaling,
-                creator,
-                ConfigHelper.ConfigLoaderFor(config)
-                );
+            // todo : move to boundary registry
 
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
 
@@ -210,7 +194,7 @@ namespace Watchman.Tests.AutoScaling
 
             // assert
 
-            var alarms = stack
+            var alarms = cloudformation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("AutoScalingGroupName");
 
@@ -225,22 +209,6 @@ namespace Watchman.Tests.AutoScaling
         public async Task UsesDesiredInstancesForThresholdIfCloudWatchMetricsDoNotExist()
         {
             // arrange
-
-            var stack = new FakeStackDeployer();
-
-            var autoScalingClient = FakeAwsClients.CreateAutoScalingClientForGroups(new[]
-            {
-                new AutoScalingGroup()
-                {
-                    AutoScalingGroupName = "group-1",
-                    DesiredCapacity = 40
-                }
-            });
-
-            var source = new AutoScalingGroupSource(autoScalingClient);
-
-            var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
-
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
                 new AlertingGroupServices()
                 {
@@ -259,32 +227,35 @@ namespace Watchman.Tests.AutoScaling
                         }
                     }
                 });
+
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(new[]
+            {
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-1",
+                    DesiredCapacity = 40
+                }
+            });
             
             var now = DateTime.UtcNow;
-
-            var fakeTime = new Mock<ICurrentTimeProvider>();
-            fakeTime.Setup(a => a.UtcNow).Returns(now);
-
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-
-            cloudWatch.Setup(x =>
+            
+            ioc.GetMock<ICurrentTimeProvider>().Setup(a => a.UtcNow).Returns(now);
+            
+            ioc.GetMock<IAmazonCloudWatch>().Setup(x =>
                     x.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new GetMetricStatisticsResponse()
                 {
                     Datapoints = new List<Datapoint>()
                 });
 
-            var provider = new AutoScalingGroupAlarmDataProvider(cloudWatch.Object, fakeTime.Object);
+            ioc.GetMock<IConfigLoader>().HasConfig(config);
 
-            var sut = IoCHelper.CreateSystemUnderTest(
-                source,
-                provider,
-                provider,
-                WatchmanServiceConfigurationMapper.MapAutoScaling,
-                creator,
-                ConfigHelper.ConfigLoaderFor(config)
-                );
-
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
 
@@ -292,7 +263,7 @@ namespace Watchman.Tests.AutoScaling
 
             // assert
 
-            var alarms = stack
+            var alarms = cloudformation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("AutoScalingGroupName");
 
@@ -307,21 +278,6 @@ namespace Watchman.Tests.AutoScaling
         public async Task TimesSuppliedToCloudWatchAreUtc()
         {
             // arrange
-
-            var stack = new FakeStackDeployer();
-
-            var autoScalingClient = FakeAwsClients.CreateAutoScalingClientForGroups(new[]
-            {
-                new AutoScalingGroup()
-                {
-                    AutoScalingGroupName = "group-1",
-                    DesiredCapacity = 40
-                }
-            });
-
-            var source = new AutoScalingGroupSource(autoScalingClient);
-
-            var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
 
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
                 new AlertingGroupServices()
@@ -342,9 +298,25 @@ namespace Watchman.Tests.AutoScaling
                     }
                 });
 
+            var cloudformation = new FakeCloudFormation();
 
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            cloudWatch
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
+
+            // use real implementation to check it works
+            ioc.Override<ICurrentTimeProvider>(new CurrentTimeProvider());
+
+            ioc.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(new[]
+            {
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-1",
+                    DesiredCapacity = 40
+                }
+            });
+            
+            ioc.GetMock<IAmazonCloudWatch>()
                 .Setup(c => c.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new GetMetricStatisticsResponse()
@@ -354,26 +326,15 @@ namespace Watchman.Tests.AutoScaling
                         new Datapoint() {Minimum = 5}
                     }
                 });
-                
 
-            var provider = new AutoScalingGroupAlarmDataProvider(cloudWatch.Object, new CurrentTimeProvider());
-
-            var sut = IoCHelper.CreateSystemUnderTest(
-                source,
-                provider,
-                provider,
-                WatchmanServiceConfigurationMapper.MapAutoScaling,
-                creator,
-                ConfigHelper.ConfigLoaderFor(config)
-                );
-
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
 
             await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
 
             // assert
-            cloudWatch.Verify(x => x.GetMetricStatisticsAsync(
+            ioc.GetMock<IAmazonCloudWatch>().Verify(x => x.GetMetricStatisticsAsync(
                 It.Is<GetMetricStatisticsRequest>(
                     r => r.StartTime.Kind == DateTimeKind.Utc
                     && r.EndTime.Kind == DateTimeKind.Utc

@@ -1,16 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.CloudFormation;
+using Amazon.ElasticLoadBalancing;
 using Amazon.ElasticLoadBalancing.Model;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Elb;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
+using Watchman.Configuration.Load;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
 using Watchman.Engine.Generation.Generic;
 using Watchman.Engine.Logging;
 using Watchman.Tests.Fakes;
+using Watchman.Tests.IoC;
 
 namespace Watchman.Tests
 {
@@ -20,20 +24,6 @@ namespace Watchman.Tests
         public async Task CanUseExtendedStatisticsForResource()
         {
             // arrange
-
-            var fakeStackDeployer = new FakeStackDeployer();
-
-            var elbClient = FakeAwsClients.CreateElbClientForLoadBalancers(new[]
-            {
-                new LoadBalancerDescription() 
-                {
-                    LoadBalancerName = "elb-1"
-                }
-            });
-
-         
-            var creator = new CloudFormationAlarmCreator(fakeStackDeployer, new ConsoleAlarmLogger(true));
-
             var config = ConfigHelper.CreateBasicConfiguration(
                 "test",
                 "group-suffix",
@@ -58,16 +48,22 @@ namespace Watchman.Tests
                 }
             );
 
-            var sutBuilder = new Builder(ConfigHelper.ConfigLoaderFor(config), creator);
+            var fakeCloudFormation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(fakeCloudFormation.Instance)
+                .WithConfig(config);
 
-            sutBuilder.AddService(
-                new ElbSource(elbClient),
-                new ElbAlarmDataProvider(), 
-                new ElbAlarmDataProvider(),
-                WatchmanServiceConfigurationMapper.MapElb
-                );
+            ioc.GetMock<IAmazonElasticLoadBalancing>().DescribeReturnsLoadBalancers(new[]
+            {
+                new LoadBalancerDescription()
+                {
+                    LoadBalancerName = "elb-1"
+                }
+            });
 
-            var sut = sutBuilder.Build();
+            ioc.GetMock<IConfigLoader>().HasConfig(config);
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
             
             // act
 
@@ -75,7 +71,7 @@ namespace Watchman.Tests
 
             // assert
             
-            var alarmsByElb = fakeStackDeployer
+            var alarmsByElb = fakeCloudFormation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("LoadBalancerName");
 
@@ -90,23 +86,7 @@ namespace Watchman.Tests
         public async Task CanSetExtendedStatisticAtResourceOrServiceLevel()
         {
             // arrange
-
-            var fakeStackDeployer = new FakeStackDeployer();
-
-            var elbClient = FakeAwsClients.CreateElbClientForLoadBalancers(new[]
-            {
-                new LoadBalancerDescription()
-                {
-                    LoadBalancerName = "elb-1"
-                },
-                new LoadBalancerDescription()
-                {
-                    LoadBalancerName = "elb-2"
-                }
-            });
-
-
-            var creator = new CloudFormationAlarmCreator(fakeStackDeployer, new ConsoleAlarmLogger(true));
+            var fakeCloudFormation = new FakeCloudFormation();
 
             var config = ConfigHelper.CreateBasicConfiguration(
                 "test",
@@ -145,16 +125,25 @@ namespace Watchman.Tests
                 }
             );
 
-            var sutBuilder = new Builder(ConfigHelper.ConfigLoaderFor(config), creator);
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(fakeCloudFormation.Instance)
+                .WithConfig(config);
 
-            sutBuilder.AddService(
-                new ElbSource(elbClient),
-                new ElbAlarmDataProvider(),
-                new ElbAlarmDataProvider(),
-                WatchmanServiceConfigurationMapper.MapElb
-                );
+            ioc.GetMock<IAmazonElasticLoadBalancing>().DescribeReturnsLoadBalancers(new[]
+            {
+                new LoadBalancerDescription()
+                {
+                    LoadBalancerName = "elb-1"
+                },
+                new LoadBalancerDescription()
+                {
+                    LoadBalancerName = "elb-2"
+                }
+            });
 
-            var sut = sutBuilder.Build();
+            ioc.GetMock<IConfigLoader>().HasConfig(config);
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
 
@@ -162,7 +151,7 @@ namespace Watchman.Tests
 
             // assert
 
-            var alarmsByElb = fakeStackDeployer
+            var alarmsByElb = fakeCloudFormation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("LoadBalancerName");
 

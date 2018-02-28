@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Watchman.Engine.Generation;
+using Watchman.IoC;
 
 namespace Watchman
 {

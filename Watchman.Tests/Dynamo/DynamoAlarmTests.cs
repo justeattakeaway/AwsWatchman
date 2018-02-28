@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.CloudFormation;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -8,11 +10,13 @@ using NUnit.Framework;
 using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
+using Watchman.Configuration.Load;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
 using Watchman.Engine.Generation.Generic;
 using Watchman.Engine.Logging;
 using Watchman.Tests.Fakes;
+using Watchman.Tests.IoC;
 
 namespace Watchman.Tests.Dynamo
 {
@@ -24,26 +28,6 @@ namespace Watchman.Tests.Dynamo
         public async Task IgnoresNamedEntitiesThatDoNotExist()
         {
             // arrange
-
-            var stack = new Mock<ICloudformationStackDeployer>();
-
-            var dynamoClient = FakeAwsClients.CreateDynamoClientForTables(new[]
-            {
-                new TableDescription()
-                {
-                    TableName = "first-dynamo-table",
-                    ProvisionedThroughput = new ProvisionedThroughputDescription()
-                    {
-                        ReadCapacityUnits = 10,
-                        WriteCapacityUnits = 10
-                    }
-                }
-            });
-
-            var source = new TableDescriptionSource(dynamoClient);
-
-            var creator = new CloudFormationAlarmCreator(stack.Object, new ConsoleAlarmLogger(true));
-
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
                 new AlertingGroupServices()
                 {
@@ -59,16 +43,27 @@ namespace Watchman.Tests.Dynamo
                     }
                 });
 
-            var builder = new Builder(ConfigHelper.ConfigLoaderFor(config), creator);
-            builder.AddDynamoDbService(source,
-                new DynamoDbDataProvider(),
-                new DynamoDbDataProvider(),
-                WatchmanServiceConfigurationMapper.MapDynamoDb
-            );
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
 
-            var sut = builder.Build();
+            ioc.GetMock<IAmazonDynamoDB>().HasDynamoTables(new[]
+            {
+                new TableDescription()
+                {
+                    TableName = "first-dynamo-table",
+                    ProvisionedThroughput = new ProvisionedThroughputDescription()
+                    {
+                        ReadCapacityUnits = 10,
+                        WriteCapacityUnits = 10
+                    }
+                }
+            });
+            
+            ioc.GetMock<IConfigLoader>().HasConfig(config);
 
-
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
 
@@ -76,37 +71,13 @@ namespace Watchman.Tests.Dynamo
             
             // assert
 
-            stack
-                .Verify(x => x.DeployStack(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<bool>()
-                    ), Times.Never);
+            Assert.That(cloudformation.StacksDeployed, Is.Zero);
         }
 
         [Test]
         public async Task AlarmCreatedWithCorrectProperties()
         {
             // arrange
-
-            var stack = new FakeStackDeployer();
-
-            var dynamoClient = FakeAwsClients.CreateDynamoClientForTables(new[]
-            {
-                new TableDescription()
-                {
-                    TableName = "first-dynamo-table",
-                    ProvisionedThroughput = new ProvisionedThroughputDescription()
-                    {
-                        ReadCapacityUnits = 100,
-                        WriteCapacityUnits = 200
-                    }
-                }
-            });
-
-            var source = new TableDescriptionSource(dynamoClient);
-            var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
-
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
             {
                 DynamoDb = new AwsServiceAlarms<ResourceConfig>()
@@ -121,15 +92,28 @@ namespace Watchman.Tests.Dynamo
                 }
             });
 
-            var builder = new Builder(ConfigHelper.ConfigLoaderFor(config), creator);
-            builder.AddDynamoDbService(source,
-                new DynamoDbDataProvider(),
-                new DynamoDbDataProvider(),
-                WatchmanServiceConfigurationMapper.MapDynamoDb
-                );
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
 
-            var sut = builder.Build();
-            
+            ioc.GetMock<IAmazonDynamoDB>().HasDynamoTables(new[]
+            {
+                new TableDescription()
+                {
+                    TableName = "first-dynamo-table",
+                    ProvisionedThroughput = new ProvisionedThroughputDescription()
+                    {
+                        ReadCapacityUnits = 100,
+                        WriteCapacityUnits = 200
+                    }
+                }
+            });
+
+            ioc.GetMock<IConfigLoader>().HasConfig(config);
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+          
             // act
 
             await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
@@ -140,7 +124,7 @@ namespace Watchman.Tests.Dynamo
             const decimal capacityMultiplier = defaultCapacityThreshold * OneMinuteInSeconds;
             const int defaultThrottleThreshold = 2;
 
-            var alarmsByTable = stack
+            var alarmsByTable = cloudformation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("TableName");
 
@@ -191,10 +175,27 @@ namespace Watchman.Tests.Dynamo
         public async Task AlarmsCanBeAddedToGlobalSecondaryIndexes()
         {
             // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
+            {
+                DynamoDb = new AwsServiceAlarms<ResourceConfig>()
+                {
+                    Resources =
+                        new List<ResourceThresholds<ResourceConfig>>()
+                        {
+                            new ResourceThresholds<ResourceConfig>()
+                            {
+                                Name = "first-table"
+                            }
+                        }
+                }
+            });
 
-            var stack = new FakeStackDeployer();
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
 
-            var dynamoClient = FakeAwsClients.CreateDynamoClientForTables(new[]
+            ioc.GetMock<IAmazonDynamoDB>().HasDynamoTables(new[]
             {
                 new TableDescription()
                 {
@@ -219,32 +220,9 @@ namespace Watchman.Tests.Dynamo
                 }
             });
 
-            var source = new TableDescriptionSource(dynamoClient);
-            var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
+            ioc.GetMock<IConfigLoader>().HasConfig(config);
 
-            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
-            {
-                DynamoDb = new AwsServiceAlarms<ResourceConfig>()
-                {
-                    Resources =
-                        new List<ResourceThresholds<ResourceConfig>>()
-                        {
-                            new ResourceThresholds<ResourceConfig>()
-                            {
-                                Name = "first-table"
-                            }
-                        }
-                }
-            });
-
-            var builder = new Builder(ConfigHelper.ConfigLoaderFor(config), creator);
-            builder.AddDynamoDbService(source,
-                new DynamoDbDataProvider(),
-                new DynamoDbDataProvider(),
-                WatchmanServiceConfigurationMapper.MapDynamoDb
-            );
-
-            var sut = builder.Build();
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
 
@@ -256,9 +234,9 @@ namespace Watchman.Tests.Dynamo
             const int defaultThrottleThreshold = 2;
 
             // basic check we still have table alarms
-            Assert.That(stack.Stack("Watchman-test").AlarmsByDimension("TableName").Any(), Is.True);
+            Assert.That(cloudformation.Stack("Watchman-test").AlarmsByDimension("TableName").Any(), Is.True);
 
-            var alarmsByGsi = stack
+            var alarmsByGsi = cloudformation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("GlobalSecondaryIndexName");
 
