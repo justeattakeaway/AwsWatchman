@@ -4,7 +4,10 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine.Generation
 {
-    public interface IResourceAlarmGenerator<TAlarmConfig> where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
+    // TResource type argument is required because the implementations of this are specific to TResource (not necessarily TAlarmConfig)
+    public interface IResourceAlarmGenerator<TResource, TAlarmConfig>
+        where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
+        where TResource : class
     {
         Task<IList<Alarm>> GenerateAlarmsFor(AwsServiceAlarms<TAlarmConfig> service, IList<AlarmDefinition> defaults, string alarmSuffix);
     }

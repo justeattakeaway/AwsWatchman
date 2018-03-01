@@ -366,6 +366,76 @@ namespace Watchman.Engine.Alarms
             }
         };
 
+        public static IList<AlarmDefinition> DynamoDbGsi = new List<AlarmDefinition>()
+        {
+            new AlarmDefinition
+            {
+                Name = "GsiConsumedReadCapacityUnitsHigh",
+                Metric = "ConsumedReadCapacityUnits",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.PercentageOf,
+                    Value = AwsConstants.DefaultCapacityThreshold * 100,
+                    SourceAttribute = "ProvisionedReadThroughput"
+                },
+                DimensionNames = new[] {"GlobalSecondaryIndexName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            },
+            new AlarmDefinition
+            {
+                Name = "GsiConsumedWriteCapacityUnitsHigh",
+                Metric = "ConsumedWriteCapacityUnits",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.PercentageOf,
+                    Value = AwsConstants.DefaultCapacityThreshold * 100,
+                    SourceAttribute = "ProvisionedWriteThroughput"
+                },
+                DimensionNames = new[] {"GlobalSecondaryIndexName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            },
+            new AlarmDefinition
+            {
+                Name = "GsiReadThrottleEventsHigh",
+                Metric = "ReadThrottleEvents",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.ThrottlingThreshold
+                },
+                DimensionNames = new[] {"GlobalSecondaryIndexName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            },
+            new AlarmDefinition
+            {
+                Name = "GsiWriteThrottleEventsHigh",
+                Metric = "WriteThrottleEvents",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.ThrottlingThreshold
+                },
+                DimensionNames = new[] {"GlobalSecondaryIndexName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            }
+        };
+
         public static IList<AlarmDefinition> DynamoDb = new List<AlarmDefinition>
         {
             new AlarmDefinition

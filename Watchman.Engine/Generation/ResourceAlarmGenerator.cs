@@ -6,7 +6,7 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine.Generation
 {
-    public class ResourceAlarmGenerator<T, TAlarmConfig> : IResourceAlarmGenerator<TAlarmConfig>
+    public class ResourceAlarmGenerator<T, TAlarmConfig> : IResourceAlarmGenerator<T, TAlarmConfig>
         where T:class
         where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
     {
@@ -69,7 +69,7 @@ namespace Watchman.Engine.Generation
 
                 var model = new Alarm
                 {
-                    AlarmName = _builder.GetAlarmName(entity, alarm.Name, groupSuffix),
+                    AlarmName = $"{resource.Name}-{alarm.Name}-{groupSuffix}",
                     Resource = entity,
                     Dimensions = dimensions,
                     AlarmDefinition = alarm

@@ -104,7 +104,7 @@ The following services are supported
 - `Kinesis`
 - `Elb`
 - `StepFunction`
-- `DynamoDb` (in-progress migration from the existing non-cloudformation mechanism, limited functionality - indexes are not yet monitored.)
+- `DynamoDb` (new implementation of the existing non-cloudformation mechanism)
 - `VpcSubnet` (this is a custom service using JUST EAT custom metrics)
 
 ## Alarm names and default thresholds
