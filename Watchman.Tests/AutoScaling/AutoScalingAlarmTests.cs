@@ -180,8 +180,6 @@ namespace Watchman.Tests.AutoScaling
                 }
             });
 
-            // todo : move to boundary registry
-
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
