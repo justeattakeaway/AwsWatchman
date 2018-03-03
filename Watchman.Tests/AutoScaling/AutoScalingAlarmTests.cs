@@ -126,8 +126,6 @@ namespace Watchman.Tests.AutoScaling
             SetupCloudWatchDesiredMetric(cloudWatch, 100 * 60, now, "group-delay-100", 90);
             SetupCloudWatchDesiredMetric(cloudWatch, 20 * 60, now, "group-delay-20", 80);
 
-            ioc.GetMock<IConfigLoader>().HasConfig(config);
-
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
@@ -181,8 +179,6 @@ namespace Watchman.Tests.AutoScaling
                     DesiredCapacity = 40
                 }
             });
-
-            ioc.GetMock<IConfigLoader>().HasConfig(config);
 
             // todo : move to boundary registry
 
@@ -252,8 +248,6 @@ namespace Watchman.Tests.AutoScaling
                 {
                     Datapoints = new List<Datapoint>()
                 });
-
-            ioc.GetMock<IConfigLoader>().HasConfig(config);
 
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
 

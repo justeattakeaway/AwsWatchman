@@ -31,40 +31,7 @@ namespace Watchman.Tests
         public async Task ContinuesWhenAlarmGenerationFailsForOneAlertingGroup()
         {
             // arrange
-            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
-            {
-                DynamoDb = new AwsServiceAlarms<ResourceConfig>()
-                {
-                    Resources =
-                        new List<ResourceThresholds<ResourceConfig>>()
-                        {
-                            new ResourceThresholds<ResourceConfig>()
-                            {
-                                Name = "first-table"
-                            }
-                        }
-                }
-            });
 
-            var cloudformation = new FakeCloudFormation();
-            var ioc = new TestingIocBootstrapper()
-                .WithCloudFormation(cloudformation.Instance)
-                .WithConfig(config);
-
-            ioc.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(new[]
-            {
-                new AutoScalingGroup()
-                {
-                    AutoScalingGroupName = "group-1",
-                    DesiredCapacity = 40
-                },
-                new AutoScalingGroup()
-                {
-                    AutoScalingGroupName = "group-2",
-                    DesiredCapacity = 10
-                }
-            });
-            
             var config1 = new AlertingGroup()
             {
                 Name = "group-1",
@@ -92,7 +59,7 @@ namespace Watchman.Tests
                     }
                 }
             };
-            
+
             var config2 = new AlertingGroup()
             {
                 Name = "group-2",
@@ -116,18 +83,35 @@ namespace Watchman.Tests
                 }
             };
 
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(new WatchmanConfiguration()
+                {
+                    AlertingGroups = new List<AlertingGroup>()
+                    {
+                        config1, config2
+                    }
+                });
+
+            ioc.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(new[]
+            {
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-1",
+                    DesiredCapacity = 40
+                },
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-2",
+                    DesiredCapacity = 10
+                }
+            });
+            
             ioc.GetMock<IAmazonCloudWatch>()
                 .Setup(c => c.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(),
                     It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new Exception("something bad"));
-
-            ioc.GetMock<IConfigLoader>().HasConfig(new WatchmanConfiguration()
-            {
-                AlertingGroups = new List<AlertingGroup>()
-                {
-                    config1, config2
-                }
-            });
 
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
 

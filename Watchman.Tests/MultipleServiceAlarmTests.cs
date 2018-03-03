@@ -88,8 +88,6 @@ namespace Watchman.Tests
                 }
             });
 
-            ioc.GetMock<IConfigLoader>().HasConfig(config);
-
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
             
             // act

@@ -61,8 +61,6 @@ namespace Watchman.Tests.Dynamo
                 }
             });
             
-            ioc.GetMock<IConfigLoader>().HasConfig(config);
-
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
@@ -109,8 +107,6 @@ namespace Watchman.Tests.Dynamo
                     }
                 }
             });
-
-            ioc.GetMock<IConfigLoader>().HasConfig(config);
 
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
           
@@ -219,8 +215,6 @@ namespace Watchman.Tests.Dynamo
                     }
                 }
             });
-
-            ioc.GetMock<IConfigLoader>().HasConfig(config);
 
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
 

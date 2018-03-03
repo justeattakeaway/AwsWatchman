@@ -61,8 +61,6 @@ namespace Watchman.Tests
                 }
             });
 
-            ioc.GetMock<IConfigLoader>().HasConfig(config);
-
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
             
             // act
@@ -140,8 +138,6 @@ namespace Watchman.Tests
                     LoadBalancerName = "elb-2"
                 }
             });
-
-            ioc.GetMock<IConfigLoader>().HasConfig(config);
 
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
