@@ -31,7 +31,7 @@ namespace Watchman.Engine.Generation.Dynamo
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
             AwsServiceAlarms<ResourceConfig> service,
             IList<AlarmDefinition> defaults,
-            string alarmSuffix)
+            AlertingGroupParameters groupParameters)
         {
             if (service?.Resources == null || service.Resources.Count == 0)
             {
@@ -42,7 +42,7 @@ namespace Watchman.Engine.Generation.Dynamo
 
             foreach (var resource in service.Resources)
             {
-                var alarmsForResource = await CreateAlarmsForResource(defaults, resource, service, alarmSuffix);
+                var alarmsForResource = await CreateAlarmsForResource(defaults, resource, service, groupParameters);
                 alarms.AddRange(alarmsForResource);                    
             }
 
@@ -53,7 +53,7 @@ namespace Watchman.Engine.Generation.Dynamo
             IList<AlarmDefinition> defaults,
             ResourceThresholds<ResourceConfig> resource,
             AwsServiceAlarms<ResourceConfig> service,
-            string groupSuffix)
+            AlertingGroupParameters groupParameters)
         {
             var entity = await _tableSource.GetResourceAsync(resource.Name);
 
@@ -62,14 +62,15 @@ namespace Watchman.Engine.Generation.Dynamo
                 throw new Exception($"Entity {resource.Name} not found");
             }
 
-            var result = await BuildTableAlarms(defaults, resource, service, groupSuffix, entity);
+            var result = await BuildTableAlarms(defaults, resource, service, groupParameters, entity);
             
-            result.AddRange(await BuildIndexAlarms(resource, service, groupSuffix, entity));
+            result.AddRange(await BuildIndexAlarms(resource, service, groupParameters, entity));
 
             return result;
         }
 
-        private async Task<List<Alarm>> BuildTableAlarms(IList<AlarmDefinition> defaults, ResourceThresholds<ResourceConfig> resource, AwsServiceAlarms<ResourceConfig> service, string groupSuffix,
+        private async Task<List<Alarm>> BuildTableAlarms(IList<AlarmDefinition> defaults, ResourceThresholds<ResourceConfig> resource, AwsServiceAlarms<ResourceConfig> service,
+            AlertingGroupParameters groupParameters,
             AwsResource<TableDescription> entity)
         {
             var expanded = await _builder.CopyAndUpdateDefaultAlarmsForResource(entity, defaults, service, resource);
@@ -82,7 +83,8 @@ namespace Watchman.Engine.Generation.Dynamo
 
                 var model = new Alarm
                 {
-                    AlarmName = $"{resource.Name}-{alarm.Name}-{groupSuffix}",
+                    AlarmName = $"{resource.Name}-{alarm.Name}-{groupParameters.AlarmNameSuffix}",
+                    AlarmDescription = _builder.GetAlarmDescription(groupParameters),
                     Resource = entity,
                     Dimensions = dimensions,
                     AlarmDefinition = alarm
@@ -92,7 +94,7 @@ namespace Watchman.Engine.Generation.Dynamo
             return result;
         }
 
-        private async Task<IList<Alarm>> BuildIndexAlarms(ResourceThresholds<ResourceConfig> resource, AwsServiceAlarms<ResourceConfig> service, string groupSuffix,
+        private async Task<IList<Alarm>> BuildIndexAlarms(ResourceThresholds<ResourceConfig> resource, AwsServiceAlarms<ResourceConfig> service, AlertingGroupParameters groupParameters,
             AwsResource<TableDescription> entity)
         {
             var result = new List<Alarm>();
@@ -115,7 +117,8 @@ namespace Watchman.Engine.Generation.Dynamo
 
                     var model = new Alarm
                     {
-                        AlarmName = $"{resource.Name}-{gsi.IndexName}-{gsiAlarm.Name}-{groupSuffix}",
+                        AlarmName = $"{resource.Name}-{gsi.IndexName}-{gsiAlarm.Name}-{groupParameters.AlarmNameSuffix}",
+                        AlarmDescription = _builder.GetAlarmDescription(groupParameters),
                         Resource = entity,
                         Dimensions = dimensions,
                         AlarmDefinition = gsiAlarm

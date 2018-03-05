@@ -76,7 +76,7 @@ namespace Watchman.Engine.Tests.Generation
             // act
 
             var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
-                alertingGroup.GroupParameters.AlarmNameSuffix);
+                alertingGroup.GroupParameters);
 
             // assert
 
@@ -124,7 +124,7 @@ namespace Watchman.Engine.Tests.Generation
             // act
 
             var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
-                alertingGroup.GroupParameters.AlarmNameSuffix);
+                alertingGroup.GroupParameters);
 
             // assert
 
@@ -176,7 +176,7 @@ namespace Watchman.Engine.Tests.Generation
             // act
 
             var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
-                alertingGroup.GroupParameters.AlarmNameSuffix);
+                alertingGroup.GroupParameters);
 
             // assert
 
@@ -219,7 +219,7 @@ namespace Watchman.Engine.Tests.Generation
             // act
 
             var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
-                alertingGroup.GroupParameters.AlarmNameSuffix);
+                alertingGroup.GroupParameters);
 
             // assert
 
@@ -271,7 +271,7 @@ namespace Watchman.Engine.Tests.Generation
             // act
 
             var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
-                alertingGroup.GroupParameters.AlarmNameSuffix);
+                alertingGroup.GroupParameters);
 
             // assert
 
@@ -349,7 +349,7 @@ namespace Watchman.Engine.Tests.Generation
             // act
 
             var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
-                alertingGroup.GroupParameters.AlarmNameSuffix);
+                alertingGroup.GroupParameters);
 
             // assert
 
@@ -403,7 +403,7 @@ namespace Watchman.Engine.Tests.Generation
             // act
 
             var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
-                alertingGroup.GroupParameters.AlarmNameSuffix);
+                alertingGroup.GroupParameters);
 
             // assert
 
@@ -461,7 +461,7 @@ namespace Watchman.Engine.Tests.Generation
             // act
 
             var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
-                alertingGroup.GroupParameters.AlarmNameSuffix);
+                alertingGroup.GroupParameters);
 
             // assert
 

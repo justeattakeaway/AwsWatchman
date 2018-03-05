@@ -29,6 +29,7 @@ namespace Watchman.Configuration.Load
                 AlarmNameSuffix = (string)jsonObject["AlarmNameSuffix"],
                 IsCatchAll = (bool)(jsonObject["IsCatchAll"] ?? false),
                 Name = (string)jsonObject["Name"],
+                Description = (string)jsonObject["Description"],
                 ReportTargets = jsonObject["ReportTargets"]?.ToObject<List<ReportTarget>>(serializer) ?? new List<ReportTarget>(),
                 Services = jsonObject["Services"]?.ToObject<AlertingGroupServices>(serializer)
             };
