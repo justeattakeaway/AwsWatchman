@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -98,7 +99,18 @@ namespace Watchman.Engine.Generation
 
             return result;
         }
-        
+
+        public string GetAlarmDescription(AlertingGroupParameters groupParameters)
+        {
+            var suffix = string.IsNullOrWhiteSpace(groupParameters.Description)
+                ? null
+                : $" ({groupParameters.Description})";
+
+            var description = $"{AwsConstants.DefaultDescription}. Alerting group: {groupParameters.Name}{suffix}";
+
+            return description;
+        }
+
         private async Task<Threshold> ExpandThreshold(T resource, TAlarmConfig config, Threshold threshold)
         {
             if (threshold.ThresholdType == ThresholdType.PercentageOf)

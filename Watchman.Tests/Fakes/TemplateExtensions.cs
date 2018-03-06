@@ -6,14 +6,6 @@ namespace Watchman.Tests.Fakes
 {
     static class TemplateExtensions
     {
-        public static Dictionary<string, Resource> Alarms(this Template t)
-        {
-            return t
-                .Resources
-                .Where(kvp => kvp.Value.Type == "AWS::CloudWatch::Alarm")
-                .ToDictionary(k => k.Key, k => k.Value);
-        }
-
         public static List<Dimension> Dimensions(this Resource r)
         {
             var arr = (JArray) r
@@ -34,12 +26,12 @@ namespace Watchman.Tests.Fakes
         public static Dictionary<string, List<Resource>> AlarmsByDimension(this Template t, string dimension)
         {
             return t
-                .Alarms()
-                .Values
+                .Resources
+                .Where(kvp => kvp.Value.Type == "AWS::CloudWatch::Alarm")
                 .Select(z => new
                 {
-                    dimension = z.Dimension(dimension),
-                    resource = z
+                    dimension = z.Value.Dimension(dimension),
+                    resource = z.Value
                 })
                 .Where(z => z.dimension != null)
                 .GroupBy(
@@ -47,6 +39,15 @@ namespace Watchman.Tests.Fakes
                     z => z.resource,
                     (table, alarms) => new { table, alarms })
                 .ToDictionary(z => z.table, z => z.alarms.ToList());
+        }
+
+        public static IList<Resource> Alarms(this Template t)
+        {
+            return t
+                .Resources
+                .Where(kvp => kvp.Value.Type == "AWS::CloudWatch::Alarm")
+                .Select(x => x.Value)
+                .ToList();
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Watchman.Engine
     public class AlertingGroupParameters
     {
         public string Name { get; }
-
+        public string Description { get; }
         public string AlarmNameSuffix { get; }
 
         public IReadOnlyCollection<AlertTarget> Targets { get; }
@@ -19,12 +19,14 @@ namespace Watchman.Engine
             string name,
             string alarmNameSuffix,
             List<AlertTarget> targets = null,
-            bool isCatchAll = false)
+            bool isCatchAll = false,
+            string description = null)
         {
             Name = name;
             AlarmNameSuffix = alarmNameSuffix;
             Targets = (targets ?? new List<AlertTarget>()).AsReadOnly();
             IsCatchAll = isCatchAll;
+            Description = description;
         }
         
         // from https://stackoverflow.com/a/263416/22224
@@ -34,6 +36,7 @@ namespace Watchman.Engine
             {
                 int hash = 486187739;
                 hash = hash * 23 + Name.GetHashCode();
+                hash = hash * 23 + (Description ?? "").GetHashCode();
                 hash = hash * 23 + AlarmNameSuffix.GetHashCode();
 
                 foreach (var target in Targets)

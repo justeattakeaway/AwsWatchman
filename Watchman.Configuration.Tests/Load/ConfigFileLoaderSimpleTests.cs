@@ -66,6 +66,16 @@ namespace Watchman.Configuration.Tests.Load
             AssertContainsName(names, "SqsOnly");
         }
 
+        [Test]
+        public void TheConfigContainsCorrectDescriptions()
+        {
+            var names = _config.AlertingGroups
+                .Select(g => g.Description)
+                .ToList();
+
+            AssertContainsName(names, "Description of AutoscalingOnly");            
+        }
+
         private static void AssertContainsName(List<string> names, string test)
         {
             Assert.That(names.Count(s => s == test), Is.EqualTo(1));

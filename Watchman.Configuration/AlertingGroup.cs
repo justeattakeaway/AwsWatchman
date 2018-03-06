@@ -5,7 +5,7 @@ namespace Watchman.Configuration
     public class AlertingGroup
     {
         public string Name { get; set; }
-
+        public string Description { get; set; }
         public string AlarmNameSuffix { get; set; }
 
         public List<AlertTarget> Targets { get; set; }

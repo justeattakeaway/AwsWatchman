@@ -27,7 +27,7 @@ namespace Watchman.Engine.Generation
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
             AwsServiceAlarms<TAlarmConfig> service,
             IList<AlarmDefinition> defaults,
-            string alarmSuffix)
+            AlertingGroupParameters groupParameters)
         {
             if (service?.Resources == null || service.Resources.Count == 0)
             {
@@ -38,7 +38,7 @@ namespace Watchman.Engine.Generation
 
             foreach (var resource in service.Resources)
             {
-                var alarmsForResource = await CreateAlarmsForResource(defaults, resource, service, alarmSuffix);
+                var alarmsForResource = await CreateAlarmsForResource(defaults, resource, service, groupParameters);
                 alarms.AddRange(alarmsForResource);                    
             }
 
@@ -49,7 +49,7 @@ namespace Watchman.Engine.Generation
             IList<AlarmDefinition> defaults,
             ResourceThresholds<TAlarmConfig> resource,
             AwsServiceAlarms<TAlarmConfig> service,
-            string groupSuffix)
+            AlertingGroupParameters groupParameters)
         {
             var entity = await _tableSource.GetResourceAsync(resource.Name);
 
@@ -69,7 +69,8 @@ namespace Watchman.Engine.Generation
 
                 var model = new Alarm
                 {
-                    AlarmName = $"{resource.Name}-{alarm.Name}-{groupSuffix}",
+                    AlarmName = $"{resource.Name}-{alarm.Name}-{groupParameters.AlarmNameSuffix}",
+                    AlarmDescription = _builder.GetAlarmDescription(groupParameters),
                     Resource = entity,
                     Dimensions = dimensions,
                     AlarmDefinition = alarm

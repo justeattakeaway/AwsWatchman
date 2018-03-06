@@ -127,7 +127,7 @@ namespace Watchman.Engine.Generation.Generic
             var propsObject = new
             {
                 AlarmName = alarm.AlarmName,
-                AlarmDescription = AwsConstants.DefaultDescription,
+                AlarmDescription = alarm.AlarmDescription,
                 Namespace = definition.Namespace,
                 MetricName = definition.Metric,
                 Dimensions = alarm.Dimensions.Select(d => new { d.Name, d.Value }),
