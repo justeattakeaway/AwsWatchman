@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
+using Amazon.CloudFormation;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Moq;
@@ -12,11 +14,13 @@ using Watchman.AwsResources;
 using Watchman.AwsResources.Services.AutoScaling;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
+using Watchman.Configuration.Load;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
 using Watchman.Engine.Generation.Generic;
 using Watchman.Engine.Logging;
 using Watchman.Tests.Fakes;
+using Watchman.Tests.IoC;
 
 namespace Watchman.Tests
 {
@@ -27,26 +31,6 @@ namespace Watchman.Tests
         public async Task ContinuesWhenAlarmGenerationFailsForOneAlertingGroup()
         {
             // arrange
-
-            var stack = new FakeStackDeployer();
-
-            var autoScalingClient = FakeAwsClients.CreateAutoScalingClientForGroups(new[]
-            {
-                new AutoScalingGroup()
-                {
-                    AutoScalingGroupName = "group-1",
-                    DesiredCapacity = 40
-                },
-                new AutoScalingGroup()
-                {
-                    AutoScalingGroupName = "group-2",
-                    DesiredCapacity = 10
-                }
-            });
-
-            var source = new AutoScalingGroupSource(autoScalingClient);
-
-            var creator = new CloudFormationAlarmCreator(stack, new ConsoleAlarmLogger(true));
 
             var config1 = new AlertingGroup()
             {
@@ -75,7 +59,7 @@ namespace Watchman.Tests
                     }
                 }
             };
-            
+
             var config2 = new AlertingGroup()
             {
                 Name = "group-2",
@@ -99,23 +83,37 @@ namespace Watchman.Tests
                 }
             };
 
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            cloudWatch
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(new WatchmanConfiguration()
+                {
+                    AlertingGroups = new List<AlertingGroup>()
+                    {
+                        config1, config2
+                    }
+                });
+
+            ioc.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(new[]
+            {
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-1",
+                    DesiredCapacity = 40
+                },
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-2",
+                    DesiredCapacity = 10
+                }
+            });
+            
+            ioc.GetMock<IAmazonCloudWatch>()
                 .Setup(c => c.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(),
                     It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new Exception("something bad"));
 
-
-            var provider = new AutoScalingGroupAlarmDataProvider(cloudWatch.Object, new CurrentTimeProvider());
-
-            var sut = IoCHelper.CreateSystemUnderTest(
-                source,
-                provider,
-                provider,
-                WatchmanServiceConfigurationMapper.MapAutoScaling,
-                creator,
-                ConfigHelper.ConfigLoaderFor(config1, config2)
-                );
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             Exception caught = null;
 
@@ -130,8 +128,8 @@ namespace Watchman.Tests
             }
 
             // assert
-            Assert.That(stack.StackWasDeployed("Watchman-group-1"), Is.EqualTo(false));
-            Assert.That(stack.StackWasDeployed("Watchman-group-2"), Is.EqualTo(true));
+            Assert.That(cloudformation.StackWasDeployed("Watchman-group-1"), Is.EqualTo(false));
+            Assert.That(cloudformation.StackWasDeployed("Watchman-group-2"), Is.EqualTo(true));
             Assert.That(caught, Is.Not.Null);
         }
     }

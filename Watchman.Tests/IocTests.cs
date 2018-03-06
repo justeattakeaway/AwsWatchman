@@ -1,6 +1,7 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using Watchman.Engine.Generation;
 using Watchman.Engine.Generation.Dynamo;
+using Watchman.IoC;
 
 namespace Watchman.Tests
 {
