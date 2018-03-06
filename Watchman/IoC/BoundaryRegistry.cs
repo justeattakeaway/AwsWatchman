@@ -24,23 +24,11 @@ namespace Watchman.IoC
     {
         public BoundaryRegistry(StartupParameters parameters)
         {
-            For<IConfigLoader>().Use<ConfigLoader>();
-            For<ICurrentTimeProvider>().Use<CurrentTimeProvider>();
-
-            ConfigureLogging(parameters);
-            ConfigureAwsClients(parameters);
+            SetupLocalDependencies(parameters);
+            SetupAwsDependencies(parameters);
         }
 
-        private void ConfigureLogging(StartupParameters parameters)
-        {
-            var alarmLogger = new ConsoleAlarmLogger(parameters.Verbose);
-            var loadLogger = new ConsoleConfigLoadLogger(parameters.Verbose);
-
-            For<IAlarmLogger>().Use(alarmLogger);
-            For<IConfigLoadLogger>().Use(loadLogger);
-        }
-
-        private void ConfigureAwsClients(StartupParameters parameters)
+        private void SetupAwsDependencies(StartupParameters parameters)
         {
             var region = AwsStartup.ParseRegion(parameters.AwsRegion);
             var creds = AwsStartup.CredentialsWithFallback(
@@ -83,6 +71,17 @@ namespace Watchman.IoC
             For<IAmazonCloudWatch>()
                 .Use(ctx => new AmazonCloudWatchClient(creds, region))
                 .Singleton();
+        }
+
+        private void SetupLocalDependencies(StartupParameters parameters)
+        {
+            var alarmLogger = new ConsoleAlarmLogger(parameters.Verbose);
+            var loadLogger = new ConsoleConfigLoadLogger(parameters.Verbose);
+
+            For<IAlarmLogger>().Use(alarmLogger);
+            For<IConfigLoadLogger>().Use(loadLogger);
+            For<IConfigLoader>().Use<ConfigLoader>();
+            For<ICurrentTimeProvider>().Use<CurrentTimeProvider>();
         }
     }
 }

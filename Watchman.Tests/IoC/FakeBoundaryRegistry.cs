@@ -17,7 +17,8 @@ using Watchman.Configuration.Load;
 using Watchman.Engine.Logging;
 
 namespace Watchman.Tests.IoC
-{class FakeBoundaryRegistry : Registry
+{
+    class FakeBoundaryRegistry : Registry
     {
         private void SetupFake<T>() where T:class
         {
@@ -50,9 +51,9 @@ namespace Watchman.Tests.IoC
 
         private void SetupLocalDependencies()
         {
-            SetupFake<IConfigLoader>();
             SetupFake<IAlarmLogger>();
             SetupFake<IConfigLoadLogger>();
+            SetupFake<IConfigLoader>();
             SetupFake<ICurrentTimeProvider>();
         }
     }
