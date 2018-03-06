@@ -3,10 +3,10 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.5.1" />
-    <PackageReference Include="AWSSDK.Core" Version="3.3.21.14" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.6" />
-    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.0.24" />
+    <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.5.2" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.21.15" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.6.1" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.0.25" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.0" />
     <PackageReference Include="NUnit" Version="3.9.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
