@@ -299,5 +299,37 @@ namespace Watchman.Configuration.Tests.Load
             Assert.That(elb.Values["LatencyHigh"].ExtendedStatistic, Is.EqualTo("p90"));
             Assert.That(elb.Resources.First().Values["LatencyHigh"].ExtendedStatistic, Is.EqualTo("p95"));
         }
+
+        [Test]
+        public void EnabledFlagDeserialised()
+        {
+            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "EnabledFlag");
+
+            Assert.That(group, Is.Not.Null);
+
+            var elb = group.Services.Elb;
+
+            Assert.That(elb.Values["LatencyHigh"].Enabled, Is.False);
+            Assert.That(elb.Values["UnHealthyHostCountHigh"].Enabled, Is.True);
+
+            Assert.That(elb.Resources.First().Values["LatencyHigh"].Enabled, Is.True);
+            Assert.That(elb.Resources.First().Values["UnHealthyHostCountHigh"].Enabled, Is.False);
+        }
+
+        [Test]
+        public void EnabledFlagShorthandDeserialised()
+        {
+            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "EnabledFlag");
+
+            Assert.That(group, Is.Not.Null);
+
+            var elb = group.Services.AutoScaling;
+
+            Assert.That(elb.Values["LatencyHigh"].Enabled, Is.False);
+            Assert.That(elb.Values["UnHealthyHostCountHigh"].Enabled, Is.True);
+
+            Assert.That(elb.Resources.First().Values["LatencyHigh"].Enabled, Is.True);
+            Assert.That(elb.Resources.First().Values["UnHealthyHostCountHigh"].Enabled, Is.False);
+        }
     }
 }
