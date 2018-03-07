@@ -19,6 +19,7 @@ namespace Watchman.Engine
         public Threshold Threshold { get; set; }
         public ComparisonOperator ComparisonOperator { get; set; }
         public string Namespace { get; set; }
+        public bool Enabled { get; set; } = true;
 
         /// <summary>
         /// A list of Dimension names. The values are obtained from the specific resource.
