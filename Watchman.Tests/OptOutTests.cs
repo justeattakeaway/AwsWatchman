@@ -39,20 +39,20 @@ namespace Watchman.Tests
                                         Values = new Dictionary<string, AlarmValues>()
                                         {
                                             // to test we can opt out at resource level
-                                            { "LatencyHigh", new AlarmValues(null, null, null, enabled: false) },
+                                            { "LatencyHigh", new AlarmValues(enabled: false) },
 
                                             // to test we can revert an opt-out at service level
-                                            { "UnHealthyHostCountHigh", new AlarmValues(null, null, null, enabled: true) }
+                                            { "UnHealthyHostCountHigh", new AlarmValues(enabled: true) }
                                         }
                                     }
                                 },
                                 Values = new Dictionary<string, AlarmValues>()
                                 {
                                     // test we can opt out at service level
-                                    { "Http5xxErrorsHigh", new AlarmValues(null, null, null, enabled: false) },
+                                    { "Http5xxErrorsHigh", new AlarmValues(enabled: false) },
 
                                     // setup for above (we can revert an opt-out at service level)
-                                    { "UnHealthyHostCountHigh", new AlarmValues(null, null, null, enabled: false) }
+                                    { "UnHealthyHostCountHigh", new AlarmValues(enabled: false) }
                                 }
                             }
                         }

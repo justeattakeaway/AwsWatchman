@@ -37,7 +37,7 @@ namespace Watchman.Engine.Tests.Generation
                 Values = new Dictionary<string, AlarmValues>
                 {
                     {
-                        "SomeThreshold", new AlarmValues(500, 2, null)
+                        "SomeThreshold", new AlarmValues(500, 2)
                     }
                 }
             };
@@ -47,7 +47,7 @@ namespace Watchman.Engine.Tests.Generation
                 Values = new Dictionary<string, AlarmValues>
                 {
                     {
-                        "SomeThreshold", new AlarmValues(100, 3, null)
+                        "SomeThreshold", new AlarmValues(100, 3)
                     }
                 }
             };
@@ -103,7 +103,7 @@ namespace Watchman.Engine.Tests.Generation
                 Values = new Dictionary<string, AlarmValues>
                 {
                     {
-                        "SomeThreshold", new AlarmValues(500, 2, null)
+                        "SomeThreshold", new AlarmValues(500, 2)
                     }
                 }
             };
@@ -114,7 +114,7 @@ namespace Watchman.Engine.Tests.Generation
                 Values = new Dictionary<string, AlarmValues>
                 {
                     {
-                        "SomeThreshold", new AlarmValues(100, 3, null)
+                        "SomeThreshold", new AlarmValues(100, 3)
                     }
                 }
             };

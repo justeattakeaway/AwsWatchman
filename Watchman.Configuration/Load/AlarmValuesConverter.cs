@@ -29,10 +29,12 @@ namespace Watchman.Configuration.Load
             switch (token.Type)
             {
                 case JTokenType.Boolean:
-                    return new AlarmValues(null, null, null, (bool) token);
+                    return new AlarmValues(enabled: (bool) token);
+
                 case JTokenType.Float:
                 case JTokenType.Integer:
-                    return new AlarmValues((double) token, null, null);
+                    return (double) token;
+
                 case JTokenType.String:
                     if (double.TryParse((string) token, out var result))
                     {

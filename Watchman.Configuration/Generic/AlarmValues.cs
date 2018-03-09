@@ -14,7 +14,10 @@ namespace Watchman.Configuration.Generic
             Enabled = null;
         }
 
-        public AlarmValues(double? value, int? evaluationPeriods, string extendedStatistic, bool? enabled = null)
+        public AlarmValues(double? value = null,
+            int? evaluationPeriods = null,
+            string extendedStatistic = null,
+            bool? enabled = null)
         {
             Threshold = value;
             EvaluationPeriods = evaluationPeriods;
