@@ -99,7 +99,8 @@ namespace Watchman.Engine.Generation.Generic
             string groupName,
             string stackName, bool dryRun)
         {
-            alarms = alarms.ToList();
+            alarms = alarms.Where(a => a.AlarmDefinition.Enabled).ToList();
+
             if (!alarms.Any())
             {
                 // todo, we should actually continue here but will change in later PR as want to keep behaviour same during refactor

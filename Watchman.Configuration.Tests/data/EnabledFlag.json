@@ -1,0 +1,50 @@
+{
+  "Name": "EnabledFlag",
+  "AlarmNameSuffix": "CustomSuffix",
+  "Targets": [
+    { "Email": "elb@example.com" }
+  ],
+  "Services": {
+    "Elb": {
+      "Values": {
+        "LatencyHigh": {
+          "Enabled": false
+        },
+        "UnHealthyHostCountHigh": {
+          "Enabled": true
+        }
+      },
+      "Resources": [
+        {
+          "Pattern": "elb",
+          "Values": {
+            "LatencyHigh": {
+              "Enabled": true
+            },
+            "UnHealthyHostCountHigh": {
+              "Enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "AutoScaling": {
+      "Values": {
+        "LatencyHigh": false,
+        "UnHealthyHostCountHigh": true
+      },
+      "Resources": [
+        {
+          "Pattern": "asg",
+          "Values": {
+            "LatencyHigh": true,
+            "UnHealthyHostCountHigh": false
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+

@@ -39,7 +39,7 @@ namespace Watchman.Tests
                                 Values = new Dictionary<string, AlarmValues>()
                                 {
                                     {
-                                        "LatencyHigh", new AlarmValues(null, null, "p97")
+                                        "LatencyHigh", new AlarmValues(extendedStatistic: "p97")
                                     }
                                 }
                             }
@@ -101,7 +101,7 @@ namespace Watchman.Tests
                                 Values = new Dictionary<string, AlarmValues>()
                                 {
                                     {
-                                        "LatencyHigh", new AlarmValues(null, null, "p97")
+                                        "LatencyHigh", new AlarmValues(extendedStatistic: "p97")
                                     }
                                 }
                             },
@@ -116,7 +116,7 @@ namespace Watchman.Tests
                         Values = new Dictionary<string, AlarmValues>()
                         {
                             {
-                                "LatencyHigh", new AlarmValues(null, null, "p99")
+                                "LatencyHigh", new AlarmValues(extendedStatistic: "p99")
                             }
                         }
                     }

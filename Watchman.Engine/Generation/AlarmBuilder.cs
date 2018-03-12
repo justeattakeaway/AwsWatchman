@@ -53,7 +53,11 @@ namespace Watchman.Engine.Generation
                 .Select(t => t.ExtendedStatistic)
                 .FirstOrDefault(t => !string.IsNullOrEmpty(t));
 
-            return new AlarmValues(matchedThresholdValue, matchedEvalPeriods, matchedExtendedStatistic);
+            var matchedEnabled = matchesForKey
+                .Select(t => t.Enabled)
+                .FirstOrDefault(t => t.HasValue);
+
+            return new AlarmValues(matchedThresholdValue, matchedEvalPeriods, matchedExtendedStatistic, matchedEnabled);
         }
 
         private async Task<AlarmDefinition> AlarmWithMergedValues(
@@ -79,6 +83,8 @@ namespace Watchman.Engine.Generation
             copy.ExtendedStatistic = !string.IsNullOrEmpty(mergedThreshold.ExtendedStatistic)
                 ? mergedThreshold.ExtendedStatistic
                 : alarm.ExtendedStatistic;
+
+            copy.Enabled = mergedThreshold.Enabled ?? alarm.Enabled;
 
             return copy;
         }

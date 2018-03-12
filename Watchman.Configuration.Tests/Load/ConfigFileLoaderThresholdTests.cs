@@ -97,7 +97,12 @@ namespace Watchman.Configuration.Tests.Load
 
             Assert.That(section.Values, Is.Not.Null);
             Assert.That(section.Values, Is.Not.Empty);
-            Assert.That(section.Values.Count, Is.EqualTo(4));
+            Assert.That(section.Values.Count, Is.EqualTo(7));
+
+            Assert.That(section.Values["ThrottlesHigh"].Threshold, Is.EqualTo(40));
+            Assert.That(section.Values["FloatValue"].Threshold, Is.EqualTo(2.1));
+            Assert.That(section.Values["FloatValueAsString"].Threshold, Is.EqualTo(2.2));
+            Assert.That(section.Values["IntValueAsString"].Threshold, Is.EqualTo(41));
         }
 
         [Test]
