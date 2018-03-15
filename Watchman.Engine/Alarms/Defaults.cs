@@ -474,8 +474,24 @@ namespace Watchman.Engine.Alarms
             },
             new AlarmDefinition
             {
-                Name = "ThrottledRequestsHigh",
-                Metric = "ThrottledRequests",
+                Name = "ReadThrottleEventsHigh",
+                Metric = "ReadThrottleEvents",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.ThrottlingThreshold
+                },
+                DimensionNames = new[] {"TableName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            },
+            new AlarmDefinition
+            {
+                Name = "WriteThrottleEventsHigh",
+                Metric = "WriteThrottleEvents",
                 Period = TimeSpan.FromMinutes(1),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
