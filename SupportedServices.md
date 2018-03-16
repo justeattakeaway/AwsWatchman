@@ -153,9 +153,14 @@ For each resource each of the default alarms will be applied. See [alarm definit
 
 ### DynamoDb
 
-- `ConsumedReadCapacityUnitsHigh`: 80 (%)
-- `ConsumedWriteCapacityUnitsHigh`: 80 (%)
-- `ThrottledRequestsHigh`: 2 
+- `ConsumedReadCapacityUnitsHigh`: 80 (% of provisioned)
+- `ConsumedWriteCapacityUnitsHigh`: 80 (% of provisioned)
+- `ReadThrottleEventsHigh`: 2 
+- `WriteThrottleEventsHigh`: 2 
+- `GsiConsumedReadCapacityUnitsHigh`: 80 (%)
+- `GsiConsumedWriteCapacityUnitsHigh`: 80 (%)
+- `GsiReadThrottleEventsHigh`: 2
+- `GsiWriteThrottleEventsHigh`: 2
 
 ### VpcSubnets
 

@@ -153,18 +153,32 @@ namespace Watchman.Tests.Dynamo
                 )
             );
 
-            Assert.That(alarms.Exists(
-                alarm =>
-                    alarm.Properties["MetricName"].Value<string>() == "ThrottledRequests"
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("ThrottledRequestsHigh")
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                    && alarm.Properties["Threshold"].Value<int>() == defaultThrottleThreshold
-                    && alarm.Properties["Period"].Value<int>() == 60
-                    && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                    && alarm.Properties["Statistic"].Value<string>() == "Sum"
-                    && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.DynamoDb
-                )
-            );
+            var readThrottleAlarm =
+                alarms.Single(a => a.Properties["MetricName"].Value<string>() == "ReadThrottleEvents");
+
+            Assert.That(readThrottleAlarm.Properties["AlarmName"].Value<string>(),
+                Contains.Substring("ReadThrottleEventsHigh"));
+            Assert.That(readThrottleAlarm.Properties["AlarmName"].Value<string>(), Contains.Substring("-group-suffix"));
+            Assert.That(readThrottleAlarm.Properties["Threshold"].Value<int>(), Is.EqualTo(defaultThrottleThreshold));
+            Assert.That(readThrottleAlarm.Properties["Period"].Value<int>(), Is.EqualTo(60));
+            Assert.That(readThrottleAlarm.Properties["ComparisonOperator"].Value<string>(),
+                Is.EqualTo("GreaterThanOrEqualToThreshold"));
+            Assert.That(readThrottleAlarm.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
+            Assert.That(readThrottleAlarm.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
+
+            var writeThrottleAlarm =
+                alarms.Single(a => a.Properties["MetricName"].Value<string>() == "WriteThrottleEvents");
+
+            Assert.That(writeThrottleAlarm.Properties["AlarmName"].Value<string>(),
+                Contains.Substring("WriteThrottleEventsHigh"));
+            Assert.That(writeThrottleAlarm.Properties["AlarmName"].Value<string>(),
+                Contains.Substring("-group-suffix"));
+            Assert.That(writeThrottleAlarm.Properties["Threshold"].Value<int>(), Is.EqualTo(defaultThrottleThreshold));
+            Assert.That(writeThrottleAlarm.Properties["Period"].Value<int>(), Is.EqualTo(60));
+            Assert.That(writeThrottleAlarm.Properties["ComparisonOperator"].Value<string>(),
+                Is.EqualTo("GreaterThanOrEqualToThreshold"));
+            Assert.That(writeThrottleAlarm.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
+            Assert.That(writeThrottleAlarm.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
         }
 
         [Test]
