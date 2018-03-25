@@ -4,17 +4,17 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.CloudFormation" Version="3.3.9.1" />
-    <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.5.2" />
-    <PackageReference Include="AWSSDK.Core" Version="3.3.21.15" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.6.1" />
-    <PackageReference Include="AWSSDK.EC2" Version="3.3.47.1" />
-    <PackageReference Include="AWSSDK.ElasticLoadBalancing" Version="3.3.2.1" />
-    <PackageReference Include="AWSSDK.Lambda" Version="3.3.12.1" />
-    <PackageReference Include="AWSSDK.RDS" Version="3.3.21.1" />
-    <PackageReference Include="AWSSDK.S3" Version="3.3.17.1" />
-    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.0.25" />
-    <PackageReference Include="AWSSDK.StepFunctions" Version="3.3.2.1" />
+    <PackageReference Include="AWSSDK.CloudFormation" Version="3.3.9.2" />
+    <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.5.3" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.21.17" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.6.2" />
+    <PackageReference Include="AWSSDK.EC2" Version="3.3.47.2" />
+    <PackageReference Include="AWSSDK.ElasticLoadBalancing" Version="3.3.2.2" />
+    <PackageReference Include="AWSSDK.Lambda" Version="3.3.12.2" />
+    <PackageReference Include="AWSSDK.RDS" Version="3.3.21.4" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.17.2" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.0.26" />
+    <PackageReference Include="AWSSDK.StepFunctions" Version="3.3.2.2" />
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="StructureMap" Version="4.6.1" />
