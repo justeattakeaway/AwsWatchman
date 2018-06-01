@@ -10,7 +10,7 @@
     <PackageReference Include="AWSSDK.EC2" Version="3.3.52" />
     <PackageReference Include="AWSSDK.ElasticLoadBalancing" Version="3.3.2.5" />
     <PackageReference Include="AWSSDK.Lambda" Version="3.3.13.2" />
-    <PackageReference Include="AWSSDK.RDS" Version="3.3.23" />
+    <PackageReference Include="AWSSDK.RDS" Version="3.3.24" />
     <PackageReference Include="AWSSDK.StepFunctions" Version="3.3.2.5" />
   </ItemGroup>
   <ItemGroup>
