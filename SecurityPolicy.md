@@ -113,13 +113,14 @@ The values you will have to subsitute in are:
 			"Effect": "Allow",
 			"Action": [
 				"autoscaling:DescribeAutoScalingGroups",
-				"elasticloadbalancing:DescribeLoadBalancers",
-				"rds:DescribeDBInstances",
-				"lambda:ListFunctions",
-				"sqs:GetQueueAttributes",
 				"ec2:DescribeSubnets",
+				"elasticloadbalancing:DescribeLoadBalancers",
 				"dynamodb:DescribeTable",
-				"dynamodb:ListTables"
+				"dynamodb:ListTables",
+				"lambda:ListFunctions",
+				"rds:DescribeDBInstances",
+				"sqs:GetQueueAttributes",
+				"states:ListStateMachines"
 			],
 			"Resource": [
 				"*"
