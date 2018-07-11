@@ -3,6 +3,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.3.22.5" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.24.3" />
   </ItemGroup>
 </Project>
