@@ -285,7 +285,7 @@ namespace Watchman.Configuration.Tests.Validation
         }
 
         [Test]
-        public void AlertingGroup_Fails_When_When_DynamoDb_And_Sqs_And_Services_Have_Null_Resources()
+        public void AlertingGroup_Fails_When_When_DynamoDb_And_Sqs_And_Services_Have_NullOrEmpty_Resources()
         {
             // arrange
             _config.AlertingGroups.First().DynamoDb = new DynamoDb();
@@ -293,6 +293,9 @@ namespace Watchman.Configuration.Tests.Validation
             _config.AlertingGroups.First().Services = new AlertingGroupServices()
             {
                 Lambda = new AwsServiceAlarms<ResourceConfig>()
+                {
+                    Resources = new List<ResourceThresholds<ResourceConfig>>()
+                }
             };
 
             // act
