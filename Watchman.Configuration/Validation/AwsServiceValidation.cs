@@ -15,12 +15,14 @@ namespace Watchman.Configuration.Validation
                 }
             }
 
-            if (serviceAlarms.Resources != null)
+            if (serviceAlarms.Resources == null)
             {
-                foreach (var resource in serviceAlarms.Resources)
-                {
-                    ValidateResource(alertingGroupName, serviceName, resource);
-                }
+                throw new ConfigException($"AlertingGroup '{alertingGroupName}' has a '{serviceName}' Service with missing Resources section");
+            }
+
+            foreach (var resource in serviceAlarms.Resources)
+            {
+                ValidateResource(alertingGroupName, serviceName, resource);
             }
         }
 
