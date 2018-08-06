@@ -153,5 +153,18 @@ namespace Watchman.Configuration.Tests.Validation
             // assert
             ConfigAssert.IsValid(_config);
         }
+
+        [Test]
+        public void FailsIfServiceHasNoResources()
+        {
+            // arrange
+            _awsServiceAlarms.Resources = null;
+
+            // act
+
+            // assert
+            ConfigAssert.NotValid(_config,
+                "AlertingGroup 'someName' has a 'Lambda' Service with missing Resources section");
+        }
     }
 }
