@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
@@ -127,7 +128,7 @@ namespace Watchman.Tests
 
             //check we deployed an empty stack and deleted the redundant resources
             Assert.That(stack, Is.Not.Null);
-            Assert.That(stack.Resources.Count, Is.Zero);
+            Assert.That(stack.Resources.Any(x => x.Value.Type == "AWS::CloudWatch::Alarm"), Is.False);
         }
     }
 }

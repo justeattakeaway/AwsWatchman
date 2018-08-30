@@ -20,6 +20,7 @@ namespace Watchman.Engine.Generation
         private readonly IOrphanTablesReporter _orphanTablesReporter;
         private readonly ISqsAlarmGenerator _sqsGenerator;
         private readonly IOrphanQueuesReporter _orphanQueuesReporter;
+        private bool _hasRun = false;
 
         private readonly IAlarmCreator _creator;
 
@@ -47,8 +48,16 @@ namespace Watchman.Engine.Generation
 
         public async Task LoadAndGenerateAlarms(RunMode mode)
         {
+            if (_hasRun)
+            {
+                // there is loads of state etc. and you get duplicate alarms
+                // shouldn't happen in real life but I discovered it in tests
+                throw new InvalidOperationException($"{nameof(LoadAndGenerateAlarms)} can only be called once");
+            }
+
             try
             {
+                _hasRun = true;
                 _logger.Info($"Starting {mode}");
 
                 var config = _configLoader.LoadConfig();
