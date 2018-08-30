@@ -20,7 +20,7 @@ namespace Watchman.Engine.Generation.Generic
             _stack = stack;
             _logger = logger;
         }
-        
+
         public void AddAlarms(AlertingGroupParameters group, IList<Alarm> alarms)
         {
             foreach (var alarm in alarms)
@@ -101,18 +101,13 @@ namespace Watchman.Engine.Generation.Generic
         {
             alarms = alarms.Where(a => a.AlarmDefinition.Enabled).ToList();
 
-            if (!alarms.Any())
-            {
-                // todo, we should actually continue here but will change in later PR as want to keep behaviour same during refactor
-                _logger.Info($"{stackName} would have no alarms, skipping");
-                return;
-            }
+            var onlyUpdateExisting = !alarms.Any();
 
             var template = new CloudWatchCloudFormationTemplate(groupName, targets.ToList());
             template.AddAlarms(alarms);
             var json = template.WriteJson();
 
-            await _stack.DeployStack(stackName, json, dryRun);
+            await _stack.DeployStack(stackName, json, dryRun, onlyUpdateExisting);
         }
     }
 }
