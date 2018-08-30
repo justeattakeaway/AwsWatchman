@@ -17,16 +17,13 @@ namespace Watchman.Tests.Fakes
 
         public IAmazonCloudFormation Instance => fake.Object;
 
-
         public FakeCloudFormation()
         {
-            
-
             fake.Setup(x => x.CreateStackAsync(It.IsAny<CreateStackRequest>(),
                     It.IsAny<CancellationToken>()))
                 .Callback((CreateStackRequest req, CancellationToken token) =>
                 {
-                    _submitted.Add(req.StackName, req.TemplateBody);
+                    _submitted[req.StackName] = req.TemplateBody;
                 })
                 .ReturnsAsync(new CreateStackResponse());
 
@@ -56,6 +53,15 @@ namespace Watchman.Tests.Fakes
 
         public int StacksDeployed => _submitted.Count;
 
-        public Template Stack(string name) => JsonConvert.DeserializeObject<Template>(_submitted[name]);
+
+        public Template Stack(string name)
+        {
+            if (!_submitted.ContainsKey(name))
+            {
+                return null;
+            }
+
+            return JsonConvert.DeserializeObject<Template>(_submitted[name]);
+        }
     }
 }
