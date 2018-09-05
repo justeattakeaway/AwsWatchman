@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $solutionPath = Split-Path $MyInvocation.MyCommand.Definition
 $solutionFile = Join-Path $solutionPath "AwsWatchman.sln"
 
-$dotnetVersion = "2.1.3"
+$dotnetVersion = "2.1.401"
 
 $installDotNetSdk = $false;
 
