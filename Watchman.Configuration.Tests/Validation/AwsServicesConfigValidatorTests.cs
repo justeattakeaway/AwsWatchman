@@ -58,19 +58,6 @@ namespace Watchman.Configuration.Tests.Validation
         }
 
         [Test]
-        public void AwsServicesConfig_Fails_When_ServiceThreshold_Is_TooHigh()
-        {
-            // arrange
-            _awsServiceAlarms.Values.Add("invalidThreshold", 100500);
-
-            // act
-
-            // assert
-            ConfigAssert.NotValid(_config,
-                "Threshold of 'invalidThreshold' is ridiculously high");
-        }
-
-        [Test]
         public void AwsServicesConfig_Fails_When_Resource_Is_Null()
         {
             // arrange
@@ -107,19 +94,6 @@ namespace Watchman.Configuration.Tests.Validation
             // assert
             ConfigAssert.NotValid(_config,
                 "Threshold of 'invalidThreshold' must be greater than zero");
-        }
-
-        [Test]
-        public void AwsServicesConfig_Fails_When_ResourceThreshold_Is_TooHigh()
-        {
-            // arrange
-            _awsServiceAlarms.Resources.First().Values.Add("invalidThreshold", 100500);
-
-            // act
-
-            // assert
-            ConfigAssert.NotValid(_config,
-                "Threshold of 'invalidThreshold' is ridiculously high");
         }
 
         [Test]

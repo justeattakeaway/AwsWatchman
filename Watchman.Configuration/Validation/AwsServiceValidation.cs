@@ -55,11 +55,6 @@ namespace Watchman.Configuration.Validation
             {
                 throw new ConfigException($"Threshold of '{namedThreshold.Key}' must be greater than zero");
             }
-
-            if (value.Threshold > 100000)
-            {
-                throw new ConfigException($"Threshold of '{namedThreshold.Key}' is ridiculously high");
-            }
         }
     }
 }
