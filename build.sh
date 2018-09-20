@@ -32,12 +32,16 @@ while :; do
 done
 
 export CLI_VERSION=`cat ./global.json | grep -E '[0-9]\.[0-9]\.[a-zA-Z0-9\-]*' -o`
+echo "Found required dotnet version: $CLI_VERSION"
+
 export DOTNET_INSTALL_DIR="$root/.dotnetcli"
 export PATH="$DOTNET_INSTALL_DIR:$PATH"
 
 dotnet_version=$(dotnet --version)
+echo "Found local dotnet version: $dotnet_version"
 
 if [ "$dotnet_version" != "$CLI_VERSION" ]; then
+    echo "installing dotnet $CLI_VERSION"
     curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version "$CLI_VERSION" --install-dir "$DOTNET_INSTALL_DIR"
 fi
 
