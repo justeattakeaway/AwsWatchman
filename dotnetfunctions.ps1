@@ -45,15 +45,21 @@ else {
 
 if ($installDotNetSdk -eq $true) {
 
+    Write-Host "Installing the .NET Core SDK $dotnetVersion."
+
     $env:DOTNET_INSTALL_DIR = Join-Path "$(Convert-Path "$PSScriptRoot")" ".dotnetcli"
     $env:MSBuildSDKsPath = Join-Path $env:DOTNET_INSTALL_DIR "sdk\$dotnetVersion\Sdks"
 
-    if (($env:TEAMCITY_VERSION -ne $null) -or (!(Test-Path $env:DOTNET_INSTALL_DIR))) {
-        mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
+    if (($null -ne $env:TEAMCITY_VERSION) -or (!(Test-Path $sdkPath))) {
+        if (!(Test-Path $env:DOTNET_INSTALL_DIR)) {
+            mkdir $env:DOTNET_INSTALL_DIR | Out-Null
+        }
         $installScript = Join-Path $env:DOTNET_INSTALL_DIR "install.ps1"
-        Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/v$dotnetVersion/scripts/obtain/dotnet-install.ps1" -OutFile $installScript -UseBasicParsing
+        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor "Tls12"
+        Invoke-WebRequest "https://dot.net/v1/dotnet-install.ps1" -OutFile $installScript -UseBasicParsing
         & $installScript -Version "$dotnetVersion" -InstallDir "$env:DOTNET_INSTALL_DIR" -NoPath
     }
+
 
     $env:PATH = "$env:DOTNET_INSTALL_DIR;$env:PATH"
     $dotnet = Join-Path "$env:DOTNET_INSTALL_DIR" "dotnet.exe"
