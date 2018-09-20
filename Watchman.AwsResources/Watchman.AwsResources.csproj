@@ -11,7 +11,7 @@
     <PackageReference Include="AWSSDK.ElasticLoadBalancing" Version="3.3.3.2" />
     <PackageReference Include="AWSSDK.Lambda" Version="3.3.16.2" />
     <PackageReference Include="AWSSDK.RDS" Version="3.3.27.8" />
-    <PackageReference Include="AWSSDK.StepFunctions" Version="3.3.2.15" />
+    <PackageReference Include="AWSSDK.StepFunctions" Version="3.3.2.17" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Watchman.Configuration\Watchman.Configuration.csproj" />
