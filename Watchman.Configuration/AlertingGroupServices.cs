@@ -14,9 +14,11 @@ namespace Watchman.Configuration
         public AwsServiceAlarms<ResourceConfig> KinesisStream { get; set; }
         public AwsServiceAlarms<ResourceConfig> StepFunction { get; set; }
         public AwsServiceAlarms<ResourceConfig> DynamoDb { get; set; }
+        public AwsServiceAlarms<SqsResourceConfig> Sqs { get; set; }
+
 
         public IList<IAwsServiceAlarms> AllServices => new IAwsServiceAlarms[]
-            { Rds, AutoScaling, Lambda, VpcSubnet, Elb, KinesisStream, StepFunction, DynamoDb }
+            { Rds, AutoScaling, Lambda, VpcSubnet, Elb, KinesisStream, StepFunction, DynamoDb, Sqs }
             .Where(s => s != null)
             .ToArray();
 
@@ -29,7 +31,8 @@ namespace Watchman.Configuration
             {"Elb", Elb},
             {"KinesisStream", KinesisStream},
             {"StepFunction", StepFunction},
-            {"DynamoDb", DynamoDb}
+            {"DynamoDb", DynamoDb},
+            {"Sqs", Sqs }
         };
     }
 }

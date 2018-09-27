@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -76,7 +76,7 @@ namespace Watchman.AwsResources.Services.Sqs
         {
             var names = await ReadActiveQueueNames();
 
-            return names.Select(n => new QueueData() {Name = n}).ToList();
+            return names.Select(n => new QueueData() {Name = n, IsErrorQueue = n.EndsWith("_error")}).ToList();
         }
     }
 }

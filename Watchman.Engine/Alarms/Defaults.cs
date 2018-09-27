@@ -505,5 +505,77 @@ namespace Watchman.Engine.Alarms
                 Namespace = AwsNamespace.DynamoDb
             }
         };
+
+        public static IList<AlarmDefinition> Sqs = new List<AlarmDefinition>
+        {
+            new AlarmDefinition
+            {
+                Name = "NumberOfVisibleMessages",
+                Metric = "ApproximateNumberOfMessagesVisible",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.QueueLengthThreshold
+                },
+                DimensionNames = new[] {"QueueName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Sqs
+            },
+            new AlarmDefinition
+            {
+                Name = "AgeOfOldestMessage",
+                Metric = "ApproximateAgeOfOldestMessage",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                            {
+                                ThresholdType = ThresholdType.Absolute,
+                                Value = AwsConstants.OldestMessageThreshold
+                            },
+                DimensionNames = new[] {"QueueName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Sqs
+            }
+        };
+
+        public static IList<AlarmDefinition> SqsError = new List<AlarmDefinition>
+        {
+            new AlarmDefinition
+            {
+                Name = "NumberOfVisibleMessages_Error",
+                Metric = "ApproximateNumberOfMessagesVisible",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.ErrorQueueLengthThreshold
+                },
+                DimensionNames = new[] {"QueueName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Sqs
+            },
+            new AlarmDefinition
+            {
+                Name = "AgeOfOldestMessage_Error",
+                Metric = "ApproximateAgeOfOldestMessage",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                            {
+                                ThresholdType = ThresholdType.Absolute,
+                                Value = AwsConstants.OldestMessageThreshold
+                            },
+                DimensionNames = new[] {"QueueName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Sqs
+            }
+        };
     }
 }
