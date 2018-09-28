@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +7,7 @@ using Watchman.AwsResources.Services.Sqs;
 using Watchman.Configuration;
 using Watchman.Engine.Logging;
 using Watchman.Engine.Sns;
+using ErrorQueue = Watchman.Configuration.ErrorQueue;
 
 namespace Watchman.Engine.Generation.Sqs
 {

@@ -65,6 +65,9 @@ namespace Watchman.IoC
 
             AddService<QueueData, QueueSource, QueueDataProvider, SqsResourceConfig, SqsResourceAlarmGenerator>(
                 WatchmanServiceConfigurationMapper.MapSqs);
+
+            For<IAlarmDimensionProvider<ErrorQueueData>>().Use<ErrorQueueDataProvider>();
+            For<IResourceAttributesProvider<ErrorQueueData, SqsResourceConfig>>().Use<ErrorQueueDataProvider>();
         }
 
         private void AddService<TServiceModel, TSource, TDataProvider, TResourceAlarmConfig>(

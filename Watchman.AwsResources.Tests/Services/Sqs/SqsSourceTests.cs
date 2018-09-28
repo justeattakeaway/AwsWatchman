@@ -16,7 +16,6 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
         private ListMetricsResponse _firstPage;
         private ListMetricsResponse _secondPage;
         private ListMetricsResponse _thirdPage;
-        private ListMetricsResponse _fourthPage;
         private Dictionary<string, string> _attributes;
 
         private QueueSource _queueSource;
@@ -78,14 +77,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                                 Value = "Queue-3"
                             }
                         }
-                    }
-                }
-            };
-
-            _fourthPage = new ListMetricsResponse
-            {
-                Metrics = new List<Metric>
-                {
+                    },
                     new Metric
                     {
                         MetricName = "ApproximateAgeOfOldestMessage",
@@ -94,7 +86,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                             new Dimension
                             {
                                 Name = "QueueName",
-                                Value = "Queue-4_error"
+                                Value = "Queue-3_error"
                             }
                         }
                     }
@@ -122,10 +114,6 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_thirdPage);
 
-            cloudWatchMock.Setup(s => s.ListMetricsAsync(
-                It.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == "token-3"),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_fourthPage);
 
             _queueSource = new QueueSource(cloudWatchMock.Object);
         }
@@ -139,12 +127,11 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
             var result = await _queueSource.GetResourceNamesAsync();
 
             // assert
-            Assert.That(result.Count, Is.EqualTo(4));
+            Assert.That(result.Count, Is.EqualTo(3));
 
             Assert.That(result.First(), Is.EqualTo(_firstPage.Metrics.Single().Dimensions.Single().Value));
             Assert.That(result.Skip(1).First(), Is.EqualTo(_secondPage.Metrics.Single().Dimensions.Single().Value));
-            Assert.That(result.Skip(2).First(), Is.EqualTo(_thirdPage.Metrics.Single().Dimensions.Single().Value));
-            Assert.That(result.Skip(3).First(), Is.EqualTo(_fourthPage.Metrics.Single().Dimensions.Single().Value));
+            Assert.That(result.Skip(2).First(), Is.EqualTo(_thirdPage.Metrics.First().Dimensions.Single().Value));
         }
 
         [Test]
@@ -195,13 +182,14 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
         public async Task GetResourceAsyncCorrectlyPopulatesTheIsErrorField()
         {
             // arrange
-            var fourthQueueName = _fourthPage.Metrics.First().Dimensions.Single().Value;
+            var thirdQueueName = _thirdPage.Metrics.First().Dimensions.Single().Value;
 
             // act
-            var result = await _queueSource.GetResourceAsync(fourthQueueName);
+            var result = await _queueSource.GetResourceAsync(thirdQueueName);
 
             // assert
-            Assert.That(result.Resource.IsErrorQueue, Is.True);
+            Assert.That(result.Resource.ErrorQueue, Is.Not.Null);
+            Assert.That(result.Resource.ErrorQueue.Name, Is.EqualTo(thirdQueueName + "_error"));
         }
     }
 }

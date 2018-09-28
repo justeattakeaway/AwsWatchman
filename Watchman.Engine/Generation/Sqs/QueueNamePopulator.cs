@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -97,7 +97,7 @@ namespace Watchman.Engine.Generation.Sqs
                 Pattern = null,
                 LengthThreshold = pattern.LengthThreshold,
                 OldestMessageThreshold = pattern.OldestMessageThreshold,
-                Errors = new ErrorQueue(pattern.Errors)
+                Errors = new Configuration.ErrorQueue(pattern.Errors)
             };
         }
     }

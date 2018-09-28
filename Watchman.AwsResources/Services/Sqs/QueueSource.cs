@@ -1,17 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 
 namespace Watchman.AwsResources.Services.Sqs
 {
-    /// <summary>
-    /// read all queues that are "active"
-    /// i.e. have metrics in cloudwatch
-    /// See http://stackoverflow.com/a/40346581/5599
-    /// </summary>
     public class QueueSource : ResourceSourceBase<QueueData>
     {
         private readonly IAmazonCloudWatch _amazonCloudWatch;
@@ -76,7 +72,24 @@ namespace Watchman.AwsResources.Services.Sqs
         {
             var names = await ReadActiveQueueNames();
 
-            return names.Select(n => new QueueData() {Name = n, IsErrorQueue = n.EndsWith("_error")}).ToList();
+            var queueDatas = names.Where(e => !IsErrorQueue(e)).Select(n => new QueueData()
+            {
+                Name = n,
+                ErrorQueue =
+                         new ErrorQueueData()
+                         {
+                             Name = names.FirstOrDefault(
+                                 e => e.StartsWith(n) &&
+                                      IsErrorQueue(e))
+                         }
+            });
+
+            return queueDatas;
+        }
+
+        private bool IsErrorQueue(string queueName)
+        {
+            return queueName.ToLowerInvariant().EndsWith("_error");
         }
     }
 }

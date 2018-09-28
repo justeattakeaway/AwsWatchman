@@ -1,11 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Watchman.AwsResources.Services.Sqs
 {
-    public class QueueData
+    public class ErrorQueueData : IAwsResource
     {
         public string Name { get; set; }
-
-        public ErrorQueueData ErrorQueue { get; set; }
     }
 }
