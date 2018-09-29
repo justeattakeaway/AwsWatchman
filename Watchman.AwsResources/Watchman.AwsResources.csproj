@@ -6,7 +6,7 @@
     <PackageReference Include="AWSSDK.AutoScaling" Version="3.3.6.2" />
     <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.8.1" />
     <PackageReference Include="AWSSDK.Core" Version="3.3.25.4" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.14.2" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.14.3" />
     <PackageReference Include="AWSSDK.EC2" Version="3.3.59.1" />
     <PackageReference Include="AWSSDK.ElasticLoadBalancing" Version="3.3.3.2" />
     <PackageReference Include="AWSSDK.Lambda" Version="3.3.16.2" />
