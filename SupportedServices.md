@@ -114,6 +114,7 @@ The following services are supported
 - `Elb`
 - `StepFunction`
 - `DynamoDb` (new implementation of the existing non-cloudformation mechanism)
+- `Sqs` (new implementation of the existing non-cloudformation mechanism)
 - `VpcSubnet` (this is a custom service using JUST EAT custom metrics)
 
 ## Alarm names and default thresholds
@@ -161,6 +162,15 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `GsiConsumedWriteCapacityUnitsHigh`: 80 (%)
 - `GsiReadThrottleEventsHigh`: 2
 - `GsiWriteThrottleEventsHigh`: 2
+
+### Sqs
+
+Sqs will mark any queue as an error queue if it ends with "_error"
+
+- `NumberOfMessagesVisible`: 100
+- `AgeOfOldestMessage`: 600 (seconds)
+- `NumberOfMessagesVisible_Error`: 10
+- `AgeOfOldestMessage_Error`: 600 (seconds)
 
 ### VpcSubnets
 
