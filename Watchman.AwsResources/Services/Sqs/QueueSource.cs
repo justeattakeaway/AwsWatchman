@@ -72,24 +72,8 @@ namespace Watchman.AwsResources.Services.Sqs
         {
             var names = await ReadActiveQueueNames();
 
-            var queueDatas = names.Where(e => !IsErrorQueue(e)).Select(n => new QueueData()
-            {
-                Name = n,
-                ErrorQueue =
-                         new ErrorQueueData()
-                         {
-                             Name = names.FirstOrDefault(
-                                 e => e.StartsWith(n) &&
-                                      IsErrorQueue(e))
-                         }
-            });
-
-            return queueDatas;
+            return names.Select(n => new QueueData() { Name = n }).ToList();
         }
 
-        private bool IsErrorQueue(string queueName)
-        {
-            return queueName.ToLowerInvariant().EndsWith("_error");
-        }
     }
 }

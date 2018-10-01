@@ -63,11 +63,17 @@ namespace Watchman.IoC
             AddService<TableDescription, TableDescriptionSource, DynamoDbDataProvider, ResourceConfig, DynamoResourceAlarmGenerator>(
                 WatchmanServiceConfigurationMapper.MapDynamoDb);
 
-            AddService<QueueData, QueueSource, QueueDataProvider, SqsResourceConfig, SqsResourceAlarmGenerator>(
-                WatchmanServiceConfigurationMapper.MapSqs);
+            For<IResourceSource<QueueServiceData>>().Use<QueueServiceSource>();
+            For<IAlarmDimensionProvider<QueueData>>().Use<QueueDataProvider>();
+            For<IResourceAttributesProvider<QueueData, SqsResourceConfig>>().Use<QueueDataProvider>();
 
-            For<IAlarmDimensionProvider<ErrorQueueData>>().Use<ErrorQueueDataProvider>();
-            For<IResourceAttributesProvider<ErrorQueueData, SqsResourceConfig>>().Use<ErrorQueueDataProvider>();
+            For<IServiceAlarmTasks>()
+                .Use<ServiceAlarmTasks<QueueServiceData, SqsResourceConfig>>()
+                .Ctor<Func<WatchmanConfiguration, WatchmanServiceConfiguration<SqsResourceConfig>>>()
+                .Is(WatchmanServiceConfigurationMapper.MapSqs);
+
+            For<IResourceAlarmGenerator<QueueServiceData, SqsResourceConfig>>().Use<SqsResourceAlarmGenerator>();
+
         }
 
         private void AddService<TServiceModel, TSource, TDataProvider, TResourceAlarmConfig>(
