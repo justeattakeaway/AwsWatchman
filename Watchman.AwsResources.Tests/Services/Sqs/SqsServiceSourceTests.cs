@@ -11,14 +11,14 @@ using Watchman.AwsResources.Services.Sqs;
 namespace Watchman.AwsResources.Tests.Services.Sqs
 {
     [TestFixture]
-    public class SqsSourceTests
+    public class SqsServiceSourceTests
     {
         private ListMetricsResponse _firstPage;
         private ListMetricsResponse _secondPage;
         private ListMetricsResponse _thirdPage;
         private Dictionary<string, string> _attributes;
 
-        private QueueSource _queueSource;
+        private QueueServiceSource _queueSource;
 
         [SetUp]
         public void Setup()
@@ -77,6 +77,18 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                                 Value = "Queue-3"
                             }
                         }
+                    },
+                    new Metric
+                    {
+                        MetricName = "ApproximateAgeOfOldestMessage",
+                        Dimensions = new List<Dimension>
+                        {
+                            new Dimension
+                            {
+                                Name = "QueueName",
+                                Value = "Queue-3_error"
+                            }
+                        }
                     }
                 }
             };
@@ -103,7 +115,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 .ReturnsAsync(_thirdPage);
 
 
-            _queueSource = new QueueSource(cloudWatchMock.Object);
+            _queueSource = new QueueServiceSource(cloudWatchMock.Object);
         }
 
         [Test]
@@ -162,9 +174,22 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
 
             // assert
             Assert.That(result.Name, Is.EqualTo(secondQueueName));
-            Assert.That(result.Resource, Is.InstanceOf<QueueData>());
-            Assert.That(result.Resource.Name, Is.EqualTo(secondQueueName));
+            Assert.That(result.Resource, Is.InstanceOf<QueueServiceData>());
+            Assert.That(result.Resource.Queue.Name, Is.EqualTo(secondQueueName));
         }
 
+        [Test]
+        public async Task GetResourceAsyncCorrectlyPopulatesTheIsErrorField()
+        {
+            // arrange
+            var thirdQueueName = _thirdPage.Metrics.First().Dimensions.Single().Value;
+
+            // act
+            var result = await _queueSource.GetResourceAsync(thirdQueueName);
+
+            // assert
+            Assert.That(result.Resource.ErrorQueue, Is.Not.Null);
+            Assert.That(result.Resource.ErrorQueue.Name, Is.EqualTo(thirdQueueName + "_error"));
+        }
     }
 }

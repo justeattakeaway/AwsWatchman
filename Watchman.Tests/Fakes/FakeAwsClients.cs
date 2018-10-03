@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
+using Amazon.CloudWatch;
+using Amazon.CloudWatch.Model;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Amazon.ElasticLoadBalancing;
@@ -59,6 +61,30 @@ namespace Watchman.Tests.Fakes
                     });
 
             }
+        }
+
+        public static void HasSqsQueues(this Mock<IAmazonCloudWatch> fake, IEnumerable<string> queues)
+        {
+            fake
+                .Setup(x => x.ListMetricsAsync(It.IsAny<ListMetricsRequest>(), new CancellationToken()))
+                .ReturnsAsync(new ListMetricsResponse()
+                              {
+                                  Metrics = queues.Select(q => new Metric()
+                                                               {
+                                                                   MetricName = "ApproximateAgeOfOldestMessage",
+                                                                   Dimensions =
+                                                                       new List<Amazon.CloudWatch.Model.Dimension
+                                                                       >()
+                                                                       {
+                                                                           new Amazon.CloudWatch.Model.Dimension()
+                                                                           {
+                                                                               Name = "QueueName",
+                                                                               Value = q
+                                                                           }
+                                                                       }
+                                                               }).ToList()
+                              });
+
         }
 
         public static void HasLambdaFunctions(this Mock<IAmazonLambda> fake, IEnumerable<FunctionConfiguration> functions)

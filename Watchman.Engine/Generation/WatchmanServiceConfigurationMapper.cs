@@ -58,6 +58,13 @@ namespace Watchman.Engine.Generation
             return Map(input, id, a => a?.Services?.DynamoDb, Defaults.DynamoDb);
         }
 
+        public static WatchmanServiceConfiguration<SqsResourceConfig> MapSqs(WatchmanConfiguration input)
+        {
+            const string id = "Sqs";
+            return Map(input, id, a => a?.Services?.Sqs, Defaults.Sqs);
+        }
+
+
         private static WatchmanServiceConfiguration<TConfig> Map<TConfig>(WatchmanConfiguration input,
             string serviceName,
             Func<AlertingGroup, AwsServiceAlarms<TConfig>> readServiceFromGroup,

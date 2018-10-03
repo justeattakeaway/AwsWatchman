@@ -1,4 +1,3 @@
-using Amazon;
 using Amazon.AutoScaling;
 using Amazon.CloudFormation;
 using Amazon.CloudWatch;
@@ -7,7 +6,6 @@ using Amazon.EC2;
 using Amazon.ElasticLoadBalancing;
 using Amazon.Lambda;
 using Amazon.RDS;
-using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.SimpleNotificationService;
 using Amazon.StepFunctions;

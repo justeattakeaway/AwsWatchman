@@ -13,6 +13,7 @@ using Watchman.AwsResources.Services.Elb;
 using Watchman.AwsResources.Services.Kinesis;
 using Watchman.AwsResources.Services.Lambda;
 using Watchman.AwsResources.Services.Rds;
+using Watchman.AwsResources.Services.Sqs;
 using Watchman.AwsResources.Services.StepFunction;
 using Watchman.AwsResources.Services.VpcSubnet;
 using Watchman.Configuration;
@@ -20,6 +21,7 @@ using Watchman.Configuration.Generic;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
 using Watchman.Engine.Generation.Dynamo;
+using Watchman.Engine.Generation.Sqs;
 using Subnet = Amazon.EC2.Model.Subnet;
 
 namespace Watchman.IoC
@@ -60,6 +62,18 @@ namespace Watchman.IoC
             
             AddService<TableDescription, TableDescriptionSource, DynamoDbDataProvider, ResourceConfig, DynamoResourceAlarmGenerator>(
                 WatchmanServiceConfigurationMapper.MapDynamoDb);
+
+            For<IResourceSource<QueueServiceData>>().Use<QueueServiceSource>();
+            For<IAlarmDimensionProvider<QueueData>>().Use<QueueDataProvider>();
+            For<IResourceAttributesProvider<QueueData, SqsResourceConfig>>().Use<QueueDataProvider>();
+
+            For<IServiceAlarmTasks>()
+                .Use<ServiceAlarmTasks<QueueServiceData, SqsResourceConfig>>()
+                .Ctor<Func<WatchmanConfiguration, WatchmanServiceConfiguration<SqsResourceConfig>>>()
+                .Is(WatchmanServiceConfigurationMapper.MapSqs);
+
+            For<IResourceAlarmGenerator<QueueServiceData, SqsResourceConfig>>().Use<SqsResourceAlarmGenerator>();
+
         }
 
         private void AddService<TServiceModel, TSource, TDataProvider, TResourceAlarmConfig>(
