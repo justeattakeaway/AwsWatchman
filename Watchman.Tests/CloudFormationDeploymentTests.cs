@@ -109,7 +109,10 @@ namespace Watchman.Tests
                 .Stack("Watchman-test");
 
             Assert.That(stack, Is.Not.Null);
-            Assert.That(stack.Resources.Count, Is.GreaterThan(0));
+            Assert.That(stack.Resources
+                .Values
+                .Where(r => r.Type == "AWS::CloudWatch::Alarm")
+                .Count, Is.GreaterThan(0));
 
             var secondTestContext = new TestingIocBootstrapper()
                 .WithCloudFormation(cloudformation.Instance)
