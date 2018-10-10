@@ -15,7 +15,7 @@ namespace Watchman.Engine.Generation.Generic
             _logger = logger;
         }
 
-        public Task DeployStack(string name, string body, bool isDryRun, bool onlyUpdateExisting)
+        public Task DeployStack(string name, string body, bool isDryRun, bool updateOnly)
         {
             var path = Path.Combine(_basePath, $"{name}.json");
 
