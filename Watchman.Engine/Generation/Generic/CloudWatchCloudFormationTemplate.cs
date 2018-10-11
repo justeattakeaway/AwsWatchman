@@ -33,6 +33,10 @@ namespace Watchman.Engine.Generation.Generic
         {
             _alarms.AddRange(alarms);
         }
+        public void AddAlarm(Alarm alarm)
+        {
+            _alarms.Add(alarm);
+        }
 
         public string WriteJson()
         {
@@ -42,7 +46,7 @@ namespace Watchman.Engine.Generation.Generic
 
             var resources = new JObject();
 
-            AddSnsTopics(_groupName, _alarms, resources);
+            AddSnsTopics(_groupName, resources);
 
             foreach (var alarm in _alarms)
             {
@@ -73,7 +77,7 @@ namespace Watchman.Engine.Generation.Generic
             return sns;
         }
 
-        private void AddSnsTopics(string groupName, IList<Alarm> alarms, JObject resources)
+        private void AddSnsTopics(string groupName, JObject resources)
         {
             var emails = _targets.OfType<AlertEmail>().ToList();
 

@@ -95,19 +95,26 @@ namespace Watchman.Engine.Generation.Generic
             }
         }
 
-        private async Task GenerateAndDeployStack(IEnumerable<Alarm> alarms, IEnumerable<AlertTarget> targets,
+        private async Task GenerateAndDeployStack(
+            IEnumerable<Alarm> alarms,
+            IEnumerable<AlertTarget> targets,
             string groupName,
-            string stackName, bool dryRun)
+            string stackName,
+            bool dryRun)
         {
             alarms = alarms.Where(a => a.AlarmDefinition.Enabled).ToList();
 
             var onlyUpdateExisting = !alarms.Any();
 
-            var template = new CloudWatchCloudFormationTemplate(groupName, targets.ToList());
+            var template = new CloudWatchCloudFormationMultiStackTemplate(2, groupName, targets.ToList());
             template.AddAlarms(alarms);
-            var json = template.WriteJson();
+            var jsons = template.WriteJson();
 
-            await _stack.DeployStack(stackName, json, dryRun, onlyUpdateExisting);
+            for (int i = 0; i< jsons.Count() ; i++)
+            {
+                var groupStackName = i > 0 ? $"{stackName}-{i}" : stackName;
+                await _stack.DeployStack(groupStackName, jsons[i], dryRun, onlyUpdateExisting);
+            }
         }
     }
 }
