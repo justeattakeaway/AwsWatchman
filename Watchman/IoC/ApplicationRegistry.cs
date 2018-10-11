@@ -61,7 +61,7 @@ namespace Watchman.IoC
                 var s3Location = GetS3Location(parameters);
 
                 For<ICloudformationStackDeployer>()
-                    .Use(ctx => new CloudformationStackDeployer(
+                    .Use(ctx => new CloudFormationStackDeployer(
                         ctx.GetInstance<IAlarmLogger>(),
                         ctx.GetInstance<IAmazonCloudFormation>(),
                         ctx.GetInstance<IAmazonS3>(),

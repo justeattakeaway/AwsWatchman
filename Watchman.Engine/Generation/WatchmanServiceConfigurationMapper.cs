@@ -87,7 +87,8 @@ namespace Watchman.Engine.Generation
                     input.AlarmNameSuffix,
                     input.Targets,
                     input.IsCatchAll,
-                    input.Description
+                    input.Description,
+                    input.NumberOfCloudFormationStacks
                 ),
                 Service = service
             };

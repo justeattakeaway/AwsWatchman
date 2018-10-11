@@ -17,6 +17,8 @@ namespace Watchman.Configuration
         public DynamoDb DynamoDb { get; set; }
         public Sqs Sqs { get; set; }
 
+        public int NumberOfCloudFormationStacks { get; set; } = 1;
+
         public AlertingGroupServices Services { get; set; }
 
         public AlertingGroup()
