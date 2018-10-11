@@ -1,11 +1,12 @@
-﻿{
+{
   "Name": "RdsOnly",
+  "NumberOfCloudFormationStacks": 2,
   "Targets": [
     { "Email": "RdsOnlyTest@example.com" },
     { "Url": "http://farley.com" }
   ],
   "AlarmNameSuffix": "RdsOnlyTest",
-  "Services":  {
+  "Services": {
     "Rds": {
       "ExcludeResourcesPrefixedWith": [ "testPrefix" ],
       "Resources": [
