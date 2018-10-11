@@ -264,11 +264,16 @@ namespace Watchman.Engine.Generation.Generic
             } while (true);
         }
 
-        public async Task DeployStack(string name, string body, bool isDryRun)
+        public async Task DeployStack(string name, string body, bool isDryRun, bool updateOnly)
         {
             var allStacks = await AllStacks();
 
             var isUpdate = allStacks.Contains(name);
+
+            if (updateOnly && !isUpdate)
+            {
+                return;
+            }
 
             await CommitStackChanges(name, isUpdate, isDryRun, body);
         }
