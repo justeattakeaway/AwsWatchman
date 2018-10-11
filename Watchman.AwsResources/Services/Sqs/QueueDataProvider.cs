@@ -8,9 +8,9 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Sqs
 {
-    public class QueueDataProvider : IAlarmDimensionProvider<QueueData>, IResourceAttributesProvider<QueueData, SqsResourceConfig>
+    public class QueueDataProvider : IAlarmDimensionProvider<QueueDataV2>, IResourceAttributesProvider<QueueDataV2, SqsResourceConfig>
     {
-        public List<Dimension> GetDimensions(QueueData resource, IList<string> dimensionNames)
+        public List<Dimension> GetDimensions(QueueDataV2 resource, IList<string> dimensionNames)
         {
             var allowed = new List<Dimension>()
                           {
@@ -37,7 +37,7 @@ namespace Watchman.AwsResources.Services.Sqs
             return requested;
         }
 
-        public Task<decimal> GetValue(QueueData resource, SqsResourceConfig config, string property)
+        public Task<decimal> GetValue(QueueDataV2 resource, SqsResourceConfig config, string property)
         {
             throw new NotImplementedException();
         }

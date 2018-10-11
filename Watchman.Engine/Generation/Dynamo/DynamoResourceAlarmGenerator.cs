@@ -18,39 +18,41 @@ namespace Watchman.Engine.Generation.Dynamo
         private readonly AlarmBuilder<TableDescription, ResourceConfig> _builder;
         private readonly AlarmBuilder<GlobalSecondaryIndexDescription, ResourceConfig> _gsiAlarmBuilder = new AlarmBuilder<GlobalSecondaryIndexDescription, ResourceConfig>(new DynamoDbGsiDataProvider());
 
+        private readonly AlarmDefaults<TableDescription> _defaultAlarms;
+
+
         public DynamoResourceAlarmGenerator(
             IResourceSource<TableDescription> tableSource,
             IAlarmDimensionProvider<TableDescription> dimensionProvider,
-            IResourceAttributesProvider<TableDescription, ResourceConfig> attributeProvider)
+            IResourceAttributesProvider<TableDescription, ResourceConfig> attributeProvider, AlarmDefaults<TableDescription> defaultAlarms)
         {
             _tableSource = tableSource;
             _dimensions = dimensionProvider;
+            _defaultAlarms = defaultAlarms;
             _builder = new AlarmBuilder<TableDescription, ResourceConfig>(attributeProvider);
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
             AwsServiceAlarms<ResourceConfig> service,
-            IList<AlarmDefinition> defaults,
             AlertingGroupParameters groupParameters)
         {
             if (service?.Resources == null || service.Resources.Count == 0)
             {
                 return new List<Alarm>();
             }
-            
+
             List<Alarm> alarms = new List<Alarm>();
 
             foreach (var resource in service.Resources)
             {
-                var alarmsForResource = await CreateAlarmsForResource(defaults, resource, service, groupParameters);
-                alarms.AddRange(alarmsForResource);                    
+                var alarmsForResource = await CreateAlarmsForResource(resource, service, groupParameters);
+                alarms.AddRange(alarmsForResource);
             }
 
             return alarms;
         }
 
         private async Task<IList<Alarm>> CreateAlarmsForResource(
-            IList<AlarmDefinition> defaults,
             ResourceThresholds<ResourceConfig> resource,
             AwsServiceAlarms<ResourceConfig> service,
             AlertingGroupParameters groupParameters)
@@ -62,18 +64,18 @@ namespace Watchman.Engine.Generation.Dynamo
                 throw new Exception($"Entity {resource.Name} not found");
             }
 
-            var result = await BuildTableAlarms(defaults, resource, service, groupParameters, entity);
-            
+            var result = await BuildTableAlarms(resource, service, groupParameters, entity);
+
             result.AddRange(await BuildIndexAlarms(resource, service, groupParameters, entity));
 
             return result;
         }
 
-        private async Task<List<Alarm>> BuildTableAlarms(IList<AlarmDefinition> defaults, ResourceThresholds<ResourceConfig> resource, AwsServiceAlarms<ResourceConfig> service,
+        private async Task<List<Alarm>> BuildTableAlarms(ResourceThresholds<ResourceConfig> resource, AwsServiceAlarms<ResourceConfig> service,
             AlertingGroupParameters groupParameters,
             AwsResource<TableDescription> entity)
         {
-            var expanded = await _builder.CopyAndUpdateDefaultAlarmsForResource(entity, defaults, service, resource);
+            var expanded = await _builder.CopyAndUpdateDefaultAlarmsForResource(entity, _defaultAlarms, service, resource);
 
             var result = new List<Alarm>();
 

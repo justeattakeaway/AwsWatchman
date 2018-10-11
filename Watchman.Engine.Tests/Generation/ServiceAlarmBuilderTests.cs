@@ -19,7 +19,14 @@ namespace Watchman.Engine.Tests.Generation
         private Mock<IAlarmDimensionProvider<FakeResource>> _fakeDimensionProvider;
         private Mock<IResourceAttributesProvider<FakeResource, ResourceConfig>> _fakeAttributeProvider;
 
-        private ResourceAlarmGenerator<FakeResource, ResourceConfig> _generator;
+        private ResourceAlarmGenerator<FakeResource, ResourceConfig> CreateSut(IEnumerable<AlarmDefinition> defaults)
+        {
+            return new ResourceAlarmGenerator<FakeResource, ResourceConfig>(
+                _fakeTableSource.Object,
+                _fakeDimensionProvider.Object,
+                AlarmDefaults<FakeResource>.FromDefaults(defaults),
+                _fakeAttributeProvider.Object);
+        }
 
         [SetUp]
         public void SetUp()
@@ -27,11 +34,6 @@ namespace Watchman.Engine.Tests.Generation
             _fakeTableSource = new Mock<IResourceSource<FakeResource>>();
             _fakeDimensionProvider = new Mock<IAlarmDimensionProvider<FakeResource>>();
             _fakeAttributeProvider = new Mock<IResourceAttributesProvider<FakeResource, ResourceConfig>>();
-
-            _generator = new ResourceAlarmGenerator<FakeResource, ResourceConfig>(
-                _fakeTableSource.Object,
-                _fakeDimensionProvider.Object,
-                _fakeAttributeProvider.Object);
         }
 
         private void SetupFakeResources(IList<string> resourceNames)
@@ -75,7 +77,7 @@ namespace Watchman.Engine.Tests.Generation
 
             // act
 
-            var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
+            var result = await CreateSut(defaults).GenerateAlarmsFor(alertingGroup.Service,
                 alertingGroup.GroupParameters);
 
             // assert
@@ -123,7 +125,7 @@ namespace Watchman.Engine.Tests.Generation
 
             // act
 
-            var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
+            var result = await CreateSut(defaults).GenerateAlarmsFor(alertingGroup.Service,
                 alertingGroup.GroupParameters);
 
             // assert
@@ -175,7 +177,7 @@ namespace Watchman.Engine.Tests.Generation
 
             // act
 
-            var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
+            var result = await CreateSut(defaults).GenerateAlarmsFor(alertingGroup.Service,
                 alertingGroup.GroupParameters);
 
             // assert
@@ -218,7 +220,7 @@ namespace Watchman.Engine.Tests.Generation
 
             // act
 
-            var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
+            var result = await CreateSut(defaults).GenerateAlarmsFor(alertingGroup.Service,
                 alertingGroup.GroupParameters);
 
             // assert
@@ -270,7 +272,7 @@ namespace Watchman.Engine.Tests.Generation
 
             // act
 
-            var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
+            var result = await CreateSut(defaults).GenerateAlarmsFor(alertingGroup.Service,
                 alertingGroup.GroupParameters);
 
             // assert
@@ -348,7 +350,7 @@ namespace Watchman.Engine.Tests.Generation
 
             // act
 
-            var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
+            var result = await CreateSut(defaults).GenerateAlarmsFor(alertingGroup.Service,
                 alertingGroup.GroupParameters);
 
             // assert
@@ -402,7 +404,7 @@ namespace Watchman.Engine.Tests.Generation
 
             // act
 
-            var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
+            var result = await CreateSut(defaults).GenerateAlarmsFor(alertingGroup.Service,
                 alertingGroup.GroupParameters);
 
             // assert
@@ -460,7 +462,7 @@ namespace Watchman.Engine.Tests.Generation
 
             // act
 
-            var result = await _generator.GenerateAlarmsFor(alertingGroup.Service, defaults,
+            var result = await CreateSut(defaults).GenerateAlarmsFor(alertingGroup.Service,
                 alertingGroup.GroupParameters);
 
             // assert

@@ -18,7 +18,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
         private ListMetricsResponse _thirdPage;
         private Dictionary<string, string> _attributes;
 
-        private QueueServiceSource _queueSource;
+        private QueueDataV2Source _queueSource;
 
         [SetUp]
         public void Setup()
@@ -115,7 +115,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 .ReturnsAsync(_thirdPage);
 
 
-            _queueSource = new QueueServiceSource(cloudWatchMock.Object);
+            _queueSource = new QueueDataV2Source(cloudWatchMock.Object);
         }
 
         [Test]
@@ -174,8 +174,8 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
 
             // assert
             Assert.That(result.Name, Is.EqualTo(secondQueueName));
-            Assert.That(result.Resource, Is.InstanceOf<QueueServiceData>());
-            Assert.That(result.Resource.Queue.Name, Is.EqualTo(secondQueueName));
+            Assert.That(result.Resource, Is.InstanceOf<QueueDataV2>());
+            Assert.That(result.Resource.Name, Is.EqualTo(secondQueueName));
         }
 
         [Test]

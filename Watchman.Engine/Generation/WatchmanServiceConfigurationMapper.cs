@@ -13,69 +13,68 @@ namespace Watchman.Engine.Generation
         public static WatchmanServiceConfiguration<ResourceConfig> MapRds(WatchmanConfiguration input)
         {
             const string id = "Rds";
-            return Map(input, id, a => a?.Services?.Rds, Defaults.Rds);
+            return Map(input, id, a => a?.Services?.Rds);
         }
 
         public static WatchmanServiceConfiguration<AutoScalingResourceConfig> MapAutoScaling(WatchmanConfiguration input)
         {
             const string id = "AutoScaling";
-            return Map(input, id, a => a?.Services?.AutoScaling, Defaults.AutoScaling);
+            return Map(input, id, a => a?.Services?.AutoScaling);
         }
 
         public static WatchmanServiceConfiguration<ResourceConfig> MapLambda(WatchmanConfiguration input)
         {
             const string id = "Lambda";
-            return Map(input, id, a => a?.Services?.Lambda, Defaults.Lambda);
+            return Map(input, id, a => a?.Services?.Lambda);
         }
 
         public static WatchmanServiceConfiguration<ResourceConfig> MapVpcSubnet(WatchmanConfiguration input)
         {
             const string id = "VpcSubnet";
-            return Map(input, id, a => a?.Services?.VpcSubnet, Defaults.VpcSubnets);
+            return Map(input, id, a => a?.Services?.VpcSubnet);
         }
 
         public static WatchmanServiceConfiguration<ResourceConfig> MapElb(WatchmanConfiguration input)
         {
             const string id = "Elb";
-            return Map(input, id, a => a?.Services?.Elb, Defaults.Elb);
+            return Map(input, id, a => a?.Services?.Elb);
         }
 
         public static WatchmanServiceConfiguration<ResourceConfig> MapStream(WatchmanConfiguration input)
         {
             const string id = "KinesisStream";
-            return Map(input, id, a => a?.Services?.KinesisStream, Defaults.KinesisStream);
+            return Map(input, id, a => a?.Services?.KinesisStream);
         }
 
         public static WatchmanServiceConfiguration<ResourceConfig> MapStepFunction(WatchmanConfiguration input)
         {
             const string id = "StepFunction";
-            return Map(input, id, a => a?.Services?.StepFunction, Defaults.StepFunction);
+            return Map(input, id, a => a?.Services?.StepFunction);
         }
 
         public static WatchmanServiceConfiguration<ResourceConfig> MapDynamoDb(WatchmanConfiguration input)
         {
             const string id = "DynamoDb";
-            return Map(input, id, a => a?.Services?.DynamoDb, Defaults.DynamoDb);
+            return Map(input, id, a => a?.Services?.DynamoDb);
         }
 
         public static WatchmanServiceConfiguration<SqsResourceConfig> MapSqs(WatchmanConfiguration input)
         {
             const string id = "Sqs";
-            return Map(input, id, a => a?.Services?.Sqs, Defaults.Sqs);
+            return Map(input, id, a => a?.Services?.Sqs);
         }
 
 
         private static WatchmanServiceConfiguration<TConfig> Map<TConfig>(WatchmanConfiguration input,
             string serviceName,
-            Func<AlertingGroup, AwsServiceAlarms<TConfig>> readServiceFromGroup,
-            IList<AlarmDefinition> defaults) where TConfig : class
+            Func<AlertingGroup, AwsServiceAlarms<TConfig>> readServiceFromGroup) where TConfig : class
         {
             var groups = input.AlertingGroups
                 .Select(x => ServiceAlertingGroup(x, readServiceFromGroup))
                 .Where(x => x != null)
                 .ToList();
 
-            return new WatchmanServiceConfiguration<TConfig>(serviceName, groups, defaults);
+            return new WatchmanServiceConfiguration<TConfig>(serviceName, groups);
         }
 
         private static ServiceAlertingGroup<T> Map<T>(AlertingGroup input, AwsServiceAlarms<T> service) where T:class

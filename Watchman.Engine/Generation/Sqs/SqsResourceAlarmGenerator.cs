@@ -8,26 +8,28 @@ using Watchman.Engine.Alarms;
 
 namespace Watchman.Engine.Generation.Sqs
 {
-    public class SqsResourceAlarmGenerator : IResourceAlarmGenerator<QueueServiceData, SqsResourceConfig>
+    public class SqsResourceAlarmGenerator : IResourceAlarmGenerator<QueueDataV2, SqsResourceConfig>
     {
-        private readonly AlarmBuilder<QueueData, SqsResourceConfig> _builder;
-        private readonly IResourceSource<QueueServiceData> _queueSource;
-        private readonly IAlarmDimensionProvider<QueueData> _dimensionProvider;
+        private readonly AlarmBuilder<QueueDataV2, SqsResourceConfig> _builder;
+        private readonly IResourceSource<QueueDataV2> _queueSource;
+        private readonly IAlarmDimensionProvider<QueueDataV2> _dimensionProvider;
         private readonly IList<AlarmDefinition> _errorQueueDefaults = Defaults.SqsError;
+        private readonly AlarmDefaults<QueueDataV2> _defaultAlarms;
+
 
         public SqsResourceAlarmGenerator(
-            IResourceSource<QueueServiceData> queueSource,
-            IAlarmDimensionProvider<QueueData> dimensionProvider,
-            IResourceAttributesProvider<QueueData, SqsResourceConfig> attributeProvider)
+            IResourceSource<QueueDataV2> queueSource,
+            IAlarmDimensionProvider<QueueDataV2> dimensionProvider,
+            IResourceAttributesProvider<QueueDataV2, SqsResourceConfig> attributeProvider, AlarmDefaults<QueueDataV2> defaultAlarms)
         {
-            _builder = new AlarmBuilder<QueueData, SqsResourceConfig>(attributeProvider);
+            _builder = new AlarmBuilder<QueueDataV2, SqsResourceConfig>(attributeProvider);
             _queueSource = queueSource;
             _dimensionProvider = dimensionProvider;
+            _defaultAlarms = defaultAlarms;
         }
 
         public async Task<IList<Alarm>> GenerateAlarmsFor(
             AwsServiceAlarms<SqsResourceConfig> service,
-            IList<AlarmDefinition> defaults,
             AlertingGroupParameters groupParameters)
         {
             if (service?.Resources == null || service.Resources.Count == 0)
@@ -41,7 +43,6 @@ namespace Watchman.Engine.Generation.Sqs
             {
                var alarmsForResource = await CreateAlarmsForResource(
                     resource?.Options?.IncludeErrorQueues ?? true,
-                    defaults,
                     resource,
                     service,
                     groupParameters);
@@ -53,11 +54,10 @@ namespace Watchman.Engine.Generation.Sqs
 
         private async Task<IList<Alarm>> CreateAlarmsForResource(
             bool includeErrorQueues,
-            IList<AlarmDefinition> defaults,
             ResourceThresholds<SqsResourceConfig> resource,
             AwsServiceAlarms<SqsResourceConfig> service,
             AlertingGroupParameters groupParameters)
-        { 
+        {
             var entity = await _queueSource.GetResourceAsync(resource.Name);
 
             if (entity == null)
@@ -65,15 +65,15 @@ namespace Watchman.Engine.Generation.Sqs
                 throw new Exception($"Entity {resource.Name} not found");
             }
 
-            var queueResource = new AwsResource<QueueData>(entity.Name, entity.Resource.Queue);
-            var alarms = await BuildAlarmsForQueue(defaults, resource, service, groupParameters, queueResource);
+            var queueResource = new AwsResource<QueueDataV2>(entity.Name, entity.Resource);
+            var alarms = await BuildAlarmsForQueue(_defaultAlarms, resource, service, groupParameters, queueResource);
 
             if (includeErrorQueues && entity.Resource.ErrorQueue != null)
             {
-                var errorQueueResource = new AwsResource<QueueData>(entity.Name, entity.Resource.ErrorQueue);
+                var errorQueueResource = new AwsResource<QueueDataV2>(entity.Name, entity.Resource.ErrorQueue);
                 alarms.AddRange(await BuildAlarmsForQueue(_errorQueueDefaults, resource, service, groupParameters, errorQueueResource));
             }
-            
+
             return alarms;
         }
 
@@ -82,7 +82,7 @@ namespace Watchman.Engine.Generation.Sqs
             ResourceThresholds<SqsResourceConfig> resource,
             AwsServiceAlarms<SqsResourceConfig> service,
             AlertingGroupParameters groupParameters,
-            AwsResource<QueueData> entity)
+            AwsResource<QueueDataV2> entity)
         {
             var expanded = await _builder.CopyAndUpdateDefaultAlarmsForResource(entity, defaults, service, resource);
 
