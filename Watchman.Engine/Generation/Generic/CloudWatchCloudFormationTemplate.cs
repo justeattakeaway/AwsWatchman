@@ -60,15 +60,14 @@ namespace Watchman.Engine.Generation.Generic
             return root.ToString();
         }
 
-        private static JObject CreateSnsTopic<T>(string name, string description, List<T> targets, Func<T, JObject> mapper) where T : AlertTarget
+        private static JObject CreateSnsTopic<T>(string description, List<T> targets, Func<T, JObject> mapper) where T : AlertTarget
         {
             var sns = JObject.FromObject(new
             {
                 Type = "AWS::SNS::Topic",
                 Properties = new
                 {
-                    DisplayName = description,
-                    TopicName = name
+                    DisplayName = description
                 }
             });
 
@@ -83,8 +82,7 @@ namespace Watchman.Engine.Generation.Generic
 
             if (emails.Any())
             {
-                var sns = CreateSnsTopic($"AwsWatchman_Email_{groupName}",
-                    AwsConstants.DefaultEmailTopicDesciption,
+                var sns = CreateSnsTopic(AwsConstants.DefaultEmailTopicDesciption,
                     emails, email => JObject.FromObject(new
                         {
                             Protocol = "email",
@@ -99,8 +97,7 @@ namespace Watchman.Engine.Generation.Generic
             var urls = _targets.OfType<AlertUrl>().ToList();
             if (urls.Any())
             {
-                var sns = CreateSnsTopic($"AwsWatchman_Url_{groupName}",
-                    AwsConstants.DefaultUrlTopicDesciption,
+                var sns = CreateSnsTopic(AwsConstants.DefaultUrlTopicDesciption,
                     urls, url =>
                 {
                     var protocol = url.Url.StartsWith("https") ? "https" : "http";
