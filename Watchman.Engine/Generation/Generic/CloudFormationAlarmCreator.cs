@@ -73,16 +73,17 @@ namespace Watchman.Engine.Generation.Generic
 
                 var stackName = StackName(alertingGroup);
 
+                var stackedAlarms = alarms
+                    .GroupBy(a => Bucket(a.AlarmName, alertingGroup.NumberOfCloudFormationStacks))
+                    .ToList();
 
-                for (int i = 0; i < alertingGroup.NumberOfCloudFormationStacks; i++)
+                for(int i = 0; i < stackedAlarms.Count(); i++)
                 {
                     var numberedStackName = i > 0 ? $"{stackName}-{i}" : stackName;
                     try
                     {
-                        var iClosure = i;
-                        var alarmsForStack = alarms.Where(a => Bucket(a.AlarmName, alertingGroup.NumberOfCloudFormationStacks) == iClosure);
                         await GenerateAndDeployStack(
-                            alarmsForStack,
+                            stackedAlarms[i],
                             alertingGroup.Targets,
                             alertingGroup.Name,
                             numberedStackName,
