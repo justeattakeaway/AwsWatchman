@@ -10,7 +10,7 @@ using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Generation.Generic
 {
-    public class CloudformationStackDeployer : ICloudformationStackDeployer
+    public class CloudFormationStackDeployer : ICloudformationStackDeployer
     {
         private const int CloudformationRequestBodyLimit = 51200;
         private readonly IAlarmLogger _logger;
@@ -55,7 +55,7 @@ namespace Watchman.Engine.Generation.Generic
             "UPDATE_ROLLBACK_COMPLETE"
         };
 
-        public CloudformationStackDeployer(
+        public CloudFormationStackDeployer(
             IAlarmLogger logger,
             IAmazonCloudFormation cloudformation,
             IAmazonS3 s3Client,
@@ -63,7 +63,7 @@ namespace Watchman.Engine.Generation.Generic
         {
         }
 
-        public CloudformationStackDeployer(
+        public CloudFormationStackDeployer(
             IAlarmLogger logger,
             IAmazonCloudFormation cloudformation,
             IAmazonS3 s3Client,

@@ -11,6 +11,8 @@ namespace Watchman.Engine
         public string Description { get; }
         public string AlarmNameSuffix { get; }
 
+        public int NumberOfCloudFormationStacks { get; }
+
         public IReadOnlyCollection<AlertTarget> Targets { get; }
 
         public bool IsCatchAll { get; }
@@ -20,13 +22,15 @@ namespace Watchman.Engine
             string alarmNameSuffix,
             List<AlertTarget> targets = null,
             bool isCatchAll = false,
-            string description = null)
+            string description = null,
+            int numberOfCloudFormationStacks = 1)
         {
             Name = name;
             AlarmNameSuffix = alarmNameSuffix;
             Targets = (targets ?? new List<AlertTarget>()).AsReadOnly();
             IsCatchAll = isCatchAll;
             Description = description;
+            NumberOfCloudFormationStacks = numberOfCloudFormationStacks;
         }
         
         // from https://stackoverflow.com/a/263416/22224

@@ -116,7 +116,6 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var emailTopic = parsed["Resources"]["EmailTopic"];
 
             Assert.That(emailTopic, Is.Not.Null);
-            Assert.That((string) emailTopic["Properties"]["TopicName"], Is.EqualTo($"AwsWatchman_Email_{AlertingGroupName}"));
 
             var emailsInTopic = emailTopic["Properties"]["Subscription"].ToList();
 
@@ -151,7 +150,6 @@ namespace Watchman.Engine.Tests.Generation.Generic
             var emailTopic = parsed["Resources"]["UrlTopic"];
 
             Assert.That(emailTopic, Is.Not.Null);
-            Assert.That((string) emailTopic["Properties"]["TopicName"], Is.EqualTo($"AwsWatchman_Url_{AlertingGroupName}"));
 
             var emailsInTopic = emailTopic["Properties"]["Subscription"].ToList();
 

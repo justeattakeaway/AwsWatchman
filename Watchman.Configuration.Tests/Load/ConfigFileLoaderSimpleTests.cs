@@ -163,6 +163,17 @@ namespace Watchman.Configuration.Tests.Load
             AssertSectionIsPopulated(group.Services.Rds);
         }
 
+        [Test]
+        public void TheConfigContainsCorrectNumberOfStacks()
+        {
+            var numberOfCloudFormationStacks = _config.AlertingGroups
+                .Select(g => g.NumberOfCloudFormationStacks)
+                .ToList();
+
+            Assert.That(numberOfCloudFormationStacks.All(c => c.Equals(2)));
+        }
+
+
         private static void AssertSectionIsPopulated(IAwsServiceAlarms section)
         {
             Assert.That(section, Is.Not.Null);

@@ -1,5 +1,6 @@
 {
   "Name": "AutoscalingOnly",
+  "NumberOfCloudFormationStacks" :  2, 
   "Description": "Description of AutoscalingOnly",
   "Targets": [
     { "Email": "AutoscalingOnlyTest@example.com" },

@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Amazon;
 using Amazon.CloudWatch;
 using NUnit.Framework;
@@ -32,8 +32,7 @@ namespace Watchman.Engine.IntegrationTests
 
         private static IAlarmFinder MakeAlarmFinder()
         {
-            var cloudwatch = new AmazonCloudWatchClient(CredentialsReader.GetCredentials(),
-                new AmazonCloudWatchConfig {RegionEndpoint = RegionEndpoint.EUWest1});
+            var cloudwatch = new AmazonCloudWatchClient(RegionEndpoint.EUWest1);
             return new AlarmFinder(new ConsoleAlarmLogger(false), cloudwatch);
         }
 

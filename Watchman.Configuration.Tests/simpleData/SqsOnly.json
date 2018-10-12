@@ -1,5 +1,6 @@
-﻿{
+{
   "Name": "SqsOnly",
+  "NumberOfCloudFormationStacks": 2,
   "Targets": [
     { "Email": "SqsOnlyTest@example.com" },
     { "Url": "http://farley.com" }

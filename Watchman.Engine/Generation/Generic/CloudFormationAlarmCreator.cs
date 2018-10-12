@@ -73,20 +73,28 @@ namespace Watchman.Engine.Generation.Generic
 
                 var stackName = StackName(alertingGroup);
 
-                try
+
+                for (int i = 0; i < alertingGroup.NumberOfCloudFormationStacks; i++)
                 {
-                    await GenerateAndDeployStack(
-                        alarms,
-                        alertingGroup.Targets,
-                        alertingGroup.Name,
-                        stackName,
-                        dryRun);
+                    var numberedStackName = i > 0 ? $"{stackName}-{i}" : stackName;
+                    try
+                    {
+                        var iClosure = i;
+                        var alarmsForStack = alarms.Where(a => Bucket(a.AlarmName, alertingGroup.NumberOfCloudFormationStacks) == iClosure);
+                        await GenerateAndDeployStack(
+                            alarmsForStack,
+                            alertingGroup.Targets,
+                            alertingGroup.Name,
+                            numberedStackName,
+                            dryRun);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e, $"Error deploying stack {numberedStackName}");
+                        failedStacks++;
+                    }
                 }
-                catch (Exception e)
-                {
-                    _logger.Error(e, $"Error deploying stack {stackName}");
-                    failedStacks++;
-                }
+
             }
 
             if (failedStacks > 0)
@@ -95,9 +103,12 @@ namespace Watchman.Engine.Generation.Generic
             }
         }
 
-        private async Task GenerateAndDeployStack(IEnumerable<Alarm> alarms, IEnumerable<AlertTarget> targets,
+        private async Task GenerateAndDeployStack(
+            IEnumerable<Alarm> alarms,
+            IEnumerable<AlertTarget> targets,
             string groupName,
-            string stackName, bool dryRun)
+            string stackName,
+            bool dryRun)
         {
             alarms = alarms.Where(a => a.AlarmDefinition.Enabled).ToList();
 
@@ -106,8 +117,13 @@ namespace Watchman.Engine.Generation.Generic
             var template = new CloudWatchCloudFormationTemplate(groupName, targets.ToList());
             template.AddAlarms(alarms);
             var json = template.WriteJson();
-
             await _stack.DeployStack(stackName, json, dryRun, onlyUpdateExisting);
+        }
+
+        private int Bucket(string input, int numberOfBuckets)
+        {
+            var h = input.Select(c => (int)c).Sum();
+            return h % numberOfBuckets;
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿{
+{
   "Name": "DynamoOnly",
+  "NumberOfCloudFormationStacks": 2,
   "Targets": [
     { "Email": "DynamoOnly@example.com" },
     { "Url": "http://farley.com" }

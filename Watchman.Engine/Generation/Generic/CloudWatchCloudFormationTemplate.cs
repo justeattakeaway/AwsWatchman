@@ -33,6 +33,10 @@ namespace Watchman.Engine.Generation.Generic
         {
             _alarms.AddRange(alarms);
         }
+        public void AddAlarm(Alarm alarm)
+        {
+            _alarms.Add(alarm);
+        }
 
         public string WriteJson()
         {
@@ -42,7 +46,7 @@ namespace Watchman.Engine.Generation.Generic
 
             var resources = new JObject();
 
-            AddSnsTopics(_groupName, _alarms, resources);
+            AddSnsTopics(_groupName, resources);
 
             foreach (var alarm in _alarms)
             {
@@ -56,15 +60,14 @@ namespace Watchman.Engine.Generation.Generic
             return root.ToString();
         }
 
-        private static JObject CreateSnsTopic<T>(string name, string description, List<T> targets, Func<T, JObject> mapper) where T : AlertTarget
+        private static JObject CreateSnsTopic<T>(string description, List<T> targets, Func<T, JObject> mapper) where T : AlertTarget
         {
             var sns = JObject.FromObject(new
             {
                 Type = "AWS::SNS::Topic",
                 Properties = new
                 {
-                    DisplayName = description,
-                    TopicName = name
+                    DisplayName = description
                 }
             });
 
@@ -73,14 +76,13 @@ namespace Watchman.Engine.Generation.Generic
             return sns;
         }
 
-        private void AddSnsTopics(string groupName, IList<Alarm> alarms, JObject resources)
+        private void AddSnsTopics(string groupName, JObject resources)
         {
             var emails = _targets.OfType<AlertEmail>().ToList();
 
             if (emails.Any())
             {
-                var sns = CreateSnsTopic($"AwsWatchman_Email_{groupName}",
-                    AwsConstants.DefaultEmailTopicDesciption,
+                var sns = CreateSnsTopic(AwsConstants.DefaultEmailTopicDesciption,
                     emails, email => JObject.FromObject(new
                         {
                             Protocol = "email",
@@ -95,8 +97,7 @@ namespace Watchman.Engine.Generation.Generic
             var urls = _targets.OfType<AlertUrl>().ToList();
             if (urls.Any())
             {
-                var sns = CreateSnsTopic($"AwsWatchman_Url_{groupName}",
-                    AwsConstants.DefaultUrlTopicDesciption,
+                var sns = CreateSnsTopic(AwsConstants.DefaultUrlTopicDesciption,
                     urls, url =>
                 {
                     var protocol = url.Url.StartsWith("https") ? "https" : "http";
