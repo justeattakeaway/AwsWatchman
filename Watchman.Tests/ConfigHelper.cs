@@ -12,7 +12,8 @@ namespace Watchman.Tests
         public static WatchmanConfiguration CreateBasicConfiguration(
             string name,
             string suffix,
-            AlertingGroupServices services
+            AlertingGroupServices services,
+            int numberOfCloudFormationStacks = 1
         )
         {
             return new WatchmanConfiguration()
@@ -27,7 +28,8 @@ namespace Watchman.Tests
                         {
                             new AlertEmail("test@example.com")
                         },
-                        Services = services
+                        Services = services,
+                        NumberOfCloudFormationStacks = numberOfCloudFormationStacks
                     }
                 }
             };
