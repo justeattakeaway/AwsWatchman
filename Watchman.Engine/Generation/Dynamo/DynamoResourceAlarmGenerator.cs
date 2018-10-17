@@ -14,10 +14,8 @@ namespace Watchman.Engine.Generation.Dynamo
     {
         private readonly IResourceSource<TableDescription> _tableSource;
         private readonly IAlarmDimensionProvider<TableDescription> _dimensions;
-        private readonly IAlarmDimensionProvider<GlobalSecondaryIndexDescription> _gsiDimensionProvider = new DynamoDbGsiDataProvider();
-        private readonly AlarmBuilder<TableDescription, ResourceConfig> _builder;
-        private readonly AlarmBuilder<GlobalSecondaryIndexDescription, ResourceConfig> _gsiAlarmBuilder = new AlarmBuilder<GlobalSecondaryIndexDescription, ResourceConfig>(new DynamoDbGsiDataProvider());
-
+        private readonly IResourceAttributesProvider<TableDescription, ResourceConfig> _attributeProvider;
+        private readonly DynamoDbGsiDataProvider _gsiProvider = new DynamoDbGsiDataProvider();
         private readonly AlarmDefaults<TableDescription> _defaultAlarms;
 
 
@@ -28,8 +26,8 @@ namespace Watchman.Engine.Generation.Dynamo
         {
             _tableSource = tableSource;
             _dimensions = dimensionProvider;
+            _attributeProvider = attributeProvider;
             _defaultAlarms = defaultAlarms;
-            _builder = new AlarmBuilder<TableDescription, ResourceConfig>(attributeProvider);
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
@@ -66,64 +64,71 @@ namespace Watchman.Engine.Generation.Dynamo
 
             var result = await BuildTableAlarms(resource, service, groupParameters, entity);
 
-            result.AddRange(await BuildIndexAlarms(resource, service, groupParameters, entity));
+            result.AddRange(await BuildIndexAlarms(resource, service, groupParameters, entity.Resource));
 
             return result;
         }
 
-        private async Task<List<Alarm>> BuildTableAlarms(ResourceThresholds<ResourceConfig> resource, AwsServiceAlarms<ResourceConfig> service,
+        private async Task<List<Alarm>> BuildTableAlarms(ResourceThresholds<ResourceConfig> resource,
+            AwsServiceAlarms<ResourceConfig> service,
             AlertingGroupParameters groupParameters,
             AwsResource<TableDescription> entity)
         {
-            var expanded = await _builder.CopyAndUpdateDefaultAlarmsForResource(entity, _defaultAlarms, service, resource);
+            var mergedConfig = AlarmHelpers.MergeServiceAndResourceConfiguration(service.Options, resource.Options);
 
             var result = new List<Alarm>();
 
-            foreach (var alarm in expanded)
+            foreach (var alarm in _defaultAlarms)
             {
+                var mergedValues = AlarmHelpers.MergeValueOverrides(alarm.Name, service.Values, resource.Values);
                 var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
+                var built = await AlarmHelpers.AlarmWithMergedValues(_attributeProvider, entity, alarm,
+                    mergedConfig, mergedValues);
 
                 var model = new Alarm
                 {
-                    AlarmName = $"{resource.Name}-{alarm.Name}-{groupParameters.AlarmNameSuffix}",
-                    AlarmDescription = _builder.GetAlarmDescription(groupParameters),
+                    AlarmName = $"{resource.Name}-{built.Name}-{groupParameters.AlarmNameSuffix}",
+                    AlarmDescription = AlarmHelpers.GetAlarmDescription(groupParameters),
                     Resource = entity,
                     Dimensions = dimensions,
-                    AlarmDefinition = alarm
+                    AlarmDefinition = built
                 };
+
                 result.Add(model);
             }
+
             return result;
         }
 
-        private async Task<IList<Alarm>> BuildIndexAlarms(ResourceThresholds<ResourceConfig> resource, AwsServiceAlarms<ResourceConfig> service, AlertingGroupParameters groupParameters,
-            AwsResource<TableDescription> entity)
+        private async Task<IList<Alarm>> BuildIndexAlarms(ResourceThresholds<ResourceConfig> resource,
+            AwsServiceAlarms<ResourceConfig> service,
+            AlertingGroupParameters groupParameters,
+            TableDescription table)
         {
+            // called twice
+            var mergedConfig = AlarmHelpers.MergeServiceAndResourceConfiguration(service.Options, resource.Options);
+
             var result = new List<Alarm>();
 
-            var gsiSet = entity.Resource.GlobalSecondaryIndexes;
-
+            var gsiSet = table.GlobalSecondaryIndexes;
 
             foreach (var gsi in gsiSet)
             {
                 var gsiResource = new AwsResource<GlobalSecondaryIndexDescription>(gsi.IndexName, gsi);
 
-
-                var expandedGsi = await _gsiAlarmBuilder.CopyAndUpdateDefaultAlarmsForResource(
-                    gsiResource,
-                    Defaults.DynamoDbGsi, service, resource);
-
-                foreach (var gsiAlarm in expandedGsi)
+                foreach (var alarm in Defaults.DynamoDbGsi)
                 {
-                    var dimensions = _gsiDimensionProvider.GetDimensions(gsi, gsiAlarm.DimensionNames);
+                    var mergedValues = AlarmHelpers.MergeValueOverrides(alarm.Name, service.Values, resource.Values);
+                    var dimensions = _gsiProvider.GetDimensions(gsi, alarm.DimensionNames);
+                    var built = await AlarmHelpers.AlarmWithMergedValues(_gsiProvider, gsiResource, alarm, mergedConfig, mergedValues);
 
                     var model = new Alarm
                     {
-                        AlarmName = $"{resource.Name}-{gsi.IndexName}-{gsiAlarm.Name}-{groupParameters.AlarmNameSuffix}",
-                        AlarmDescription = _builder.GetAlarmDescription(groupParameters),
-                        Resource = entity,
+                        AlarmName = $"{resource.Name}-{gsi.IndexName}-{alarm.Name}-{groupParameters.AlarmNameSuffix}",
+                        AlarmDescription = AlarmHelpers.GetAlarmDescription(groupParameters),
+                        Resource = gsiResource,
                         Dimensions = dimensions,
-                        AlarmDefinition = gsiAlarm
+                        AlarmDefinition = built
                     };
 
                     result.Add(model);

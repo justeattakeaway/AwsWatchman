@@ -6,19 +6,6 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine.Generation
 {
-
-
-    public class AlarmDefaults<TServiceType> : List<AlarmDefinition>
-    {
-
-        public static AlarmDefaults<TServiceType> FromDefaults(IEnumerable<AlarmDefinition> defaults)
-        {
-            var result = new AlarmDefaults<TServiceType>();
-            result.AddRange(defaults);
-            return result;
-        }
-    }
-
     public class ResourceAlarmGenerator<T, TAlarmConfig> : IResourceAlarmGenerator<T, TAlarmConfig>
         where T:class
         where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
@@ -26,7 +13,7 @@ namespace Watchman.Engine.Generation
         private readonly IResourceSource<T> _tableSource;
         private readonly IAlarmDimensionProvider<T> _dimensions;
         private readonly AlarmDefaults<T> _defaultAlarms;
-        private readonly AlarmBuilder<T, TAlarmConfig> _builder;
+        private readonly IResourceAttributesProvider<T, TAlarmConfig> _attributeProvider;
 
         public ResourceAlarmGenerator(
             IResourceSource<T> tableSource,
@@ -37,7 +24,7 @@ namespace Watchman.Engine.Generation
             _tableSource = tableSource;
             _dimensions = dimensionProvider;
             _defaultAlarms = defaultAlarms;
-            _builder = new AlarmBuilder<T, TAlarmConfig>(attributeProvider);
+            _attributeProvider = attributeProvider;
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
@@ -67,28 +54,30 @@ namespace Watchman.Engine.Generation
         {
             var entity = await _tableSource.GetResourceAsync(resource.Name);
 
-            // apply thresholds from resource or alerting group
-            var expanded = await _builder.CopyAndUpdateDefaultAlarmsForResource(entity, _defaultAlarms, service, resource);
-
-            var result = new List<Alarm>();
-
             if (entity == null)
             {
                 throw new Exception($"Entity {resource.Name} not found");
             }
 
-            foreach (var alarm in expanded)
+            var mergedConfig = AlarmHelpers.MergeServiceAndResourceConfiguration(service.Options, resource.Options);
+
+            var result = new List<Alarm>();
+
+            foreach (var alarm in _defaultAlarms)
             {
+                var mergedValues = AlarmHelpers.MergeValueOverrides(alarm.Name, service.Values, resource.Values);
                 var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
+                var built = await AlarmHelpers.AlarmWithMergedValues(_attributeProvider, entity, alarm, mergedConfig, mergedValues);
 
                 var model = new Alarm
                 {
-                    AlarmName = $"{resource.Name}-{alarm.Name}-{groupParameters.AlarmNameSuffix}",
-                    AlarmDescription = _builder.GetAlarmDescription(groupParameters),
+                    AlarmName = $"{resource.Name}-{built.Name}-{groupParameters.AlarmNameSuffix}",
+                    AlarmDescription = AlarmHelpers.GetAlarmDescription(groupParameters),
                     Resource = entity,
                     Dimensions = dimensions,
-                    AlarmDefinition = alarm
+                    AlarmDefinition = built
                 };
+
                 result.Add(model);
             }
 
