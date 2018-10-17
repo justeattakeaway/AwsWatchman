@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.CloudFormation" Version="3.3.11.13" />
+    <PackageReference Include="AWSSDK.CloudFormation" Version="3.3.11.15" />
     <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.8.3" />
     <PackageReference Include="AWSSDK.Core" Version="3.3.27.2" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.14.5" />
