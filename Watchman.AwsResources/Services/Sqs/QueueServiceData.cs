@@ -4,11 +4,13 @@ using System.Text;
 
 namespace Watchman.AwsResources.Services.Sqs
 {
-    public class QueueServiceData
+
+    public class QueueDataV2
     {
-        public QueueData Queue { get; set; }
+        public string Name { get; set; }
 
+        public QueueDataV2 ErrorQueue { get; set; }
 
-        public QueueData ErrorQueue { get; set; }
     }
+
 }

@@ -87,7 +87,6 @@ namespace Watchman.Engine.Generation
                 {
                     var alarmsForGroup = await _resourceAlarmGenerator.GenerateAlarmsFor(
                         alertingGroup.Service,
-                        serviceConfig.Defaults,
                         alertingGroup.GroupParameters);
 
                     _creator.AddAlarms(alertingGroup.GroupParameters, alarmsForGroup);
