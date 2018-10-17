@@ -183,6 +183,23 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Lambda
+            },
+            new AlarmDefinition
+            {
+                Name = "InvocationsLow",
+                Enabled = false,
+                Metric = "Invocations",
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 288,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 1
+                },
+                DimensionNames = new[] {"FunctionName"},
+                ComparisonOperator = ComparisonOperator.LessThanThreshold,
+                Statistic = Statistic.SampleCount,
+                Namespace = AwsNamespace.Lambda
             }
         };
 

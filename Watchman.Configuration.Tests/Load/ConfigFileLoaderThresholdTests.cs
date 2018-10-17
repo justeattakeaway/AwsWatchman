@@ -97,12 +97,13 @@ namespace Watchman.Configuration.Tests.Load
 
             Assert.That(section.Values, Is.Not.Null);
             Assert.That(section.Values, Is.Not.Empty);
-            Assert.That(section.Values.Count, Is.EqualTo(7));
+            Assert.That(section.Values.Count, Is.EqualTo(8));
 
             Assert.That(section.Values["ThrottlesHigh"].Threshold, Is.EqualTo(40));
             Assert.That(section.Values["FloatValue"].Threshold, Is.EqualTo(2.1));
             Assert.That(section.Values["FloatValueAsString"].Threshold, Is.EqualTo(2.2));
             Assert.That(section.Values["IntValueAsString"].Threshold, Is.EqualTo(41));
+            Assert.That(section.Values["InvocationsLow"].Threshold, Is.EqualTo(5));
         }
 
         [Test]
@@ -116,6 +117,7 @@ namespace Watchman.Configuration.Tests.Load
             var errrorsHigh = values["ErrorsHigh"];
             var durationHigh = values["DurationHigh"];
             var throttlesHigh = values["ThrottlesHigh"];
+            var invocationsLow = values["InvocationsLow"];
             var fooHigh = values["FooHigh"];
 
             Assert.That(errrorsHigh.Threshold, Is.EqualTo(20));
@@ -129,6 +131,9 @@ namespace Watchman.Configuration.Tests.Load
 
             Assert.That(fooHigh.Threshold, Is.Null);
             Assert.That(fooHigh.EvaluationPeriods, Is.EqualTo(3));
+
+            Assert.That(invocationsLow.Threshold, Is.EqualTo(5));
+            Assert.That(invocationsLow.EvaluationPeriods, Is.Null);
         }
     }
 }

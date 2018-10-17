@@ -26,7 +26,8 @@
         "ThrottlesHigh": 40,
         "FloatValue": 2.1,
         "FloatValueAsString": "2.2",
-        "IntValueAsString": "41"
+        "IntValueAsString": "41",
+        "InvocationsLow": 5
       }
     }
   }
