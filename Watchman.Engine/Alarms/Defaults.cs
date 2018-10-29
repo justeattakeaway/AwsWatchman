@@ -529,7 +529,7 @@ namespace Watchman.Engine.Alarms
             {
                 Name = "NumberOfVisibleMessages",
                 Metric = "ApproximateNumberOfMessagesVisible",
-                Period = TimeSpan.FromMinutes(1),
+                Period = TimeSpan.FromMinutes(5),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
                 {
@@ -545,7 +545,7 @@ namespace Watchman.Engine.Alarms
             {
                 Name = "AgeOfOldestMessage",
                 Metric = "ApproximateAgeOfOldestMessage",
-                Period = TimeSpan.FromMinutes(1),
+                Period = TimeSpan.FromMinutes(5),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
                             {
@@ -565,7 +565,7 @@ namespace Watchman.Engine.Alarms
             {
                 Name = "NumberOfVisibleMessages_Error",
                 Metric = "ApproximateNumberOfMessagesVisible",
-                Period = TimeSpan.FromMinutes(1),
+                Period = TimeSpan.FromMinutes(5),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
                 {
@@ -581,7 +581,7 @@ namespace Watchman.Engine.Alarms
             {
                 Name = "AgeOfOldestMessage_Error",
                 Metric = "ApproximateAgeOfOldestMessage",
-                Period = TimeSpan.FromMinutes(1),
+                Period = TimeSpan.FromMinutes(5),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
                             {
