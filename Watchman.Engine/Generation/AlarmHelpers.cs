@@ -14,7 +14,7 @@ namespace Watchman.Engine.Generation
         public static AlarmValues MergeValueOverrides(string key, Dictionary<string, AlarmValues> serviceThresholds,
             Dictionary<string, AlarmValues> resourceThresholds)
         {
-            return MergeValueOverrides(key, new[] { serviceThresholds, resourceThresholds });
+            return MergeValueOverrides(key, new[] { resourceThresholds, serviceThresholds });
         }
 
         private static AlarmValues MergeValueOverrides(string key, Dictionary<string, AlarmValues>[] thresholds)
