@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.CloudWatch.Model;
+using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.DynamoDb;
+using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine.Alarms;
 
@@ -69,28 +72,33 @@ namespace Watchman.Engine.Generation.Dynamo
             return result;
         }
 
-        private async Task<List<Alarm>> BuildTableAlarms(ResourceThresholds<ResourceConfig> resource,
+        private async Task<List<Alarm>> BuildTableAlarms(ResourceThresholds<ResourceConfig> resourceConfig,
             AwsServiceAlarms<ResourceConfig> service,
             AlertingGroupParameters groupParameters,
             AwsResource<TableDescription> entity)
         {
-            var mergedConfig = service.Options.OverrideWith(resource.Options);
+            var mergedConfig = service.Options.OverrideWith(resourceConfig.Options);
 
             var result = new List<Alarm>();
 
-            var mergedValuesByAlarmName = service.Values.OverrideWith(resource.Values);
+            var mergedValuesByAlarmName = service.Values.OverrideWith(resourceConfig.Values);
 
             foreach (var alarm in _defaultAlarms)
             {
                 var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
                 var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
+                var configuredThreshold = alarm.Threshold.CopyWith(value: values.Threshold);
 
-                var built = await AlarmHelpers.AlarmWithMergedValues(_attributeProvider, entity, alarm,
-                    mergedConfig, values);
+                var threshold = await ThresholdCalculator.ExpandThreshold(_attributeProvider,
+                    entity.Resource,
+                    mergedConfig,
+                    configuredThreshold);
+
+                var built = alarm.CopyWith(threshold, values);
 
                 var model = new Alarm
                 {
-                    AlarmName = $"{resource.Name}-{built.Name}-{groupParameters.AlarmNameSuffix}",
+                    AlarmName = $"{resourceConfig.Name}-{built.Name}-{groupParameters.AlarmNameSuffix}",
                     AlarmDescription = AlarmHelpers.GetAlarmDescription(groupParameters),
                     Resource = entity,
                     Dimensions = dimensions,
@@ -124,10 +132,14 @@ namespace Watchman.Engine.Generation.Dynamo
                 foreach (var alarm in Defaults.DynamoDbGsi)
                 {
                     var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
-
+                    var configuredThreshold = alarm.Threshold.CopyWith(value: values.Threshold);
                     var dimensions = _gsiProvider.GetDimensions(gsi, alarm.DimensionNames);
-                    var built = await AlarmHelpers.AlarmWithMergedValues(_gsiProvider, gsiResource, alarm, mergedConfig,
-                        values);
+                    var threshold = await ThresholdCalculator.ExpandThreshold(_gsiProvider,
+                        gsiResource.Resource,
+                        mergedConfig,
+                        configuredThreshold);
+
+                    var built = alarm.CopyWith(threshold, values);
 
                     var model = new Alarm
                     {

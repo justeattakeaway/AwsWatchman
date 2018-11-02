@@ -67,10 +67,14 @@ namespace Watchman.Engine.Generation
             foreach (var alarm in _defaultAlarms)
             {
                 var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
-
+                var configuredThreshold = alarm.Threshold.CopyWith(value: values.Threshold);
                 var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
-                var built = await AlarmHelpers.AlarmWithMergedValues(_attributeProvider, entity, alarm, mergedConfig,
-                    values);
+                var threshold = await ThresholdCalculator.ExpandThreshold(_attributeProvider,
+                    entity.Resource,
+                    mergedConfig,
+                    configuredThreshold);
+
+                var built = alarm.CopyWith(threshold, values);
 
                 var model = new Alarm
                 {

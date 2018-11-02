@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Amazon.Lambda.Model;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.Sqs;
+using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine.Alarms;
 
@@ -89,8 +90,14 @@ namespace Watchman.Engine.Generation.Sqs
                 var dimensions = _dimensionProvider.GetDimensions(entity.Resource, alarm.DimensionNames);
                 var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
 
-                var built = await AlarmHelpers.AlarmWithMergedValues(_attributeProvider, entity, alarm, mergedConfig,
-                    values);
+                var actualThreshold = alarm.Threshold.CopyWith(value: values.Threshold);
+
+                var threshold = await ThresholdCalculator.ExpandThreshold(_attributeProvider,
+                    entity.Resource,
+                    mergedConfig,
+                    actualThreshold);
+
+                var built = alarm.CopyWith(threshold, values);
 
                 var model = new Alarm
                 {

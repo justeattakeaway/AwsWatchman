@@ -60,13 +60,13 @@ namespace Watchman.Tests.Dynamo
                     }
                 }
             });
-            
+
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
 
             await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
-            
+
             // assert
 
             Assert.That(cloudformation.StacksDeployed, Is.Zero);
@@ -109,7 +109,7 @@ namespace Watchman.Tests.Dynamo
             });
 
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
-          
+
             // act
 
             await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
@@ -128,7 +128,7 @@ namespace Watchman.Tests.Dynamo
             var alarms = alarmsByTable["first-dynamo-table"];
 
             Assert.That(alarms.Exists(
-                alarm => 
+                alarm =>
                     alarm.Properties["MetricName"].Value<string>() == "ConsumedReadCapacityUnits"
                     && alarm.Properties["AlarmName"].Value<string>().Contains("ConsumedReadCapacityUnitsHigh")
                     && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
@@ -263,7 +263,7 @@ namespace Watchman.Tests.Dynamo
                 Is.EqualTo("GreaterThanOrEqualToThreshold"));
             Assert.That(consumedRead.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(consumedRead.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
-            
+
             var consumedWrite = alarms.SingleOrDefault(
                 a => a.Properties["AlarmName"].ToString()
                     .Contains("first-table-first-gsi-GsiConsumedWriteCapacityUnitsHigh"));
@@ -289,7 +289,7 @@ namespace Watchman.Tests.Dynamo
                 Is.EqualTo("GreaterThanOrEqualToThreshold"));
             Assert.That(readThrottle.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(readThrottle.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
-            
+
             var writeThrottle = alarms.SingleOrDefault(
                 a => a.Properties["AlarmName"].ToString()
                     .Contains("first-table-first-gsi-GsiWriteThrottleEventsHigh"));
@@ -301,6 +301,92 @@ namespace Watchman.Tests.Dynamo
                 Is.EqualTo("GreaterThanOrEqualToThreshold"));
             Assert.That(writeThrottle.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(writeThrottle.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
+        }
+
+
+        [Test]
+        public async Task CanOverrideThresholdPercentage()
+        {
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
+            {
+                DynamoDb = new AwsServiceAlarms<ResourceConfig>()
+                {
+                    Resources =
+                        new List<ResourceThresholds<ResourceConfig>>()
+                        {
+                            new ResourceThresholds<ResourceConfig>()
+                            {
+                                Name = "first-table",
+                                 Values = new Dictionary<string, AlarmValues>()
+                                 {
+                                    {"GsiConsumedReadCapacityUnitsHigh", 20},
+                                    {"ConsumedReadCapacityUnitsHigh", 10}
+                                 }
+                            }
+                        }
+                }
+            });
+
+            var cloudFormation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonDynamoDB>().HasDynamoTables(new[]
+            {
+                new TableDescription()
+                {
+                    TableName = "first-table",
+                    ProvisionedThroughput = new ProvisionedThroughputDescription()
+                    {
+                        ReadCapacityUnits = 100,
+                        WriteCapacityUnits = 200
+                    },
+                    GlobalSecondaryIndexes = new List<GlobalSecondaryIndexDescription>()
+                    {
+                        new GlobalSecondaryIndexDescription()
+                        {
+                             IndexName = "first-gsi",
+                             ProvisionedThroughput = new ProvisionedThroughputDescription()
+                             {
+                                 ReadCapacityUnits = 400,
+                                 WriteCapacityUnits = 500
+                             }
+                        }
+                    }
+                }
+            });
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var alarmsByGsi = cloudFormation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("GlobalSecondaryIndexName");
+            var gsiAlarms = alarmsByGsi["first-gsi"];
+
+            var consumedReadGsi = gsiAlarms.SingleOrDefault(
+                a => a.Properties["AlarmName"].ToString()
+                    .Contains("first-table-first-gsi-GsiConsumedReadCapacityUnitsHigh"));
+            Assert.That(consumedReadGsi.Properties["Threshold"].Value<int>(),
+                Is.EqualTo(400 * OneMinuteInSeconds * 0.2m));
+
+            var alarmsByTable = cloudFormation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("TableName");
+            var tableAlarms = alarmsByTable["first-table"];
+
+            var consumedReadForTable = tableAlarms.SingleOrDefault(
+                a => a.Properties["AlarmName"].ToString()
+                    .Contains("first-table-ConsumedReadCapacityUnitsHigh"));
+            Assert.That(consumedReadForTable.Properties["Threshold"].Value<int>(),
+                Is.EqualTo(100 * OneMinuteInSeconds * 0.1m));
         }
     }
 }
