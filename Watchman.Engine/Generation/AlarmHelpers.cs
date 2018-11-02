@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Watchman.AwsResources;
@@ -11,35 +9,6 @@ namespace Watchman.Engine.Generation
 {
     static class AlarmHelpers
     {
-        public static AlarmValues MergeValueOverrides(string key, Dictionary<string, AlarmValues> serviceThresholds,
-            Dictionary<string, AlarmValues> resourceThresholds)
-        {
-            var thresholds = new[] { resourceThresholds, serviceThresholds };
-      
-            var matchesForKey = thresholds
-                .Where(t => t != null && t.ContainsKey(key))
-                .Select(t => t[key])
-                .ToList();
-
-            var matchedEvalPeriods = matchesForKey
-                .Select(t => t.EvaluationPeriods)
-                .FirstOrDefault(t => t.HasValue);
-
-            var matchedThresholdValue = matchesForKey
-                .Select(t => t.Threshold)
-                .FirstOrDefault(t => t.HasValue);
-
-            var matchedExtendedStatistic = matchesForKey
-                .Select(t => t.ExtendedStatistic)
-                .FirstOrDefault(t => !string.IsNullOrEmpty(t));
-
-            var matchedEnabled = matchesForKey
-                .Select(t => t.Enabled)
-                .FirstOrDefault(t => t.HasValue);
-
-            return new AlarmValues(matchedThresholdValue, matchedEvalPeriods, matchedExtendedStatistic, matchedEnabled);
-        }
-
         public static TAlarmConfig MergeServiceAndResourceConfiguration<TAlarmConfig>(TAlarmConfig serviceConfig,
             TAlarmConfig resourceConfig) where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
         {
@@ -72,7 +41,7 @@ namespace Watchman.Engine.Generation
             AwsResource<T> entity,
             AlarmDefinition alarm,
             TAlarmConfig mergedConfig,
-            AlarmValues mergedValues)   where T : class
+            AlarmValues mergedValues) where T : class
             where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
         {
             var copy = alarm.Copy();
@@ -96,7 +65,6 @@ namespace Watchman.Engine.Generation
         }
 
         private static async Task<Threshold> ExpandThreshold<T, TAlarmConfig>(
-
             IResourceAttributesProvider<T, TAlarmConfig> attributeProvider,
             T resource, TAlarmConfig config, Threshold threshold)
             where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()

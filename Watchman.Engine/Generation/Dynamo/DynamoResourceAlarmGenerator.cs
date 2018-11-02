@@ -78,12 +78,15 @@ namespace Watchman.Engine.Generation.Dynamo
 
             var result = new List<Alarm>();
 
+            var mergedValuesByAlarmName = service.Values.OverrideWith(resource.Values);
+
             foreach (var alarm in _defaultAlarms)
             {
-                var mergedValues = AlarmHelpers.MergeValueOverrides(alarm.Name, service.Values, resource.Values);
                 var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
+                var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
+
                 var built = await AlarmHelpers.AlarmWithMergedValues(_attributeProvider, entity, alarm,
-                    mergedConfig, mergedValues);
+                    mergedConfig, values);
 
                 var model = new Alarm
                 {
@@ -112,15 +115,19 @@ namespace Watchman.Engine.Generation.Dynamo
 
             var gsiSet = table.GlobalSecondaryIndexes;
 
+            var mergedValuesByAlarmName = service.Values.OverrideWith(resource.Values);
+
             foreach (var gsi in gsiSet)
             {
                 var gsiResource = new AwsResource<GlobalSecondaryIndexDescription>(gsi.IndexName, gsi);
 
                 foreach (var alarm in Defaults.DynamoDbGsi)
                 {
-                    var mergedValues = AlarmHelpers.MergeValueOverrides(alarm.Name, service.Values, resource.Values);
+                    var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
+
                     var dimensions = _gsiProvider.GetDimensions(gsi, alarm.DimensionNames);
-                    var built = await AlarmHelpers.AlarmWithMergedValues(_gsiProvider, gsiResource, alarm, mergedConfig, mergedValues);
+                    var built = await AlarmHelpers.AlarmWithMergedValues(_gsiProvider, gsiResource, alarm, mergedConfig,
+                        values);
 
                     var model = new Alarm
                     {

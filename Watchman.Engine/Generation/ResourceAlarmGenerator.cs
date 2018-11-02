@@ -60,14 +60,17 @@ namespace Watchman.Engine.Generation
             }
 
             var mergedConfig = AlarmHelpers.MergeServiceAndResourceConfiguration(service.Options, resource.Options);
+            var mergedValuesByAlarmName = service.Values.OverrideWith(resource.Values);
 
             var result = new List<Alarm>();
 
             foreach (var alarm in _defaultAlarms)
             {
-                var mergedValues = AlarmHelpers.MergeValueOverrides(alarm.Name, service.Values, resource.Values);
+                var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
+
                 var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
-                var built = await AlarmHelpers.AlarmWithMergedValues(_attributeProvider, entity, alarm, mergedConfig, mergedValues);
+                var built = await AlarmHelpers.AlarmWithMergedValues(_attributeProvider, entity, alarm, mergedConfig,
+                    values);
 
                 var model = new Alarm
                 {
