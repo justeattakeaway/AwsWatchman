@@ -7,9 +7,9 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine.Generation
 {
-    static class AlarmHelpers
+    static class AlertingGroupParameterExtensions
     {
-        public static string GetAlarmDescription(AlertingGroupParameters groupParameters)
+        public static string DefaultAlarmDescription(this AlertingGroupParameters groupParameters)
         {
             var suffix = string.IsNullOrWhiteSpace(groupParameters.Description)
                 ? null
