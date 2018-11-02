@@ -59,7 +59,7 @@ namespace Watchman.Engine.Generation
                 throw new Exception($"Entity {resource.Name} not found");
             }
 
-            var mergedConfig = AlarmHelpers.MergeServiceAndResourceConfiguration(service.Options, resource.Options);
+            var mergedConfig = service.Options.OverrideWith(resource.Options);
             var mergedValuesByAlarmName = service.Values.OverrideWith(resource.Values);
 
             var result = new List<Alarm>();

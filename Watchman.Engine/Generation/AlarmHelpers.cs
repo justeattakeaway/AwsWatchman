@@ -9,22 +9,6 @@ namespace Watchman.Engine.Generation
 {
     static class AlarmHelpers
     {
-        public static TAlarmConfig MergeServiceAndResourceConfiguration<TAlarmConfig>(TAlarmConfig serviceConfig,
-            TAlarmConfig resourceConfig) where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
-        {
-            if (resourceConfig == null)
-            {
-                return serviceConfig ?? new TAlarmConfig();
-            }
-
-            if (serviceConfig == null)
-            {
-                return resourceConfig;
-            }
-
-            return resourceConfig.Merge(serviceConfig);
-        }
-
         public static string GetAlarmDescription(AlertingGroupParameters groupParameters)
         {
             var suffix = string.IsNullOrWhiteSpace(groupParameters.Description)

@@ -74,7 +74,7 @@ namespace Watchman.Engine.Generation.Dynamo
             AlertingGroupParameters groupParameters,
             AwsResource<TableDescription> entity)
         {
-            var mergedConfig = AlarmHelpers.MergeServiceAndResourceConfiguration(service.Options, resource.Options);
+            var mergedConfig = service.Options.OverrideWith(resource.Options);
 
             var result = new List<Alarm>();
 
@@ -109,7 +109,7 @@ namespace Watchman.Engine.Generation.Dynamo
             TableDescription table)
         {
             // called twice
-            var mergedConfig = AlarmHelpers.MergeServiceAndResourceConfiguration(service.Options, resource.Options);
+            var mergedConfig = service.Options.OverrideWith(resource.Options);
 
             var result = new List<Alarm>();
 

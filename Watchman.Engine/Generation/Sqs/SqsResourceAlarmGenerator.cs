@@ -77,7 +77,7 @@ namespace Watchman.Engine.Generation.Sqs
             AlertingGroupParameters groupParameters,
             AwsResource<QueueDataV2> entity)
         {
-            var mergedConfig = AlarmHelpers.MergeServiceAndResourceConfiguration(service.Options, resource.Options);
+            var mergedConfig = service.Options.OverrideWith(resource.Options);
             bool includeErrorQueues = mergedConfig.IncludeErrorQueues ?? true;
 
             var result = new List<Alarm>();
