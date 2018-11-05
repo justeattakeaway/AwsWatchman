@@ -39,7 +39,7 @@ namespace Watchman.Tests.AutoScaling
         {
 
             client.Setup(
-                    c => c.GetMetricStatisticsAsync(It.Is<GetMetricStatisticsRequest>(req =>  
+                    c => c.GetMetricStatisticsAsync(It.Is<GetMetricStatisticsRequest>(req =>
                             req.MetricName == "GroupDesiredCapacity"
                             && req.Namespace == "AWS/AutoScaling"
                             && req.Period == lagSeconds
@@ -129,7 +129,7 @@ namespace Watchman.Tests.AutoScaling
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
             // act
-            
+
             await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
 
             // assert
@@ -235,11 +235,11 @@ namespace Watchman.Tests.AutoScaling
                     DesiredCapacity = 40
                 }
             });
-            
+
             var now = DateTime.UtcNow;
-            
+
             ioc.GetMock<ICurrentTimeProvider>().Setup(a => a.UtcNow).Returns(now);
-            
+
             ioc.GetMock<IAmazonCloudWatch>().Setup(x =>
                     x.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new GetMetricStatisticsResponse()
@@ -307,7 +307,7 @@ namespace Watchman.Tests.AutoScaling
                     DesiredCapacity = 40
                 }
             });
-            
+
             ioc.GetMock<IAmazonCloudWatch>()
                 .Setup(c => c.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(),
                     It.IsAny<CancellationToken>()))
@@ -332,6 +332,60 @@ namespace Watchman.Tests.AutoScaling
                     && r.EndTime.Kind == DateTimeKind.Utc
                     ), It.IsAny<CancellationToken>())
                 );
+        }
+
+        [Test]
+        public async Task CanOverrideThreshold()
+        {
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
+                new AlertingGroupServices()
+                {
+                    AutoScaling = new AwsServiceAlarms<AutoScalingResourceConfig>()
+                    {
+                        Resources = new List<ResourceThresholds<AutoScalingResourceConfig>>()
+                        {
+                            new ResourceThresholds<AutoScalingResourceConfig>()
+                            {
+                                Name = "group-1",
+                                Values = new Dictionary<string, AlarmValues>()
+                                {
+                                    {"GroupInServiceInstancesLow", 10}
+                                }
+                            }
+                        }
+                    }
+                });
+
+            var cloudFormation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(new[]
+            {
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = "group-1",
+                    DesiredCapacity = 40
+                }
+            });
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var alarms = cloudFormation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("AutoScalingGroupName");
+
+            var alarm = alarms["group-1"].Single(a => a.Properties["AlarmName"].ToString().Contains("InService"));
+
+            Assert.That((decimal)alarm.Properties["Threshold"], Is.EqualTo(40 * 0.1));
         }
     }
 }
