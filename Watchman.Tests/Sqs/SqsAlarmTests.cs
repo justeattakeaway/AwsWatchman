@@ -22,15 +22,15 @@ namespace Watchman.Tests.Sqs
                 new AlertingGroupServices()
                 {
                     Sqs = new AwsServiceAlarms<SqsResourceConfig>()
-                               {
-                                   Resources = new List<ResourceThresholds<SqsResourceConfig>>()
-                                               {
-                                                   new ResourceThresholds<SqsResourceConfig>()
-                                                   {
-                                                       Name = "non-existent-queue"
-                                                   }
-                                               }
-                               }
+                    {
+                        Resources = new List<ResourceThresholds<SqsResourceConfig>>()
+                        {
+                            new ResourceThresholds<SqsResourceConfig>()
+                            {
+                                Name = "non-existent-queue"
+                            }
+                        }
+                    }
                 });
 
             var cloudformation = new FakeCloudFormation();
@@ -39,9 +39,9 @@ namespace Watchman.Tests.Sqs
                 .WithConfig(config);
 
             ioc.GetMock<IAmazonCloudWatch>().HasSqsQueues(new[]
-                                                   {
-                                                       "http://sqs.com/first-queue"
-                                                   });
+            {
+                "http://sqs.com/first-queue"
+            });
 
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
 
@@ -89,7 +89,7 @@ namespace Watchman.Tests.Sqs
             await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
 
             // assert
-            
+
             var alarmsByQueue = cloudformation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("QueueName");
@@ -98,17 +98,17 @@ namespace Watchman.Tests.Sqs
             var alarmsForQueue = alarmsByQueue["first-sqs-queue"];
 
             Assert.That(alarmsForQueue.Exists(
-                alarm =>
-                    alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages")
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                    && alarm.Properties["Threshold"].Value<int>() == 100
-                    && alarm.Properties["Period"].Value<int>() == 60
-                    && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                    && alarm.Properties["Statistic"].Value<string>() == "Sum"
-                    && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                    )
-                );
+                    alarm =>
+                        alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
+                        && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages")
+                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
+                        && alarm.Properties["Threshold"].Value<int>() == 100
+                        && alarm.Properties["Period"].Value<int>() == 60 * 5
+                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
+                        && alarm.Properties["Statistic"].Value<string>() == "Sum"
+                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
+                )
+            );
 
             Assert.That(alarmsForQueue.Exists(
                     alarm =>
@@ -116,7 +116,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage")
                         && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                         && alarm.Properties["Threshold"].Value<int>() == 600
-                        && alarm.Properties["Period"].Value<int>() == 60
+                        && alarm.Properties["Period"].Value<int>() == 60 * 5
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
@@ -131,7 +131,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages_Error")
                         && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                         && alarm.Properties["Threshold"].Value<int>() == 10
-                        && alarm.Properties["Period"].Value<int>() == 60
+                        && alarm.Properties["Period"].Value<int>() == 60 * 5
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Sum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
@@ -144,7 +144,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage_Error")
                         && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                         && alarm.Properties["Threshold"].Value<int>() == 600
-                        && alarm.Properties["Period"].Value<int>() == 60
+                        && alarm.Properties["Period"].Value<int>() == 60 * 5
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
@@ -167,9 +167,9 @@ namespace Watchman.Tests.Sqs
                         {
                             Pattern = "first-sqs-queue",
                             Options = new SqsResourceConfig()
-                                      {
-                                          IncludeErrorQueues = false
-                                      },
+                            {
+                                IncludeErrorQueues = false
+                            },
                         }
                     }
                 }
@@ -201,30 +201,9 @@ namespace Watchman.Tests.Sqs
             Assert.That(alarmsByQueue.ContainsKey("first-sqs-queue"), Is.True);
             var alarmsForQueue = alarmsByQueue["first-sqs-queue"];
 
-            Assert.That(alarmsForQueue.Exists(
-                alarm =>
-                    alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages")
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                    && alarm.Properties["Threshold"].Value<int>() == 100
-                    && alarm.Properties["Period"].Value<int>() == 60
-                    && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                    && alarm.Properties["Statistic"].Value<string>() == "Sum"
-                    && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                    )
-                );
-
-            Assert.That(alarmsForQueue.Exists(
-                    alarm =>
-                        alarm.Properties["MetricName"].Value<string>() == "ApproximateAgeOfOldestMessage"
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage")
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                        && alarm.Properties["Threshold"].Value<int>() == 600
-                        && alarm.Properties["Period"].Value<int>() == 60
-                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
-                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                )
+            Assert.That(
+                alarmsForQueue.Exists(
+                    alarm => alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible")
             );
 
             Assert.That(!alarmsByQueue.ContainsKey("first-sqs-queue_error"));
@@ -245,9 +224,9 @@ namespace Watchman.Tests.Sqs
                         {
                             Pattern = "first-sqs-queue",
                             Values = new Dictionary<string, AlarmValues>()
-                                     {
-                                         { "NumberOfVisibleMessages_Error", new AlarmValues(value: 1) }
-                                     }
+                            {
+                                { "NumberOfVisibleMessages_Error", new AlarmValues(value: 1) }
+                            }
                         }
                     }
                 }
@@ -280,28 +259,16 @@ namespace Watchman.Tests.Sqs
             var alarmsForQueue = alarmsByQueue["first-sqs-queue"];
 
             Assert.That(alarmsForQueue.Exists(
-                alarm =>
-                    alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages")
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                    && alarm.Properties["Threshold"].Value<int>() == 100
-                    && alarm.Properties["Period"].Value<int>() == 60
-                    && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                    && alarm.Properties["Statistic"].Value<string>() == "Sum"
-                    && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                    )
-                );
+                    alarm =>
+                        alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
+                        && alarm.Properties["Threshold"].Value<int>() == 100
+                )
+            );
 
             Assert.That(alarmsForQueue.Exists(
                     alarm =>
                         alarm.Properties["MetricName"].Value<string>() == "ApproximateAgeOfOldestMessage"
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage")
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                         && alarm.Properties["Threshold"].Value<int>() == 600
-                        && alarm.Properties["Period"].Value<int>() == 60
-                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
-                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );
 
@@ -310,26 +277,14 @@ namespace Watchman.Tests.Sqs
             Assert.That(alarmsForErrorQueue.Exists(
                     alarm =>
                         alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages_Error")
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                         && alarm.Properties["Threshold"].Value<int>() == 1
-                        && alarm.Properties["Period"].Value<int>() == 60
-                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Sum"
-                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );
 
             Assert.That(alarmsForErrorQueue.Exists(
                     alarm =>
                         alarm.Properties["MetricName"].Value<string>() == "ApproximateAgeOfOldestMessage"
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage_Error")
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                         && alarm.Properties["Threshold"].Value<int>() == 600
-                        && alarm.Properties["Period"].Value<int>() == 60
-                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
-                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );
         }
@@ -379,28 +334,14 @@ namespace Watchman.Tests.Sqs
             var alarmsForQueue = alarmsByQueue["first-sqs-queue"];
 
             Assert.That(alarmsForQueue.Exists(
-                alarm =>
-                    alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages")
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                    && alarm.Properties["Threshold"].Value<int>() == 100
-                    && alarm.Properties["Period"].Value<int>() == 60
-                    && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                    && alarm.Properties["Statistic"].Value<string>() == "Sum"
-                    && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                    )
-                );
+                    alarm =>
+                        alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
+                )
+            );
 
             Assert.That(alarmsForQueue.Exists(
                     alarm =>
                         alarm.Properties["MetricName"].Value<string>() == "ApproximateAgeOfOldestMessage"
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage")
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                        && alarm.Properties["Threshold"].Value<int>() == 600
-                        && alarm.Properties["Period"].Value<int>() == 60
-                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
-                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );
 
@@ -412,7 +353,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages_Error")
                         && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                         && alarm.Properties["Threshold"].Value<int>() == 10
-                        && alarm.Properties["Period"].Value<int>() == 60
+                        && alarm.Properties["Period"].Value<int>() == 60 * 5
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Sum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
@@ -425,7 +366,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage_Error")
                         && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
                         && alarm.Properties["Threshold"].Value<int>() == 600
-                        && alarm.Properties["Period"].Value<int>() == 60
+                        && alarm.Properties["Period"].Value<int>() == 60 * 5
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
@@ -478,28 +419,14 @@ namespace Watchman.Tests.Sqs
             var alarmsForQueue = alarmsByQueue["first-sqs-queue"];
 
             Assert.That(alarmsForQueue.Exists(
-                alarm =>
-                    alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages")
-                    && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                    && alarm.Properties["Threshold"].Value<int>() == 100
-                    && alarm.Properties["Period"].Value<int>() == 60
-                    && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                    && alarm.Properties["Statistic"].Value<string>() == "Sum"
-                    && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                    )
-                );
+                    alarm =>
+                        alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
+                )
+            );
 
             Assert.That(alarmsForQueue.Exists(
                     alarm =>
                         alarm.Properties["MetricName"].Value<string>() == "ApproximateAgeOfOldestMessage"
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage")
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                        && alarm.Properties["Threshold"].Value<int>() == 600
-                        && alarm.Properties["Period"].Value<int>() == 60
-                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
-                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );
 
@@ -508,26 +435,12 @@ namespace Watchman.Tests.Sqs
             Assert.That(alarmsForErrorQueue.Exists(
                     alarm =>
                         alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages_Error")
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                        && alarm.Properties["Threshold"].Value<int>() == 10
-                        && alarm.Properties["Period"].Value<int>() == 60
-                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Sum"
-                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );
 
             Assert.That(alarmsForErrorQueue.Exists(
                     alarm =>
                         alarm.Properties["MetricName"].Value<string>() == "ApproximateAgeOfOldestMessage"
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage_Error")
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                        && alarm.Properties["Threshold"].Value<int>() == 600
-                        && alarm.Properties["Period"].Value<int>() == 60
-                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
-                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );
         }
