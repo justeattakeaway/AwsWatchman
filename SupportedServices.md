@@ -173,6 +173,10 @@ Sqs will mark any queue as an error queue if it ends with "_error"
 - `NumberOfMessagesVisible_Error`: 10
 - `AgeOfOldestMessage_Error`: 600 (seconds)
 
+#### Options
+
+- `IncludeErrorQueues`: Enable special handling of _error queues matching the primary queue name (default `true`)
+
 ### VpcSubnets
 
 - `IpAddressesRemainingLow` 30 (% of subnet allocation)
