@@ -10,7 +10,7 @@ using Watchman.Configuration.Generic;
 namespace Watchman.AwsResources.Services.DynamoDb
 {
     public class DynamoDbDataProvider : IAlarmDimensionProvider<TableDescription>,
-        IResourceAttributesProvider<TableDescription, ResourceConfig>
+        IResourceAttributesProvider<TableDescription, DynamoResourceConfig>
     {
         public List<Dimension> GetDimensions(TableDescription resource, IList<string> dimensionNames)
         {
@@ -27,7 +27,7 @@ namespace Watchman.AwsResources.Services.DynamoDb
                 .Join(allowed, name => name, dim => dim.Name, (_, dim) => dim)
                 .ToList();
 
-            
+
 
             if (requested.Count != dimensionNames.Count)
             {
@@ -43,10 +43,10 @@ namespace Watchman.AwsResources.Services.DynamoDb
 
         private const int OneMinuteInSeconds = 60;
 
-        public Task<decimal> GetValue(TableDescription resource, ResourceConfig config, string property)
+        public Task<decimal> GetValue(TableDescription resource, DynamoResourceConfig config, string property)
         {
             // in future the multiplication by a minute shouldn't be hardcoded
-            // it's needed because the read capacity unit is in seconds, but our alarm is currently a sum over 1 minute. 
+            // it's needed because the read capacity unit is in seconds, but our alarm is currently a sum over 1 minute.
 
             switch (property)
             {

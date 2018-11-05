@@ -52,7 +52,7 @@ namespace Watchman.Engine.Generation
             return Map(input, id, a => a?.Services?.StepFunction);
         }
 
-        public static WatchmanServiceConfiguration<ResourceConfig> MapDynamoDb(WatchmanConfiguration input)
+        public static WatchmanServiceConfiguration<DynamoResourceConfig> MapDynamoDb(WatchmanConfiguration input)
         {
             const string id = "DynamoDb";
             return Map(input, id, a => a?.Services?.DynamoDb);

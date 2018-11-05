@@ -62,8 +62,8 @@ namespace Watchman.IoC
                 WatchmanServiceConfigurationMapper.MapStepFunction, Defaults.StepFunction
             );
 
-            AddService<TableDescription, TableDescriptionSource, DynamoDbDataProvider, ResourceConfig, DynamoResourceAlarmGenerator>(
-                WatchmanServiceConfigurationMapper.MapDynamoDb, Defaults.DynamoDb);
+            AddService<TableDescription, TableDescriptionSource, DynamoDbDataProvider, DynamoResourceConfig, DynamoResourceAlarmGenerator>(
+                WatchmanServiceConfigurationMapper.MapDynamoDb, null);
 
 
             AddService<QueueDataV2, QueueDataV2Source, QueueDataProvider, SqsResourceConfig, SqsResourceAlarmGenerator>(
@@ -109,7 +109,10 @@ namespace Watchman.IoC
 
             For<IResourceAlarmGenerator<TServiceModel, TResourceAlarmConfig>>().Use<TAlarmBuilder>();
 
-            For<AlarmDefaults<TServiceModel>>().Use(_ => AlarmDefaults<TServiceModel>.FromDefaults(defaults));
+            if (defaults != null)
+            {
+                For<AlarmDefaults<TServiceModel>>().Use(_ => AlarmDefaults<TServiceModel>.FromDefaults(defaults));
+            }
         }
     }
 }

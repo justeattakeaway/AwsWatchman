@@ -9,7 +9,7 @@ using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.DynamoDb
 {
-    public class DynamoDbGsiDataProvider : IResourceAttributesProvider<GlobalSecondaryIndexDescription, ResourceConfig>
+    public class DynamoDbGsiDataProvider : IResourceAttributesProvider<GlobalSecondaryIndexDescription, DynamoResourceConfig>
     {
         public List<Dimension> GetDimensions(GlobalSecondaryIndexDescription resource,
             TableDescription table,
@@ -47,7 +47,7 @@ namespace Watchman.AwsResources.Services.DynamoDb
 
         private const int OneMinuteInSeconds = 60;
 
-        public Task<decimal> GetValue(GlobalSecondaryIndexDescription resource, ResourceConfig config, string property)
+        public Task<decimal> GetValue(GlobalSecondaryIndexDescription resource, DynamoResourceConfig config, string property)
         {
             // in future the multiplication by a minute shouldn't be hardcoded
             // it's needed because the read capacity unit is in seconds, but our alarm is currently a sum over 1 minute.

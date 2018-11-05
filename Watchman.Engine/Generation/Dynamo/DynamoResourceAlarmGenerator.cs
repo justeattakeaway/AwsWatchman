@@ -13,19 +13,20 @@ using Watchman.Engine.Alarms;
 
 namespace Watchman.Engine.Generation.Dynamo
 {
-    public class DynamoResourceAlarmGenerator : IResourceAlarmGenerator<TableDescription, ResourceConfig>
+    public class DynamoResourceAlarmGenerator : IResourceAlarmGenerator<TableDescription, DynamoResourceConfig>
     {
         private readonly IResourceSource<TableDescription> _tableSource;
         private readonly IAlarmDimensionProvider<TableDescription> _dimensions;
-        private readonly IResourceAttributesProvider<TableDescription, ResourceConfig> _attributeProvider;
+        private readonly IResourceAttributesProvider<TableDescription, DynamoResourceConfig> _attributeProvider;
         private readonly DynamoDbGsiDataProvider _gsiProvider = new DynamoDbGsiDataProvider();
-        private readonly AlarmDefaults<TableDescription> _defaultAlarms;
+        private readonly DynamoDbDefaults _defaultAlarms;
 
 
         public DynamoResourceAlarmGenerator(
             IResourceSource<TableDescription> tableSource,
             IAlarmDimensionProvider<TableDescription> dimensionProvider,
-            IResourceAttributesProvider<TableDescription, ResourceConfig> attributeProvider, AlarmDefaults<TableDescription> defaultAlarms)
+            IResourceAttributesProvider<TableDescription, DynamoResourceConfig> attributeProvider,
+            DynamoDbDefaults defaultAlarms)
         {
             _tableSource = tableSource;
             _dimensions = dimensionProvider;
@@ -34,7 +35,7 @@ namespace Watchman.Engine.Generation.Dynamo
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
-            AwsServiceAlarms<ResourceConfig> service,
+            AwsServiceAlarms<DynamoResourceConfig> service,
             AlertingGroupParameters groupParameters)
         {
             if (service?.Resources == null || service.Resources.Count == 0)
@@ -54,8 +55,8 @@ namespace Watchman.Engine.Generation.Dynamo
         }
 
         private async Task<IList<Alarm>> CreateAlarmsForResource(
-            ResourceThresholds<ResourceConfig> resource,
-            AwsServiceAlarms<ResourceConfig> service,
+            ResourceThresholds<DynamoResourceConfig> resource,
+            AwsServiceAlarms<DynamoResourceConfig> service,
             AlertingGroupParameters groupParameters)
         {
             var entity = await _tableSource.GetResourceAsync(resource.Name);
@@ -72,8 +73,8 @@ namespace Watchman.Engine.Generation.Dynamo
             return result;
         }
 
-        private async Task<List<Alarm>> BuildTableAlarms(ResourceThresholds<ResourceConfig> resourceConfig,
-            AwsServiceAlarms<ResourceConfig> service,
+        private async Task<List<Alarm>> BuildTableAlarms(ResourceThresholds<DynamoResourceConfig> resourceConfig,
+            AwsServiceAlarms<DynamoResourceConfig> service,
             AlertingGroupParameters groupParameters,
             AwsResource<TableDescription> entity)
         {
@@ -83,7 +84,13 @@ namespace Watchman.Engine.Generation.Dynamo
 
             var mergedValuesByAlarmName = service.Values.OverrideWith(resourceConfig.Values);
 
-            foreach (var alarm in _defaultAlarms)
+            var defaults = _defaultAlarms.DynamoDbRead;
+            if (mergedConfig.MonitorWrites ?? DynamoResourceConfig.MonitorWritesDefault)
+            {
+                defaults = defaults.Concat(_defaultAlarms.DynamoDbWrite).ToArray();
+            }
+
+            foreach (var alarm in defaults)
             {
                 var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
                 var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
@@ -111,8 +118,8 @@ namespace Watchman.Engine.Generation.Dynamo
             return result;
         }
 
-        private async Task<IList<Alarm>> BuildIndexAlarms(ResourceThresholds<ResourceConfig> resourceConfig,
-            AwsServiceAlarms<ResourceConfig> service,
+        private async Task<IList<Alarm>> BuildIndexAlarms(ResourceThresholds<DynamoResourceConfig> resourceConfig,
+            AwsServiceAlarms<DynamoResourceConfig> service,
             AlertingGroupParameters groupParameters,
             AwsResource<TableDescription> parentTableEntity)
         {
@@ -125,11 +132,17 @@ namespace Watchman.Engine.Generation.Dynamo
 
             var mergedValuesByAlarmName = service.Values.OverrideWith(resourceConfig.Values);
 
+            var defaults = _defaultAlarms.DynamoDbGsiRead;
+            if (mergedConfig.MonitorWrites ?? DynamoResourceConfig.MonitorWritesDefault)
+            {
+                defaults = defaults.Concat(_defaultAlarms.DynamoDbGsiWrite).ToArray();
+            }
+
             foreach (var gsi in gsiSet)
             {
                 var gsiResource = new AwsResource<GlobalSecondaryIndexDescription>(gsi.IndexName, gsi);
 
-                foreach (var alarm in Defaults.DynamoDbGsi)
+                foreach (var alarm in defaults)
                 {
                     var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
                     var configuredThreshold = alarm.Threshold.CopyWith(value: values.Threshold);

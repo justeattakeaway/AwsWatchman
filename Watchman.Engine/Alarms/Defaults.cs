@@ -5,6 +5,159 @@ using Watchman.Configuration;
 
 namespace Watchman.Engine.Alarms
 {
+    public class DynamoDbDefaults
+    {
+        public IList<AlarmDefinition> DynamoDbGsiRead = new List<AlarmDefinition>()
+        {
+            new AlarmDefinition
+            {
+                Name = "GsiConsumedReadCapacityUnitsHigh",
+                Metric = "ConsumedReadCapacityUnits",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.PercentageOf,
+                    Value = AwsConstants.DefaultCapacityThreshold * 100,
+                    SourceAttribute = "ProvisionedReadThroughput"
+                },
+                DimensionNames = new[] { "GlobalSecondaryIndexName", "TableName" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            },
+            new AlarmDefinition
+            {
+                Name = "GsiReadThrottleEventsHigh",
+                Metric = "ReadThrottleEvents",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.ThrottlingThreshold
+                },
+                DimensionNames = new[] { "GlobalSecondaryIndexName", "TableName" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            }
+        };
+
+        public IList<AlarmDefinition> DynamoDbGsiWrite = new List<AlarmDefinition>()
+        {
+            new AlarmDefinition
+            {
+                Name = "GsiConsumedWriteCapacityUnitsHigh",
+                Metric = "ConsumedWriteCapacityUnits",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.PercentageOf,
+                    Value = AwsConstants.DefaultCapacityThreshold * 100,
+                    SourceAttribute = "ProvisionedWriteThroughput"
+                },
+                DimensionNames = new[] { "GlobalSecondaryIndexName", "TableName" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            },
+            new AlarmDefinition
+            {
+                Name = "GsiWriteThrottleEventsHigh",
+                Metric = "WriteThrottleEvents",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.ThrottlingThreshold
+                },
+                DimensionNames = new[] { "GlobalSecondaryIndexName", "TableName" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            }
+        };
+
+
+        public IList<AlarmDefinition> DynamoDbRead = new List<AlarmDefinition>
+        {
+            new AlarmDefinition
+            {
+                Name = "ConsumedReadCapacityUnitsHigh",
+                Metric = "ConsumedReadCapacityUnits",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.PercentageOf,
+                    Value = AwsConstants.DefaultCapacityThreshold * 100,
+                    SourceAttribute = "ProvisionedReadThroughput"
+                },
+                DimensionNames = new[] { "TableName" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            },
+            new AlarmDefinition
+            {
+                Name = "ReadThrottleEventsHigh",
+                Metric = "ReadThrottleEvents",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.ThrottlingThreshold
+                },
+                DimensionNames = new[] { "TableName" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            }
+        };
+
+
+        public IList<AlarmDefinition> DynamoDbWrite = new List<AlarmDefinition>
+        {
+            new AlarmDefinition
+            {
+                Name = "ConsumedWriteCapacityUnitsHigh",
+                Metric = "ConsumedWriteCapacityUnits",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.PercentageOf,
+                    Value = AwsConstants.DefaultCapacityThreshold * 100,
+                    SourceAttribute = "ProvisionedWriteThroughput"
+                },
+                DimensionNames = new[] { "TableName" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            },
+            new AlarmDefinition
+            {
+                Name = "WriteThrottleEventsHigh",
+                Metric = "WriteThrottleEvents",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.ThrottlingThreshold
+                },
+                DimensionNames = new[] { "TableName" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.DynamoDb
+            }
+        };
+    }
+
     /// <summary>
     ///  Alarms which will be applied to each service
     ///  The threshold can be overridden by the service or resource definition
@@ -25,7 +178,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.PercentageOf,
                     Value = 30
                 },
-                DimensionNames = new[] {"DBInstanceIdentifier"},
+                DimensionNames = new[] { "DBInstanceIdentifier" },
                 ComparisonOperator = ComparisonOperator.LessThanThreshold,
                 Statistic = Statistic.Minimum,
                 Namespace = AwsNamespace.Rds
@@ -41,7 +194,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 60
                 },
-                DimensionNames = new[] {"DBInstanceIdentifier"},
+                DimensionNames = new[] { "DBInstanceIdentifier" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Rds
@@ -57,7 +210,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 200
                 },
-                DimensionNames = new[] {"DBInstanceIdentifier"},
+                DimensionNames = new[] { "DBInstanceIdentifier" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Rds
@@ -77,7 +230,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 0.2
                 },
-                DimensionNames = new[] {"AutoScalingGroupName"},
+                DimensionNames = new[] { "AutoScalingGroupName" },
                 ComparisonOperator = ComparisonOperator.LessThanThreshold,
                 Statistic = Statistic.Minimum,
                 Namespace = AwsNamespace.Ec2
@@ -93,7 +246,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 90
                 },
-                DimensionNames = new[] {"AutoScalingGroupName"},
+                DimensionNames = new[] { "AutoScalingGroupName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Ec2
@@ -110,7 +263,7 @@ namespace Watchman.Engine.Alarms
                     Value = 50,
                     SourceAttribute = "GroupDesiredCapacity"
                 },
-                DimensionNames = new[] {"AutoScalingGroupName"},
+                DimensionNames = new[] { "AutoScalingGroupName" },
                 ComparisonOperator = ComparisonOperator.LessThanThreshold,
                 Statistic = Statistic.Minimum,
                 Namespace = AwsNamespace.AutoScaling
@@ -130,7 +283,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 3
                 },
-                DimensionNames = new[] {"FunctionName"},
+                DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Lambda
@@ -147,7 +300,7 @@ namespace Watchman.Engine.Alarms
                     Value = 50,
                     SourceAttribute = "Timeout"
                 },
-                DimensionNames = new[] {"FunctionName"},
+                DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Lambda
@@ -163,7 +316,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 5
                 },
-                DimensionNames = new[] {"FunctionName"},
+                DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Lambda
@@ -179,7 +332,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 300000
                 },
-                DimensionNames = new[] {"FunctionName"},
+                DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Lambda
@@ -196,7 +349,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 1
                 },
-                DimensionNames = new[] {"FunctionName"},
+                DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.LessThanThreshold,
                 Statistic = Statistic.SampleCount,
                 Namespace = AwsNamespace.Lambda
@@ -217,7 +370,7 @@ namespace Watchman.Engine.Alarms
                     SourceAttribute = "NumberOfIpAddresses",
                     Value = 30
                 },
-                DimensionNames = new[] {"Subnet"},
+                DimensionNames = new[] { "Subnet" },
                 ComparisonOperator = ComparisonOperator.LessThanOrEqualToThreshold,
                 Statistic = Statistic.Minimum,
                 Namespace = "JUSTEAT/PlatformLimits",
@@ -238,7 +391,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 50
                 },
-                DimensionNames = new[] {"LoadBalancerName"},
+                DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Elb
@@ -254,7 +407,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 500
                 },
-                DimensionNames = new[] {"LoadBalancerName"},
+                DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Elb
@@ -270,7 +423,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 200
                 },
-                DimensionNames = new[] {"LoadBalancerName"},
+                DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Elb
@@ -286,7 +439,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 10
                 },
-                DimensionNames = new[] {"LoadBalancerName"},
+                DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Elb
@@ -302,7 +455,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 0.50
                 },
-                DimensionNames = new[] {"LoadBalancerName"},
+                DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 // This should be probably a percentile statistic once that is supported via cloudformation
                 Statistic = Statistic.Average,
@@ -319,7 +472,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 1
                 },
-                DimensionNames = new[] {"LoadBalancerName"},
+                DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Elb
@@ -339,7 +492,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 1
                 },
-                DimensionNames = new[] {"StreamName"},
+                DimensionNames = new[] { "StreamName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Kinesis
@@ -355,7 +508,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 1
                 },
-                DimensionNames = new[] {"StreamName"},
+                DimensionNames = new[] { "StreamName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Kinesis
@@ -376,150 +529,10 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = 1
                 },
-                DimensionNames = new[] {"StateMachineArn"},
+                DimensionNames = new[] { "StateMachineArn" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.StepFunction
-            }
-        };
-
-        public static IList<AlarmDefinition> DynamoDbGsi = new List<AlarmDefinition>()
-        {
-            new AlarmDefinition
-            {
-                Name = "GsiConsumedReadCapacityUnitsHigh",
-                Metric = "ConsumedReadCapacityUnits",
-                Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
-                Threshold = new Threshold
-                {
-                    ThresholdType = ThresholdType.PercentageOf,
-                    Value = AwsConstants.DefaultCapacityThreshold * 100,
-                    SourceAttribute = "ProvisionedReadThroughput"
-                },
-                DimensionNames = new[] {"GlobalSecondaryIndexName", "TableName"},
-                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
-            },
-            new AlarmDefinition
-            {
-                Name = "GsiConsumedWriteCapacityUnitsHigh",
-                Metric = "ConsumedWriteCapacityUnits",
-                Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
-                Threshold = new Threshold
-                {
-                    ThresholdType = ThresholdType.PercentageOf,
-                    Value = AwsConstants.DefaultCapacityThreshold * 100,
-                    SourceAttribute = "ProvisionedWriteThroughput"
-                },
-                DimensionNames = new[] {"GlobalSecondaryIndexName", "TableName"},
-                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
-            },
-            new AlarmDefinition
-            {
-                Name = "GsiReadThrottleEventsHigh",
-                Metric = "ReadThrottleEvents",
-                Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
-                Threshold = new Threshold
-                {
-                    ThresholdType = ThresholdType.Absolute,
-                    Value = AwsConstants.ThrottlingThreshold
-                },
-                DimensionNames = new[] {"GlobalSecondaryIndexName", "TableName"},
-                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
-            },
-            new AlarmDefinition
-            {
-                Name = "GsiWriteThrottleEventsHigh",
-                Metric = "WriteThrottleEvents",
-                Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
-                Threshold = new Threshold
-                {
-                    ThresholdType = ThresholdType.Absolute,
-                    Value = AwsConstants.ThrottlingThreshold
-                },
-                DimensionNames = new[] {"GlobalSecondaryIndexName", "TableName"},
-                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
-            }
-        };
-
-        public static IList<AlarmDefinition> DynamoDb = new List<AlarmDefinition>
-        {
-            new AlarmDefinition
-            {
-                Name = "ConsumedReadCapacityUnitsHigh",
-                Metric = "ConsumedReadCapacityUnits",
-                Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
-                Threshold = new Threshold
-                {
-                    ThresholdType = ThresholdType.PercentageOf,
-                    Value = AwsConstants.DefaultCapacityThreshold * 100,
-                    SourceAttribute = "ProvisionedReadThroughput"
-                },
-                DimensionNames = new[] {"TableName"},
-                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
-            },
-            new AlarmDefinition
-            {
-                Name = "ConsumedWriteCapacityUnitsHigh",
-                Metric = "ConsumedWriteCapacityUnits",
-                Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
-                Threshold = new Threshold
-                {
-                    ThresholdType = ThresholdType.PercentageOf,
-                    Value = AwsConstants.DefaultCapacityThreshold * 100,
-                    SourceAttribute = "ProvisionedWriteThroughput"
-                },
-                DimensionNames = new[] {"TableName"},
-                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
-            },
-            new AlarmDefinition
-            {
-                Name = "ReadThrottleEventsHigh",
-                Metric = "ReadThrottleEvents",
-                Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
-                Threshold = new Threshold
-                {
-                    ThresholdType = ThresholdType.Absolute,
-                    Value = AwsConstants.ThrottlingThreshold
-                },
-                DimensionNames = new[] {"TableName"},
-                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
-            },
-            new AlarmDefinition
-            {
-                Name = "WriteThrottleEventsHigh",
-                Metric = "WriteThrottleEvents",
-                Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
-                Threshold = new Threshold
-                {
-                    ThresholdType = ThresholdType.Absolute,
-                    Value = AwsConstants.ThrottlingThreshold
-                },
-                DimensionNames = new[] {"TableName"},
-                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
             }
         };
 
@@ -536,7 +549,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = AwsConstants.QueueLengthThreshold
                 },
-                DimensionNames = new[] {"QueueName"},
+                DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Sqs
@@ -548,11 +561,11 @@ namespace Watchman.Engine.Alarms
                 Period = TimeSpan.FromMinutes(5),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
-                            {
-                                ThresholdType = ThresholdType.Absolute,
-                                Value = AwsConstants.OldestMessageThreshold
-                            },
-                DimensionNames = new[] {"QueueName"},
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.OldestMessageThreshold
+                },
+                DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Sqs
@@ -572,7 +585,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = AwsConstants.ErrorQueueLengthThreshold
                 },
-                DimensionNames = new[] {"QueueName"},
+                DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Sqs
@@ -584,11 +597,11 @@ namespace Watchman.Engine.Alarms
                 Period = TimeSpan.FromMinutes(5),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
-                            {
-                                ThresholdType = ThresholdType.Absolute,
-                                Value = AwsConstants.OldestMessageThreshold
-                            },
-                DimensionNames = new[] {"QueueName"},
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = AwsConstants.OldestMessageThreshold
+                },
+                DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Sqs
