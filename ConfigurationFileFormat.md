@@ -16,7 +16,8 @@ Each file contains an "alerting group".
 | ReportTargets | Array of `ReportTarget` | | List of email addresses to mail the provisioning report to, for use with Quartermaster |
 | IsCatchAll | Boolean | Default is `false` |If `true`, this group is not inspected when generating the lists of unmonitored resources, and it can include resources monitored by this group.|
 |Services| services| Required | Describes the services to monitor. |
-
+|NumberOfCloudFormationStacks| int |  Optional (default 1) | Divide alarms between this many CloudFormation stacks. CloudFormation stacks have some hard limits on number of resources and template file size. Do not reduce this value once you have set it and deployed stacks, unless you manually delete the stacks first. | 
+ 
 __NOTES:__
 
 ** Each AlertingGroup must specify services to monitor in some form.
