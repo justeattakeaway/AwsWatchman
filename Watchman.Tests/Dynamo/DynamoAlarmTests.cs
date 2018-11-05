@@ -388,5 +388,75 @@ namespace Watchman.Tests.Dynamo
             Assert.That(consumedReadForTable.Properties["Threshold"].Value<int>(),
                 Is.EqualTo(100 * OneMinuteInSeconds * 0.1m));
         }
+
+        [Test]
+        public async Task GsiLogicalResourceNameContainsTable()
+        {
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
+            {
+                DynamoDb = new AwsServiceAlarms<ResourceConfig>()
+                {
+                    Resources =
+                        new List<ResourceThresholds<ResourceConfig>>()
+                        {
+                            new ResourceThresholds<ResourceConfig>()
+                            {
+                                 Pattern = "first-table",
+                                 Values = new Dictionary<string, AlarmValues>()
+                                 {
+                                    {"GsiConsumedReadCapacityUnitsHigh", 20},
+                                    {"ConsumedReadCapacityUnitsHigh", 10}
+                                 }
+                            }
+                        }
+                }
+            });
+
+            var cloudFormation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonDynamoDB>().HasDynamoTables(new[]
+            {
+                new TableDescription()
+                {
+                    TableName = "production-first-table",
+                    ProvisionedThroughput = new ProvisionedThroughputDescription()
+                    {
+                        ReadCapacityUnits = 100,
+                        WriteCapacityUnits = 200
+                    },
+                    GlobalSecondaryIndexes = new List<GlobalSecondaryIndexDescription>()
+                    {
+                        new GlobalSecondaryIndexDescription()
+                        {
+                             IndexName = "first-gsi",
+                             ProvisionedThroughput = new ProvisionedThroughputDescription()
+                             {
+                                 ReadCapacityUnits = 400,
+                                 WriteCapacityUnits = 500
+                             }
+                        }
+                    }
+                }
+            });
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var resources = cloudFormation
+                .Stack("Watchman-test")
+                .Resources;
+
+            // TODO: logical name should include table and GSI name
+            Assert.That(resources, Contains.Key("productionfirsttableGsiConsumedReadCapacityUnitsHigh"));
+        }
     }
 }

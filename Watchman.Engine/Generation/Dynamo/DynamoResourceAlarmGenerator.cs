@@ -67,7 +67,7 @@ namespace Watchman.Engine.Generation.Dynamo
 
             var result = await BuildTableAlarms(resource, service, groupParameters, entity);
 
-            result.AddRange(await BuildIndexAlarms(resource, service, groupParameters, entity.Resource));
+            result.AddRange(await BuildIndexAlarms(resource, service, groupParameters, entity));
 
             return result;
         }
@@ -111,19 +111,19 @@ namespace Watchman.Engine.Generation.Dynamo
             return result;
         }
 
-        private async Task<IList<Alarm>> BuildIndexAlarms(ResourceThresholds<ResourceConfig> resource,
+        private async Task<IList<Alarm>> BuildIndexAlarms(ResourceThresholds<ResourceConfig> resourceConfig,
             AwsServiceAlarms<ResourceConfig> service,
             AlertingGroupParameters groupParameters,
-            TableDescription table)
+            AwsResource<TableDescription> parentTableEntity)
         {
             // called twice
-            var mergedConfig = service.Options.OverrideWith(resource.Options);
+            var mergedConfig = service.Options.OverrideWith(resourceConfig.Options);
 
             var result = new List<Alarm>();
 
-            var gsiSet = table.GlobalSecondaryIndexes;
+            var gsiSet = parentTableEntity.Resource.GlobalSecondaryIndexes;
 
-            var mergedValuesByAlarmName = service.Values.OverrideWith(resource.Values);
+            var mergedValuesByAlarmName = service.Values.OverrideWith(resourceConfig.Values);
 
             foreach (var gsi in gsiSet)
             {
@@ -143,9 +143,12 @@ namespace Watchman.Engine.Generation.Dynamo
 
                     var model = new Alarm
                     {
-                        AlarmName = $"{resource.Name}-{gsi.IndexName}-{alarm.Name}-{groupParameters.AlarmNameSuffix}",
+                        AlarmName = $"{resourceConfig.Name}-{gsi.IndexName}-{alarm.Name}-{groupParameters.AlarmNameSuffix}",
                         AlarmDescription = groupParameters.DefaultAlarmDescription(),
-                        Resource = gsiResource,
+                        // TODO: remove this property in a future PR
+                        // passing in the entity shouldn't be necessary and passing in the table entity here
+                        // when the alarm is for a GSI is an even worse hack
+                        Resource = parentTableEntity,
                         Dimensions = dimensions,
                         AlarmDefinition = built
                     };
