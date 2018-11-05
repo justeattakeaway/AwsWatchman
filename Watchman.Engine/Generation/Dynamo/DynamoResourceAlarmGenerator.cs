@@ -133,7 +133,7 @@ namespace Watchman.Engine.Generation.Dynamo
                 {
                     var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
                     var configuredThreshold = alarm.Threshold.CopyWith(value: values.Threshold);
-                    var dimensions = _gsiProvider.GetDimensions(gsi, alarm.DimensionNames);
+                    var dimensions = _gsiProvider.GetDimensions(gsi, parentTableEntity.Resource, alarm.DimensionNames);
                     var threshold = await ThresholdCalculator.ExpandThreshold(_gsiProvider,
                         gsiResource.Resource,
                         mergedConfig,

@@ -397,7 +397,7 @@ namespace Watchman.Engine.Alarms
                     Value = AwsConstants.DefaultCapacityThreshold * 100,
                     SourceAttribute = "ProvisionedReadThroughput"
                 },
-                DimensionNames = new[] {"GlobalSecondaryIndexName"},
+                DimensionNames = new[] {"GlobalSecondaryIndexName", "TableName"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb
@@ -414,7 +414,7 @@ namespace Watchman.Engine.Alarms
                     Value = AwsConstants.DefaultCapacityThreshold * 100,
                     SourceAttribute = "ProvisionedWriteThroughput"
                 },
-                DimensionNames = new[] {"GlobalSecondaryIndexName"},
+                DimensionNames = new[] {"GlobalSecondaryIndexName", "TableName"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb
@@ -430,7 +430,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = AwsConstants.ThrottlingThreshold
                 },
-                DimensionNames = new[] {"GlobalSecondaryIndexName"},
+                DimensionNames = new[] {"GlobalSecondaryIndexName", "TableName"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb
@@ -446,7 +446,7 @@ namespace Watchman.Engine.Alarms
                     ThresholdType = ThresholdType.Absolute,
                     Value = AwsConstants.ThrottlingThreshold
                 },
-                DimensionNames = new[] {"GlobalSecondaryIndexName"},
+                DimensionNames = new[] {"GlobalSecondaryIndexName", "TableName"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb

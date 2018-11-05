@@ -263,6 +263,7 @@ namespace Watchman.Tests.Dynamo
                 Is.EqualTo("GreaterThanOrEqualToThreshold"));
             Assert.That(consumedRead.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(consumedRead.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
+            Assert.That(consumedRead.Dimension("TableName"), Is.EqualTo("first-table"));
 
             var consumedWrite = alarms.SingleOrDefault(
                 a => a.Properties["AlarmName"].ToString()
@@ -277,6 +278,7 @@ namespace Watchman.Tests.Dynamo
                 Is.EqualTo("GreaterThanOrEqualToThreshold"));
             Assert.That(consumedWrite.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(consumedWrite.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
+            Assert.That(consumedWrite.Dimension("TableName"), Is.EqualTo("first-table"));
 
             var readThrottle = alarms.SingleOrDefault(
                 a => a.Properties["AlarmName"].ToString()
@@ -289,6 +291,7 @@ namespace Watchman.Tests.Dynamo
                 Is.EqualTo("GreaterThanOrEqualToThreshold"));
             Assert.That(readThrottle.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(readThrottle.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
+            Assert.That(readThrottle.Dimension("TableName"), Is.EqualTo("first-table"));
 
             var writeThrottle = alarms.SingleOrDefault(
                 a => a.Properties["AlarmName"].ToString()
@@ -301,6 +304,7 @@ namespace Watchman.Tests.Dynamo
                 Is.EqualTo("GreaterThanOrEqualToThreshold"));
             Assert.That(writeThrottle.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(writeThrottle.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
+            Assert.That(writeThrottle.Dimension("TableName"), Is.EqualTo("first-table"));
         }
 
 
@@ -317,12 +321,12 @@ namespace Watchman.Tests.Dynamo
                         {
                             new ResourceThresholds<ResourceConfig>()
                             {
-                                Name = "first-table",
-                                 Values = new Dictionary<string, AlarmValues>()
-                                 {
+                                Pattern = "first-table",
+                                Values = new Dictionary<string, AlarmValues>()
+                                {
                                     {"GsiConsumedReadCapacityUnitsHigh", 20},
                                     {"ConsumedReadCapacityUnitsHigh", 10}
-                                 }
+                                }
                             }
                         }
                 }
@@ -337,7 +341,7 @@ namespace Watchman.Tests.Dynamo
             {
                 new TableDescription()
                 {
-                    TableName = "first-table",
+                    TableName = "production-first-table",
                     ProvisionedThroughput = new ProvisionedThroughputDescription()
                     {
                         ReadCapacityUnits = 100,
@@ -380,7 +384,7 @@ namespace Watchman.Tests.Dynamo
             var alarmsByTable = cloudFormation
                 .Stack("Watchman-test")
                 .AlarmsByDimension("TableName");
-            var tableAlarms = alarmsByTable["first-table"];
+            var tableAlarms = alarmsByTable["production-first-table"];
 
             var consumedReadForTable = tableAlarms.SingleOrDefault(
                 a => a.Properties["AlarmName"].ToString()
