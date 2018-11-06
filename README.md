@@ -110,17 +110,7 @@ The user associated with the keys needs to be in several roles. These are all do
 
 ## Alerts on
 
-Alerts are generated at configurable thresholds on the following CloudWatch metrics:
-
-* DynamoDb:
-  * ConsumedReadCapacityUnits 
-  * ConsumedWriteCapacityUnits
-  * ReadThrottleEvents
-  * WriteThrottleEvents
-* SQS:
-  * ApproximateNumberOfMessagesVisible
-  * ApproximateAgeOfOldestMessage
-
+See [Supported Services](SupportedServices.md) for supported AWS services.
 
 ### Run sequence
 
@@ -132,7 +122,7 @@ When run, `Watchman` does things in approximately this order:
 - for each resource type, across all alerting groups:
   - Populate resource names. Expand regexp patterns into full resource names that match the pattern.
   - For the set of alarm definitions for each service (e.g. DynamoDB, SQS, RDS), apply either the default threshold from those definitions, or from the alerting group, or from the specific resource definition, depending on what is defined.
- - Create alarm models and create CloudFormation from them. For legacy reasons, DynamoDB, SQS are different, they put alarms directly. We may convert them later.
+ - Create alarm models and create CloudFormation from them. 
  - Commit the changes. Skipped if the run mode is `DryRun`.
  - Report on "orphans", i.e. resources that are not covered by any alarms in alerting group, excluding "CatchAll" groups.
 
