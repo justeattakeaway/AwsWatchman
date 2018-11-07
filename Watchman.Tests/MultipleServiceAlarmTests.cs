@@ -39,11 +39,11 @@ namespace Watchman.Tests
                 "group-suffix",
                 new AlertingGroupServices()
                 {
-                    DynamoDb = new AwsServiceAlarms<ResourceConfig>()
+                    DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
                     {
-                        Resources = new List<ResourceThresholds<ResourceConfig>>()
+                        Resources = new List<ResourceThresholds<DynamoResourceConfig>>()
                         {
-                            new ResourceThresholds<ResourceConfig>()
+                            new ResourceThresholds<DynamoResourceConfig>()
                             {
                                 Name = "first-dynamo-table"
                             }
@@ -89,7 +89,7 @@ namespace Watchman.Tests
             });
 
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
-            
+
             // act
 
             await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);

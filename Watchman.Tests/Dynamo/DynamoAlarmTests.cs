@@ -31,11 +31,11 @@ namespace Watchman.Tests.Dynamo
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
                 new AlertingGroupServices()
                 {
-                    DynamoDb = new AwsServiceAlarms<ResourceConfig>()
+                    DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
                     {
-                        Resources = new List<ResourceThresholds<ResourceConfig>>()
+                        Resources = new List<ResourceThresholds<DynamoResourceConfig>>()
                         {
-                            new ResourceThresholds<ResourceConfig>()
+                            new ResourceThresholds<DynamoResourceConfig>()
                             {
                                 Name = "non-existant-table"
                             }
@@ -78,11 +78,11 @@ namespace Watchman.Tests.Dynamo
             // arrange
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
             {
-                DynamoDb = new AwsServiceAlarms<ResourceConfig>()
+                DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
                 {
-                    Resources = new List<ResourceThresholds<ResourceConfig>>()
+                    Resources = new List<ResourceThresholds<DynamoResourceConfig>>()
                     {
-                        new ResourceThresholds<ResourceConfig>()
+                        new ResourceThresholds<DynamoResourceConfig>()
                         {
                             Name = "first-dynamo-table"
                         }
@@ -187,12 +187,12 @@ namespace Watchman.Tests.Dynamo
             // arrange
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
             {
-                DynamoDb = new AwsServiceAlarms<ResourceConfig>()
+                DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
                 {
                     Resources =
-                        new List<ResourceThresholds<ResourceConfig>>()
+                        new List<ResourceThresholds<DynamoResourceConfig>>()
                         {
-                            new ResourceThresholds<ResourceConfig>()
+                            new ResourceThresholds<DynamoResourceConfig>()
                             {
                                 Name = "first-table"
                             }
@@ -314,12 +314,12 @@ namespace Watchman.Tests.Dynamo
             // arrange
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
             {
-                DynamoDb = new AwsServiceAlarms<ResourceConfig>()
+                DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
                 {
                     Resources =
-                        new List<ResourceThresholds<ResourceConfig>>()
+                        new List<ResourceThresholds<DynamoResourceConfig>>()
                         {
-                            new ResourceThresholds<ResourceConfig>()
+                            new ResourceThresholds<DynamoResourceConfig>()
                             {
                                 Pattern = "first-table",
                                 Values = new Dictionary<string, AlarmValues>()
@@ -399,12 +399,12 @@ namespace Watchman.Tests.Dynamo
             // arrange
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
             {
-                DynamoDb = new AwsServiceAlarms<ResourceConfig>()
+                DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
                 {
                     Resources =
-                        new List<ResourceThresholds<ResourceConfig>>()
+                        new List<ResourceThresholds<DynamoResourceConfig>>()
                         {
-                            new ResourceThresholds<ResourceConfig>()
+                            new ResourceThresholds<DynamoResourceConfig>()
                             {
                                  Pattern = "first-table",
                                  Values = new Dictionary<string, AlarmValues>()
@@ -462,5 +462,91 @@ namespace Watchman.Tests.Dynamo
             // TODO: logical name should include table and GSI name
             Assert.That(resources, Contains.Key("productionfirsttableGsiConsumedReadCapacityUnitsHigh"));
         }
+
+          [Test]
+        public async Task CanDisableWritesAcrossTableAndGsi()
+        {
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
+            {
+                DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
+                {
+                    Resources =
+                        new List<ResourceThresholds<DynamoResourceConfig>>()
+                        {
+                            new ResourceThresholds<DynamoResourceConfig>()
+                            {
+                                Name = "first-table"
+                            }
+                        },
+                    Options = new DynamoResourceConfig()
+                    {
+                        MonitorWrites = false
+                    }
+                }
+            });
+
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonDynamoDB>().HasDynamoTables(new[]
+            {
+                new TableDescription()
+                {
+                    TableName = "first-table",
+                    ProvisionedThroughput = new ProvisionedThroughputDescription()
+                    {
+                        ReadCapacityUnits = 100,
+                        WriteCapacityUnits = 200
+                    },
+                    GlobalSecondaryIndexes = new List<GlobalSecondaryIndexDescription>()
+                    {
+                        new GlobalSecondaryIndexDescription()
+                        {
+                            IndexName = "first-gsi",
+                            ProvisionedThroughput = new ProvisionedThroughputDescription()
+                            {
+                                ReadCapacityUnits = 400,
+                                WriteCapacityUnits = 500
+                            }
+                        }
+                    }
+                }
+            });
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var alarms = cloudformation
+                .Stack("Watchman-test")
+                .Alarms();
+
+            // check we didn't disable read alarms
+
+            Assert.That(alarms.Count(
+                a => a.Properties["MetricName"].ToString()
+                    .Contains("ReadThrottleEvents")), Is.AtLeast(2));
+
+            Assert.That(alarms.Count(
+                a => a.Properties["MetricName"].ToString()
+                    .Contains("ConsumedReadCapacityUnits")), Is.AtLeast(2));
+
+            // no write alarms
+
+            Assert.That(alarms.Where(
+                a => a.Properties["MetricName"].ToString()
+                     == "ConsumedWriteCapacityUnits"), Is.Empty);
+
+            Assert.That(alarms.Where(
+                a => a.Properties["MetricName"].ToString()
+                     == "WriteThrottleEvents"), Is.Empty);
+        }
     }
-}
+ }

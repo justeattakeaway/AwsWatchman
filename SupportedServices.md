@@ -164,6 +164,9 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `GsiReadThrottleEventsHigh`: 2
 - `GsiWriteThrottleEventsHigh`: 2
 
+#### Options
+- `MonitorWrites` Shorthand can be used to disable all the write alarms. Default is `true`.
+
 ### Sqs
 
 Sqs will mark any queue as an error queue if it ends with "_error"
