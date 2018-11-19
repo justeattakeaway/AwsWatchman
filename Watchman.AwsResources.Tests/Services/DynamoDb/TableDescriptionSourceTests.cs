@@ -139,7 +139,7 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
         }
 
         [Test]
-        public async Task GetResouceAsync_ReturnsNullIfNotInList()
+        public async Task GetResourceAsync_ReturnsNullIfNotInList()
         {
             var result = await _tableDescriptionSource.GetResourceAsync("does-not-exist");
             Assert.Null(result);
