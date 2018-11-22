@@ -44,13 +44,12 @@ else {
 }
 
 if ($installDotNetSdk -eq $true) {
-
     Write-Host "Installing the .NET Core SDK $dotnetVersion."
 
     $env:DOTNET_INSTALL_DIR = Join-Path "$(Convert-Path "$PSScriptRoot")" ".dotnetcli"
     $env:MSBuildSDKsPath = Join-Path $env:DOTNET_INSTALL_DIR "sdk\$dotnetVersion\Sdks"
 
-    if (($null -ne $env:TEAMCITY_VERSION) -or (!(Test-Path $sdkPath))) {
+    if (($null -ne $env:TEAMCITY_VERSION) -or (($null -ne $sdkPath) -and !(Test-Path $sdkPath))) {
         if (!(Test-Path $env:DOTNET_INSTALL_DIR)) {
             mkdir $env:DOTNET_INSTALL_DIR | Out-Null
         }
