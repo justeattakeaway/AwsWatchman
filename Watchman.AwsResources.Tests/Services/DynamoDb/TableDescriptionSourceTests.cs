@@ -137,5 +137,12 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
             Assert.That(result.Resource, Is.InstanceOf<TableDescription>());
             Assert.That(result.Resource.TableName, Is.EqualTo(secondDbInstanceName));
         }
+
+        [Test]
+        public async Task GetResourceAsync_ReturnsNullIfNotInList()
+        {
+            var result = await _tableDescriptionSource.GetResourceAsync("does-not-exist");
+            Assert.Null(result);
+        }
     }
 }

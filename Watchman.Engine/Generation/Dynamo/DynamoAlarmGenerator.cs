@@ -105,6 +105,13 @@ namespace Watchman.Engine.Generation.Dynamo
             try
             {
                 var tableResource = await _tableSource.GetResourceAsync(table.Name);
+
+                if (tableResource == null)
+                {
+                    _logger.Info($"Skipping named table {table.Name} as it does not exist");
+                    return;
+                }
+
                 var tableDescription = tableResource.Resource;
                 var threshold = table.Threshold ?? alarmTables.Threshold;
 
@@ -163,6 +170,13 @@ namespace Watchman.Engine.Generation.Dynamo
             try
             {
                 var tableResource = await _tableSource.GetResourceAsync(table.Name);
+
+                if (tableResource == null)
+                {
+                    _logger.Info($"Skipping named table {table.Name} as it does not exist");
+                    return;
+                }
+
                 var tableDescription = tableResource.Resource;
                 var threshold = table.Threshold ?? alarmTables.Threshold;
 
