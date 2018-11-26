@@ -104,6 +104,7 @@ namespace Watchman.Configuration.Tests.Load
             Assert.That(section.Values["FloatValueAsString"].Threshold, Is.EqualTo(2.2));
             Assert.That(section.Values["IntValueAsString"].Threshold, Is.EqualTo(41));
             Assert.That(section.Values["InvocationsLow"].Threshold, Is.EqualTo(5));
+            Assert.That(section.Values["InvocationsHigh"].Threshold, Is.EqualTo(10));
         }
 
         [Test]

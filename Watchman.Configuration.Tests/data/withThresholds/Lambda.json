@@ -27,7 +27,8 @@
         "FloatValue": 2.1,
         "FloatValueAsString": "2.2",
         "IntValueAsString": "41",
-        "InvocationsLow": 5
+        "InvocationsLow": 5,
+        "InvocationsHigh": 10 
       }
     }
   }

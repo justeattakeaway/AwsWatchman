@@ -143,6 +143,7 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `DurationHigh`: 50 (% of defined Timeout)
 - `ThrottlesHigh`: 5 (count)
 - `InvocationsLow`: Disabled by default. If enabled it checks the function was executed at least once in a day.
+- `InvocationsHigh`: Disabled by default. If enabled it checks the function was executed at most x in a day.
 
 ### Kinesis
 
