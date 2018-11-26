@@ -3,6 +3,8 @@ using Moq;
 using NUnit.Framework;
 using Watchman.Configuration.Load;
 using Watchman.Configuration.Validation;
+using Watchman.Configuration.Tests.Extensions;
+using System.IO;
 
 namespace Watchman.Configuration.Tests.Load
 {
@@ -26,7 +28,7 @@ namespace Watchman.Configuration.Tests.Load
         [Test]
         public void LoadConfig_DuplicateGroupNames_Throws()
         {
-            var loader = GetLoader("data\\duplicates\\duplicateGroups");
+            var loader = GetLoader($"data\\duplicates\\duplicateGroups".ToCrossPlatformPath());
 
             var config = loader();
 
