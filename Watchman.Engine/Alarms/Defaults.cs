@@ -220,7 +220,7 @@ namespace Watchman.Engine.Alarms
                 Name = "WriteIOPSHigh",
                 Metric = "WriteIOPS",
                 Period = TimeSpan.FromMinutes(5),
-                EvaluationPeriods = 5,
+                EvaluationPeriods = 1,
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
@@ -237,7 +237,7 @@ namespace Watchman.Engine.Alarms
                 Name = "ReadIOPSHigh",
                 Metric = "ReadIOPS",
                 Period = TimeSpan.FromMinutes(5),
-                EvaluationPeriods = 5,
+                EvaluationPeriods = 1,
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
