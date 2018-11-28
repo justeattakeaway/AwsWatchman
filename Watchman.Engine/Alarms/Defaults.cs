@@ -219,7 +219,7 @@ namespace Watchman.Engine.Alarms
             {
                 Name = "WriteIOPSHigh",
                 Metric = "WriteIOPS",
-                Period = TimeSpan.FromMinutes(5),
+                Period = TimeSpan.FromMinutes(1),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
                 {
@@ -236,7 +236,7 @@ namespace Watchman.Engine.Alarms
             {
                 Name = "ReadIOPSHigh",
                 Metric = "ReadIOPS",
-                Period = TimeSpan.FromMinutes(5),
+                Period = TimeSpan.FromMinutes(1),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
                 {
