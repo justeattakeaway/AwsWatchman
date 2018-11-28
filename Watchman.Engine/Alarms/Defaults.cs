@@ -214,6 +214,40 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Rds
+            },
+            new AlarmDefinition
+            {
+                Name = "WriteIOPSHigh",
+                Metric = "WriteIOPS",
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 5,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 500
+                },
+                DimensionNames = new[] { "DBInstanceIdentifier" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Rds,
+                Enabled = false
+            },
+            new AlarmDefinition
+            {
+                Name = "ReadIOPSHigh",
+                Metric = "ReadIOPS",
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 5,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 500
+                },
+                DimensionNames = new[] { "DBInstanceIdentifier" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Rds,
+                Enabled = false
             }
         };
 
