@@ -4,6 +4,8 @@ using Watchman.Configuration.Load;
 using Moq;
 using NUnit.Framework;
 using Watchman.Configuration.Generic;
+using Watchman.Configuration.Tests.Extensions;
+using System.IO;
 
 namespace Watchman.Configuration.Tests.Load
 {
@@ -15,7 +17,7 @@ namespace Watchman.Configuration.Tests.Load
         [SetUp]
         public void Setup()
         {
-            var testFilePath = TestFiles.GetRelativePathTo("data\\withThresholds");
+            var testFilePath = TestFiles.GetRelativePathTo(($"data\\withThresholds".ToCrossPlatformPath()));
             var testFilesSettings = new FileSettings(testFilePath);
 
             var logger = new Mock<IConfigLoadLogger>();
@@ -97,13 +99,14 @@ namespace Watchman.Configuration.Tests.Load
 
             Assert.That(section.Values, Is.Not.Null);
             Assert.That(section.Values, Is.Not.Empty);
-            Assert.That(section.Values.Count, Is.EqualTo(8));
+            Assert.That(section.Values.Count, Is.EqualTo(9));
 
             Assert.That(section.Values["ThrottlesHigh"].Threshold, Is.EqualTo(40));
             Assert.That(section.Values["FloatValue"].Threshold, Is.EqualTo(2.1));
             Assert.That(section.Values["FloatValueAsString"].Threshold, Is.EqualTo(2.2));
             Assert.That(section.Values["IntValueAsString"].Threshold, Is.EqualTo(41));
             Assert.That(section.Values["InvocationsLow"].Threshold, Is.EqualTo(5));
+            Assert.That(section.Values["InvocationsHigh"].Threshold, Is.EqualTo(10));
         }
 
         [Test]
