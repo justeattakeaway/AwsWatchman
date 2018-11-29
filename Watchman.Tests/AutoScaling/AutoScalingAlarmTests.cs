@@ -47,8 +47,8 @@ namespace Watchman.Tests.AutoScaling
                             && req.Dimensions.All(
                                 x => x.Name == "AutoScalingGroupName" && x.Value== autoScalingGroupName
                             )
-                            && req.EndTime == now
-                            && req.StartTime == now.AddSeconds(lagSeconds * -1)
+                            && req.EndTimeUtc == now
+                            && req.StartTimeUtc == now.AddSeconds(lagSeconds * -1)
 
                         ),
                         It.IsAny<CancellationToken>())
@@ -328,8 +328,8 @@ namespace Watchman.Tests.AutoScaling
             // assert
             ioc.GetMock<IAmazonCloudWatch>().Verify(x => x.GetMetricStatisticsAsync(
                 It.Is<GetMetricStatisticsRequest>(
-                    r => r.StartTime.Kind == DateTimeKind.Utc
-                    && r.EndTime.Kind == DateTimeKind.Utc
+                    r => r.StartTimeUtc.Kind == DateTimeKind.Utc
+                    && r.EndTimeUtc.Kind == DateTimeKind.Utc
                     ), It.IsAny<CancellationToken>())
                 );
         }

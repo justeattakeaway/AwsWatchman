@@ -158,8 +158,8 @@ namespace QuarterMaster
             var allDataPoints = new List<Datapoint>();
             for (var i = 0; i <= ReportDuration; i++)
             {
-                getMetricsRequest.StartTime = DateTime.UtcNow.AddDays(-(i + 1));
-                getMetricsRequest.EndTime = DateTime.UtcNow.AddDays(-i);
+                getMetricsRequest.StartTimeUtc = DateTime.UtcNow.AddDays(-(i + 1));
+                getMetricsRequest.EndTimeUtc = DateTime.UtcNow.AddDays(-i);
                 allDataPoints.AddRange((await _cloudwatch.GetMetricStatisticsAsync(getMetricsRequest)).Datapoints);
             }
             return allDataPoints.Count > 0 ? allDataPoints.Max(x => x.Sum) : 0;
