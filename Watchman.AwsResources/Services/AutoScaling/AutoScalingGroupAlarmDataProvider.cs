@@ -67,22 +67,22 @@ namespace Watchman.AwsResources.Services.AutoScaling
             var now = _timeProvider.UtcNow;
 
             var metric = await _cloudWatch.GetMetricStatisticsAsync(
-                new GetMetricStatisticsRequest()
+                new GetMetricStatisticsRequest
                 {
-                    Dimensions = new List<Dimension>()
+                    Dimensions = new List<Dimension>
                     {
-                        new Dimension()
+                        new Dimension
                         {
                             Name = "AutoScalingGroupName",
                             Value = resource.AutoScalingGroupName
                         }
                     },
-                    Statistics = new List<string>() {"Minimum"},
+                    Statistics = new List<string> {"Minimum"},
                     Namespace = "AWS/AutoScaling",
                     Period = delaySeconds,
                     MetricName = "GroupDesiredCapacity",
-                    StartTime = now.AddSeconds(-1 * delaySeconds),
-                    EndTime = now
+                    StartTimeUtc = now.AddSeconds(-1 * delaySeconds),
+                    EndTimeUtc = now
                 }
             );
 
@@ -111,7 +111,6 @@ namespace Watchman.AwsResources.Services.AutoScaling
 
         public List<Dimension> GetDimensions(AutoScalingGroup resource, IList<string> dimensionNames)
         {
-
             return dimensionNames
                 .Select(x => GetDimension(resource, x))
                 .ToList();
