@@ -40,6 +40,12 @@ namespace Watchman.Engine.Generation
             return Map(input, id, a => a?.Services?.Elb);
         }
 
+        public static WatchmanServiceConfiguration<ResourceConfig> MapAlb(WatchmanConfiguration input)
+        {
+            const string id = "Alb";
+            return Map(input, id, a => a?.Services?.Alb);
+        }
+
         public static WatchmanServiceConfiguration<ResourceConfig> MapStream(WatchmanConfiguration input)
         {
             const string id = "KinesisStream";

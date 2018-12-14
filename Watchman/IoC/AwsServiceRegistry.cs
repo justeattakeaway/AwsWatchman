@@ -8,6 +8,7 @@ using Amazon.RDS.Model;
 using Amazon.StepFunctions.Model;
 using StructureMap;
 using Watchman.AwsResources;
+using Watchman.AwsResources.Services.Alb;
 using Watchman.AwsResources.Services.AutoScaling;
 using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.AwsResources.Services.Elb;
@@ -53,6 +54,10 @@ namespace Watchman.IoC
             AddService<LoadBalancerDescription, ElbSource, ElbAlarmDataProvider, ResourceConfig>(
                 WatchmanServiceConfigurationMapper.MapElb, Defaults.Elb
                 );
+
+            AddService<LoadBalancerDescription, AlbSource, AlbAlarmDataProvider, ResourceConfig>(
+                WatchmanServiceConfigurationMapper.MapAlb, Defaults.Alb
+            );
 
             AddService<KinesisStreamData, KinesisStreamSource, KinesisStreamAlarmDataProvider, ResourceConfig>(
                 WatchmanServiceConfigurationMapper.MapStream, Defaults.KinesisStream

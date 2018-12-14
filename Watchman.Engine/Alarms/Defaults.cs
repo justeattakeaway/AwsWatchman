@@ -326,6 +326,26 @@ namespace Watchman.Engine.Alarms
             }
         };
 
+        public static IList<AlarmDefinition> Alb = new List<AlarmDefinition>
+        {
+            new AlarmDefinition
+            {
+                Name = "Target5xxErrorsHigh",
+                Metric = "HTTPCode_Target_5XX_Count",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 50
+                },
+                DimensionNames = new[] {"LoadBalancerName"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Alb
+            }
+        };
+
         public static IList<AlarmDefinition> KinesisStream = new List<AlarmDefinition>
         {
             new AlarmDefinition
