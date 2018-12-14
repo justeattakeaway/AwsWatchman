@@ -143,6 +143,7 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `DurationHigh`: 50 (% of defined Timeout)
 - `ThrottlesHigh`: 5 (count)
 - `InvocationsLow`: Disabled by default. If enabled it checks the function was executed at least once in a day.
+- `InvocationsHigh`: Disabled by default. If enabled it checks the function was executed at most x in a day.
 
 ### Kinesis
 
@@ -164,6 +165,9 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `GsiReadThrottleEventsHigh`: 2
 - `GsiWriteThrottleEventsHigh`: 2
 
+#### Options
+- `MonitorWrites` Shorthand can be used to disable all the write alarms. Default is `true`.
+
 ### Sqs
 
 Sqs will mark any queue as an error queue if it ends with "_error"
@@ -172,6 +176,10 @@ Sqs will mark any queue as an error queue if it ends with "_error"
 - `AgeOfOldestMessage`: 600 (seconds)
 - `NumberOfMessagesVisible_Error`: 10
 - `AgeOfOldestMessage_Error`: 600 (seconds)
+
+#### Options
+
+- `IncludeErrorQueues`: Enable special handling of _error queues matching the primary queue name (default `true`)
 
 ### VpcSubnets
 

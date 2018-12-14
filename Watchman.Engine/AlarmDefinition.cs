@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Amazon.CloudWatch;
 using Watchman.Configuration;
+using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine
 {
@@ -54,6 +55,24 @@ namespace Watchman.Engine
                 AlertOnOk = AlertOnOk,
                 ExtendedStatistic = ExtendedStatistic
             };
+        }
+
+        public AlarmDefinition CopyWith(
+            Threshold threshold,
+            AlarmValues mergedValues)
+        {
+            var copy = Copy();
+
+            copy.Threshold = threshold;
+            copy.EvaluationPeriods = mergedValues.EvaluationPeriods ?? EvaluationPeriods;
+
+            copy.ExtendedStatistic = !string.IsNullOrEmpty(mergedValues.ExtendedStatistic)
+                ? mergedValues.ExtendedStatistic
+                : ExtendedStatistic;
+
+            copy.Enabled = mergedValues.Enabled ?? Enabled;
+
+            return copy;
         }
     }
 }

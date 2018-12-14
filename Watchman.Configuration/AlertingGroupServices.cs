@@ -14,7 +14,7 @@ namespace Watchman.Configuration
         public AwsServiceAlarms<ResourceConfig> Alb { get; set; }
         public AwsServiceAlarms<ResourceConfig> KinesisStream { get; set; }
         public AwsServiceAlarms<ResourceConfig> StepFunction { get; set; }
-        public AwsServiceAlarms<ResourceConfig> DynamoDb { get; set; }
+        public AwsServiceAlarms<DynamoResourceConfig> DynamoDb { get; set; }
         public AwsServiceAlarms<SqsResourceConfig> Sqs { get; set; }
 
 

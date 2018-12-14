@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
@@ -28,6 +29,16 @@ namespace Watchman.AwsResources.Services.DynamoDb
 
         public async Task<AwsResource<TableDescription>> GetResourceAsync(string name)
         {
+            if (_tableNames == null)
+            {
+                await GetResourceNamesAsync();
+            }
+
+            if (!_tableNames.Contains(name))
+            {
+                return null;
+            }
+
             if (_cachedTableDescriptions.ContainsKey(name))
             {
                 return _cachedTableDescriptions[name];

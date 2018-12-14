@@ -2,38 +2,40 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.CloudWatch.Model;
+using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.DynamoDb;
+using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine.Alarms;
 
 namespace Watchman.Engine.Generation.Dynamo
 {
-    public class DynamoResourceAlarmGenerator : IResourceAlarmGenerator<TableDescription, ResourceConfig>
+    public class DynamoResourceAlarmGenerator : IResourceAlarmGenerator<TableDescription, DynamoResourceConfig>
     {
         private readonly IResourceSource<TableDescription> _tableSource;
         private readonly IAlarmDimensionProvider<TableDescription> _dimensions;
-        private readonly IAlarmDimensionProvider<GlobalSecondaryIndexDescription> _gsiDimensionProvider = new DynamoDbGsiDataProvider();
-        private readonly AlarmBuilder<TableDescription, ResourceConfig> _builder;
-        private readonly AlarmBuilder<GlobalSecondaryIndexDescription, ResourceConfig> _gsiAlarmBuilder = new AlarmBuilder<GlobalSecondaryIndexDescription, ResourceConfig>(new DynamoDbGsiDataProvider());
-
-        private readonly AlarmDefaults<TableDescription> _defaultAlarms;
+        private readonly IResourceAttributesProvider<TableDescription, DynamoResourceConfig> _attributeProvider;
+        private readonly DynamoDbGsiDataProvider _gsiProvider = new DynamoDbGsiDataProvider();
+        private readonly DynamoDbDefaults _defaultAlarms;
 
 
         public DynamoResourceAlarmGenerator(
             IResourceSource<TableDescription> tableSource,
             IAlarmDimensionProvider<TableDescription> dimensionProvider,
-            IResourceAttributesProvider<TableDescription, ResourceConfig> attributeProvider, AlarmDefaults<TableDescription> defaultAlarms)
+            IResourceAttributesProvider<TableDescription, DynamoResourceConfig> attributeProvider,
+            DynamoDbDefaults defaultAlarms)
         {
             _tableSource = tableSource;
             _dimensions = dimensionProvider;
+            _attributeProvider = attributeProvider;
             _defaultAlarms = defaultAlarms;
-            _builder = new AlarmBuilder<TableDescription, ResourceConfig>(attributeProvider);
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
-            AwsServiceAlarms<ResourceConfig> service,
+            AwsServiceAlarms<DynamoResourceConfig> service,
             AlertingGroupParameters groupParameters)
         {
             if (service?.Resources == null || service.Resources.Count == 0)
@@ -53,8 +55,8 @@ namespace Watchman.Engine.Generation.Dynamo
         }
 
         private async Task<IList<Alarm>> CreateAlarmsForResource(
-            ResourceThresholds<ResourceConfig> resource,
-            AwsServiceAlarms<ResourceConfig> service,
+            ResourceThresholds<DynamoResourceConfig> resource,
+            AwsServiceAlarms<DynamoResourceConfig> service,
             AlertingGroupParameters groupParameters)
         {
             var entity = await _tableSource.GetResourceAsync(resource.Name);
@@ -71,59 +73,97 @@ namespace Watchman.Engine.Generation.Dynamo
             return result;
         }
 
-        private async Task<List<Alarm>> BuildTableAlarms(ResourceThresholds<ResourceConfig> resource, AwsServiceAlarms<ResourceConfig> service,
+        private async Task<List<Alarm>> BuildTableAlarms(ResourceThresholds<DynamoResourceConfig> resourceConfig,
+            AwsServiceAlarms<DynamoResourceConfig> service,
             AlertingGroupParameters groupParameters,
             AwsResource<TableDescription> entity)
         {
-            var expanded = await _builder.CopyAndUpdateDefaultAlarmsForResource(entity, _defaultAlarms, service, resource);
+            var mergedConfig = service.Options.OverrideWith(resourceConfig.Options);
 
             var result = new List<Alarm>();
 
-            foreach (var alarm in expanded)
+            var mergedValuesByAlarmName = service.Values.OverrideWith(resourceConfig.Values);
+
+            var defaults = _defaultAlarms.DynamoDbRead;
+            if (mergedConfig.MonitorWrites ?? DynamoResourceConfig.MonitorWritesDefault)
+            {
+                defaults = defaults.Concat(_defaultAlarms.DynamoDbWrite).ToArray();
+            }
+
+            foreach (var alarm in defaults)
             {
                 var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
+                var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
+                var configuredThreshold = alarm.Threshold.CopyWith(value: values.Threshold);
+
+                var threshold = await ThresholdCalculator.ExpandThreshold(_attributeProvider,
+                    entity.Resource,
+                    mergedConfig,
+                    configuredThreshold);
+
+                var built = alarm.CopyWith(threshold, values);
 
                 var model = new Alarm
                 {
-                    AlarmName = $"{resource.Name}-{alarm.Name}-{groupParameters.AlarmNameSuffix}",
-                    AlarmDescription = _builder.GetAlarmDescription(groupParameters),
+                    AlarmName = $"{resourceConfig.Name}-{built.Name}-{groupParameters.AlarmNameSuffix}",
+                    AlarmDescription = groupParameters.DefaultAlarmDescription(),
                     Resource = entity,
                     Dimensions = dimensions,
-                    AlarmDefinition = alarm
+                    AlarmDefinition = built
                 };
+
                 result.Add(model);
             }
+
             return result;
         }
 
-        private async Task<IList<Alarm>> BuildIndexAlarms(ResourceThresholds<ResourceConfig> resource, AwsServiceAlarms<ResourceConfig> service, AlertingGroupParameters groupParameters,
-            AwsResource<TableDescription> entity)
+        private async Task<IList<Alarm>> BuildIndexAlarms(ResourceThresholds<DynamoResourceConfig> resourceConfig,
+            AwsServiceAlarms<DynamoResourceConfig> service,
+            AlertingGroupParameters groupParameters,
+            AwsResource<TableDescription> parentTableEntity)
         {
+            // called twice
+            var mergedConfig = service.Options.OverrideWith(resourceConfig.Options);
+
             var result = new List<Alarm>();
 
-            var gsiSet = entity.Resource.GlobalSecondaryIndexes;
+            var gsiSet = parentTableEntity.Resource.GlobalSecondaryIndexes;
 
+            var mergedValuesByAlarmName = service.Values.OverrideWith(resourceConfig.Values);
+
+            var defaults = _defaultAlarms.DynamoDbGsiRead;
+            if (mergedConfig.MonitorWrites ?? DynamoResourceConfig.MonitorWritesDefault)
+            {
+                defaults = defaults.Concat(_defaultAlarms.DynamoDbGsiWrite).ToArray();
+            }
 
             foreach (var gsi in gsiSet)
             {
                 var gsiResource = new AwsResource<GlobalSecondaryIndexDescription>(gsi.IndexName, gsi);
 
-
-                var expandedGsi = await _gsiAlarmBuilder.CopyAndUpdateDefaultAlarmsForResource(
-                    gsiResource,
-                    Defaults.DynamoDbGsi, service, resource);
-
-                foreach (var gsiAlarm in expandedGsi)
+                foreach (var alarm in defaults)
                 {
-                    var dimensions = _gsiDimensionProvider.GetDimensions(gsi, gsiAlarm.DimensionNames);
+                    var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
+                    var configuredThreshold = alarm.Threshold.CopyWith(value: values.Threshold);
+                    var dimensions = _gsiProvider.GetDimensions(gsi, parentTableEntity.Resource, alarm.DimensionNames);
+                    var threshold = await ThresholdCalculator.ExpandThreshold(_gsiProvider,
+                        gsiResource.Resource,
+                        mergedConfig,
+                        configuredThreshold);
+
+                    var built = alarm.CopyWith(threshold, values);
 
                     var model = new Alarm
                     {
-                        AlarmName = $"{resource.Name}-{gsi.IndexName}-{gsiAlarm.Name}-{groupParameters.AlarmNameSuffix}",
-                        AlarmDescription = _builder.GetAlarmDescription(groupParameters),
-                        Resource = entity,
+                        AlarmName = $"{resourceConfig.Name}-{gsi.IndexName}-{alarm.Name}-{groupParameters.AlarmNameSuffix}",
+                        AlarmDescription = groupParameters.DefaultAlarmDescription(),
+                        // TODO: remove this property in a future PR
+                        // passing in the entity shouldn't be necessary and passing in the table entity here
+                        // when the alarm is for a GSI is an even worse hack
+                        Resource = parentTableEntity,
                         Dimensions = dimensions,
-                        AlarmDefinition = gsiAlarm
+                        AlarmDefinition = built
                     };
 
                     result.Add(model);
