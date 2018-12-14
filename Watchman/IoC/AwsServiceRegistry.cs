@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Amazon.AutoScaling.Model;
 using Amazon.DynamoDBv2.Model;
 using Amazon.ElasticLoadBalancing.Model;
+using Amazon.ElasticLoadBalancingV2.Model;
 using Amazon.Lambda.Model;
 using Amazon.RDS.Model;
 using Amazon.StepFunctions.Model;
@@ -55,7 +56,7 @@ namespace Watchman.IoC
                 WatchmanServiceConfigurationMapper.MapElb, Defaults.Elb
                 );
 
-            AddService<LoadBalancerDescription, AlbSource, AlbAlarmDataProvider, ResourceConfig>(
+            AddService<LoadBalancer, AlbSource, AlbAlarmDataProvider, ResourceConfig>(
                 WatchmanServiceConfigurationMapper.MapAlb, Defaults.Alb
             );
 

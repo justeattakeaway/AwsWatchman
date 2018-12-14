@@ -1,24 +1,28 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
-using Amazon.ElasticLoadBalancing.Model;
+using Amazon.ElasticLoadBalancingV2.Model;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Alb
 {
-    public class AlbAlarmDataProvider : IAlarmDimensionProvider<LoadBalancerDescription>,
-        IResourceAttributesProvider<LoadBalancerDescription, ResourceConfig>
+    public class AlbAlarmDataProvider : IAlarmDimensionProvider<LoadBalancer>,
+        IResourceAttributesProvider<LoadBalancer, ResourceConfig>
     {
-        public List<Dimension> GetDimensions(LoadBalancerDescription resource, IList<string> dimensionNames)
+        private const string LoadBalancerDimensionPattern = "loadbalancer/(.*)";
+        private static readonly Regex LoadBalancerDimensionValueRegex = new Regex(LoadBalancerDimensionPattern);
+
+        public List<Dimension> GetDimensions(LoadBalancer resource, IList<string> dimensionNames)
         {
             return dimensionNames
                 .Select(d => GetDimension(resource, d))
                 .ToList();
         }
 
-        private Dimension GetDimension(LoadBalancerDescription resource, string dimensionName)
+        private Dimension GetDimension(LoadBalancer resource, string dimensionName)
         {
             var dim = new Dimension
             {
@@ -27,9 +31,17 @@ namespace Watchman.AwsResources.Services.Alb
 
             switch (dimensionName)
             {
-                case "LoadBalancerName":
-                    dim.Value = resource.LoadBalancerName;
-                    break;
+                case "LoadBalancer":
+                    if (LoadBalancerDimensionValueRegex.IsMatch(resource.LoadBalancerArn))
+                    {
+                        var match = LoadBalancerDimensionValueRegex.Match(resource.LoadBalancerArn);
+                        dim.Value = match.Groups[1].Value;
+                        break;
+                    }
+                    else
+                    {
+                        throw new Exception($"Could not find dimension value for LoadBalancer with LoadBalancerArn '{resource.LoadBalancerArn}'");
+                    }
 
                 default:
                     throw new Exception("Unsupported dimension " + dimensionName);
@@ -38,7 +50,7 @@ namespace Watchman.AwsResources.Services.Alb
             return dim;
         }
 
-        public Task<decimal> GetValue(LoadBalancerDescription resource, ResourceConfig config, string property)
+        public Task<decimal> GetValue(LoadBalancer resource, ResourceConfig config, string property)
         {
             throw new NotImplementedException();
         }

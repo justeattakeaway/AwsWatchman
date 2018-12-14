@@ -4,6 +4,7 @@ using Amazon.CloudWatch;
 using Amazon.DynamoDBv2;
 using Amazon.EC2;
 using Amazon.ElasticLoadBalancing;
+using Amazon.ElasticLoadBalancingV2;
 using Amazon.Lambda;
 using Amazon.RDS;
 using Amazon.S3;
@@ -59,6 +60,9 @@ namespace Watchman.IoC
                 .Singleton();
             For<IAmazonElasticLoadBalancing>()
                 .Use(ctx => new AmazonElasticLoadBalancingClient(creds, region))
+                .Singleton();
+            For<IAmazonElasticLoadBalancingV2>()
+                .Use(ctx => new AmazonElasticLoadBalancingV2Client(creds, region))
                 .Singleton();
             For<IAmazonS3>()
                 .Use(ctx => new AmazonS3Client(creds, region))

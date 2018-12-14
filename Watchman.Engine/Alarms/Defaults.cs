@@ -500,16 +500,64 @@ namespace Watchman.Engine.Alarms
         {
             new AlarmDefinition
             {
-                Name = "Target5xxErrorsHigh",
-                Metric = "HTTPCode_Target_5XX_Count",
+                Name = "Alb5xxErrorsHigh",
+                Metric = "HTTPCode_ELB_5XX_Count",
                 Period = TimeSpan.FromMinutes(1),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
-                    Value = 50
+                    Value = 10
                 },
-                DimensionNames = new[] {"LoadBalancerName"},
+                DimensionNames = new[] {"LoadBalancer"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Alb
+            },
+            new AlarmDefinition
+            {
+                Name = "AlbRejectedConnectionCountHigh",
+                Metric = "RejectedConnectionCount",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 10
+                },
+                DimensionNames = new[] {"LoadBalancer"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Alb
+            },
+            new AlarmDefinition
+            {
+                Name = "AlbTargetResponseTimeHigh",
+                Metric = "TargetResponseTime",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 10
+                },
+                DimensionNames = new[] {"LoadBalancer"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Average,
+                Namespace = AwsNamespace.Alb
+            },
+            new AlarmDefinition
+            {
+                Name = "UnHealthyHostCountHigh",
+                Metric = "UnHealthyHostCount",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 1
+                },
+                DimensionNames = new[] {"LoadBalancer"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Alb
