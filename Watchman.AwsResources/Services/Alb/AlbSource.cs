@@ -7,7 +7,7 @@ using Amazon.ElasticLoadBalancingV2.Model;
 
 namespace Watchman.AwsResources.Services.Alb
 {
-    public class AlbSource : ResourceSourceBase<LoadBalancer>
+    public class AlbSource : ResourceSourceBase<AlbResource>
     {
         private readonly IAmazonElasticLoadBalancingV2 _client;
 
@@ -16,11 +16,24 @@ namespace Watchman.AwsResources.Services.Alb
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
-        protected override async Task<IEnumerable<LoadBalancer>> FetchResources()
-        {
-            var results = new List<LoadBalancer>();
-            string marker = null;
+        protected override string GetResourceName(AlbResource resource) => resource.LoadBalancer.LoadBalancerName;
 
+        protected override async Task<IEnumerable<AlbResource>> FetchResources()
+        {
+            var loadBalancers = await GetLoadBalancers();
+
+            var results = loadBalancers.Select(loadBalancer => new AlbResource
+            {
+                LoadBalancer = loadBalancer
+            });
+
+            return results;
+        }
+
+        private async Task<IEnumerable<LoadBalancer>> GetLoadBalancers()
+        {
+            var loadBalancers = new List<LoadBalancer>();
+            string marker = null;
             do
             {
                 var response = await _client.DescribeLoadBalancersAsync(new DescribeLoadBalancersRequest
@@ -31,14 +44,11 @@ namespace Watchman.AwsResources.Services.Alb
                 var applicationLoadBalancers = response.LoadBalancers
                     .Where(x => x.Type == LoadBalancerTypeEnum.Application);
 
-                results.AddRange(applicationLoadBalancers);
+                loadBalancers.AddRange(applicationLoadBalancers);
                 marker = response.NextMarker;
-            }
-            while (!string.IsNullOrEmpty(marker));
+            } while (!string.IsNullOrEmpty(marker));
 
-            return results;
+            return loadBalancers;
         }
-
-        protected override string GetResourceName(LoadBalancer resource) => resource.LoadBalancerName;
     }
 }

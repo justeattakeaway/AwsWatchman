@@ -150,8 +150,8 @@ namespace Watchman.AwsResources.Tests.Services.Alb
 
             // assert
             Assert.That(result.Name, Is.EqualTo(secondFunctionName));
-            Assert.That(result.Resource, Is.InstanceOf<LoadBalancer>());
-            Assert.That(result.Resource.LoadBalancerName, Is.EqualTo(secondFunctionName));
+            Assert.That(result.Resource, Is.InstanceOf<AlbResource>());
+            Assert.That(result.Resource.LoadBalancer.LoadBalancerName, Is.EqualTo(secondFunctionName));
         }
     }
 }

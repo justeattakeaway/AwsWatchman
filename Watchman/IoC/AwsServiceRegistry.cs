@@ -56,7 +56,7 @@ namespace Watchman.IoC
                 WatchmanServiceConfigurationMapper.MapElb, Defaults.Elb
                 );
 
-            AddService<LoadBalancer, AlbSource, AlbAlarmDataProvider, ResourceConfig>(
+            AddService<AlbResource, AlbSource, AlbAlarmDataProvider, ResourceConfig>(
                 WatchmanServiceConfigurationMapper.MapAlb, Defaults.Alb
             );
 

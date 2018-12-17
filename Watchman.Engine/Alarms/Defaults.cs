@@ -516,6 +516,22 @@ namespace Watchman.Engine.Alarms
             },
             new AlarmDefinition
             {
+                Name = "AlbTarget5xxErrorsHigh",
+                Metric = "HTTPCode_Target_5XX_Count",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 10
+                },
+                DimensionNames = new[] {"LoadBalancer"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Alb
+            },
+            new AlarmDefinition
+            {
                 Name = "AlbRejectedConnectionCountHigh",
                 Metric = "RejectedConnectionCount",
                 Period = TimeSpan.FromMinutes(1),
@@ -536,6 +552,7 @@ namespace Watchman.Engine.Alarms
                 Metric = "TargetResponseTime",
                 Period = TimeSpan.FromMinutes(1),
                 EvaluationPeriods = 1,
+                ExtendedStatistic = "p99",
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
@@ -544,22 +561,6 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] {"LoadBalancer"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Average,
-                Namespace = AwsNamespace.Alb
-            },
-            new AlarmDefinition
-            {
-                Name = "UnHealthyHostCountHigh",
-                Metric = "UnHealthyHostCount",
-                Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
-                Threshold = new Threshold
-                {
-                    ThresholdType = ThresholdType.Absolute,
-                    Value = 1
-                },
-                DimensionNames = new[] {"LoadBalancer"},
-                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.Alb
             }
         };
