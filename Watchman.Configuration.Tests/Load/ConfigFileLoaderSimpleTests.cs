@@ -33,7 +33,7 @@ namespace Watchman.Configuration.Tests.Load
         [Test]
         public void TheConfigIsNotEmpty()
         {
-            Assert.That(_config.AlertingGroups.Count, Is.EqualTo(5));
+            Assert.That(_config.AlertingGroups.Count, Is.EqualTo(6));
 
             foreach (var group in _config.AlertingGroups)
             {

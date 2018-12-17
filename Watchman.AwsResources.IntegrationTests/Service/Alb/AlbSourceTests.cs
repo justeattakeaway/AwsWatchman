@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Amazon;
 using Amazon.ElasticLoadBalancingV2;
 using NUnit.Framework;
+using TestHelper;
 using Watchman.AwsResources.Services.Alb;
 
 namespace Watchman.AwsResources.IntegrationTests.Service.Alb
@@ -22,12 +23,7 @@ namespace Watchman.AwsResources.IntegrationTests.Service.Alb
 
         private static AlbSource InitializeAlbSource()
         {
-            var config = new AmazonElasticLoadBalancingV2Config
-            {
-                RegionEndpoint = RegionEndpoint.EUWest1
-            };
-            var albClient = new AmazonElasticLoadBalancingV2Client(config);
-
+            var albClient = new AmazonElasticLoadBalancingV2Client(CredentialsReader.GetCredentials(), RegionEndpoint.EUWest1);
             return new AlbSource(albClient);
         }
     }
