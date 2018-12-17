@@ -199,8 +199,6 @@ Note that using the defaults here for all alarms is probably not that useful.
 
 ### Alb
 
-Note that using the defaults here for all alarms is probably not that useful.
-
 - `Alb5xxErrorsHigh`: 10 (count)
 - `AlbTarget5xxErrorsHigh`: 10 (count)
 - `AlbRejectedConnectionCountHigh`: 10 (count)
