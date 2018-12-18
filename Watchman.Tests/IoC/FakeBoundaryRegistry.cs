@@ -4,6 +4,7 @@ using Amazon.CloudWatch;
 using Amazon.DynamoDBv2;
 using Amazon.EC2;
 using Amazon.ElasticLoadBalancing;
+using Amazon.ElasticLoadBalancingV2;
 using Amazon.Lambda;
 using Amazon.RDS;
 using Amazon.S3;
@@ -44,6 +45,7 @@ namespace Watchman.Tests.IoC
             SetupFake<IAmazonLambda>();
             SetupFake<IAmazonEC2>();
             SetupFake<IAmazonElasticLoadBalancing>();
+            SetupFake<IAmazonElasticLoadBalancingV2>();
             SetupFake<IAmazonS3>();
             SetupFake<IAmazonStepFunctions>();
             SetupFake<IAmazonCloudWatch>();

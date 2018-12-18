@@ -500,7 +500,7 @@ namespace Watchman.Engine.Alarms
         {
             new AlarmDefinition
             {
-                Name = "Alb5xxErrorsHigh",
+                Name = "5xxErrorsHigh",
                 Metric = "HTTPCode_ELB_5XX_Count",
                 Period = TimeSpan.FromMinutes(1),
                 EvaluationPeriods = 1,
@@ -516,7 +516,7 @@ namespace Watchman.Engine.Alarms
             },
             new AlarmDefinition
             {
-                Name = "AlbTarget5xxErrorsHigh",
+                Name = "Target5xxErrorsHigh",
                 Metric = "HTTPCode_Target_5XX_Count",
                 Period = TimeSpan.FromMinutes(1),
                 EvaluationPeriods = 1,
@@ -532,7 +532,7 @@ namespace Watchman.Engine.Alarms
             },
             new AlarmDefinition
             {
-                Name = "AlbRejectedConnectionCountHigh",
+                Name = "RejectedConnectionCountHigh",
                 Metric = "RejectedConnectionCount",
                 Period = TimeSpan.FromMinutes(1),
                 EvaluationPeriods = 1,
@@ -548,7 +548,7 @@ namespace Watchman.Engine.Alarms
             },
             new AlarmDefinition
             {
-                Name = "AlbTargetResponseTimeHigh",
+                Name = "TargetResponseTimeHigh",
                 Metric = "TargetResponseTime",
                 Period = TimeSpan.FromMinutes(1),
                 EvaluationPeriods = 1,
@@ -556,11 +556,10 @@ namespace Watchman.Engine.Alarms
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
-                    Value = 10
+                    Value = 2
                 },
                 DimensionNames = new[] {"LoadBalancer"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Alb
             }
         };
