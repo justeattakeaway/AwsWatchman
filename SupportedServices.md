@@ -199,10 +199,10 @@ Note that using the defaults here for all alarms is probably not that useful.
 
 ### Alb
 
-- `Alb5xxErrorsHigh`: 10 (count)
-- `AlbTarget5xxErrorsHigh`: 10 (count)
-- `AlbRejectedConnectionCountHigh`: 10 (count)
-- `AlbTargetResponseTimeHigh`: 2 (seconds) compared against `p99`
+- `5xxErrorsHigh`: 10 (count)
+- `Target5xxErrorsHigh`: 10 (count)
+- `RejectedConnectionCountHigh`: 10 (count)
+- `TargetResponseTimeHigh`: 2 (seconds) compared against `p99`
 
 ## Full example
 
