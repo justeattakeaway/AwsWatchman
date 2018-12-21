@@ -33,7 +33,7 @@ namespace Watchman.Configuration.Tests.Load
         [Test]
         public void TheConfigIsNotEmpty()
         {
-            Assert.That(_config.AlertingGroups.Count, Is.EqualTo(5));
+            Assert.That(_config.AlertingGroups.Count, Is.EqualTo(6));
 
             foreach (var group in _config.AlertingGroups)
             {
@@ -64,6 +64,7 @@ namespace Watchman.Configuration.Tests.Load
             AssertContainsName(names, "LambdaOnly");
             AssertContainsName(names, "RdsOnly");
             AssertContainsName(names, "SqsOnly");
+            AssertContainsName(names, "AlbOnly");
         }
 
         [Test]
@@ -152,6 +153,15 @@ namespace Watchman.Configuration.Tests.Load
 
             Assert.That(group, Is.Not.Null);
             AssertSectionIsPopulated(group.Services.Lambda);
+        }
+
+        [Test]
+        public void AlbResourcesAreDeserialised()
+        {
+            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "AlbOnly");
+
+            Assert.That(group, Is.Not.Null);
+            AssertSectionIsPopulated(group.Services.Alb);
         }
 
         [Test]

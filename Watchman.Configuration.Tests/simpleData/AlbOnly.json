@@ -1,0 +1,17 @@
+{
+  "Name": "AlbOnly",
+  "NumberOfCloudFormationStacks": 2,
+  "Targets": [
+    { "Email": "AlbOnlyTest@example.com" },
+    { "Url": "http://farley.com" }
+  ],
+  "AlarmNameSuffix": "AlbOnlyTest",
+  "Services": {
+    "Alb": {
+      "ExcludeResourcesPrefixedWith": [ "testPrefix" ],
+      "Resources": [
+        { "Pattern": "alb-pattern" }
+      ]
+    }
+  }
+}

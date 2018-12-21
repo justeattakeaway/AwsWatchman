@@ -496,6 +496,74 @@ namespace Watchman.Engine.Alarms
             }
         };
 
+        public static IList<AlarmDefinition> Alb = new List<AlarmDefinition>
+        {
+            new AlarmDefinition
+            {
+                Name = "5xxErrorsHigh",
+                Metric = "HTTPCode_ELB_5XX_Count",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 10
+                },
+                DimensionNames = new[] {"LoadBalancer"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Alb
+            },
+            new AlarmDefinition
+            {
+                Name = "Target5xxErrorsHigh",
+                Metric = "HTTPCode_Target_5XX_Count",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 10
+                },
+                DimensionNames = new[] {"LoadBalancer"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Alb
+            },
+            new AlarmDefinition
+            {
+                Name = "RejectedConnectionCountHigh",
+                Metric = "RejectedConnectionCount",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 10
+                },
+                DimensionNames = new[] {"LoadBalancer"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Alb
+            },
+            new AlarmDefinition
+            {
+                Name = "TargetResponseTimeHigh",
+                Metric = "TargetResponseTime",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                ExtendedStatistic = "p99",
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 2
+                },
+                DimensionNames = new[] {"LoadBalancer"},
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Namespace = AwsNamespace.Alb
+            }
+        };
+
         public static IList<AlarmDefinition> KinesisStream = new List<AlarmDefinition>
         {
             new AlarmDefinition

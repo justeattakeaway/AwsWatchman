@@ -11,6 +11,7 @@ namespace Watchman.Configuration
         public AwsServiceAlarms<ResourceConfig> Lambda { get; set; }
         public AwsServiceAlarms<ResourceConfig> VpcSubnet { get; set; }
         public AwsServiceAlarms<ResourceConfig> Elb { get; set; }
+        public AwsServiceAlarms<ResourceConfig> Alb { get; set; }
         public AwsServiceAlarms<ResourceConfig> KinesisStream { get; set; }
         public AwsServiceAlarms<ResourceConfig> StepFunction { get; set; }
         public AwsServiceAlarms<DynamoResourceConfig> DynamoDb { get; set; }
@@ -29,6 +30,7 @@ namespace Watchman.Configuration
             {"Lambda", Lambda},
             {"VpcSubnet", VpcSubnet},
             {"Elb", Elb},
+            {"Alb", Alb},
             {"KinesisStream", KinesisStream},
             {"StepFunction", StepFunction},
             {"DynamoDb", DynamoDb},

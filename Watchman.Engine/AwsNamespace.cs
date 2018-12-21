@@ -9,6 +9,7 @@ namespace Watchman.Engine
         public const string AutoScaling = "AWS/AutoScaling";
         public const string Lambda = "AWS/Lambda";
         public const string Elb = "AWS/ELB";
+        public const string Alb = "AWS/ApplicationELB";
         public const string Kinesis = "AWS/Kinesis";
         public const string StepFunction = "AWS/States";
     }

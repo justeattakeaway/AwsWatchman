@@ -112,6 +112,7 @@ The following services are supported
 - `Lambda`
 - `Kinesis`
 - `Elb`
+- `Alb`
 - `StepFunction`
 - `DynamoDb` (new implementation of the existing non-cloudformation mechanism)
 - `Sqs` (new implementation of the existing non-cloudformation mechanism)
@@ -195,6 +196,13 @@ Note that using the defaults here for all alarms is probably not that useful.
 - `SpilloverCountHigh`: 10 (count)
 - `LatencyHigh`: 0.5 (average in seconds)
 - `UnHealthyHostCountHigh`: 1 (count)
+
+### Alb
+
+- `5xxErrorsHigh`: 10 (count)
+- `Target5xxErrorsHigh`: 10 (count)
+- `RejectedConnectionCountHigh`: 10 (count)
+- `TargetResponseTimeHigh`: 2 (seconds) compared against `p99`
 
 ## Full example
 
