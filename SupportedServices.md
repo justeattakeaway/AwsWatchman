@@ -173,9 +173,9 @@ For each resource each of the default alarms will be applied. See [alarm definit
 
 Sqs will mark any queue as an error queue if it ends with "_error"
 
-- `NumberOfMessagesVisible`: 100
+- `NumberOfVisibleMessages`: 100
 - `AgeOfOldestMessage`: 600 (seconds)
-- `NumberOfMessagesVisible_Error`: 10
+- `NumberOfVisibleMessages_Error`: 10
 - `AgeOfOldestMessage_Error`: 600 (seconds)
 
 #### Options
