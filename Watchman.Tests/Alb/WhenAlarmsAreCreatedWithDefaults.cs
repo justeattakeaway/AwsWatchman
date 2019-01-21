@@ -37,7 +37,7 @@ namespace Watchman.Tests.Alb
             Assert.That(alarm.Properties["Dimensions"].First["Name"].Value<string>(), Is.EqualTo("LoadBalancer"));
             Assert.That(alarm.Properties["Dimensions"].First["Value"].Value<string>(), Is.EqualTo("loadBalancer-1"));
             Assert.That(alarm.GetPropertyValue("ComparisonOperator"), Is.EqualTo("GreaterThanOrEqualToThreshold"));
-            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("1"));
+            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("2"));
             Assert.That(alarm.GetPropertyValue("Period"), Is.EqualTo("60"));
             Assert.That(alarm.GetPropertyValue("Threshold"), Is.EqualTo("10"));
             Assert.That(alarm.GetPropertyValue("Statistic"), Is.EqualTo("Sum"));
@@ -58,7 +58,7 @@ namespace Watchman.Tests.Alb
             Assert.That(alarm.Properties["Dimensions"].First["Name"].Value<string>(), Is.EqualTo("LoadBalancer"));
             Assert.That(alarm.Properties["Dimensions"].First["Value"].Value<string>(), Is.EqualTo("loadBalancer-1"));
             Assert.That(alarm.GetPropertyValue("ComparisonOperator"), Is.EqualTo("GreaterThanOrEqualToThreshold"));
-            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("1"));
+            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("2"));
             Assert.That(alarm.GetPropertyValue("Period"), Is.EqualTo("60"));
             Assert.That(alarm.GetPropertyValue("Threshold"), Is.EqualTo("10"));
             Assert.That(alarm.GetPropertyValue("Statistic"), Is.EqualTo("Sum"));
@@ -79,7 +79,7 @@ namespace Watchman.Tests.Alb
             Assert.That(alarm.Properties["Dimensions"].First["Name"].Value<string>(), Is.EqualTo("LoadBalancer"));
             Assert.That(alarm.Properties["Dimensions"].First["Value"].Value<string>(), Is.EqualTo("loadBalancer-1"));
             Assert.That(alarm.GetPropertyValue("ComparisonOperator"), Is.EqualTo("GreaterThanOrEqualToThreshold"));
-            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("1"));
+            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("2"));
             Assert.That(alarm.GetPropertyValue("Period"), Is.EqualTo("60"));
             Assert.That(alarm.GetPropertyValue("Threshold"), Is.EqualTo("10"));
             Assert.That(alarm.GetPropertyValue("Statistic"), Is.EqualTo("Sum"));
@@ -100,7 +100,7 @@ namespace Watchman.Tests.Alb
             Assert.That(alarm.Properties["Dimensions"].First["Name"].Value<string>(), Is.EqualTo("LoadBalancer"));
             Assert.That(alarm.Properties["Dimensions"].First["Value"].Value<string>(), Is.EqualTo("loadBalancer-1"));
             Assert.That(alarm.GetPropertyValue("ComparisonOperator"), Is.EqualTo("GreaterThanOrEqualToThreshold"));
-            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("1"));
+            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("2"));
             Assert.That(alarm.GetPropertyValue("Period"), Is.EqualTo("60"));
             Assert.That(alarm.GetPropertyValue("Threshold"), Is.EqualTo("2"));
             Assert.That(alarm.GetPropertyValue("Statistic"), Is.Empty);

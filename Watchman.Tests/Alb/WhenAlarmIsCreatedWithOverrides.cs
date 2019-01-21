@@ -25,7 +25,7 @@ namespace Watchman.Tests.Alb
             var alarm = _albTestSetupData.Alarms.FirstOrDefault(x => x.GetPropertyValue("AlarmName") == alarmName);
 
             Assert.That(alarm, Is.Not.Null);
-            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("1"));
+            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("2"));
             Assert.That(alarm.GetPropertyValue("Threshold"), Is.EqualTo("10"));
             Assert.That(alarm.GetPropertyValue("Statistic"), Is.EqualTo("Sum"));
             Assert.That(alarm.GetPropertyValue("ExtendedStatistic"), Is.Empty);
@@ -38,7 +38,7 @@ namespace Watchman.Tests.Alb
             var alarm = _albTestSetupData.Alarms.FirstOrDefault(x => x.GetPropertyValue("AlarmName") == alarmName);
 
             Assert.That(alarm, Is.Not.Null);
-            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("1"));
+            Assert.That(alarm.GetPropertyValue("EvaluationPeriods"), Is.EqualTo("2"));
             Assert.That(alarm.GetPropertyValue("Threshold"), Is.EqualTo("10"));
             Assert.That(alarm.GetPropertyValue("Statistic"), Is.EqualTo("Sum"));
             Assert.That(alarm.GetPropertyValue("ExtendedStatistic"), Is.Empty);

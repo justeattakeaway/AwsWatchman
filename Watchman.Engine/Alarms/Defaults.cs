@@ -503,7 +503,7 @@ namespace Watchman.Engine.Alarms
                 Name = "5xxErrorsHigh",
                 Metric = "HTTPCode_ELB_5XX_Count",
                 Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
+                EvaluationPeriods = 2,
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
@@ -519,7 +519,7 @@ namespace Watchman.Engine.Alarms
                 Name = "Target5xxErrorsHigh",
                 Metric = "HTTPCode_Target_5XX_Count",
                 Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
+                EvaluationPeriods = 2,
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
@@ -535,7 +535,7 @@ namespace Watchman.Engine.Alarms
                 Name = "RejectedConnectionCountHigh",
                 Metric = "RejectedConnectionCount",
                 Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
+                EvaluationPeriods = 2,
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
@@ -551,7 +551,7 @@ namespace Watchman.Engine.Alarms
                 Name = "TargetResponseTimeHigh",
                 Metric = "TargetResponseTime",
                 Period = TimeSpan.FromMinutes(1),
-                EvaluationPeriods = 1,
+                EvaluationPeriods = 2,
                 ExtendedStatistic = "p99",
                 Threshold = new Threshold
                 {
