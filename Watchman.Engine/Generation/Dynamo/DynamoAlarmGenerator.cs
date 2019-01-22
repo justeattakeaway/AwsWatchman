@@ -108,7 +108,7 @@ namespace Watchman.Engine.Generation.Dynamo
 
                 if (tableResource == null)
                 {
-                    _logger.Info($"Skipping named table {table.Name} as it does not exist");
+                    _logger.Error($"Skipping table {table.Name} as it does not exist");
                     return;
                 }
 
@@ -173,7 +173,7 @@ namespace Watchman.Engine.Generation.Dynamo
 
                 if (tableResource == null)
                 {
-                    _logger.Info($"Skipping named table {table.Name} as it does not exist");
+                    _logger.Error($"Skipping table {table.Name} as it does not exist");
                     return;
                 }
 

@@ -61,5 +61,37 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
             mockery.GivenATable("table-that-exists", 1300, 600);
             mockery.ValidSnsTopic();
         }
+
+        [Test]
+        public async Task DoesNotThrowIfTableIsReturnedInListingButCannotBeDescribed()
+        {
+            var mockery = new DynamoAlarmGeneratorMockery();
+            var generator = mockery.AlarmGenerator;
+
+            mockery.GivenAListOfTables(new[] { "banana" , "apple"});
+            mockery.GivenATable("apple", 1300, 600);
+            mockery.ValidSnsTopic();
+
+            var config = new WatchmanConfiguration()
+            {
+                AlertingGroups = new List<AlertingGroup>()
+                {
+                    new AlertingGroup()
+                    {
+                        Name = "TestGroup",
+                        AlarmNameSuffix = "TestGroup",
+                        DynamoDb = new DynamoDb()
+                        {
+                            Tables = new List<Table>
+                            {
+                                new Table { Pattern = "^.*$" }
+                            }
+                        }
+                    }
+                }
+            };
+
+            await generator.GenerateAlarmsFor(config, RunMode.GenerateAlarms);
+        }
     }
 }

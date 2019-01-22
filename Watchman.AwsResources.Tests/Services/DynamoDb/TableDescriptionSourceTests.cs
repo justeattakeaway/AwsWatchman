@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,10 +18,7 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
         private ListTablesResponse _secondPage;
         private ListTablesResponse _thirdPage;
 
-        private TableDescriptionSource _tableDescriptionSource;
-
-        [SetUp]
-        public void Setup()
+        private TableDescriptionSource SetupPagingTest()
         {
             var firstTableName = "Table-1";
             _firstPage = new ListTablesResponse
@@ -59,32 +57,33 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
             var dynamoDbMock = new Mock<IAmazonDynamoDB>();
             dynamoDbMock.Setup(s => s.ListTablesAsync(
                 It.Is<string>(r => r == null), It.IsAny<CancellationToken>()
-                )).ReturnsAsync(_firstPage);
+            )).ReturnsAsync(_firstPage);
 
             dynamoDbMock.Setup(s => s.ListTablesAsync(
                 It.Is<string>(r => r == firstTableName),
                 It.IsAny<CancellationToken>()
-                )).ReturnsAsync(_secondPage);
+            )).ReturnsAsync(_secondPage);
 
             dynamoDbMock.Setup(s => s.ListTablesAsync(
                 It.Is<string>(r => r == secondTableName),
                 It.IsAny<CancellationToken>()
-                )).ReturnsAsync(_thirdPage);
+            )).ReturnsAsync(_thirdPage);
 
             dynamoDbMock.Setup(s => s.DescribeTableAsync(It.Is<string>(r => r == secondTableName),
-                It.IsAny<CancellationToken>()))
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(describeSecondTableResponse);
 
-            _tableDescriptionSource = new TableDescriptionSource(dynamoDbMock.Object);
+            return new TableDescriptionSource(dynamoDbMock.Object);
         }
 
         [Test]
         public async Task GetResourcesAsync_MultiplePages_AllFetchedAndReturned()
         {
             // arrange
+            var test = SetupPagingTest();
 
             // act
-            var result = await _tableDescriptionSource.GetResourceNamesAsync();
+            var result = await test.GetResourceNamesAsync();
 
             // assert
             Assert.That(result.Count, Is.EqualTo(3));
@@ -98,10 +97,12 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
         public async Task GetResourcesAsync_SinglePage_FetchedAndReturned()
         {
             // arrange
+            var test = SetupPagingTest();
+
             _firstPage.LastEvaluatedTableName = null;
 
             // act
-            var result = await _tableDescriptionSource.GetResourceNamesAsync();
+            var result = await test.GetResourceNamesAsync();
 
             // assert
             Assert.That(result.Count, Is.EqualTo(1));
@@ -113,11 +114,12 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
         public async Task GetResourcesAsync_EmptyResult_EmptyListReturned()
         {
             // arrange
+            var test = SetupPagingTest();
             _firstPage.LastEvaluatedTableName = null;
             _firstPage.TableNames = new List<string>();
 
             // act
-            var result = await _tableDescriptionSource.GetResourceNamesAsync();
+            var result = await test.GetResourceNamesAsync();
 
             // assert
             Assert.That(result.Count, Is.EqualTo(0));
@@ -127,10 +129,11 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
         public async Task GetResouceAsync_ReturnsCorrectResource()
         {
             // arrange
+            var test = SetupPagingTest();
             var secondDbInstanceName = _secondPage.TableNames.First();
 
             // act
-            var result = await _tableDescriptionSource.GetResourceAsync(secondDbInstanceName);
+            var result = await test.GetResourceAsync(secondDbInstanceName);
 
             // assert
             Assert.That(result.Name, Is.EqualTo(secondDbInstanceName));
@@ -141,7 +144,36 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
         [Test]
         public async Task GetResourceAsync_ReturnsNullIfNotInList()
         {
-            var result = await _tableDescriptionSource.GetResourceAsync("does-not-exist");
+            var result = await SetupPagingTest().GetResourceAsync("does-not-exist");
+            Assert.Null(result);
+        }
+
+        [Test]
+        public async Task GetResourceAsync_ReturnsNullIfSdkThrowsNotFound()
+        {
+            var dynamoDbFake = new Mock<IAmazonDynamoDB>();
+
+            dynamoDbFake
+                .Setup(s => s.ListTablesAsync(
+                    It.Is<string>(r => r == null), It.IsAny<CancellationToken>()
+                ))
+                .ReturnsAsync(new ListTablesResponse()
+                {
+                    TableNames = new List<string>() { "banana" }
+                });
+
+            dynamoDbFake
+                .Setup(s => s.DescribeTableAsync("banana", It.IsAny<CancellationToken>()))
+                .Throws(new ResourceNotFoundException("Table not found"))
+                //so we know we actually threw this error
+                .Verifiable();
+
+            var sut = new TableDescriptionSource(dynamoDbFake.Object);
+
+            var result = await sut.GetResourceAsync("banana");
+
+            dynamoDbFake.Verify();
+
             Assert.Null(result);
         }
     }
