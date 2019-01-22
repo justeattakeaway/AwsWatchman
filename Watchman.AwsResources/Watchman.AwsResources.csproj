@@ -9,7 +9,7 @@
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.17.1" />
     <PackageReference Include="AWSSDK.EC2" Version="3.3.79" />
     <PackageReference Include="AWSSDK.ElasticLoadBalancing" Version="3.3.3.33" />
-    <PackageReference Include="AWSSDK.ElasticLoadBalancingV2" Version="3.3.12.10" />
+    <PackageReference Include="AWSSDK.ElasticLoadBalancingV2" Version="3.3.12.11" />
     <PackageReference Include="AWSSDK.Lambda" Version="3.3.19.11" />
     <PackageReference Include="AWSSDK.RDS" Version="3.3.37.12" />
     <PackageReference Include="AWSSDK.StepFunctions" Version="3.3.4.5" />
