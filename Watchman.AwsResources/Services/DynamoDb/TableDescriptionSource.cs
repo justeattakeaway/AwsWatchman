@@ -44,7 +44,16 @@ namespace Watchman.AwsResources.Services.DynamoDb
                 return _cachedTableDescriptions[name];
             }
 
-            var tableResponse = await _dynamoDb.DescribeTableAsync(name);
+            DescribeTableResponse tableResponse;
+
+            try
+            {
+                tableResponse = await _dynamoDb.DescribeTableAsync(name);
+            }
+            catch (ResourceNotFoundException)
+            {
+                return null;
+            }
 
             var dataItem = new AwsResource<TableDescription>(tableResponse.Table.TableName, tableResponse.Table);
             _cachedTableDescriptions.Add(tableResponse.Table.TableName, dataItem);

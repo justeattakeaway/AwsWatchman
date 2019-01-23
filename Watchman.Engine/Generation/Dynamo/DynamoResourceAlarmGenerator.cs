@@ -10,6 +10,7 @@ using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine.Alarms;
+using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Generation.Dynamo
 {
@@ -20,18 +21,20 @@ namespace Watchman.Engine.Generation.Dynamo
         private readonly IResourceAttributesProvider<TableDescription, DynamoResourceConfig> _attributeProvider;
         private readonly DynamoDbGsiDataProvider _gsiProvider = new DynamoDbGsiDataProvider();
         private readonly DynamoDbDefaults _defaultAlarms;
-
+        private readonly IAlarmLogger _logger;
 
         public DynamoResourceAlarmGenerator(
             IResourceSource<TableDescription> tableSource,
             IAlarmDimensionProvider<TableDescription> dimensionProvider,
             IResourceAttributesProvider<TableDescription, DynamoResourceConfig> attributeProvider,
-            DynamoDbDefaults defaultAlarms)
+            DynamoDbDefaults defaultAlarms,
+            IAlarmLogger logger)
         {
             _tableSource = tableSource;
             _dimensions = dimensionProvider;
             _attributeProvider = attributeProvider;
             _defaultAlarms = defaultAlarms;
+            _logger = logger;
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
@@ -63,7 +66,8 @@ namespace Watchman.Engine.Generation.Dynamo
 
             if (entity == null)
             {
-                throw new Exception($"Entity {resource.Name} not found");
+                _logger.Error($"Skipping table {resource.Name} as it does not exist");
+                return Array.Empty<Alarm>();
             }
 
             var result = await BuildTableAlarms(resource, service, groupParameters, entity);

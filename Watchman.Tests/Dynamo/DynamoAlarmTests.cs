@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Amazon.CloudFormation;
 using Amazon.DynamoDBv2;
@@ -70,6 +71,77 @@ namespace Watchman.Tests.Dynamo
             // assert
 
             Assert.That(cloudformation.StacksDeployed, Is.Zero);
+        }
+
+        [Test]
+        public async Task IgnoresTablesThatOnlyExistInListings()
+        {
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
+                new AlertingGroupServices()
+                {
+                    DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
+                    {
+                        Resources = new List<ResourceThresholds<DynamoResourceConfig>>()
+                        {
+                            new ResourceThresholds<DynamoResourceConfig>()
+                            {
+                                Pattern = "^.*$"
+                            }
+                        }
+                    }
+                });
+
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
+
+            var dynamo = ioc.GetMock<IAmazonDynamoDB>();
+
+            dynamo
+                .Setup(x => x.ListTablesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ListTablesResponse()
+                {
+                    TableNames = new List<string>() { "non-existent", "existent" }
+                });
+
+            dynamo
+                .Setup(x => x.DescribeTableAsync("non-existent", It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new ResourceNotFoundException("bad"))
+
+                // so we know this actually got hit and the error was thrown
+                .Verifiable();
+
+            dynamo
+                .Setup(x => x.DescribeTableAsync("existent", It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new DescribeTableResponse()
+                {
+                    Table = new TableDescription()
+                    {
+                        TableName = "existent",
+                        GlobalSecondaryIndexes = new List<GlobalSecondaryIndexDescription>(),
+                        ProvisionedThroughput = new ProvisionedThroughputDescription()
+                    }
+                });
+
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            dynamo.Verify();
+            Assert.That(cloudformation.StacksDeployed, Is.EqualTo(1));
+
+            var alarms = cloudformation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("TableName");
+
+            Assert.That(alarms.Keys.ToArray(), Is.EquivalentTo(new[] { "existent" }));
         }
 
         [Test]
