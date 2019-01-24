@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Watchman.Engine.Alarms;
+using Watchman.Engine.Generation.Dynamo.Alarms;
+using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Generation.Sqs
@@ -12,14 +14,16 @@ namespace Watchman.Engine.Generation.Sqs
         private readonly IAmazonCloudWatch _cloudWatchClient;
         private readonly IAlarmLogger _logger;
         private readonly IAlarmFinder _alarmFinder;
+        private readonly ILegacyAlarmTracker _tracker;
 
         public QueueAlarmCreator(IAmazonCloudWatch cloudWatchClient,
             IAlarmFinder alarmFinder,
-            IAlarmLogger logger)
+            IAlarmLogger logger, ILegacyAlarmTracker tracker)
         {
             _cloudWatchClient = cloudWatchClient;
             _alarmFinder = alarmFinder;
             _logger = logger;
+            _tracker = tracker;
         }
 
         public int AlarmPutCount { get; private set; }
@@ -29,6 +33,8 @@ namespace Watchman.Engine.Generation.Sqs
              string snsTopicArn, bool dryRun)
         {
             var alarmName = GetAlarmName(queueName, AwsMetrics.MessagesVisible, alarmNameSuffix);
+
+            _tracker.Register(alarmName);
 
             var alarmNeedsUpdate = await InspectExistingAlarm(alarmName,
                 threshold, AwsConstants.FiveMinutesInSeconds, snsTopicArn);
@@ -50,6 +56,8 @@ namespace Watchman.Engine.Generation.Sqs
         public async Task EnsureOldestMessageAlarm(string queueName, int threshold, string alarmNameSuffix, string snsTopicArn, bool dryRun)
         {
             var alarmName = GetAlarmName(queueName, AwsMetrics.AgeOfOldestMessage, alarmNameSuffix);
+
+            _tracker.Register(alarmName);
 
             var alarmNeedsUpdate = await InspectExistingAlarm(alarmName,
                 threshold, AwsConstants.FiveMinutesInSeconds, snsTopicArn);

@@ -3,7 +3,9 @@ using Amazon.CloudWatch;
 using Moq;
 using NUnit.Framework;
 using Watchman.Engine.Alarms;
+using Watchman.Engine.Generation.Dynamo.Alarms;
 using Watchman.Engine.Generation.Sqs;
+using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;
 using Watchman.Engine.Tests.Generation.Dynamo.Alarms;
 
@@ -20,7 +22,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             var logger = new Mock<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureLengthAlarm("testQueue", 10, "suffix", "testArn", false);
 
@@ -35,7 +37,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             var logger = new Mock<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureLengthAlarm("testQueue", 10, "suffix", "testArn", true);
 
@@ -53,7 +55,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             var logger = new Mock<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureLengthAlarm("testQueue", 10, "suffix", "testArn", false);
 
@@ -71,7 +73,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             var logger = new Mock<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureLengthAlarm("testQueue", 10, "suffix", "testArn", false);
 
@@ -89,7 +91,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             var logger = new Mock<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureLengthAlarm("testQueue", 10, "suffix", "testArn", false);
 
@@ -107,7 +109,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
             var logger = new Mock<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureLengthAlarm("testQueue", 10, "suffix", "secondTarget", false);
 

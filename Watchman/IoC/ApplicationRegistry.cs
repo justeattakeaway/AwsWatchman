@@ -13,6 +13,7 @@ using Watchman.Engine.Generation.Dynamo;
 using Watchman.Engine.Generation.Dynamo.Alarms;
 using Watchman.Engine.Generation.Generic;
 using Watchman.Engine.Generation.Sqs;
+using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;
 using Watchman.Engine.Sns;
 
@@ -39,7 +40,7 @@ namespace Watchman.IoC
 
             For<ITableAlarmCreator>().Use<TableAlarmCreator>();
             For<IIndexAlarmCreator>().Use<IndexAlarmCreator>();
-            For<IAlarmFinder>().Use<AlarmFinder>();
+            For<IAlarmFinder>().Use<AlarmFinder>().Singleton();
 
             For<IQueueAlarmCreator>().Use<QueueAlarmCreator>();
 
@@ -74,6 +75,9 @@ namespace Watchman.IoC
             var fileSettings = new FileSettings(parameters.ConfigFolderLocation);
 
             For<FileSettings>().Use(fileSettings);
+
+            For<ILegacyAlarmTracker>().Use<LegacyAlarmTracker>().Singleton();
+            For<IOrphanedAlarmReporter>().Use<OrphanedAlarmReporter>();
         }
 
         private static S3Location GetS3Location(StartupParameters parameters)

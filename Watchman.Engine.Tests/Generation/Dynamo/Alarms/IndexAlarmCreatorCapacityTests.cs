@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using Watchman.Engine.Alarms;
 using Watchman.Engine.Generation.Dynamo.Alarms;
+using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
@@ -20,7 +21,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var indexAlarmCreator = new IndexAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();
@@ -38,7 +39,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var indexAlarmCreator = new IndexAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();
@@ -56,7 +57,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var indexAlarmCreator = new IndexAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();
@@ -74,7 +75,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var indexAlarmCreator = new IndexAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();
@@ -94,7 +95,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var indexAlarmCreator = new IndexAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();
@@ -114,7 +115,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var indexAlarmCreator = new IndexAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object,logger.Object);
+                cloudWatch.Object, alarmFinder.Object,logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();
@@ -135,7 +136,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
 
             var indexAlarmCreator = new IndexAlarmCreator(
                 cloudWatch.Object,
-                alarmFinder.Object, logger.Object);
+                alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();
@@ -156,7 +157,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
 
             var indexAlarmCreator = new IndexAlarmCreator(
                 cloudWatch.Object,
-                alarmFinder.Object, logger.Object);
+                alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();
@@ -176,7 +177,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var indexAlarmCreator = new IndexAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();
@@ -196,7 +197,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var indexAlarmCreator = new IndexAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();
@@ -216,7 +217,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var indexAlarmCreator = new IndexAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
             var index = MakeIndexDescription();

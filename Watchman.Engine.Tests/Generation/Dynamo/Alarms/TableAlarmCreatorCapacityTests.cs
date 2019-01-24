@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using Watchman.Engine.Alarms;
 using Watchman.Engine.Generation.Dynamo.Alarms;
+using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
@@ -20,7 +21,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -37,7 +38,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -54,7 +55,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -71,7 +72,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -90,7 +91,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -109,7 +110,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -128,7 +129,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -147,7 +148,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -166,7 +167,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -185,7 +186,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             var logger = new Mock<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object);
+                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 

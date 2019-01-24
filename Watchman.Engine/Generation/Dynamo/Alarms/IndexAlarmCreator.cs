@@ -4,6 +4,7 @@ using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Amazon.DynamoDBv2.Model;
 using Watchman.Engine.Alarms;
+using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Generation.Dynamo.Alarms
@@ -13,14 +14,16 @@ namespace Watchman.Engine.Generation.Dynamo.Alarms
         private readonly IAmazonCloudWatch _cloudWatchClient;
         private readonly IAlarmFinder _alarmFinder;
         private readonly IAlarmLogger _logger;
+        private readonly ILegacyAlarmTracker _tracker;
 
         public IndexAlarmCreator(IAmazonCloudWatch cloudWatchClient,
             IAlarmFinder alarmFinder,
-            IAlarmLogger logger)
+            IAlarmLogger logger, ILegacyAlarmTracker tracker)
         {
             _cloudWatchClient = cloudWatchClient;
             _alarmFinder = alarmFinder;
             _logger = logger;
+            _tracker = tracker;
         }
 
         public int AlarmPutCount { get; private set; }
@@ -75,6 +78,8 @@ namespace Watchman.Engine.Generation.Dynamo.Alarms
             string metricName, double thresholdInUnits, int periodSeconds,
             string snsTopicArn, bool dryRun)
         {
+            _tracker.Register(alarmName);
+
             var alarmNeedsUpdate = await InspectExistingAlarm(alarmName,
                 thresholdInUnits, periodSeconds, snsTopicArn);
 
