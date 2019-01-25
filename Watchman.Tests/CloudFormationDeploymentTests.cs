@@ -180,19 +180,27 @@ namespace Watchman.Tests
                 .Stack("Watchman-test");
 
             Assert.That(stack, Is.Not.Null);
-            Assert.That(stack.Resources
+            var stack1Alarms = stack.Resources
                 .Values
                 .Where(r => r.Type == "AWS::CloudWatch::Alarm")
-                .Count, Is.GreaterThan(0));
+                .ToArray();
+
+            Assert.That(stack1Alarms, Is.Not.Empty);
+
+            // first stack alarms shouldn't be prefixed
+            Assert.That(stack1Alarms.Any(a => a.Properties["AlarmName"].ToObject<string>().EndsWith("-0")), Is.False);
 
             var stack2 = cloudformation
                 .Stack("Watchman-test-1");
 
             Assert.That(stack2, Is.Not.Null);
-            Assert.That(stack2.Resources
+
+            var stack2Alarms = stack2.Resources
                 .Values
                 .Where(r => r.Type == "AWS::CloudWatch::Alarm")
-                .Count, Is.GreaterThan(0));
+                .ToArray();
+            Assert.That(stack2Alarms, Is.Not.Empty);
+            Assert.That(stack2Alarms.All(a => a.Properties["AlarmName"].ToObject<string>().EndsWith("-1")), Is.True);
         }
     }
 }
