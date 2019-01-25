@@ -88,12 +88,14 @@ namespace Watchman.Engine.Generation
 
         private async Task LogOrphanedAlarms()
         {
+            _logger.Info("Looking for old alarms");
+
             var orphans = await _orphanedAlarmReporter.FindOrphanedAlarms();
+            _logger.Info(
+                $"Found {orphans.Count} alarm(s) that appear to be created by AwsWatchman but are no longer managed:");
+
             if (orphans.Any())
             {
-                _logger.Info(
-                    $"Found {orphans.Count} alarm(s) that appear to be created by AwsWatchman but are no longer managed:");
-
                 foreach (var alarm in orphans)
                 {
                     _logger.Info(

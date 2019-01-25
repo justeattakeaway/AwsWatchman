@@ -17,13 +17,11 @@ namespace Watchman.Engine.LegacyTracking
     {
         private readonly ILegacyAlarmTracker _tracker;
         private readonly IAlarmFinder _finder;
-        private readonly IAlarmLogger _logger;
 
         public OrphanedAlarmReporter(ILegacyAlarmTracker tracker, IAlarmFinder finder, IAlarmLogger logger)
         {
             _tracker = tracker;
             _finder = finder;
-            _logger = logger;
         }
 
         public async Task<IReadOnlyList<MetricAlarm>> FindOrphanedAlarms()
