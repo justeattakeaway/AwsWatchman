@@ -8,6 +8,7 @@ using Watchman.AwsResources;
 using Watchman.Engine.Alarms;
 using Watchman.Engine.Generation.Dynamo;
 using Watchman.Engine.Generation.Dynamo.Alarms;
+using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;
 using Watchman.Engine.Sns;
 
@@ -29,8 +30,8 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
             var tableNamePopulator = new TableNamePopulator(logger, TableLoader.Object);
             var snsCreator = new SnsCreator(SnsTopicCreator.Object, SnsSubscriptionCreator.Object);
 
-            var tableAlarmCreator = new TableAlarmCreator(Cloudwatch.Object, AlarmFinder.Object, logger);
-            var indexAlarmCreator = new IndexAlarmCreator(Cloudwatch.Object, AlarmFinder.Object, logger);
+            var tableAlarmCreator = new TableAlarmCreator(Cloudwatch.Object, AlarmFinder.Object, logger, Mock.Of<ILegacyAlarmTracker>());
+            var indexAlarmCreator = new IndexAlarmCreator(Cloudwatch.Object, AlarmFinder.Object, logger, Mock.Of<ILegacyAlarmTracker>());
 
             AlarmGenerator = new DynamoAlarmGenerator(
                 logger,

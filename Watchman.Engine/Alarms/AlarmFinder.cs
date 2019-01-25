@@ -72,6 +72,13 @@ namespace Watchman.Engine.Alarms
             return null;
         }
 
+        public async Task<IReadOnlyCollection<MetricAlarm>> AllAlarms()
+        {
+            await Preload();
+
+            return _alarmData.Values.ToArray();
+        }
+
         public int Count => _alarmData?.Count ?? 0;
     }
 }

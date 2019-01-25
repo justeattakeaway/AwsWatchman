@@ -8,6 +8,7 @@ using Watchman.Configuration.Validation;
 using Watchman.Engine.Generation.Dynamo;
 using Watchman.Engine.Generation.Generic;
 using Watchman.Engine.Generation.Sqs;
+using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Generation
@@ -20,6 +21,7 @@ namespace Watchman.Engine.Generation
         private readonly IOrphanTablesReporter _orphanTablesReporter;
         private readonly ISqsAlarmGenerator _sqsGenerator;
         private readonly IOrphanQueuesReporter _orphanQueuesReporter;
+        private readonly IOrphanedAlarmReporter _orphanedAlarmReporter;
         private bool _hasRun = false;
 
         private readonly IAlarmCreator _creator;
@@ -33,6 +35,7 @@ namespace Watchman.Engine.Generation
             IOrphanTablesReporter orphanTablesReporter,
             ISqsAlarmGenerator sqsGenerator,
             IOrphanQueuesReporter orphanQueuesReporter,
+            IOrphanedAlarmReporter orphanedAlarmReporter,
             IAlarmCreator creator,
             IEnumerable<IServiceAlarmTasks> otherServices)
         {
@@ -42,6 +45,7 @@ namespace Watchman.Engine.Generation
             _orphanTablesReporter = orphanTablesReporter;
             _sqsGenerator = sqsGenerator;
             _orphanQueuesReporter = orphanQueuesReporter;
+            _orphanedAlarmReporter = orphanedAlarmReporter;
             _creator = creator;
             _otherServices = otherServices;
         }
@@ -68,12 +72,35 @@ namespace Watchman.Engine.Generation
                     await GenerateAlarms(config, mode);
                 }
 
+                if (mode == RunMode.GenerateAlarms)
+                {
+                    await LogOrphanedAlarms();
+                }
+
                 _logger.Detail("Done");
             }
             catch (Exception ex)
             {
                 _logger.Error(ex, "Error in run");
                 throw;
+            }
+        }
+
+        private async Task LogOrphanedAlarms()
+        {
+            _logger.Info("Looking for old alarms");
+
+            var orphans = await _orphanedAlarmReporter.FindOrphanedAlarms();
+            _logger.Info(
+                $"Found {orphans.Count} alarm(s) that appear to be created by AwsWatchman but are no longer managed:");
+
+            if (orphans.Any())
+            {
+                foreach (var alarm in orphans)
+                {
+                    _logger.Info(
+                        $" - {alarm.AlarmName}  (updated: {alarm.AlarmConfigurationUpdatedTimestamp:yyyy-MM-dd})");
+                }
             }
         }
 
