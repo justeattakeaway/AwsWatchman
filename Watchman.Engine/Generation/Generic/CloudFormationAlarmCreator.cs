@@ -125,6 +125,8 @@ namespace Watchman.Engine.Generation.Generic
         {
             alarms = alarms.Where(a => a.AlarmDefinition.Enabled).ToList();
 
+            // if there are no alarms we want to update existing stacks (in case everything has been removed)
+            // but we don't want to create a new one which is empty
             var onlyUpdateExisting = !alarms.Any();
 
             var template = new CloudWatchCloudFormationTemplate(groupName, targets.ToList());
