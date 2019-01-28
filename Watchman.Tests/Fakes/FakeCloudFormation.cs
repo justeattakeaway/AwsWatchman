@@ -87,6 +87,13 @@ namespace Watchman.Tests.Fakes
             return _submitted[name].Stack;
         }
 
+        public IReadOnlyCollection<(string name, Template template)> Stacks()
+        {
+            return _submitted
+                .Select(s => (s.Key, s.Value.Stack))
+                .ToArray();
+        }
+
         enum LastOperation
         {
             Create,

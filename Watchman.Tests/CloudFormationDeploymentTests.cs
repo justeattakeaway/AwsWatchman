@@ -9,6 +9,7 @@ using Watchman.AwsResources;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine;
+using Watchman.Engine.Alarms;
 using Watchman.Engine.Generation;
 using Watchman.Tests.Fakes;
 using Watchman.Tests.IoC;
@@ -201,6 +202,78 @@ namespace Watchman.Tests
                 .ToArray();
             Assert.That(stack2Alarms, Is.Not.Empty);
             Assert.That(stack2Alarms.All(a => a.Properties["AlarmName"].ToObject<string>().EndsWith("-1")), Is.True);
+        }
+
+        [Test]
+        public async Task AlarmsAreDistributedEvenlyAcrossStacks()
+        {
+            const int numStacks = 10;
+            const int numAsgs = 100;
+
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
+                new AlertingGroupServices()
+                {
+                    AutoScaling = new AwsServiceAlarms<AutoScalingResourceConfig>()
+                    {
+                        Resources = new List<ResourceThresholds<AutoScalingResourceConfig>>()
+                        {
+                            new ResourceThresholds<AutoScalingResourceConfig>()
+                            {
+                                Pattern = ".*"
+                            }
+                        }
+                    }
+                },
+                numberOfCloudFormationStacks: numStacks);
+
+            var cloudFormation = new FakeCloudFormation();
+
+            var context = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            var lotsOfAsgs = Enumerable.Range(0, numAsgs).Select(r =>
+
+                    new AutoScalingGroup()
+                    {
+                        AutoScalingGroupName = $"group-{r}",
+                        DesiredCapacity = 40
+                    }
+                )
+                .ToArray();
+
+            context.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(lotsOfAsgs);
+
+            try
+            {
+                await context.Get<AlarmLoaderAndGenerator>()
+                    .LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+            }
+            catch
+            {
+                // ignore
+            }
+
+            var stacks = cloudFormation.Stacks();
+
+            Assert.That(stacks.Count, Is.EqualTo(numStacks));
+
+            var resourceCountsByStack = stacks.Select(s => (s.name, s.template.Resources.Count)).ToArray();
+
+            var totalResources = stacks.Sum(s => s.template.Resources.Count);
+
+            var alarmCount = stacks
+                .Sum(s => s.template.Resources.Count(r => r.Value.Type == "AWS::CloudWatch::Alarm"));
+
+            Assert.That(alarmCount, Is.EqualTo(Defaults.AutoScaling.Count * numAsgs));
+
+            var approxExpectedPerStack = (float) totalResources / numStacks;
+
+            foreach (var (_, count) in resourceCountsByStack)
+            {
+                Assert.That(count, Is.Not.GreaterThan(approxExpectedPerStack * 1.2));
+                Assert.That(count, Is.Not.LessThan(approxExpectedPerStack * 0.8));
+            }
         }
     }
 }

@@ -73,19 +73,23 @@ namespace Watchman.Engine.Generation.Generic
 
                 var stackName = StackName(alertingGroup);
 
-                for (int i = 0; i < alertingGroup.NumberOfCloudFormationStacks; i++)
-                {
-                    var numberedStackName = i > 0 ? $"{stackName}-{i}" : stackName;
-                    var alarmsForStack = alarms
-                        .Where(a => Bucket(a.AlarmName, alertingGroup.NumberOfCloudFormationStacks) == i)
-                        .ToArray();
+                var stacks = Enumerable.Range(0, alertingGroup.NumberOfCloudFormationStacks)
+                    .Select(stackIndex => (stackIndex, alarms: alarms
+                            .Where(a => Bucket(a.AlarmName, alertingGroup.NumberOfCloudFormationStacks) == stackIndex)
+                            .ToArray()
+                        ))
+                    .ToArray();
 
-                    ApplyAlarmSuffix(i, alarmsForStack);
+                foreach (var stack in stacks)
+                {
+                    var numberedStackName = stack.stackIndex > 0 ? $"{stackName}-{stack.stackIndex}" : stackName;
+
+                    ApplyAlarmSuffix(stack.stackIndex, stack.alarms);
 
                     try
                     {
                         await GenerateAndDeployStack(
-                            alarmsForStack,
+                            stack.alarms,
                             alertingGroup.Targets,
                             alertingGroup.Name,
                             numberedStackName,
