@@ -71,24 +71,39 @@ namespace Watchman.AwsResources.Services.Sqs
         {
             var names = await ReadActiveQueueNames();
 
-            var queues = names.Where(e => !IsErrorQueue(e)).Select(n => new QueueDataV2()
-            {
-                Name = n,
-
-                ErrorQueue = new QueueDataV2()
+            var queues = names
+                .Where(e => !IsErrorQueue(e))
+                .Select(n =>
                 {
-                    Name = names.FirstOrDefault(
+                    var errorQueueName = names.FirstOrDefault(
                         e => e.StartsWith(n) &&
-                             IsErrorQueue(e))
-                }
-            });
+                             IsErrorQueue(e));
+
+
+                    // we could have a scenario where nothing has been published/read to/from the error queue for
+                    // a few weeks so CloudWatch stops reporting it. In this case we still do want to alert on the queue
+                    // so in this case we can guess the name as it should be predictable anyway.
+                    errorQueueName = errorQueueName ?? $"{n}{ErrorQueueSuffix}";
+
+                    return new QueueDataV2()
+                    {
+                        Name = n,
+
+                        ErrorQueue = new QueueDataV2()
+                        {
+                            Name = errorQueueName
+                        }
+                    };
+                });
 
             return queues;
         }
 
         private bool IsErrorQueue(string queueName)
         {
-            return queueName.ToLowerInvariant().EndsWith("_error");
+            return queueName.ToLowerInvariant().EndsWith(ErrorQueueSuffix);
         }
+
+        private const string ErrorQueueSuffix = "_error";
     }
 }
