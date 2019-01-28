@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Amazon.CloudWatch;
 using Newtonsoft.Json.Linq;
@@ -443,6 +444,56 @@ namespace Watchman.Tests.Sqs
                         alarm.Properties["MetricName"].Value<string>() == "ApproximateAgeOfOldestMessage"
                 )
             );
+        }
+
+        [Test]
+        public async Task GuessesErrorQueueNameWhenNotReportedByCloudWatch()
+        {
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
+            {
+                Sqs = new AwsServiceAlarms<SqsResourceConfig>()
+                {
+                    Resources = new List<ResourceThresholds<SqsResourceConfig>>()
+                    {
+                        new ResourceThresholds<SqsResourceConfig>()
+                        {
+                            Pattern = "first-sqs-queue"
+                        }
+                    }
+                }
+            });
+
+            var cloudFormation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonCloudWatch>().HasSqsQueues(new[]
+            {
+                "first-sqs-queue"
+            });
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var alarmsByQueue = cloudFormation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("QueueName");
+
+            var alarmsForQueue = alarmsByQueue["first-sqs-queue"];
+
+            Assert.That(alarmsForQueue, Is.Not.Empty);
+
+            var alarmsForErrorQueue = alarmsByQueue["first-sqs-queue_error"];
+
+            Assert.That(alarmsForErrorQueue, Is.Not.Empty);
+
         }
     }
 }
