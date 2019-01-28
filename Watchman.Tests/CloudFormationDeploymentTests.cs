@@ -9,6 +9,7 @@ using Watchman.AwsResources;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine;
+using Watchman.Engine.Alarms;
 using Watchman.Engine.Generation;
 using Watchman.Tests.Fakes;
 using Watchman.Tests.IoC;
@@ -206,6 +207,8 @@ namespace Watchman.Tests
         [Test]
         public async Task AlarmsAreDistributedEvenlyAcrossStacks()
         {
+            const int numStacks = 10;
+            const int numAsgs = 100;
 
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
                 new AlertingGroupServices()
@@ -221,7 +224,7 @@ namespace Watchman.Tests
                         }
                     }
                 },
-                numberOfCloudFormationStacks: 10);
+                numberOfCloudFormationStacks: numStacks);
 
             var cloudFormation = new FakeCloudFormation();
 
@@ -229,7 +232,7 @@ namespace Watchman.Tests
                 .WithCloudFormation(cloudFormation.Instance)
                 .WithConfig(config);
 
-            var lotsOfAsgs = Enumerable.Range(0, 100).Select(r =>
+            var lotsOfAsgs = Enumerable.Range(0, numAsgs).Select(r =>
 
                     new AutoScalingGroup()
                     {
@@ -253,13 +256,18 @@ namespace Watchman.Tests
 
             var stacks = cloudFormation.Stacks();
 
-            Assert.That(stacks.Count, Is.EqualTo(10));
+            Assert.That(stacks.Count, Is.EqualTo(numStacks));
 
             var resourceCountsByStack = stacks.Select(s => (s.name, s.template.Resources.Count)).ToArray();
 
             var totalResources = stacks.Sum(s => s.template.Resources.Count);
 
-            var approxExpectedPerStack = (float) totalResources / 10;
+            var alarmCount = stacks
+                .Sum(s => s.template.Resources.Count(r => r.Value.Type == "AWS::CloudWatch::Alarm"));
+
+            Assert.That(alarmCount, Is.EqualTo(Defaults.AutoScaling.Count * numAsgs));
+
+            var approxExpectedPerStack = (float) totalResources / numStacks;
 
             foreach (var (_, count) in resourceCountsByStack)
             {
