@@ -202,5 +202,70 @@ namespace Watchman.Tests
             Assert.That(stack2Alarms, Is.Not.Empty);
             Assert.That(stack2Alarms.All(a => a.Properties["AlarmName"].ToObject<string>().EndsWith("-1")), Is.True);
         }
+
+        [Test]
+        public async Task AlarmsAreDistributedEvenlyAcrossStacks()
+        {
+
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
+                new AlertingGroupServices()
+                {
+                    AutoScaling = new AwsServiceAlarms<AutoScalingResourceConfig>()
+                    {
+                        Resources = new List<ResourceThresholds<AutoScalingResourceConfig>>()
+                        {
+                            new ResourceThresholds<AutoScalingResourceConfig>()
+                            {
+                                Pattern = ".*"
+                            }
+                        }
+                    }
+                },
+                numberOfCloudFormationStacks: 10);
+
+            var cloudFormation = new FakeCloudFormation();
+
+            var context = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            var lotsOfAsgs = Enumerable.Range(0, 100).Select(r =>
+
+                    new AutoScalingGroup()
+                    {
+                        AutoScalingGroupName = $"group-{r}",
+                        DesiredCapacity = 40
+                    }
+                )
+                .ToArray();
+
+            context.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(lotsOfAsgs);
+
+            try
+            {
+                await context.Get<AlarmLoaderAndGenerator>()
+                    .LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+            }
+            catch
+            {
+                // ignore
+            }
+
+            var stacks = cloudFormation.Stacks();
+
+            Assert.That(stacks.Count, Is.EqualTo(10));
+
+            var resourceCountsByStack = stacks.Select(s => (s.name, s.template.Resources.Count)).ToArray();
+
+            var totalResources = stacks.Sum(s => s.template.Resources.Count);
+
+            var approxExpectedPerStack = (float) totalResources / 10;
+
+            foreach (var (_, count) in resourceCountsByStack)
+            {
+                Assert.That(count, Is.Not.GreaterThan(approxExpectedPerStack * 1.2));
+                Assert.That(count, Is.Not.LessThan(approxExpectedPerStack * 0.8));
+            }
+        }
     }
 }
