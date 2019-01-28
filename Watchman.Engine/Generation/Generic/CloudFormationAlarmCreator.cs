@@ -73,17 +73,14 @@ namespace Watchman.Engine.Generation.Generic
 
                 var stackName = StackName(alertingGroup);
 
+
                 for (int i = 0; i < alertingGroup.NumberOfCloudFormationStacks; i++)
                 {
                     var numberedStackName = i > 0 ? $"{stackName}-{i}" : stackName;
-                    var alarmsForStack = alarms
-                        .Where(a => Bucket(a.AlarmName, alertingGroup.NumberOfCloudFormationStacks) == i)
-                        .ToArray();
-
-                    ApplyAlarmSuffix(i, alarmsForStack);
-
                     try
                     {
+                        var iClosure = i;
+                        var alarmsForStack = alarms.Where(a => Bucket(a.AlarmName, alertingGroup.NumberOfCloudFormationStacks) == iClosure);
                         await GenerateAndDeployStack(
                             alarmsForStack,
                             alertingGroup.Targets,
@@ -97,22 +94,12 @@ namespace Watchman.Engine.Generation.Generic
                         failedStacks++;
                     }
                 }
+
             }
 
             if (failedStacks > 0)
             {
                 throw new WatchmanException(failedStacks + " stacks failed to deploy");
-            }
-        }
-
-        private static void ApplyAlarmSuffix(int bucket, IEnumerable<Alarm> alarmsInBucket)
-        {
-            if (bucket > 0)
-            {
-                foreach (var alarm in alarmsInBucket)
-                {
-                    alarm.AlarmName += $"-{bucket}";
-                }
             }
         }
 
@@ -125,8 +112,6 @@ namespace Watchman.Engine.Generation.Generic
         {
             alarms = alarms.Where(a => a.AlarmDefinition.Enabled).ToList();
 
-            // if there are no alarms we want to update existing stacks (in case everything has been removed)
-            // but we don't want to create a new one which is empty
             var onlyUpdateExisting = !alarms.Any();
 
             var template = new CloudWatchCloudFormationTemplate(groupName, targets.ToList());
