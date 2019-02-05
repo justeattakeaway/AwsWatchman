@@ -351,7 +351,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.LessThanThreshold,
-                Statistic = Statistic.SampleCount,
+                Statistic = Statistic.SampleCount, //The count (number) of data points used for the statistical calculation. Is this really what we want?
                 Namespace = AwsNamespace.Lambda
             },
             new AlarmDefinition
@@ -368,7 +368,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.SampleCount,
+                Statistic = Statistic.SampleCount, //The count (number) of data points used for the statistical calculation. Is this really what we want?
                 Namespace = AwsNamespace.Lambda
             }
         };
@@ -636,7 +636,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
+                Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Sqs
             },
             new AlarmDefinition
@@ -672,7 +672,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Sum,
+                Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Sqs
             },
             new AlarmDefinition

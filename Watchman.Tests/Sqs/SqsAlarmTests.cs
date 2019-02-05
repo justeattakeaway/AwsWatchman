@@ -106,7 +106,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["Threshold"].Value<int>() == 100
                         && alarm.Properties["Period"].Value<int>() == 60 * 5
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Sum"
+                        && alarm.Properties["Statistic"].Value<string>() == "Average"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );
@@ -134,7 +134,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["Threshold"].Value<int>() == 10
                         && alarm.Properties["Period"].Value<int>() == 60 * 5
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Sum"
+                        && alarm.Properties["Statistic"].Value<string>() == "Average"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );
@@ -356,7 +356,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["Threshold"].Value<int>() == 10
                         && alarm.Properties["Period"].Value<int>() == 60 * 5
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Sum"
+                        && alarm.Properties["Statistic"].Value<string>() == "Average"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );
