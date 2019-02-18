@@ -17,8 +17,9 @@ namespace Watchman.AwsResources.Services.Rds
             {
                 case "AllocatedStorage":
                     // alarm needs storage in bytes
-                    decimal result = resource.AllocatedStorage * (long)Math.Pow(10, 9);
-                    return Task.FromResult(result);
+                    return Task.FromResult((decimal)resource.AllocatedStorage * (long)Math.Pow(10, 9));
+                case "Iops":
+                    return Task.FromResult((decimal)resource.Iops);
             }
 
             throw new Exception("Unsupported RDS property name");
