@@ -25,7 +25,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb,
-                TreatMissingData = "notBreaching"
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -42,7 +42,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb,
-                TreatMissingData = "notBreaching"
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
 
@@ -64,7 +64,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb,
-                TreatMissingData = "notBreaching"
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -81,7 +81,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb,
-                TreatMissingData = "notBreaching"
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
 
@@ -104,7 +104,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb,
-                TreatMissingData = "notBreaching"
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -121,7 +121,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb,
-                TreatMissingData = "notBreaching"
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
 
@@ -144,7 +144,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb,
-                TreatMissingData = "notBreaching"
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -161,7 +161,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
                 Namespace = AwsNamespace.DynamoDb,
-                TreatMissingData = "notBreaching"
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
     }
