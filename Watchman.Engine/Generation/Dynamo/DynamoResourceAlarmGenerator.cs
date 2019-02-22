@@ -100,11 +100,16 @@ namespace Watchman.Engine.Generation.Dynamo
                 var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
                 var configuredThreshold = alarm.Threshold.CopyWith(value: values.Threshold);
 
+                if (service.Options?.ThresholdIsAbsolute ?? DynamoResourceConfig.ThresholdIsAbsoluteDefault)
+                {
+                    configuredThreshold.ThresholdType = ThresholdType.Absolute;
+                }
+
                 var threshold = await ThresholdCalculator.ExpandThreshold(_attributeProvider,
                     entity.Resource,
                     mergedConfig,
                     configuredThreshold);
-
+            
                 var built = alarm.CopyWith(threshold, values);
 
                 var model = new Alarm
@@ -151,6 +156,12 @@ namespace Watchman.Engine.Generation.Dynamo
                     var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
                     var configuredThreshold = alarm.Threshold.CopyWith(value: values.Threshold);
                     var dimensions = _gsiProvider.GetDimensions(gsi, parentTableEntity.Resource, alarm.DimensionNames);
+
+                    if (service.Options?.ThresholdIsAbsolute ?? DynamoResourceConfig.ThresholdIsAbsoluteDefault)
+                    {
+                        configuredThreshold.ThresholdType = ThresholdType.Absolute;
+                    }
+
                     var threshold = await ThresholdCalculator.ExpandThreshold(_gsiProvider,
                         gsiResource.Resource,
                         mergedConfig,

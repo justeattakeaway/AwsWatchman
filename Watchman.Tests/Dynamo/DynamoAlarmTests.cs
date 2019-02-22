@@ -535,7 +535,7 @@ namespace Watchman.Tests.Dynamo
             Assert.That(resources, Contains.Key("productionfirsttableGsiConsumedReadCapacityUnitsHigh"));
         }
 
-          [Test]
+        [Test]
         public async Task CanDisableWritesAcrossTableAndGsi()
         {
             // arrange
@@ -619,6 +619,113 @@ namespace Watchman.Tests.Dynamo
             Assert.That(alarms.Where(
                 a => a.Properties["MetricName"].ToString()
                      == "WriteThrottleEvents"), Is.Empty);
+        }
+
+        [Test]
+        public async Task CanSetAbsoluteAlarmThresholdOnTableAndGsi()
+        {
+            var consumedReadCapacityUnitsHigh = 900;
+            var consumedWriteCapacityUnitsHigh = 1900;
+            var gsiConsumedReadCapacityUnitsHigh = 3900;
+            var gsiConsumedWriteCapacityUnitsHigh = 4900;
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
+            {
+                DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
+                {
+                    Resources =
+                        new List<ResourceThresholds<DynamoResourceConfig>>()
+                        {
+                            new ResourceThresholds<DynamoResourceConfig>()
+                            {
+                                Pattern = "first-table",
+                                Values = new Dictionary<string, AlarmValues>()
+                                {
+                                    {"GsiConsumedReadCapacityUnitsHigh", gsiConsumedReadCapacityUnitsHigh},
+                                    {"GsiConsumedWriteCapacityUnitsHigh", gsiConsumedWriteCapacityUnitsHigh},
+                                    {"ConsumedReadCapacityUnitsHigh", consumedReadCapacityUnitsHigh},
+                                    {"ConsumedWriteCapacityUnitsHigh", consumedWriteCapacityUnitsHigh}
+                                }
+                            }
+                        },
+                    Options = new DynamoResourceConfig()
+                    {
+                        ThresholdIsAbsolute = true
+                    }
+                }
+            });
+
+            var cloudFormation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonDynamoDB>().HasDynamoTables(new[]
+            {
+                new TableDescription()
+                {
+                    TableName = "production-first-table",
+                    ProvisionedThroughput = new ProvisionedThroughputDescription()
+                    {
+                        ReadCapacityUnits = 1000,
+                        WriteCapacityUnits = 2000
+                    },
+                    GlobalSecondaryIndexes = new List<GlobalSecondaryIndexDescription>()
+                    {
+                        new GlobalSecondaryIndexDescription()
+                        {
+                             IndexName = "first-gsi",
+                             ProvisionedThroughput = new ProvisionedThroughputDescription()
+                             {
+                                 ReadCapacityUnits = 4000,
+                                 WriteCapacityUnits = 5000
+                             }
+                        }
+                    }
+                }
+            });
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var alarmsByGsi = cloudFormation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("GlobalSecondaryIndexName");
+            var gsiAlarms = alarmsByGsi["first-gsi"];
+
+            var consumedReadGsi = gsiAlarms.SingleOrDefault(
+                a => a.Properties["AlarmName"].ToString()
+                    .Contains("first-table-first-gsi-GsiConsumedReadCapacityUnitsHigh"));
+            Assert.That(consumedReadGsi.Properties["Threshold"].Value<int>(),
+                Is.EqualTo(gsiConsumedReadCapacityUnitsHigh));
+
+            var consumedWriteGsi = gsiAlarms.SingleOrDefault(
+                a => a.Properties["AlarmName"].ToString()
+                    .Contains("first-table-first-gsi-GsiConsumedWriteCapacityUnitsHigh"));
+            Assert.That(consumedWriteGsi.Properties["Threshold"].Value<int>(),
+                Is.EqualTo(gsiConsumedWriteCapacityUnitsHigh));
+
+            var alarmsByTable = cloudFormation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("TableName");
+            var tableAlarms = alarmsByTable["production-first-table"];
+
+            var consumedReadForTable = tableAlarms.SingleOrDefault(
+                a => a.Properties["AlarmName"].ToString()
+                    .Contains("first-table-ConsumedReadCapacityUnitsHigh"));
+            Assert.That(consumedReadForTable.Properties["Threshold"].Value<int>(),
+                Is.EqualTo(consumedReadCapacityUnitsHigh));
+
+            var consumedWriteForTable = tableAlarms.SingleOrDefault(
+                a => a.Properties["AlarmName"].ToString()
+                    .Contains("first-table-ConsumedWriteCapacityUnitsHigh"));
+            Assert.That(consumedWriteForTable.Properties["Threshold"].Value<int>(),
+                Is.EqualTo(consumedWriteCapacityUnitsHigh));
         }
     }
  }
