@@ -109,7 +109,7 @@ namespace Watchman.Engine.Generation.Dynamo
                     entity.Resource,
                     mergedConfig,
                     configuredThreshold);
-            
+
                 var built = alarm.CopyWith(threshold, values);
 
                 var model = new Alarm
