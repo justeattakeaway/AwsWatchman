@@ -135,7 +135,8 @@ namespace Watchman.Engine.Generation.Generic
                 ComparisonOperator = definition.ComparisonOperator.Value,
                 EvaluationPeriods = definition.EvaluationPeriods,
                 Period = (int) definition.Period.TotalSeconds,
-                Threshold = definition.Threshold.Value
+                Threshold = definition.Threshold.Value,
+                TreatMissingData = definition.TreatMissingData
             };
 
             var result = JObject.FromObject(propsObject);

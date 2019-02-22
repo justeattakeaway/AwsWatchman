@@ -24,7 +24,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "GlobalSecondaryIndexName", "TableName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
+                Namespace = AwsNamespace.DynamoDb,
+                TreatMissingData = "notBreaching"
             },
             new AlarmDefinition
             {
@@ -40,7 +41,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "GlobalSecondaryIndexName", "TableName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
+                Namespace = AwsNamespace.DynamoDb,
+                TreatMissingData = "notBreaching"
             }
         };
 
@@ -61,7 +63,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "GlobalSecondaryIndexName", "TableName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
+                Namespace = AwsNamespace.DynamoDb,
+                TreatMissingData = "notBreaching"
             },
             new AlarmDefinition
             {
@@ -77,7 +80,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "GlobalSecondaryIndexName", "TableName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
+                Namespace = AwsNamespace.DynamoDb,
+                TreatMissingData = "notBreaching"
             }
         };
 
@@ -99,7 +103,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "TableName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
+                Namespace = AwsNamespace.DynamoDb,
+                TreatMissingData = "notBreaching"
             },
             new AlarmDefinition
             {
@@ -115,7 +120,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "TableName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
+                Namespace = AwsNamespace.DynamoDb,
+                TreatMissingData = "notBreaching"
             }
         };
 
@@ -137,7 +143,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "TableName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
+                Namespace = AwsNamespace.DynamoDb,
+                TreatMissingData = "notBreaching"
             },
             new AlarmDefinition
             {
@@ -153,7 +160,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "TableName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.DynamoDb
+                Namespace = AwsNamespace.DynamoDb,
+                TreatMissingData = "notBreaching"
             }
         };
     }

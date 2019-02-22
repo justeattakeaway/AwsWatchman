@@ -209,6 +209,7 @@ namespace Watchman.Tests.Dynamo
                     && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                     && alarm.Properties["Statistic"].Value<string>() == "Sum"
                     && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.DynamoDb
+                    && alarm.Properties["TreatMissingData"].Value<string>() == "notBreaching"
                     )
                 );
 
@@ -222,6 +223,7 @@ namespace Watchman.Tests.Dynamo
                     && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                     && alarm.Properties["Statistic"].Value<string>() == "Sum"
                     && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.DynamoDb
+                    && alarm.Properties["TreatMissingData"].Value<string>() == "notBreaching"
                 )
             );
 
@@ -237,6 +239,7 @@ namespace Watchman.Tests.Dynamo
                 Is.EqualTo("GreaterThanOrEqualToThreshold"));
             Assert.That(readThrottleAlarm.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(readThrottleAlarm.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
+            Assert.That(readThrottleAlarm.Properties["TreatMissingData"].Value<string>(), Is.EqualTo("notBreaching"));
 
             var writeThrottleAlarm =
                 alarms.Single(a => a.Properties["MetricName"].Value<string>() == "WriteThrottleEvents");
@@ -251,6 +254,7 @@ namespace Watchman.Tests.Dynamo
                 Is.EqualTo("GreaterThanOrEqualToThreshold"));
             Assert.That(writeThrottleAlarm.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(writeThrottleAlarm.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
+            Assert.That(writeThrottleAlarm.Properties["TreatMissingData"].Value<string>(), Is.EqualTo("notBreaching"));
         }
 
         [Test]
@@ -336,6 +340,7 @@ namespace Watchman.Tests.Dynamo
             Assert.That(consumedRead.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(consumedRead.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
             Assert.That(consumedRead.Dimension("TableName"), Is.EqualTo("first-table"));
+            Assert.That(consumedRead.Properties["TreatMissingData"].Value<string>(), Is.EqualTo("notBreaching"));
 
             var consumedWrite = alarms.SingleOrDefault(
                 a => a.Properties["AlarmName"].ToString()
@@ -351,6 +356,7 @@ namespace Watchman.Tests.Dynamo
             Assert.That(consumedWrite.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(consumedWrite.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
             Assert.That(consumedWrite.Dimension("TableName"), Is.EqualTo("first-table"));
+            Assert.That(consumedWrite.Properties["TreatMissingData"].Value<string>(), Is.EqualTo("notBreaching"));
 
             var readThrottle = alarms.SingleOrDefault(
                 a => a.Properties["AlarmName"].ToString()
@@ -364,6 +370,7 @@ namespace Watchman.Tests.Dynamo
             Assert.That(readThrottle.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(readThrottle.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
             Assert.That(readThrottle.Dimension("TableName"), Is.EqualTo("first-table"));
+            Assert.That(readThrottle.Properties["TreatMissingData"].Value<string>(), Is.EqualTo("notBreaching"));
 
             var writeThrottle = alarms.SingleOrDefault(
                 a => a.Properties["AlarmName"].ToString()
@@ -377,6 +384,7 @@ namespace Watchman.Tests.Dynamo
             Assert.That(writeThrottle.Properties["Statistic"].Value<string>(), Is.EqualTo("Sum"));
             Assert.That(writeThrottle.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.DynamoDb));
             Assert.That(writeThrottle.Dimension("TableName"), Is.EqualTo("first-table"));
+            Assert.That(writeThrottle.Properties["TreatMissingData"].Value<string>(), Is.EqualTo("notBreaching"));
         }
 
 
