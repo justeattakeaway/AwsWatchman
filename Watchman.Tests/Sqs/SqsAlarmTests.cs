@@ -109,7 +109,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Average"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                        && alarm.Properties["TreatMissingData"].Value<string>() != TreatMissingDataConstants.NotBreaching
+                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.Missing
                 )
             );
 
@@ -123,7 +123,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                        && alarm.Properties["TreatMissingData"].Value<string>() != TreatMissingDataConstants.NotBreaching
+                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.Missing
                 )
             );
 
@@ -139,7 +139,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Average"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                        && alarm.Properties["TreatMissingData"].Value<string>() != TreatMissingDataConstants.NotBreaching
+                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.Missing
                 )
             );
 
@@ -153,7 +153,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                        && alarm.Properties["TreatMissingData"].Value<string>() != TreatMissingDataConstants.NotBreaching
+                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.Missing
                 )
             );
         }
