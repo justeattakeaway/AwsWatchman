@@ -6,7 +6,7 @@
     <PackageReference Include="AWSSDK.CloudFormation" Version="3.3.13.15" />
     <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.10.15" />
     <PackageReference Include="AWSSDK.Core" Version="3.3.31.11" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.17.4" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.17.9" />
     <PackageReference Include="AWSSDK.S3" Version="3.3.31.14" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.3.17" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
