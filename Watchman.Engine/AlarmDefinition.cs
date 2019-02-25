@@ -41,7 +41,7 @@ namespace Watchman.Engine
         // <summary>
         // Sets how this alarm is to handle missing data points.
         // </summary>
-        public string TreatMissingData { get; set; } = "missing";
+        public string TreatMissingData { get; set; } = TreatMissingDataConstants.Missing;
 
         public AlarmDefinition Copy()
         {
