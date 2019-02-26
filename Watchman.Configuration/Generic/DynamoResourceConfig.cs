@@ -6,7 +6,11 @@ namespace Watchman.Configuration.Generic
     {
         public static bool MonitorWritesDefault = true;
 
+        public static bool ThresholdIsAbsoluteDefault = false;
+
         public bool? MonitorWrites { get; set; }
+
+        public bool? ThresholdIsAbsolute { get; set; }
 
         public DynamoResourceConfig Merge(DynamoResourceConfig parentConfig)
         {
@@ -17,7 +21,8 @@ namespace Watchman.Configuration.Generic
 
             return new DynamoResourceConfig()
             {
-                MonitorWrites = MonitorWrites ?? parentConfig.MonitorWrites
+                MonitorWrites = MonitorWrites ?? parentConfig.MonitorWrites,
+                ThresholdIsAbsolute = ThresholdIsAbsolute ?? parentConfig.ThresholdIsAbsolute
             };
         }
     }

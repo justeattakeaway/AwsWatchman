@@ -168,6 +168,7 @@ For each resource each of the default alarms will be applied. See [alarm definit
 
 #### Options
 - `MonitorWrites` Shorthand can be used to disable all the write alarms. Default is `true`.
+- `ThresholdIsAbsolute` If this value is true, the `Consumed` metrics above will use this value as an absolute, instead of the value calculated as a percentage of the provisioned capacity. The value is measured over a period of 60 seconds, so if you want a threshold on WCU / RCU, multiply your desired value by 60. Example: Desired alarm on RCU of 200, so threshold over 60 seconds is `12000`. Default value is `false`.
 
 ### Sqs
 
