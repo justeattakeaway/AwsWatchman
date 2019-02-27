@@ -38,6 +38,11 @@ namespace Watchman.Engine
         /// </summary>
         public bool AlertOnOk { get; set; } = true;
 
+        // <summary>
+        // Sets how this alarm is to handle missing data points.
+        // </summary>
+        public string TreatMissingData { get; set; } = TreatMissingDataConstants.Missing;
+
         public AlarmDefinition Copy()
         {
             return new AlarmDefinition
@@ -53,7 +58,8 @@ namespace Watchman.Engine
                 Namespace = Namespace,
                 AlertOnInsufficientData = AlertOnInsufficientData,
                 AlertOnOk = AlertOnOk,
-                ExtendedStatistic = ExtendedStatistic
+                ExtendedStatistic = ExtendedStatistic,
+                TreatMissingData = TreatMissingData
             };
         }
 
