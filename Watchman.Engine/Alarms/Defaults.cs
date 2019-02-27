@@ -429,8 +429,9 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.LessThanThreshold,
-                Statistic = Statistic.SampleCount, //The count (number) of data points used for the statistical calculation. Is this really what we want?
-                Namespace = AwsNamespace.Lambda
+                Statistic = Statistic.Sum,
+                Namespace = AwsNamespace.Lambda,
+                TreatMissingData = TreatMissingDataConstants.Breaching
             },
             new AlarmDefinition
             {
