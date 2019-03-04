@@ -735,5 +735,158 @@ namespace Watchman.Tests.Dynamo
             Assert.That(consumedWriteForTable.Properties["Threshold"].Value<int>(),
                 Is.EqualTo(consumedWriteCapacityUnitsHigh));
         }
+
+
+        [Test]
+        public async Task OptionsConfigInChildPatternTakesPrecedence()
+        {
+            var consumedReadCapacityUnitsHigh = 900;
+            var consumedWriteCapacityUnitsHigh = 1900;
+
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
+            {
+                DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
+                {
+                    Resources =
+                        new List<ResourceThresholds<DynamoResourceConfig>>()
+                        {
+                            new ResourceThresholds<DynamoResourceConfig>()
+                            {
+                                Pattern = "first-table",
+                                Values = new Dictionary<string, AlarmValues>()
+                                {
+                                    {"ConsumedReadCapacityUnitsHigh", consumedReadCapacityUnitsHigh},
+                                    {"ConsumedWriteCapacityUnitsHigh", consumedWriteCapacityUnitsHigh}
+                                },
+                                Options = new DynamoResourceConfig()
+                                {
+                                    ThresholdIsAbsolute = true
+                                }
+                            }
+                        },
+                    Options = new DynamoResourceConfig()
+                    {
+                        ThresholdIsAbsolute = false
+                    }
+                }
+            });
+
+            var cloudFormation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonDynamoDB>().HasDynamoTables(new[]
+            {
+                new TableDescription()
+                {
+                    TableName = "production-first-table",
+                    ProvisionedThroughput = new ProvisionedThroughputDescription()
+                    {
+                        ReadCapacityUnits = 1000,
+                        WriteCapacityUnits = 2000
+                    }
+                }
+            });
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var alarmsByTable = cloudFormation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("TableName");
+            var tableAlarms = alarmsByTable["production-first-table"];
+
+            var consumedReadForTable = tableAlarms.SingleOrDefault(
+                a => a.Properties["AlarmName"].ToString()
+                    .Contains("first-table-ConsumedReadCapacityUnitsHigh"));
+            Assert.That(consumedReadForTable.Properties["Threshold"].Value<int>(),
+                Is.EqualTo(consumedReadCapacityUnitsHigh));
+
+            var consumedWriteForTable = tableAlarms.SingleOrDefault(
+                a => a.Properties["AlarmName"].ToString()
+                    .Contains("first-table-ConsumedWriteCapacityUnitsHigh"));
+            Assert.That(consumedWriteForTable.Properties["Threshold"].Value<int>(),
+                Is.EqualTo(consumedWriteCapacityUnitsHigh));
+        }
+
+        [Test]
+        public async Task OptionsConfigInParentPatternAppliedWhenNoChild()
+        {
+            var consumedReadCapacityUnitsHigh = 900;
+
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
+            {
+                DynamoDb = new AwsServiceAlarms<DynamoResourceConfig>()
+                {
+                    Resources =
+                        new List<ResourceThresholds<DynamoResourceConfig>>()
+                        {
+                            new ResourceThresholds<DynamoResourceConfig>()
+                            {
+                                Pattern = "first-table",
+                                Values = new Dictionary<string, AlarmValues>()
+                                {
+                                    {"ConsumedReadCapacityUnitsHigh", consumedReadCapacityUnitsHigh}
+                                }
+                            }
+                        },
+                    Options = new DynamoResourceConfig()
+                    {
+                        ThresholdIsAbsolute = true,
+                        MonitorWrites = false
+                    }
+                }
+            });
+
+            var cloudFormation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonDynamoDB>().HasDynamoTables(new[]
+            {
+                new TableDescription()
+                {
+                    TableName = "production-first-table",
+                    ProvisionedThroughput = new ProvisionedThroughputDescription()
+                    {
+                        ReadCapacityUnits = 1000,
+                        WriteCapacityUnits = 2000
+                    }
+                }
+            });
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var alarmsByTable = cloudFormation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("TableName");
+            var tableAlarms = alarmsByTable["production-first-table"];
+
+            var consumedReadForTable = tableAlarms.SingleOrDefault(
+                a => a.Properties["AlarmName"].ToString()
+                    .Contains("first-table-ConsumedReadCapacityUnitsHigh"));
+            Assert.That(consumedReadForTable.Properties["Threshold"].Value<int>(),
+                Is.EqualTo(consumedReadCapacityUnitsHigh));
+
+            var consumedWriteForTable = tableAlarms.SingleOrDefault(
+                a => a.Properties["AlarmName"].ToString()
+                    .Contains("first-table-ConsumedWriteCapacityUnitsHigh"));
+            Assert.That(consumedWriteForTable, Is.Null);
+        }
     }
  }
