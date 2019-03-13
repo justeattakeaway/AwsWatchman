@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Amazon.Lambda.Model;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.Sqs;
-using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine.Alarms;
 

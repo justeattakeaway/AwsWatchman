@@ -1,7 +1,4 @@
 using StructureMap;
-using Watchman.Configuration;
-using Watchman.Configuration.Load;
-using Watchman.Engine.Logging;
 
 namespace Watchman.IoC
 {   

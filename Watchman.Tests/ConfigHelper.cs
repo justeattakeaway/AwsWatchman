@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using Watchman.Configuration;
-using Watchman.Configuration.Generic;
 using Watchman.Configuration.Load;
 
 namespace Watchman.Tests

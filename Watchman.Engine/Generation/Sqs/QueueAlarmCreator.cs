@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Watchman.Engine.Alarms;
-using Watchman.Engine.Generation.Dynamo.Alarms;
 using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;
 

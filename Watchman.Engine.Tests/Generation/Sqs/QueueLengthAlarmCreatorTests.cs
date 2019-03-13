@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Amazon.CloudWatch;
 using Moq;
 using NUnit.Framework;
 using Watchman.Engine.Alarms;
-using Watchman.Engine.Generation.Dynamo.Alarms;
 using Watchman.Engine.Generation.Sqs;
 using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;

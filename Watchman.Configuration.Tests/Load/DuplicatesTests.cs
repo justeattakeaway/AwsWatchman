@@ -4,7 +4,6 @@ using NUnit.Framework;
 using Watchman.Configuration.Load;
 using Watchman.Configuration.Validation;
 using Watchman.Configuration.Tests.Extensions;
-using System.IO;
 
 namespace Watchman.Configuration.Tests.Load
 {

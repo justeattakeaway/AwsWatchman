@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amazon.CloudWatch.Model;
-using Amazon.Lambda.Model;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Services.Sqs

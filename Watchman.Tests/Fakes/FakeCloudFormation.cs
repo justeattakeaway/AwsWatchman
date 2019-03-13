@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
 using Moq;
 using Newtonsoft.Json;
-using Watchman.Engine.Generation.Generic;
 
 namespace Watchman.Tests.Fakes
 {
