@@ -1,16 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Amazon.DynamoDBv2.Model;
-using Moq;
 using NUnit.Framework;
-using Watchman.AwsResources;
-using Watchman.AwsResources.Services.Sqs;
 using Watchman.Configuration;
-using Watchman.Engine.Generation.Dynamo;
-using Watchman.Engine.Generation.Sqs;
-using Watchman.Engine.Logging;
-using Watchman.Engine.Sns;
-using Watchman.Engine.Tests.Generation.Sqs;
 
 namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
 {

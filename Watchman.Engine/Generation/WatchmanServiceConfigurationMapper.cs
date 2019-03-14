@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Watchman.AwsResources;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
-using Watchman.Engine.Alarms;
 
 namespace Watchman.Engine.Generation
 {

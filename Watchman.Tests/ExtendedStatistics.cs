@@ -1,18 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Amazon.CloudFormation;
 using Amazon.ElasticLoadBalancing;
 using Amazon.ElasticLoadBalancing.Model;
 using NUnit.Framework;
-using Watchman.AwsResources.Services.Elb;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
-using Watchman.Configuration.Load;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
-using Watchman.Engine.Generation.Generic;
-using Watchman.Engine.Logging;
 using Watchman.Tests.Fakes;
 using Watchman.Tests.IoC;
 

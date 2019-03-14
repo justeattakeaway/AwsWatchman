@@ -364,7 +364,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.Lambda
+                Namespace = AwsNamespace.Lambda,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -397,7 +398,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.Lambda
+                Namespace = AwsNamespace.Lambda,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {

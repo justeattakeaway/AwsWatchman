@@ -11,7 +11,6 @@ using Amazon.SimpleNotificationService.Model;
 using Moq;
 using NUnit.Framework;
 using Watchman.Configuration;
-using Watchman.Configuration.Generic;
 using Watchman.Engine;
 using Watchman.Engine.Generation;
 using Watchman.Engine.LegacyTracking;

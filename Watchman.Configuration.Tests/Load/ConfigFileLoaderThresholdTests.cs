@@ -3,9 +3,7 @@ using System.Linq;
 using Watchman.Configuration.Load;
 using Moq;
 using NUnit.Framework;
-using Watchman.Configuration.Generic;
 using Watchman.Configuration.Tests.Extensions;
-using System.IO;
 
 namespace Watchman.Configuration.Tests.Load
 {

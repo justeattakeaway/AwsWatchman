@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Amazon.DynamoDBv2.Model;
-using Amazon.Lambda.Model;
 using Watchman.Engine.Alarms;
 using Watchman.Engine.LegacyTracking;
 using Watchman.Engine.Logging;
