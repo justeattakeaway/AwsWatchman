@@ -5,7 +5,7 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.AutoScaling" Version="3.3.9.4" />
     <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.11" />
-    <PackageReference Include="AWSSDK.Core" Version="3.3.32.2" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.100.5" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.17.13" />
     <PackageReference Include="AWSSDK.EC2" Version="3.3.84" />
     <PackageReference Include="AWSSDK.ElasticLoadBalancing" Version="3.3.3.45" />
