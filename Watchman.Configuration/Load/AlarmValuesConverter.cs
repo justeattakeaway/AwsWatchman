@@ -56,6 +56,7 @@ namespace Watchman.Configuration.Load
             var evalPeriodsProp = jsonObject["EvaluationPeriods"];
             var extendedStatistic = jsonObject["ExtendedStatistic"];
             var enabled = jsonObject["Enabled"];
+            var periodMinutes = jsonObject["PeriodMinutes"];
 
             if (thresholdProp == null && evalPeriodsProp == null && extendedStatistic == null && enabled == null)
             {
@@ -78,7 +79,8 @@ namespace Watchman.Configuration.Load
             return new AlarmValues(thresholdValue,
                 evalPeriods,
                 extendedStatistic?.ToString(),
-                enabled?.ToObject<bool>());
+                enabled?.ToObject<bool>(),
+                periodMinutes?.ToObject<int>());
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

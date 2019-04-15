@@ -19,7 +19,8 @@
       "Values": {
         "ErrorsHigh": {
           "Threshold": 20,
-          "EvaluationPeriods": 2
+          "EvaluationPeriods": 2,
+          "PeriodMinutes" : 10
         },
         "DurationHigh": { "Threshold": 30 },
         "FooHigh": { "EvaluationPeriods": 3 },

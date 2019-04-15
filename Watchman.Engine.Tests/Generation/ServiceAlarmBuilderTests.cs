@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -286,6 +287,101 @@ namespace Watchman.Engine.Tests.Generation
             Assert.That(resourceAlarmB.AlarmDefinition.EvaluationPeriods, Is.EqualTo(4));
         }
 
+        [Test]
+        public async Task DefaultPeriodLengthIsUsedWhenThereAreNoOverrides()
+        {
+            // arrange
+            var defaults = DefineOneAlarm();
+
+            var alertingGroup = new ServiceAlertingGroup<ResourceConfig>
+            {
+                GroupParameters = new AlertingGroupParameters("TestAlarm", "Suffix"),
+                Service = new AwsServiceAlarms<ResourceConfig>
+                {
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
+                    {
+                        new ResourceThresholds<ResourceConfig>
+                        {
+                            Name = "ResourceA"
+                        },
+                         new ResourceThresholds<ResourceConfig>
+                        {
+                            Name = "ResourceB"
+                        }
+                    }
+                }
+            };
+
+            SetupFakeResources(new[] { "ResourceA", "ResourceB" });
+
+            // act
+
+            var result = await CreateSut(defaults).GenerateAlarmsFor(alertingGroup.Service,
+                alertingGroup.GroupParameters);
+
+            // assert
+
+            var resourceAlarmA = result.FirstOrDefault(x => x.Resource.Name == "ResourceA");
+            var resourceAlarmB = result.FirstOrDefault(x => x.Resource.Name == "ResourceB");
+
+            Assert.That(resourceAlarmA, Is.Not.Null);
+            Assert.That(resourceAlarmA.AlarmDefinition.Period, Is.EqualTo(TimeSpan.FromMinutes(1)));
+
+            Assert.That(resourceAlarmB, Is.Not.Null);
+            Assert.That(resourceAlarmB.AlarmDefinition.Period, Is.EqualTo(TimeSpan.FromMinutes(1)));
+        }
+
+        [Test]
+        public async Task PeriodLengthsAreSelectedFromResourceAndGroup()
+        {
+            // arrange
+            var defaults = DefineOneAlarm();
+
+            var alertingGroup = new ServiceAlertingGroup<ResourceConfig>
+            {
+                GroupParameters = new AlertingGroupParameters("TestAlarm", "Suffix"),
+                Service = new AwsServiceAlarms<ResourceConfig>
+                {
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
+                    {
+                        new ResourceThresholds<ResourceConfig>
+                        {
+                            Name = "ResourceA",
+                            Values = new Dictionary<string, AlarmValues>
+                            {
+                                {"AlarmName", new AlarmValues(200, periodMinutes:10)}
+                            }
+                        },
+                         new ResourceThresholds<ResourceConfig>
+                        {
+                            Name = "ResourceB"
+                        }
+                    },
+                    Values = new Dictionary<string, AlarmValues>
+                    {
+                        { "AlarmName", new AlarmValues(300, periodMinutes:7) }
+                    }
+                }
+            };
+
+            SetupFakeResources(new[] { "ResourceA", "ResourceB" });
+
+            // act
+
+            var result = await CreateSut(defaults).GenerateAlarmsFor(alertingGroup.Service,
+                alertingGroup.GroupParameters);
+
+            // assert
+
+            var resourceAlarmA = result.FirstOrDefault(x => x.Resource.Name == "ResourceA");
+            var resourceAlarmB = result.FirstOrDefault(x => x.Resource.Name == "ResourceB");
+
+            Assert.That(resourceAlarmA, Is.Not.Null);
+            Assert.That(resourceAlarmA.AlarmDefinition.Period, Is.EqualTo(TimeSpan.FromMinutes(10)));
+            Assert.That(resourceAlarmB, Is.Not.Null);
+            Assert.That(resourceAlarmB.AlarmDefinition.Period, Is.EqualTo(TimeSpan.FromMinutes(7)));
+        }
+
 
         private static List<AlarmDefinition> DefineOneAlarm()
         {
@@ -295,6 +391,7 @@ namespace Watchman.Engine.Tests.Generation
                 {
                     Name = "AlarmName",
                     EvaluationPeriods = 2,
+                    Period = TimeSpan.FromMinutes(1),
                     Threshold = new Threshold
                     {
                         ThresholdType = ThresholdType.Absolute,

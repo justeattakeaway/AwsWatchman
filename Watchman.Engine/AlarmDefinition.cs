@@ -76,6 +76,10 @@ namespace Watchman.Engine
                 ? mergedValues.ExtendedStatistic
                 : ExtendedStatistic;
 
+            copy.Period = mergedValues.PeriodMinutes != null
+                          ? TimeSpan.FromMinutes(mergedValues.PeriodMinutes.Value)
+                          : Period;
+
             copy.Enabled = mergedValues.Enabled ?? Enabled;
 
             return copy;
