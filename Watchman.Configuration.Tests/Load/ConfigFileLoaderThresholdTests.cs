@@ -115,26 +115,31 @@ namespace Watchman.Configuration.Tests.Load
             Assert.That(group, Is.Not.Null);
             var values = group.Services.Lambda.Values;
 
-            var errrorsHigh = values["ErrorsHigh"];
+            var errorsHigh = values["ErrorsHigh"];
             var durationHigh = values["DurationHigh"];
             var throttlesHigh = values["ThrottlesHigh"];
             var invocationsLow = values["InvocationsLow"];
             var fooHigh = values["FooHigh"];
 
-            Assert.That(errrorsHigh.Threshold, Is.EqualTo(20));
-            Assert.That(errrorsHigh.EvaluationPeriods, Is.EqualTo(2));
+            Assert.That(errorsHigh.Threshold, Is.EqualTo(20));
+            Assert.That(errorsHigh.EvaluationPeriods, Is.EqualTo(2));
+            Assert.That(errorsHigh.PeriodMinutes, Is.EqualTo(10));
 
             Assert.That(durationHigh.Threshold, Is.EqualTo(30));
             Assert.That(durationHigh.EvaluationPeriods, Is.Null);
+            Assert.That(durationHigh.PeriodMinutes, Is.Null);
 
             Assert.That(throttlesHigh.Threshold, Is.EqualTo(40));
             Assert.That(throttlesHigh.EvaluationPeriods, Is.Null);
+            Assert.That(throttlesHigh.PeriodMinutes, Is.Null);
 
             Assert.That(fooHigh.Threshold, Is.Null);
             Assert.That(fooHigh.EvaluationPeriods, Is.EqualTo(3));
+            Assert.That(fooHigh.PeriodMinutes, Is.Null);
 
             Assert.That(invocationsLow.Threshold, Is.EqualTo(5));
             Assert.That(invocationsLow.EvaluationPeriods, Is.Null);
+            Assert.That(invocationsLow.PeriodMinutes, Is.Null);
         }
     }
 }

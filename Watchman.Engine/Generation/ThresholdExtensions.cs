@@ -47,9 +47,15 @@ namespace Watchman.Engine.Generation
                             .Select(t => t.Enabled)
                             .FirstOrDefault(t => t.HasValue);
 
-                        var mergedValues = new AlarmValues(matchedThresholdValue, matchedEvalPeriods,
+                        var matchedPeriodMinutes = matchesForKey
+                            .Select(t => t.PeriodMinutes)
+                            .FirstOrDefault(t => t.HasValue);
+
+                        var mergedValues = new AlarmValues(matchedThresholdValue,
+                            matchedEvalPeriods,
                             matchedExtendedStatistic,
-                            matchedEnabled);
+                            matchedEnabled,
+                            matchedPeriodMinutes);
                         return (key: key, values: mergedValues);
                     }
                 ).ToDictionary(x => x.key, x => x.values);
