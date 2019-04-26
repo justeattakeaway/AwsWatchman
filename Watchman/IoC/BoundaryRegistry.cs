@@ -1,3 +1,5 @@
+using System;
+using Amazon;
 using Amazon.AutoScaling;
 using Amazon.CloudFormation;
 using Amazon.CloudWatch;
@@ -7,6 +9,7 @@ using Amazon.ElasticLoadBalancing;
 using Amazon.ElasticLoadBalancingV2;
 using Amazon.Lambda;
 using Amazon.RDS;
+using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.SimpleNotificationService;
 using Amazon.StepFunctions;
@@ -27,6 +30,20 @@ namespace Watchman.IoC
             SetupAwsDependencies(parameters);
         }
 
+        private TClientConfig CreateClientConfig<TClientConfig>(RegionEndpoint region)
+            where TClientConfig : ClientConfig, new()
+        {
+            var result = new TClientConfig()
+            {
+                RegionEndpoint = region,
+                MaxErrorRetry = 5,
+                Timeout = TimeSpan.FromSeconds(30),
+                ReadWriteTimeout = TimeSpan.FromSeconds(90)
+            };
+
+            return result;
+        }
+
         private void SetupAwsDependencies(StartupParameters parameters)
         {
             var region = AwsStartup.ParseRegion(parameters.AwsRegion);
@@ -34,44 +51,56 @@ namespace Watchman.IoC
                 parameters.AwsAccessKey, parameters.AwsSecretKey, parameters.AwsProfile);
 
             For<IAmazonDynamoDB>()
-                .Use(ctx => new AmazonDynamoDBClient(creds, new AmazonDynamoDBConfig {RegionEndpoint = region}))
+                .Use(ctx => new AmazonDynamoDBClient(creds,
+                    CreateClientConfig<AmazonDynamoDBConfig>(region)))
                 .Singleton();
             For<IAmazonCloudWatch>()
-                .Use(ctx => new AmazonCloudWatchClient(creds, new AmazonCloudWatchConfig {RegionEndpoint = region}))
+                .Use(ctx => new AmazonCloudWatchClient(creds,
+                    CreateClientConfig <AmazonCloudWatchConfig>(region)))
                 .Singleton();
             For<IAmazonSimpleNotificationService>()
                 .Use(ctx => new AmazonSimpleNotificationServiceClient(creds,
-                    new AmazonSimpleNotificationServiceConfig {RegionEndpoint = region}))
+                    CreateClientConfig<AmazonSimpleNotificationServiceConfig>(region)))
                 .Singleton();
             For<IAmazonRDS>()
-                .Use(ctx => new AmazonRDSClient(creds, new AmazonRDSConfig {RegionEndpoint = region}))
+                .Use(ctx => new AmazonRDSClient(creds,
+                    CreateClientConfig<AmazonRDSConfig>(region)))
                 .Singleton();
             For<IAmazonAutoScaling>()
-                .Use(ctx => new AmazonAutoScalingClient(creds, region))
+                .Use(ctx => new AmazonAutoScalingClient(creds,
+                    CreateClientConfig<AmazonAutoScalingConfig>(region)))
                 .Singleton();
             For<IAmazonCloudFormation>()
-                .Use(ctx => new AmazonCloudFormationClient(creds, region))
+                .Use(ctx => new AmazonCloudFormationClient(creds,
+                    CreateClientConfig<AmazonCloudFormationConfig>(region)))
                 .Singleton();
             For<IAmazonLambda>()
-                .Use(ctx => new AmazonLambdaClient(creds, region))
+                .Use(ctx => new AmazonLambdaClient(creds,
+                    CreateClientConfig<AmazonLambdaConfig>(region)))
                 .Singleton();
             For<IAmazonEC2>()
-                .Use(ctx => new AmazonEC2Client(creds, region))
+                .Use(ctx => new AmazonEC2Client(creds,
+                    CreateClientConfig<AmazonEC2Config>(region)))
                 .Singleton();
             For<IAmazonElasticLoadBalancing>()
-                .Use(ctx => new AmazonElasticLoadBalancingClient(creds, region))
+                .Use(ctx => new AmazonElasticLoadBalancingClient(creds,
+                    CreateClientConfig<AmazonElasticLoadBalancingConfig>(region)))
                 .Singleton();
             For<IAmazonElasticLoadBalancingV2>()
-                .Use(ctx => new AmazonElasticLoadBalancingV2Client(creds, region))
+                .Use(ctx => new AmazonElasticLoadBalancingV2Client(creds,
+                    CreateClientConfig<AmazonElasticLoadBalancingV2Config>(region)))
                 .Singleton();
             For<IAmazonS3>()
-                .Use(ctx => new AmazonS3Client(creds, region))
+                .Use(ctx => new AmazonS3Client(creds,
+                    CreateClientConfig<AmazonS3Config>(region)))
                 .Singleton();
             For<IAmazonStepFunctions>()
-                .Use(ctx => new AmazonStepFunctionsClient(creds, region))
+                .Use(ctx => new AmazonStepFunctionsClient(creds,
+                    CreateClientConfig<AmazonStepFunctionsConfig>(region)))
                 .Singleton();
             For<IAmazonCloudWatch>()
-                .Use(ctx => new AmazonCloudWatchClient(creds, region))
+                .Use(ctx => new AmazonCloudWatchClient(creds,
+                    CreateClientConfig<AmazonCloudWatchConfig>(region)))
                 .Singleton();
         }
 
