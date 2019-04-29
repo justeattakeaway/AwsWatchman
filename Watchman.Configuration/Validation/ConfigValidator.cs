@@ -60,17 +60,13 @@ namespace Watchman.Configuration.Validation
 
             ValidateTargets(alertingGroup);
 
-            var hasAtLeastOneResource = false;
-
             if (HasAny(alertingGroup.DynamoDb?.Tables))
             {
-                hasAtLeastOneResource = true;
                 DynamoDbValidation.Validate(alertingGroup.Name, alertingGroup.DynamoDb);
             }
 
             if (HasAny(alertingGroup.Sqs?.Queues))
             {
-                hasAtLeastOneResource = true;
                 SqsValidation.Validate(alertingGroup.Name, alertingGroup.Sqs);
             }
 
@@ -81,19 +77,8 @@ namespace Watchman.Configuration.Validation
                     if (service.Value != null)
                     {
                         AwsServiceValidation.Validate(alertingGroup.Name, service.Key, service.Value);
-
-                        if (HasAny(service.Value.Resources))
-                        {
-                            hasAtLeastOneResource = true;
-                        }
                     }
                 }
-            }
-
-            if (!hasAtLeastOneResource)
-            {
-                throw new ConfigException($"AlertingGroup '{alertingGroup.Name}' must contain resources to monitor. " +
-                    "Specify one or more of DynamoDb, Sqs or other resources");
             }
         }
 
