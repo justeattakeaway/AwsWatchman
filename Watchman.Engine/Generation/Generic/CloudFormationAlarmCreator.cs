@@ -66,12 +66,11 @@ namespace Watchman.Engine.Generation.Generic
 
             CheckForDuplicateStackNames();
 
-            var groups = _alarms.Keys;
-            
-            foreach (var alertingGroup in groups)
+            foreach (var group in _alarms)
             {
-                var alarms = _alarms[alertingGroup];
-                
+                var alarms = group.Value;
+                var alertingGroup = group.Key;
+
                 var stackName = StackName(alertingGroup);
 
                 var stacks = Enumerable.Range(0, alertingGroup.NumberOfCloudFormationStacks)
