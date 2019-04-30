@@ -67,7 +67,7 @@ namespace Watchman.Tests
         }
 
         [Test]
-        public async Task DoesDeployEmptyStackIfAlreadyPresentButResourcesNoLongerExist()
+        public async Task DoesDeployEmptyStackIfAlreadyPresent()
         {
             // first create a stack which has a resource
 
@@ -135,76 +135,6 @@ namespace Watchman.Tests
             Assert.That(stack.Resources.Any(x => x.Value.Type == "AWS::CloudWatch::Alarm"), Is.False);
         }
 
-        [Test]
-        public async Task DoesDeployEmptyStackIfAlreadyPresentButConfigNowEmpty()
-        {
-            // first create a stack which has a resource
-
-            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
-                new AlertingGroupServices()
-                {
-                    AutoScaling = new AwsServiceAlarms<AutoScalingResourceConfig>()
-                    {
-                        Resources = new List<ResourceThresholds<AutoScalingResourceConfig>>()
-                        {
-                            new ResourceThresholds<AutoScalingResourceConfig>()
-                            {
-                                Name = "group-1"
-                            }
-                        }
-                    }
-                });
-
-            var cloudformation = new FakeCloudFormation();
-
-            var firstTestContext = new TestingIocBootstrapper()
-                .WithCloudFormation(cloudformation.Instance)
-                .WithConfig(config);
-
-            firstTestContext.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(new[]
-            {
-                new AutoScalingGroup()
-                {
-                    AutoScalingGroupName = "group-1",
-                    DesiredCapacity = 40
-                }
-            });
-
-            await firstTestContext.Get<AlarmLoaderAndGenerator>()
-                .LoadAndGenerateAlarms(RunMode.GenerateAlarms);
-
-            // check it got deployed
-
-            var stack = cloudformation
-                .Stack("Watchman-test");
-
-            Assert.That(stack, Is.Not.Null);
-            Assert.That(stack.Resources
-                .Values
-                .Where(r => r.Type == "AWS::CloudWatch::Alarm")
-                .Count, Is.GreaterThan(0));
-
-            // deploy empty config over the top
-
-            var emptyConfig = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
-                new AlertingGroupServices());
-
-            var secondTestContext = new TestingIocBootstrapper()
-                .WithCloudFormation(cloudformation.Instance)
-                .WithConfig(emptyConfig);
-
-
-            await secondTestContext
-                .Get<AlarmLoaderAndGenerator>()
-                .LoadAndGenerateAlarms(RunMode.GenerateAlarms);
-
-            stack = cloudformation
-                .Stack("Watchman-test");
-
-            //check we deployed an empty stack and deleted the redundant resources
-            Assert.That(stack, Is.Not.Null);
-            Assert.That(stack.Resources.Any(x => x.Value.Type == "AWS::CloudWatch::Alarm"), Is.False);
-        }
 
         [Test]
         public async Task DoesDeployMultipleStacksIfSelected()

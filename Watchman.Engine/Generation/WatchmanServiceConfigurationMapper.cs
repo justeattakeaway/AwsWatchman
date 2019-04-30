@@ -74,6 +74,7 @@ namespace Watchman.Engine.Generation
         {
             var groups = input.AlertingGroups
                 .Select(x => ServiceAlertingGroup(x, readServiceFromGroup))
+                .Where(x => x != null)
                 .ToList();
 
             return new WatchmanServiceConfiguration<TConfig>(serviceName, groups);
@@ -101,7 +102,7 @@ namespace Watchman.Engine.Generation
             var service = readServiceFromGroup(ag);
             if (service == null)
             {
-                return Map<T>(ag, new AwsServiceAlarms<T>());
+                return null;
             }
 
             return Map<T>(ag, service);
