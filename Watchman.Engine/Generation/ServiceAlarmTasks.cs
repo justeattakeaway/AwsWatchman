@@ -41,6 +41,12 @@ namespace Watchman.Engine.Generation
         {
             var serviceConfig = _serviceConfigMapper(config);
 
+            // hack to make sure the alarm creator knows about all groups
+            foreach (var group in serviceConfig.AlertingGroups)
+            {
+                _creator.AddAlarms(group.GroupParameters, new List<Alarm>());
+            }
+
             if (!ServiceConfigIsPopulated(serviceConfig))
             {
                 _logger.Info($"No resources for {serviceConfig.ServiceName}. No action taken for this resource type");
