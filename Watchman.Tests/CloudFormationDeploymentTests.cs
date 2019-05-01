@@ -207,6 +207,67 @@ namespace Watchman.Tests
         }
 
         [Test]
+        public async Task TestNullRefIssueWhenMixingOldAndNewConfig()
+        {
+            var config = new WatchmanConfiguration()
+            {
+                AlertingGroups = new List<AlertingGroup>()
+                {
+                    new AlertingGroup()
+                    {
+                        Name = "ag1",
+                        AlarmNameSuffix = "ag1suffix",
+                        Services = null,
+                        DynamoDb = new DynamoDb()
+                        {
+                            Tables = new List<Table>()
+                            {
+                                new Table()
+                                {
+                                    Name = "banana"
+                                }
+                            }
+                        }
+                    },
+                    new AlertingGroup()
+                    {
+                        Name = "ag2",
+                        AlarmNameSuffix = "ag2suffix",
+
+                        Services = new AlertingGroupServices()
+                        {
+                            AutoScaling = new AwsServiceAlarms<AutoScalingResourceConfig>()
+                            {
+                                Resources = new List<ResourceThresholds<AutoScalingResourceConfig>>()
+                                {
+                                    new ResourceThresholds<AutoScalingResourceConfig>()
+                                    {
+                                        Name = "asg"
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            };
+
+            var cloudformation = new FakeCloudFormation();
+
+            var firstTestContext = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
+
+            firstTestContext.GetMock<IAmazonAutoScaling>()
+                .HasAutoScalingGroups(new AutoScalingGroup[0]);
+
+            await firstTestContext.Get<AlarmLoaderAndGenerator>()
+                .LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+
+        }
+
+        [Test]
         public async Task DoesDeployMultipleStacksIfSelected()
         {
             // first create a stack which has a resource
