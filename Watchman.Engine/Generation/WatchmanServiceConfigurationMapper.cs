@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
@@ -118,7 +119,10 @@ namespace Watchman.Engine.Generation
             var service = readServiceFromGroup(ag);
             if (service == null)
             {
-                return Map<T>(ag, new AwsServiceAlarms<T>());
+                return Map<T>(ag, new AwsServiceAlarms<T>()
+                {
+                    Resources = new List<ResourceThresholds<T>>()
+                });
             }
 
             return Map<T>(ag, service);
