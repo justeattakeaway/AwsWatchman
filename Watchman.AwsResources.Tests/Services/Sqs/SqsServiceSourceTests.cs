@@ -115,7 +115,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 .ReturnsAsync(_thirdPage);
 
 
-            _queueSource = new QueueDataV2Source(cloudWatchMock.Object);
+            _queueSource = new QueueDataV2Source(new QueueSource(cloudWatchMock.Object));
         }
 
         [Test]
