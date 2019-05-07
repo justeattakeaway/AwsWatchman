@@ -19,13 +19,6 @@ namespace Watchman.Engine.Sns
         public async Task<string> EnsureSnsTopic(string alertingGroupName, bool dryRun)
         {
             var topicName = alertingGroupName + "-Alerts";
-            var topic = await _snsClient.FindTopicAsync(topicName);
-
-            if (topic != null)
-            {
-                _logger.Detail($"Found SNS topic {topicName} with ARN {topic.TopicArn}");
-                return topic.TopicArn;
-            }
 
             if (dryRun)
             {
@@ -33,6 +26,9 @@ namespace Watchman.Engine.Sns
                 return topicName;
             }
 
+            // https://docs.aws.amazon.com/sns/latest/api/API_CreateTopic.html
+            // "This action is idempotent, so if the requester already owns a topic with the specified name,
+            // that topic's ARN is returned without creating a new topic."
             var createResponse = await _snsClient.CreateTopicAsync(topicName);
             _logger.Info($"Created SNS topic {topicName} with ARN {createResponse.TopicArn}");
             return createResponse.TopicArn;
