@@ -1,4 +1,4 @@
-﻿using Amazon.DynamoDBv2.Model;
+using Amazon.DynamoDBv2.Model;
 using Watchman.Configuration;
 using Watchman.Configuration.Load;
 using StructureMap;
@@ -33,7 +33,6 @@ namespace Quartermaster
 
         public static void ConfigureInternalDependencies(IProfileRegistry registry)
         {
-            registry.For<IResourceSource<TableDescription>>().Use<TableDescriptionSource>();
             registry.For<IConfigLoader>().Use<ConfigLoader>();
         }
     }
