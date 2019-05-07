@@ -70,6 +70,7 @@ The allowed commandline parameters are:
 * `ConfigFolder`: path to config files. Required.
 * `Verbose`: One of `true` or `false`. Give more detailed output. Optional, default is `false`.
 * `WriteCloudformationTemplatesToDirectory`. If set, alarms deployed via CloudFormation will be written to this folder instead of deployed. Note that this does not affect SQS and DynamoDb alarms which currently use a different deployment method.
+* `AwsLogging`. Enable AWS SDK logging. Default is `false`. If `true`, AWS metrics and error responses are logged to the console.
 
 AWS connection credentials will be found in the following order:
 * If `AwsAccessKey` and `AwsSecretKey` are specified, these will be used.

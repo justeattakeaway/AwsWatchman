@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Amazon;
+using Amazon.Util;
 using Watchman.Engine.Generation;
 using Watchman.IoC;
 
@@ -22,6 +24,11 @@ namespace Watchman
         {
             try
             {
+                if (startParams.AwsLogging)
+                {
+                    SetupAwsSdkLogging();
+                }
+
                 var container = new IocBootstrapper().ConfigureContainer(startParams);
                 var alarmGenerator = container.GetInstance<AlarmLoaderAndGenerator>();
 
@@ -33,6 +40,16 @@ namespace Watchman
                 Console.Error.WriteLine($"Run failed: {ex.Message}");
                 return ExitCode.RunFailed;
             }
+        }
+
+        private static void SetupAwsSdkLogging()
+        {
+            var loggingConfig = AWSConfigs.LoggingConfig;
+            loggingConfig.LogTo = LoggingOptions.Console;
+            loggingConfig.LogMetrics = true;
+            loggingConfig.LogResponses = ResponseLoggingOption.OnError;
+            loggingConfig.LogResponsesSizeLimit = 4096;
+            loggingConfig.LogMetricsFormat = LogMetricsFormatOption.JSON;
         }
     }
 }

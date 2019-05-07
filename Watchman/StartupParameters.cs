@@ -32,5 +32,8 @@ namespace Watchman
 
         [Option("WriteCloudFormationTemplatesToDirectory", HelpText = "Output cloudformation templates to folder instead of deploying")]
         public string WriteCloudFormationTemplatesToDirectory { get; set; }
+
+        [Option("AwsLogging", HelpText = "Enable AWS SDK logging", Default = false)]
+        public bool AwsLogging { get; set; }
     }
 }
