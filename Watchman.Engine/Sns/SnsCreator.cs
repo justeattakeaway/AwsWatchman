@@ -24,16 +24,5 @@ namespace Watchman.Engine.Sns
             }
             return snsTopicArn;
         }
-
-        public async Task<string> EnsureSnsTopic(IServiceAlertingGroup alertingGroup, bool dryRun)
-        {
-            var snsTopicArn = await _snsTopicCreator.EnsureSnsTopic(alertingGroup.GroupParameters.Name, dryRun);
-
-            if (!dryRun)
-            {
-                await _snsSubscriptionCreator.EnsureSnsSubscriptions(alertingGroup.GroupParameters.Targets, snsTopicArn);
-            }
-            return snsTopicArn;
-        }
     }
 }
