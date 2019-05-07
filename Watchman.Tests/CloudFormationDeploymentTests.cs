@@ -275,5 +275,48 @@ namespace Watchman.Tests
                 Assert.That(count, Is.Not.LessThan(approxExpectedPerStack * 0.8));
             }
         }
+
+        [Test]
+        public async Task StacksAreNotListedMultipleTimes()
+        {
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix",
+                new AlertingGroupServices()
+                {
+                    AutoScaling = new AwsServiceAlarms<AutoScalingResourceConfig>()
+                    {
+                        Resources = new List<ResourceThresholds<AutoScalingResourceConfig>>()
+                        {
+                            new ResourceThresholds<AutoScalingResourceConfig>()
+                            {
+                                Pattern = ".*"
+                            }
+                        }
+                    }
+                },
+                numberOfCloudFormationStacks: 5);
+
+            var cloudFormation = new FakeCloudFormation();
+
+            var context = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            context.GetMock<IAmazonAutoScaling>().HasAutoScalingGroups(new[]
+            {
+                new AutoScalingGroup()
+                {
+                    AutoScalingGroupName = $"group-asg",
+                    DesiredCapacity = 40
+                }
+            });
+
+                await context.Get<AlarmLoaderAndGenerator>()
+                    .LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+     
+            var stacks = cloudFormation.Stacks();
+
+            Assert.That(stacks.Count, Is.GreaterThan(1));
+            Assert.That(cloudFormation.CallsToListStacks, Is.EqualTo(1));
+        }
     }
 }

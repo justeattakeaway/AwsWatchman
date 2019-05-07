@@ -14,6 +14,7 @@ namespace Watchman.Tests.Fakes
 
         private Mock<IAmazonCloudFormation> fake = new Mock<IAmazonCloudFormation>();
 
+        public int CallsToListStacks { get; private set; } = 0;
         public IAmazonCloudFormation Instance => fake.Object;
 
         public FakeCloudFormation()
@@ -45,6 +46,7 @@ namespace Watchman.Tests.Fakes
                 .ReturnsAsync(new UpdateStackResponse());
 
             fake.Setup(x => x.ListStacksAsync(It.IsAny<ListStacksRequest>(), It.IsAny<CancellationToken>()))
+                .Callback(() => { CallsToListStacks++;})
                 .ReturnsAsync(() => new ListStacksResponse()
                 {
                     StackSummaries = _submitted
