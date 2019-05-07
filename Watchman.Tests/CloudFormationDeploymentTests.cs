@@ -310,7 +310,7 @@ namespace Watchman.Tests
                 }
             });
 
-                await context.Get<AlarmLoaderAndGenerator>()
+            await context.Get<AlarmLoaderAndGenerator>()
                     .LoadAndGenerateAlarms(RunMode.GenerateAlarms);
      
             var stacks = cloudFormation.Stacks();
