@@ -29,8 +29,14 @@ namespace Watchman.IoC
 
         private void ConfigureResourceSources()
         {
-            For<IResourceSource<TableDescription>>().Use<TableDescriptionSource>();
-            For<IResourceSource<QueueData>>().Use<QueueSource>();
+            // These cache table names etc
+            For<IResourceSource<TableDescription>>()
+                .Use<TableDescriptionSource>()
+                .Singleton();
+
+            For<IResourceSource<QueueData>>()
+                .Use<QueueSource>()
+                .Singleton();
         }
 
         private void ConfigureInternalDependencies(StartupParameters parameters)

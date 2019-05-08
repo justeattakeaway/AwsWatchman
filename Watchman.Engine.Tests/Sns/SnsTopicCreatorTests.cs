@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
 using Moq;
@@ -28,28 +28,7 @@ namespace Watchman.Engine.Tests.Sns
 
             client.Verify(c => c.CreateTopicAsync("test1-Alerts", It.IsAny<CancellationToken>()), Times.Once);
         }
-
-        [Test]
-        public async Task WhenTopicExistsShouldNotCreateTopic()
-        {
-            var client = new Mock<IAmazonSimpleNotificationService>();
-            client.Setup(c => c.FindTopicAsync(It.IsAny<string>()))
-                .ReturnsAsync(TestFindTopicResponse());
-
-            MockCreateTopic(client,TestCreateTopicResponse());
-
-            var logger = new Mock<IAlarmLogger>();
-            var snsTopicCreator = new SnsTopicCreator(client.Object, logger.Object);
-
-            var topicArn = await snsTopicCreator.EnsureSnsTopic("test1", false);
-
-            Assert.That(topicArn, Is.Not.Null);
-            Assert.That(topicArn, Is.EqualTo("existingTopicArn-abc-1234"));
-
-            client.Verify(c => c.CreateTopicAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()),
-                Times.Never);
-        }
-
+        
         [Test]
         public async Task DryRunShouldNotCreateTopic()
         {
@@ -74,15 +53,7 @@ namespace Watchman.Engine.Tests.Sns
                 TopicArn = "testResponse-abc123"
             };
         }
-
-        private Topic TestFindTopicResponse()
-        {
-            return new Topic
-            {
-                TopicArn = "existingTopicArn-abc-1234"
-            };
-        }
-
+        
         private void MockCreateTopic(Mock<IAmazonSimpleNotificationService> client,
             CreateTopicResponse response)
         {

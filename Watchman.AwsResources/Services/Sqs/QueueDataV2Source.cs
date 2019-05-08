@@ -8,56 +8,16 @@ namespace Watchman.AwsResources.Services.Sqs
 {
     public class QueueDataV2Source : ResourceSourceBase<QueueDataV2>
     {
-        private readonly IAmazonCloudWatch _amazonCloudWatch;
+        private readonly QueueSource _queueSource;
 
-        public QueueDataV2Source(IAmazonCloudWatch amazonCloudWatch)
+        public QueueDataV2Source(QueueSource queueSource)
         {
-            _amazonCloudWatch = amazonCloudWatch;
+            _queueSource = queueSource;
         }
 
-        private async Task<IList<string>> ReadActiveQueueNames()
+        private Task<IList<string>> ReadActiveQueueNames()
         {
-            var metrics = await ReadQueueMetrics();
-
-            return metrics
-                .SelectMany(ExtractQueueNames)
-                .OrderBy(qn => qn)
-                .Distinct()
-                .ToList();
-        }
-
-        private async Task<List<Metric>> ReadQueueMetrics()
-        {
-            var metrics = new List<Metric>();
-            string token = null;
-            do
-            {
-                var request = new ListMetricsRequest
-                {
-                    MetricName = "ApproximateAgeOfOldestMessage",
-                    NextToken = token
-                };
-                var response = await _amazonCloudWatch.ListMetricsAsync(request);
-
-                if (response != null)
-                {
-                    token = response.NextToken;
-                    metrics.AddRange(response.Metrics);
-                }
-                else
-                {
-                    token = null;
-                }
-            } while (token != null);
-
-            return metrics;
-        }
-
-        private static IEnumerable<string> ExtractQueueNames(Metric metric)
-        {
-            return metric.Dimensions
-                .Where(d => d.Name == "QueueName")
-                .Select(d => d.Value);
+           return _queueSource.GetResourceNamesAsync();
         }
 
         protected override string GetResourceName(QueueDataV2 resource)

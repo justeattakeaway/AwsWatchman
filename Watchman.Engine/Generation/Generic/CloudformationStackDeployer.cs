@@ -78,8 +78,15 @@ namespace Watchman.Engine.Generation.Generic
             _s3Location = s3Location;
         }
 
-        private async Task<IEnumerable<string>> AllStacks()
+        private IReadOnlyList<string> _stacks;
+
+        private async Task<IReadOnlyList<string>> AllStacks()
         {
+            if (_stacks != null)
+            {
+                return _stacks;
+            }
+
             string nextToken = null;
             var results = new List<string>();
 
@@ -95,6 +102,8 @@ namespace Watchman.Engine.Generation.Generic
 
                 results.AddRange(allStacks.StackSummaries.Select(x => x.StackName));
             } while (nextToken != null);
+
+            _stacks = results;
 
             return results;
         }
