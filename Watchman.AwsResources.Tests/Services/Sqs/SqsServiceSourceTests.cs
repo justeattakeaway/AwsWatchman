@@ -16,6 +16,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
         private ListMetricsResponse _firstPage;
         private ListMetricsResponse _secondPage;
         private ListMetricsResponse _thirdPage;
+        private ListMetricsResponse _fourthPage;
         private Dictionary<string, string> _attributes;
 
         private QueueDataV2Source _queueSource;
@@ -92,6 +93,25 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                     }
                 }
             };
+            _fourthPage = new ListMetricsResponse
+            {
+                NextToken = "token-4",
+                Metrics = new List<Metric>
+                {
+                    new Metric
+                    {
+                        MetricName = "ApproximateAgeOfOldestMessage",
+                        Dimensions = new List<Dimension>
+                        {
+                            new Dimension
+                            {
+                                Name = "QueueName",
+                                Value = "Queue-4_error"
+                            }
+                        }
+                    }
+                }
+            };
 
             _attributes = new Dictionary<string, string>
             {
@@ -114,6 +134,10 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_thirdPage);
 
+            cloudWatchMock.Setup(s => s.ListMetricsAsync(
+                    It.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == "token-3"),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_fourthPage);
 
             _queueSource = new QueueDataV2Source(new QueueSource(cloudWatchMock.Object));
         }
@@ -127,11 +151,12 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
             var result = await _queueSource.GetResourceNamesAsync();
 
             // assert
-            Assert.That(result.Count, Is.EqualTo(3));
+            Assert.That(result.Count, Is.EqualTo(4));
 
             Assert.That(result.First(), Is.EqualTo(_firstPage.Metrics.Single().Dimensions.Single().Value));
             Assert.That(result.Skip(1).First(), Is.EqualTo(_secondPage.Metrics.Single().Dimensions.Single().Value));
             Assert.That(result.Skip(2).First(), Is.EqualTo(_thirdPage.Metrics.First().Dimensions.Single().Value));
+            Assert.That(result.Skip(3).First(), Is.EqualTo(_fourthPage.Metrics.First().Dimensions.Single().Value));
         }
 
         [Test]
