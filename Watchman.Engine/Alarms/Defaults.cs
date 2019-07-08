@@ -492,7 +492,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.Elb
+                Namespace = AwsNamespace.Elb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -508,7 +509,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.Elb
+                Namespace = AwsNamespace.Elb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -524,7 +526,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
-                Namespace = AwsNamespace.Elb
+                Namespace = AwsNamespace.Elb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -540,7 +543,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.Elb
+                Namespace = AwsNamespace.Elb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -557,7 +561,8 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 // This should be probably a percentile statistic once that is supported via cloudformation
                 Statistic = Statistic.Average,
-                Namespace = AwsNamespace.Elb
+                Namespace = AwsNamespace.Elb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -573,7 +578,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Average,
-                Namespace = AwsNamespace.Elb
+                Namespace = AwsNamespace.Elb,
+                TreatMissingData = TreatMissingDataConstants.Breaching
             }
         };
 
@@ -593,7 +599,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] {"LoadBalancer"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.Alb
+                Namespace = AwsNamespace.Alb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -609,7 +616,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] {"LoadBalancer"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.Alb
+                Namespace = AwsNamespace.Alb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -625,7 +633,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] {"LoadBalancer"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.Alb
+                Namespace = AwsNamespace.Alb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -641,8 +650,11 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] {"LoadBalancer"},
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Namespace = AwsNamespace.Alb
-            }
+                Namespace = AwsNamespace.Alb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
+            },
+
+            // TODO we should add Unhealthy host count to match ELB?
         };
 
         public static IList<AlarmDefinition> KinesisStream = new List<AlarmDefinition>
@@ -661,7 +673,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "StreamName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.Kinesis
+                Namespace = AwsNamespace.Kinesis,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -677,7 +690,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "StreamName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.Kinesis
+                Namespace = AwsNamespace.Kinesis,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
 
@@ -698,7 +712,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "StateMachineArn" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Sum,
-                Namespace = AwsNamespace.StepFunction
+                Namespace = AwsNamespace.StepFunction,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
 
@@ -718,7 +733,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Average,
-                Namespace = AwsNamespace.Sqs
+                Namespace = AwsNamespace.Sqs,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -734,7 +750,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
-                Namespace = AwsNamespace.Sqs
+                Namespace = AwsNamespace.Sqs,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
 
@@ -754,7 +771,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Average,
-                Namespace = AwsNamespace.Sqs
+                Namespace = AwsNamespace.Sqs,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -770,7 +788,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
-                Namespace = AwsNamespace.Sqs
+                Namespace = AwsNamespace.Sqs,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
     }
