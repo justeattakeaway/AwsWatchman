@@ -27,20 +27,6 @@ namespace Watchman.AwsResources.Tests.Services.Dax
         }
 
         [Test]
-        public void GetDimensions_KnownDimensions_ReturnsValue()
-        {
-            //act
-            var result = _dataProvider.GetDimensions(_cluster, new List<string> { "ClusterId" });
-
-            //assert
-            Assert.That(result.Count, Is.EqualTo(1));
-
-            var dim = result.Single();
-            Assert.That(dim.Value, Is.EqualTo(_cluster.ClusterName));
-            Assert.That(dim.Name, Is.EqualTo("ClusterId"));
-        }
-
-        [Test]
         public void GetDimensions_UnknownDimension_ThrowException()
         {
             //act
