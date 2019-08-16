@@ -790,7 +790,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] { "ClusterId" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Average,
+                Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.DAX,
             }
         };
