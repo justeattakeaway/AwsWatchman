@@ -4,6 +4,7 @@ using Amazon;
 using Amazon.AutoScaling;
 using Amazon.CloudFormation;
 using Amazon.CloudWatch;
+using Amazon.DAX;
 using Amazon.DynamoDBv2;
 using Amazon.EC2;
 using Amazon.ElasticLoadBalancing;
@@ -105,6 +106,10 @@ namespace Watchman.IoC
             For<IAmazonCloudWatch>()
                 .Use(ctx => new AmazonCloudWatchClient(creds,
                     CreateClientConfig<AmazonCloudWatchConfig>(region, ctx.GetInstance<HttpClient>())))
+                .Singleton();
+            For<IAmazonDAX>()
+                .Use(ctx => new AmazonDAXClient(creds,
+                    CreateClientConfig<AmazonDAXConfig>(region, ctx.GetInstance<HttpClient>())))
                 .Singleton();
         }
 

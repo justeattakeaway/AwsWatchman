@@ -67,6 +67,11 @@ namespace Watchman.Engine.Generation
             return Map(input, id, a => a?.Services?.Sqs);
         }
 
+        public static WatchmanServiceConfiguration<ResourceConfig> MapDax(WatchmanConfiguration input)
+        {
+            const string id = "Dax";
+            return Map(input, id, a => a?.Services?.Dax);
+        }
 
         private static WatchmanServiceConfiguration<TConfig> Map<TConfig>(WatchmanConfiguration input,
             string serviceName,

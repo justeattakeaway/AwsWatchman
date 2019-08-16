@@ -773,5 +773,26 @@ namespace Watchman.Engine.Alarms
                 Namespace = AwsNamespace.Sqs
             }
         };
+
+        public static IList<AlarmDefinition> Dax = new List<AlarmDefinition>
+        { 
+            new AlarmDefinition
+            {
+                Enabled = true,
+                Name = "CPUUtilizationHigh",
+                Metric = "CPUUtilization",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 5,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 60
+                },
+                DimensionNames = new[] { "ClusterId" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Average,
+                Namespace = AwsNamespace.DAX,
+            }
+        };
     }
 }
