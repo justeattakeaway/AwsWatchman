@@ -5,6 +5,8 @@ using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
+using Amazon.DAX;
+using Amazon.DAX.Model;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Amazon.ElasticLoadBalancing;
@@ -32,12 +34,15 @@ namespace Watchman.Tests.Fakes
                 });
         }
 
-        public static IAmazonElasticLoadBalancing CreateElbClientForLoadBalancers(
-            IEnumerable<LoadBalancerDescription> loadBalancers)
+        public static void HasClusters(this Mock<IAmazonDAX> fake, IEnumerable<Cluster> clusters)
         {
-            var fakeClient = new Mock<IAmazonElasticLoadBalancing>();
-            fakeClient.DescribeReturnsLoadBalancers(loadBalancers);
-            return fakeClient.Object;
+            fake
+                .Setup(l => l.DescribeClustersAsync(It.IsAny<DescribeClustersRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new DescribeClustersResponse
+                {
+                    Clusters = clusters.ToList()
+                });
+            
         }
 
         public static void HasDynamoTables(this Mock<IAmazonDynamoDB> fake, IEnumerable<TableDescription> tables)

@@ -1,6 +1,7 @@
 using Amazon.AutoScaling;
 using Amazon.CloudFormation;
 using Amazon.CloudWatch;
+using Amazon.DAX;
 using Amazon.DynamoDBv2;
 using Amazon.EC2;
 using Amazon.ElasticLoadBalancing;
@@ -48,6 +49,7 @@ namespace Watchman.Tests.IoC
             SetupFake<IAmazonElasticLoadBalancingV2>();
             SetupFake<IAmazonS3>();
             SetupFake<IAmazonStepFunctions>();
+            SetupFake<IAmazonDAX>();
             SetupFake<IAmazonCloudWatch>();
         }
 

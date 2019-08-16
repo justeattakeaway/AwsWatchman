@@ -41,7 +41,7 @@ They all require an object in this format:
 	"Resources": [
 		// regular expression match of resource name
 		{
-       		"Pattern": "^.*$", 
+       		"Pattern": "^.*$",
 
        		// [optional] override the thresholds defined elsewhere
         	"Values": {
@@ -56,12 +56,12 @@ They all require an object in this format:
 
      	// exact match of resource name
      	{
-       		"Name": "Resource"        	
+       		"Name": "Resource"
      	},
 
      	// or
      	"ResourceName"
-     ]	
+     ]
 }
 ```
 
@@ -117,6 +117,7 @@ The following services are supported
 - `DynamoDb` (new implementation of the existing non-cloudformation mechanism)
 - `Sqs` (new implementation of the existing non-cloudformation mechanism)
 - `VpcSubnet` (this is a custom service using JUST EAT custom metrics)
+- `DAX`
 
 ## Alarm names and default thresholds
 
@@ -159,8 +160,8 @@ For each resource each of the default alarms will be applied. See [alarm definit
 
 - `ConsumedReadCapacityUnitsHigh`: 80 (% of provisioned)
 - `ConsumedWriteCapacityUnitsHigh`: 80 (% of provisioned)
-- `ReadThrottleEventsHigh`: 2 
-- `WriteThrottleEventsHigh`: 2 
+- `ReadThrottleEventsHigh`: 2
+- `WriteThrottleEventsHigh`: 2
 - `GsiConsumedReadCapacityUnitsHigh`: 80 (%)
 - `GsiConsumedWriteCapacityUnitsHigh`: 80 (%)
 - `GsiReadThrottleEventsHigh`: 2
@@ -205,6 +206,10 @@ Note that using the defaults here for all alarms is probably not that useful.
 - `RejectedConnectionCountHigh`: 10 (count)
 - `TargetResponseTimeHigh`: 2 (seconds) compared against `p99`
 
+### DAX
+
+- `CPUUtilizationHigh`: 60 (%)
+
 ## Full example
 
 ```
@@ -215,9 +220,9 @@ Note that using the defaults here for all alarms is probably not that useful.
     	{ "Email": "email@just-eat.com" }
   	],
   	"Services": {
-    	"Rds": { 
+    	"Rds": {
     		"Resources": [{
-       			"Pattern": "allorest", 
+       			"Pattern": "allorest",
         		"Thresholds": {
         			"FreeStorageSpaceLow": 20
         		}
