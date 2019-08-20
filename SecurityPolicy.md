@@ -121,7 +121,7 @@ The values you will have to subsitute in are:
 				"rds:DescribeDBInstances",
 				"sqs:GetQueueAttributes",
 				"states:ListStateMachines",
-        "dax:DescribeClusters"
+				"dax:DescribeClusters"
 			],
 			"Resource": [
 				"*"
