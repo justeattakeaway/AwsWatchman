@@ -1,7 +1,7 @@
-# Security policy for AWS Watchman 
+# Security policy for AWS Watchman
 
 
-Permission necessary for AWS Watchman to do all the things. 
+Permission necessary for AWS Watchman to do all the things.
 * Create An IAM user for Watchman
 * Allow access with key and secret. Take note of those, you will use them on the commandline or in a profile
 * Add the following as inline policies to the user (You may want to replace `"Resource": [ "*" ]` with something more specific to the account).
@@ -50,7 +50,7 @@ The values you will have to subsitute in are:
 				"sns:ListSubscriptionsByTopic",
 				"sns:Subscribe",
 				"sns:DeleteTopic",
-				"sns:GetTopicAttributes", 
+				"sns:GetTopicAttributes",
 				"sns:SetTopicAttributes",
 				"sns:Subscribe",
 				"sns:Unsubscribe"
@@ -120,7 +120,8 @@ The values you will have to subsitute in are:
 				"lambda:ListFunctions",
 				"rds:DescribeDBInstances",
 				"sqs:GetQueueAttributes",
-				"states:ListStateMachines"
+				"states:ListStateMachines",
+				"dax:DescribeClusters"
 			],
 			"Resource": [
 				"*"
