@@ -10,6 +10,6 @@ namespace Watchman.Engine.Generation
         public string AlarmDescription { get; set; }
         public List<Dimension> Dimensions { get; set; }
         public AlarmDefinition AlarmDefinition { get; set; }
-        public IAwsResource Resource { get; set; }
+        public string ResourceIdentifier { get; set; }
     }
 }

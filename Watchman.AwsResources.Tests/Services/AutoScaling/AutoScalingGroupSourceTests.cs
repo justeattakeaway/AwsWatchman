@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -133,7 +133,7 @@ namespace Watchman.AwsResources.Tests.Services.AutoScaling
             var result = await sut.GetResourceAsync(group.AutoScalingGroupName);
 
             // assert
-            Assert.That(result.Resource, Is.EqualTo(group));
+            Assert.That(result, Is.EqualTo(group));
         }
     }
 }

@@ -10,25 +10,22 @@ namespace Watchman.Engine.Generation
         where T:class
         where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
     {
-        private readonly IResourceSource<T> _tableSource;
         private readonly IAlarmDimensionProvider<T> _dimensions;
         private readonly AlarmDefaults<T> _defaultAlarms;
         private readonly IResourceAttributesProvider<T, TAlarmConfig> _attributeProvider;
 
         public ResourceAlarmGenerator(
-            IResourceSource<T> tableSource,
             IAlarmDimensionProvider<T> dimensionProvider,
             AlarmDefaults<T> defaultAlarms,
             IResourceAttributesProvider<T, TAlarmConfig> attributeProvider)
         {
-            _tableSource = tableSource;
             _dimensions = dimensionProvider;
             _defaultAlarms = defaultAlarms;
             _attributeProvider = attributeProvider;
         }
 
         public async Task<IList<Alarm>>  GenerateAlarmsFor(
-            AwsServiceAlarms<TAlarmConfig> service,
+            PopulatedServiceAlarms<TAlarmConfig, T> service,
             AlertingGroupParameters groupParameters)
         {
             if (service?.Resources == null || service.Resources.Count == 0)
@@ -40,7 +37,8 @@ namespace Watchman.Engine.Generation
 
             foreach (var resource in service.Resources)
             {
-                var alarmsForResource = await CreateAlarmsForResource(resource, service, groupParameters);
+                var alarmsForResource = await CreateAlarmsForResource(resource, service,
+                    groupParameters);
                 alarms.AddRange(alarmsForResource);
             }
 
@@ -48,19 +46,19 @@ namespace Watchman.Engine.Generation
         }
 
         private async Task<IList<Alarm>> CreateAlarmsForResource(
-            ResourceThresholds<TAlarmConfig> resource,
-            AwsServiceAlarms<TAlarmConfig> service,
+            ResourceAndThresholdsPair<TAlarmConfig, T> resource,
+            PopulatedServiceAlarms<TAlarmConfig, T> service,
             AlertingGroupParameters groupParameters)
         {
-            var entity = await _tableSource.GetResourceAsync(resource.Name);
+            var entity = await resource.Resource.GetFullResource();
 
             if (entity == null)
             {
-                throw new Exception($"Entity {resource.Name} not found");
+                throw new Exception($"Entity {resource.Resource.Name} not found");
             }
 
-            var mergedConfig = service.Options.OverrideWith(resource.Options);
-            var mergedValuesByAlarmName = service.Values.OverrideWith(resource.Values);
+            var mergedConfig = service.Options.OverrideWith(resource.Definition.Options);
+            var mergedValuesByAlarmName = service.Values.OverrideWith(resource.Definition.Values);
 
             var result = new List<Alarm>();
 
@@ -68,9 +66,9 @@ namespace Watchman.Engine.Generation
             {
                 var values = mergedValuesByAlarmName.GetValueOrDefault(alarm.Name) ?? new AlarmValues();
                 var configuredThreshold = alarm.Threshold.CopyWith(value: values.Threshold);
-                var dimensions = _dimensions.GetDimensions(entity.Resource, alarm.DimensionNames);
+                var dimensions = _dimensions.GetDimensions(entity, alarm.DimensionNames);
                 var threshold = await ThresholdCalculator.ExpandThreshold(_attributeProvider,
-                    entity.Resource,
+                    entity,
                     mergedConfig,
                     configuredThreshold);
 
@@ -78,9 +76,9 @@ namespace Watchman.Engine.Generation
 
                 var model = new Alarm
                 {
-                    AlarmName = $"{resource.Name}-{built.Name}-{groupParameters.AlarmNameSuffix}",
+                    AlarmName = $"{resource.Resource.Name}-{built.Name}-{groupParameters.AlarmNameSuffix}",
                     AlarmDescription = groupParameters.DefaultAlarmDescription(),
-                    Resource = entity,
+                    ResourceIdentifier = resource.Resource.Name,
                     Dimensions = dimensions,
                     AlarmDefinition = built
                 };

@@ -173,9 +173,8 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
             var result = await _queueSource.GetResourceAsync(secondQueueName);
 
             // assert
+            Assert.That(result, Is.InstanceOf<QueueDataV2>());
             Assert.That(result.Name, Is.EqualTo(secondQueueName));
-            Assert.That(result.Resource, Is.InstanceOf<QueueDataV2>());
-            Assert.That(result.Resource.Name, Is.EqualTo(secondQueueName));
         }
 
         [Test]
@@ -188,8 +187,8 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
             var result = await _queueSource.GetResourceAsync(thirdQueueName);
 
             // assert
-            Assert.That(result.Resource.ErrorQueue, Is.Not.Null);
-            Assert.That(result.Resource.ErrorQueue.Name, Is.EqualTo(thirdQueueName + "_error"));
+            Assert.That(result.ErrorQueue, Is.Not.Null);
+            Assert.That(result.ErrorQueue.Name, Is.EqualTo(thirdQueueName + "_error"));
         }
     }
 }

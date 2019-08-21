@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Amazon.CloudWatch;
 using Newtonsoft.Json.Linq;
@@ -98,19 +99,17 @@ namespace Watchman.Tests.Sqs
             Assert.That(alarmsByQueue.ContainsKey("first-sqs-queue"), Is.True);
             var alarmsForQueue = alarmsByQueue["first-sqs-queue"];
 
-            Assert.That(alarmsForQueue.Exists(
-                    alarm =>
-                        alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages")
-                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
-                        && alarm.Properties["Threshold"].Value<int>() == 100
-                        && alarm.Properties["Period"].Value<int>() == 60 * 5
-                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Average"
-                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.Missing
-                )
-            );
+            var alarm1 = alarmsForQueue
+                .Single(x => x.Properties["MetricName"].Value<string>().Contains("ApproximateNumberOfMessagesVisible"));
+
+            Assert.That(alarm1.Properties["AlarmName"].Value<string>(), Contains.Substring("NumberOfVisibleMessages"));
+            Assert.That(alarm1.Properties["AlarmName"].Value<string>(), Contains.Substring("-group-suffix"));
+            Assert.That(alarm1.Properties["Threshold"].Value<int>(), Is.EqualTo(100));
+            Assert.That(alarm1.Properties["Period"].Value<int>(), Is.EqualTo(60 * 5));
+            Assert.That(alarm1.Properties["ComparisonOperator"].Value<string>(), Is.EqualTo("GreaterThanOrEqualToThreshold"));
+            Assert.That(alarm1.Properties["Statistic"].Value<string>(), Is.EqualTo("Maximum"));
+            Assert.That(alarm1.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.Sqs));
+            Assert.That(alarm1.Properties["TreatMissingData"].Value<string>(), Is.EqualTo(TreatMissingDataConstants.Missing));
 
             Assert.That(alarmsForQueue.Exists(
                     alarm =>
@@ -136,7 +135,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["Threshold"].Value<int>() == 10
                         && alarm.Properties["Period"].Value<int>() == 60 * 5
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Average"
+                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                         && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.Missing
                 )
@@ -360,7 +359,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["Threshold"].Value<int>() == 10
                         && alarm.Properties["Period"].Value<int>() == 60 * 5
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
-                        && alarm.Properties["Statistic"].Value<string>() == "Average"
+                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
                 )
             );

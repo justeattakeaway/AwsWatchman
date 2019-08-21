@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.Model;
 using Watchman.AwsResources;
+using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.Configuration;
 using Watchman.Engine.Logging;
 
@@ -14,7 +15,7 @@ namespace Watchman.Engine.Generation.Dynamo
         private readonly IResourceSource<TableDescription> _tableSource;
 
         public TableNamePopulator(IAlarmLogger logger,
-             IResourceSource<TableDescription> tableSource)
+            IResourceSource<TableDescription> tableSource)
         {
             _logger = logger;
             _tableSource = tableSource;

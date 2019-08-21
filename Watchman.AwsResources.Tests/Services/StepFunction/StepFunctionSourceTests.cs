@@ -135,9 +135,8 @@ namespace Watchman.AwsResources.Tests.Services.StepFunction
             var result = await _source.GetResourceAsync(secondResourceName);
 
             // Assert
+            Assert.That(result, Is.InstanceOf<StateMachineListItem>());
             Assert.That(result.Name, Is.EqualTo(secondResourceName));
-            Assert.That(result.Resource, Is.InstanceOf<StateMachineListItem>());
-            Assert.That(result.Resource.Name, Is.EqualTo(secondResourceName));
         }
     }
 }

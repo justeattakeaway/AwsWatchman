@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -120,9 +120,8 @@ namespace Watchman.AwsResources.Tests.Services.Rds
             var result = await _rdsSource.GetResourceAsync(secondDbInstanceName);
 
             // assert
-            Assert.That(result.Name, Is.EqualTo(secondDbInstanceName));
-            Assert.That(result.Resource, Is.InstanceOf<DBInstance>());
-            Assert.That(result.Resource.DBInstanceIdentifier, Is.EqualTo(secondDbInstanceName));
+            Assert.That(result, Is.InstanceOf<DBInstance>());
+            Assert.That(result.DBInstanceIdentifier, Is.EqualTo(secondDbInstanceName));
         }
     }
 }

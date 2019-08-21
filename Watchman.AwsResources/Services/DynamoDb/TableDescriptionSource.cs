@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
@@ -9,29 +10,35 @@ namespace Watchman.AwsResources.Services.DynamoDb
     {
         private readonly IAmazonDynamoDB _dynamoDb;
         private IList<string> _tableNames;
-        private readonly Dictionary<string, AwsResource<TableDescription>> _cachedTableDescriptions = new Dictionary<string, AwsResource<TableDescription>>();
+        private readonly Dictionary<string, TableDescription> _cachedTableDescriptions
+            = new Dictionary<string, TableDescription>();
 
         public TableDescriptionSource(IAmazonDynamoDB dynamoDb)
         {
             _dynamoDb = dynamoDb;
         }
 
-        public async Task<IList<string>> GetResourceNamesAsync()
+        public async Task<IList<AwsResource<TableDescription>>> GetResourcesAsync()
         {
-            if (_tableNames == null)
-            {
-                _tableNames = await ReadTableNames();
-            }
+            await CheckTableNamesLoaded();
 
-            return _tableNames;
+            return _tableNames
+                .Select(t => new AwsResource<TableDescription>(t,
+                    item => GetResourceAsync(item.Name))
+                )
+                .ToList();
         }
 
-        public async Task<AwsResource<TableDescription>> GetResourceAsync(string name)
+        public async Task<IList<string>> GetResourceNamesAsync()
         {
-            if (_tableNames == null)
-            {
-                await GetResourceNamesAsync();
-            }
+            return (await GetResourcesAsync())
+                .Select(r => r.Name)
+                .ToArray();
+        }
+
+        public async Task<TableDescription> GetResourceAsync(string name)
+        {
+            await CheckTableNamesLoaded();
 
             if (!_tableNames.Contains(name))
             {
@@ -54,10 +61,17 @@ namespace Watchman.AwsResources.Services.DynamoDb
                 return null;
             }
 
-            var dataItem = new AwsResource<TableDescription>(tableResponse.Table.TableName, tableResponse.Table);
-            _cachedTableDescriptions.Add(tableResponse.Table.TableName, dataItem);
+            _cachedTableDescriptions.Add(tableResponse.Table.TableName, tableResponse.Table);
 
-            return dataItem;
+            return tableResponse.Table;
+        }
+
+        private async Task CheckTableNamesLoaded()
+        {
+            if (_tableNames == null)
+            {
+                _tableNames = await ReadTableNames();
+            }
         }
 
         private async Task<IList<string>> ReadTableNames()

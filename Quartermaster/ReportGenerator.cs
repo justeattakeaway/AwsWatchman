@@ -9,6 +9,7 @@ using Watchman.Configuration;
 using Watchman.Configuration.Load;
 using QuarterMaster.Models;
 using Watchman.AwsResources;
+using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.Configuration.Validation;
 using Watchman.Engine;
 using Watchman.Engine.Generation.Dynamo;
@@ -90,8 +91,7 @@ namespace QuarterMaster
             var reportRows = new List<ProvisioningReportRow>();
             Console.WriteLine($"Reading info about {tableConfig.Name}");
 
-            var tableResource = await _tableSource.GetResourceAsync(tableConfig.Name);
-            var table = tableResource.Resource;
+            var table = await _tableSource.GetResourceAsync(tableConfig.Name);
 
             try
             {

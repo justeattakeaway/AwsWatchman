@@ -115,7 +115,7 @@ namespace Watchman.Engine.Tests.Generation
                     Statistic = Statistic.Average,
                     Period = TimeSpan.FromMinutes(3)
                 },
-                Resource = new Resource { Name = $"resource-for-{name}"},
+                ResourceIdentifier = $"resource-for-{name}",
                 Dimensions = new List<Dimension>()
             };
         }
