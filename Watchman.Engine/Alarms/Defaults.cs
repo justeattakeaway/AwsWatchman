@@ -717,7 +717,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Average,
+                Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Sqs
             },
             new AlarmDefinition
@@ -753,7 +753,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] { "QueueName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
-                Statistic = Statistic.Average,
+                Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Sqs
             },
             new AlarmDefinition
