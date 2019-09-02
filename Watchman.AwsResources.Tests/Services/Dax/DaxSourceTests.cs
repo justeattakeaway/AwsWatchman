@@ -130,9 +130,8 @@ namespace Watchman.AwsResources.Tests.Services.Dax
             var result = await _source.GetResourceAsync(clusterName);
 
             // assert
-            Assert.That(result.Name, Is.EqualTo(clusterName));
-            Assert.That(result.Resource, Is.InstanceOf<Cluster>());
-            Assert.That(result.Resource.ClusterName, Is.EqualTo(clusterName));
+            Assert.That(result, Is.InstanceOf<Cluster>());
+            Assert.That(result.ClusterName, Is.EqualTo(clusterName));
         }
     }
 }

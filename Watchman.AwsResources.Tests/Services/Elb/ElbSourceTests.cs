@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -120,9 +120,8 @@ namespace Watchman.AwsResources.Tests.Services.Elb
             var result = await _elbSource.GetResourceAsync(secondFunctionName);
 
             // assert
-            Assert.That(result.Name, Is.EqualTo(secondFunctionName));
-            Assert.That(result.Resource, Is.InstanceOf<LoadBalancerDescription>());
-            Assert.That(result.Resource.LoadBalancerName, Is.EqualTo(secondFunctionName));
+            Assert.That(result, Is.InstanceOf<LoadBalancerDescription>());
+            Assert.That(result.LoadBalancerName, Is.EqualTo(secondFunctionName));
         }
     }
 }

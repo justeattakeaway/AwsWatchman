@@ -149,9 +149,8 @@ namespace Watchman.AwsResources.Tests.Services.Alb
             var result = await _albSource.GetResourceAsync(secondFunctionName);
 
             // assert
-            Assert.That(result.Name, Is.EqualTo(secondFunctionName));
-            Assert.That(result.Resource, Is.InstanceOf<AlbResource>());
-            Assert.That(result.Resource.LoadBalancer.LoadBalancerName, Is.EqualTo(secondFunctionName));
+            Assert.That(result, Is.InstanceOf<AlbResource>());
+            Assert.That(result.LoadBalancer.LoadBalancerName, Is.EqualTo(secondFunctionName));
         }
     }
 }

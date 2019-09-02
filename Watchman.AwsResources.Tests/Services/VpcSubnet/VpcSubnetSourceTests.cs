@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,8 +65,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
             var result = await sut.GetResourceAsync("Abc123");
 
             // assert
-            Assert.That(result.Resource, Is.EqualTo(subnet));
-            Assert.That(result.Name, Is.EqualTo("Abc123"));
+            Assert.That(result, Is.EqualTo(subnet));
         }
 
         [Test]

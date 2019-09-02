@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Newtonsoft.Json.Linq;
@@ -32,7 +33,7 @@ namespace Watchman.Engine.Tests.Generation.Generic
                 },
                 AlarmName = "",
                 Dimensions = new List<Dimension>(),
-                Resource = resource
+                ResourceIdentifier = resource.Name
             };
         }
 
@@ -41,7 +42,7 @@ namespace Watchman.Engine.Tests.Generation.Generic
         public void EmailAndUrlTargets_CreatesBothTopics()
         {
             // arrange
-            var resource = new AwsResource<FakeResourceType>("name", new FakeResourceType());
+            var resource = new AwsResource<FakeResourceType>("name", _ => Task.FromResult(new FakeResourceType()));
 
             var alarms = new List<Alarm>();
             alarms.Add(CreateExampleAlarm(resource));
@@ -70,7 +71,7 @@ namespace Watchman.Engine.Tests.Generation.Generic
         public void NoTargets_CreatesNoTopics()
         {
             // arrange
-            var resource = new AwsResource<FakeResourceType>("name", new FakeResourceType());
+            var resource = new AwsResource<FakeResourceType>("name", _ => Task.FromResult(new FakeResourceType()));
 
             var alarms = new List<Alarm>();
             alarms.Add(CreateExampleAlarm(resource));
@@ -93,7 +94,7 @@ namespace Watchman.Engine.Tests.Generation.Generic
         public void EmailTargets_CreatedTopicCorrectly()
         {
             // arrange
-            var resource = new AwsResource<FakeResourceType>("name", new FakeResourceType());
+            var resource = new AwsResource<FakeResourceType>("name", _ => Task.FromResult(new FakeResourceType()));
             var targets = new List<AlertTarget>()
             {
                 new AlertEmail("test1@test.com"),
@@ -126,7 +127,7 @@ namespace Watchman.Engine.Tests.Generation.Generic
         public void UrlTargets_CreatedTopicCorrectly()
         {
             // arrange
-            var resource = new AwsResource<FakeResourceType>("name", new FakeResourceType());
+            var resource = new AwsResource<FakeResourceType>("name", _ => Task.FromResult(new FakeResourceType()));
 
             var alarms = new List<Alarm>();
             var targets = new List<AlertTarget>()
@@ -166,7 +167,7 @@ namespace Watchman.Engine.Tests.Generation.Generic
         public void TargetMappingIsCorrect()
         {
             // arrange
-            var resource = new AwsResource<FakeResourceType>("name", new FakeResourceType());
+            var resource = new AwsResource<FakeResourceType>("name", _ => Task.FromResult(new FakeResourceType()));
 
             var alarms = new List<Alarm>();
             var targets = new List<AlertTarget>()

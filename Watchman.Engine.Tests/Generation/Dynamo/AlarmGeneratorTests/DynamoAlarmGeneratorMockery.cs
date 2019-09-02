@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Amazon.CloudWatch;
 using Amazon.DynamoDBv2;
@@ -72,12 +72,9 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
                         WriteCapacityUnits = writeCapacity
                     }
                 };
-
-            var resource = new AwsResource<TableDescription>(tableName, tableDesc);
-
             TableLoader
                 .Setup(x => x.GetResourceAsync(tableName))
-                .ReturnsAsync(resource);
+                .ReturnsAsync(tableDesc);
         }
 
         public void GivenATableWithIndex(string tableName, string indexName, int indexRead, int indexWrite)
@@ -104,11 +101,9 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
                     }
                 };
 
-            var resource = new AwsResource<TableDescription>(tableName, tableDesc);
-
             TableLoader
                 .Setup(x => x.GetResourceAsync(tableName))
-                .ReturnsAsync(resource);
+                .ReturnsAsync(tableDesc);
         }
 
         public void GivenATableDoesNotExist(string failureTable)

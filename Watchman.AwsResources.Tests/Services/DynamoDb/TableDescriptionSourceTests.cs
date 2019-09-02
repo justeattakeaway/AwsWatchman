@@ -135,9 +135,8 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
             var result = await test.GetResourceAsync(secondDbInstanceName);
 
             // assert
-            Assert.That(result.Name, Is.EqualTo(secondDbInstanceName));
-            Assert.That(result.Resource, Is.InstanceOf<TableDescription>());
-            Assert.That(result.Resource.TableName, Is.EqualTo(secondDbInstanceName));
+            Assert.That(result, Is.InstanceOf<TableDescription>());
+            Assert.That(result.TableName, Is.EqualTo(secondDbInstanceName));
         }
 
         [Test]

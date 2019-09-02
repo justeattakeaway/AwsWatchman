@@ -1,3 +1,4 @@
+using System.Linq;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine

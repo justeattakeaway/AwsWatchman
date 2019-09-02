@@ -153,9 +153,8 @@ namespace Watchman.AwsResources.Tests.Services.Kinesis
             var result = await _streamSource.GetResourceAsync(secondStreamName);
 
             // assert
+            Assert.That(result, Is.InstanceOf<KinesisStreamData>());
             Assert.That(result.Name, Is.EqualTo(secondStreamName));
-            Assert.That(result.Resource, Is.InstanceOf<KinesisStreamData>());
-            Assert.That(result.Resource.Name, Is.EqualTo(secondStreamName));
         }
     }
 }

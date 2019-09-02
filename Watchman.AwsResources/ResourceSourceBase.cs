@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +20,9 @@ namespace Watchman.AwsResources
         {
             var results = await FetchResources();
             _resources = results
-                .Select(x => new AwsResource<T>(GetResourceName(x), x))
+                .Select(x => new AwsResource<T>(
+                    GetResourceName(x),
+                    item => Task.FromResult(x)))
                 .ToList();
         }
 
@@ -29,7 +31,7 @@ namespace Watchman.AwsResources
             return (await GetResourcesAsync()).Select(r => r.Name).ToList();
         }
 
-        private async Task<IList<AwsResource<T>>> GetResourcesAsync()
+        public async Task<IList<AwsResource<T>>> GetResourcesAsync()
         {
             if (_resources != null)
             {
@@ -41,11 +43,17 @@ namespace Watchman.AwsResources
             return _resources;
         }
 
-        public async Task<AwsResource<T>> GetResourceAsync(string name)
+        public async Task<T> GetResourceAsync(string name)
         {
             var resources = await GetResourcesAsync();
 
-            return resources.FirstOrDefault(x => x.Name == name);
+            var resource= resources.FirstOrDefault(x => x.Name == name);
+            if (resource == null)
+            {
+                return null;
+            }
+
+            return await resource.GetFullResource();
         }
     }
 }

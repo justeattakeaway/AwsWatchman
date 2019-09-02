@@ -161,9 +161,8 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
             var result = await _queueSource.GetResourceAsync(secondQueueName);
 
             // assert
+            Assert.That(result, Is.InstanceOf<QueueData>());
             Assert.That(result.Name, Is.EqualTo(secondQueueName));
-            Assert.That(result.Resource, Is.InstanceOf<QueueData>());
-            Assert.That(result.Resource.Name, Is.EqualTo(secondQueueName));
         }
 
     }

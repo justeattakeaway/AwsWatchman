@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -120,9 +120,8 @@ namespace Watchman.AwsResources.Tests.Services.Lambda
             var result = await _lambdaSource.GetResourceAsync(secondFunctionName);
 
             // assert
-            Assert.That(result.Name, Is.EqualTo(secondFunctionName));
-            Assert.That(result.Resource, Is.InstanceOf<FunctionConfiguration>());
-            Assert.That(result.Resource.FunctionName, Is.EqualTo(secondFunctionName));
+            Assert.That(result, Is.InstanceOf<FunctionConfiguration>());
+            Assert.That(result.FunctionName, Is.EqualTo(secondFunctionName));
         }
     }
 }

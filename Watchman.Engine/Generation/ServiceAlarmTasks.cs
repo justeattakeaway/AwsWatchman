@@ -15,7 +15,7 @@ namespace Watchman.Engine.Generation
     {
         private readonly IAlarmLogger _logger;
         private readonly ResourceNamePopulator<T, TAlarmConfig> _populator;
-        private readonly OrphanResourcesReporter<T> _orphansReporter;
+        private readonly OrphanResourcesReporter<T, TAlarmConfig> _orphansReporter;
         private readonly IAlarmCreator _creator;
         private readonly IResourceAlarmGenerator<T, TAlarmConfig> _resourceAlarmGenerator;
         private readonly Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> _serviceConfigMapper;
@@ -23,7 +23,7 @@ namespace Watchman.Engine.Generation
         public ServiceAlarmTasks(
             IAlarmLogger logger,
             ResourceNamePopulator<T, TAlarmConfig> populator,
-            OrphanResourcesReporter<T> orphansReporter,
+            OrphanResourcesReporter<T, TAlarmConfig> orphansReporter,
             IAlarmCreator creator,
             IResourceAlarmGenerator<T, TAlarmConfig> resourceAlarmGenerator,
             Func<WatchmanConfiguration, WatchmanServiceConfiguration<TAlarmConfig>> serviceConfigMapper)
@@ -47,9 +47,9 @@ namespace Watchman.Engine.Generation
                 return new GenerateAlarmsResult();
             }
 
-            await PopulateResourceNames(serviceConfig);
-            var failures = await GenerateAlarms(serviceConfig, mode);
-            await ReportOrphans(serviceConfig);
+            var populatedServiceConfig = await PopulateResourceNames(serviceConfig);
+            var failures = await GenerateAlarms(populatedServiceConfig, mode);
+            await ReportOrphans(populatedServiceConfig);
 
             return new GenerateAlarmsResult(failures);
         }
@@ -68,15 +68,22 @@ namespace Watchman.Engine.Generation
             return resources.Any();
         }
 
-        private async Task PopulateResourceNames(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig)
+        private async Task<PopulatedServiceConfiguration<TAlarmConfig, T>> PopulateResourceNames(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig)
         {
+            //TODO: maybe move some of this into the populator
+            var items = new List<PopulatedServiceAlertingGroup<TAlarmConfig, T>>();
             foreach (var group in serviceConfig.AlertingGroups)
             {
-                await _populator.PopulateResourceNames(group);
+                var populated = await _populator.PopulateResourceNames(group);
+                items.Add(populated);
             }
+
+            return new PopulatedServiceConfiguration<TAlarmConfig, T>(
+                serviceConfig.ServiceName,
+                items);
         }
 
-        private async Task<List<string>> GenerateAlarms(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig, RunMode mode)
+        private async Task<List<string>> GenerateAlarms(PopulatedServiceConfiguration<TAlarmConfig, T> serviceConfig, RunMode mode)
         {
             var failures = new List<string>();
 
@@ -100,7 +107,7 @@ namespace Watchman.Engine.Generation
             return failures;
         }
 
-        private Task ReportOrphans(WatchmanServiceConfiguration<TAlarmConfig> serviceConfig)
+        private Task ReportOrphans(PopulatedServiceConfiguration<TAlarmConfig, T> serviceConfig)
         {
             return _orphansReporter.FindAndReport(serviceConfig.ServiceName, serviceConfig.AlertingGroups);
         }

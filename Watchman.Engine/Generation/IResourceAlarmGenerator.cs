@@ -9,7 +9,9 @@ namespace Watchman.Engine.Generation
         where TAlarmConfig : class, IServiceAlarmConfig<TAlarmConfig>, new()
         where TResource : class
     {
-        Task<IList<Alarm>> GenerateAlarmsFor(AwsServiceAlarms<TAlarmConfig> service, AlertingGroupParameters groupParameters);
+        Task<IList<Alarm>> GenerateAlarmsFor(
+            PopulatedServiceAlarms<TAlarmConfig, TResource> service,
+            AlertingGroupParameters groupParameters);
 
 
     }

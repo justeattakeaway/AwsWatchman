@@ -21,79 +21,13 @@ namespace Watchman.Engine.Tests.Generation
             // arrange
             var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
             resourceSourceStub
-                .Setup(x => x.GetResourceNamesAsync())
-                .ReturnsAsync(new List<string>
+                .Setup(x => x.GetResourcesAsync())
+                .ReturnsAsync(WrapResourceNames(new List<string>
                 {
                     "ItemX",
                     "ItemY",
                     "ItemZ"
-                });
-
-            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
-
-            var namedItem = new ResourceThresholds<ResourceConfig>
-            {
-                Name = "ItemX",
-                Values = new Dictionary<string, AlarmValues>
-                {
-                    {
-                        "SomeThreshold", new AlarmValues(500, 2)
-                    }
-                }
-            };
-
-            var patternMatchedItem = new ResourceThresholds<ResourceConfig> {
-                Pattern = "Item",
-                Values = new Dictionary<string, AlarmValues>
-                {
-                    {
-                        "SomeThreshold", new AlarmValues(100, 3)
-                    }
-                }
-            };
-
-            var group = new ServiceAlertingGroup<ResourceConfig>
-            {
-                GroupParameters = new AlertingGroupParameters("name", "suffix"),
-                Service = new AwsServiceAlarms<ResourceConfig>
-                {
-                    Resources = new List<ResourceThresholds<ResourceConfig>>
-                    {
-                        namedItem,
-                        patternMatchedItem
-                    }
-                }
-            };
-
-            // act
-            await sut.PopulateResourceNames(group);
-
-            // assert
-            var resources = group.Service.Resources;
-            Assert.That(resources.Count, Is.EqualTo(3));
-
-            var itemXThreshold = resources.First(x => x.Name == "ItemX").Values["SomeThreshold"];
-            var itemYThreshold = resources.First(x => x.Name == "ItemY").Values["SomeThreshold"];
-            var itemZThreshold = resources.First(x => x.Name == "ItemZ").Values["SomeThreshold"];
-
-            Assert.That(itemXThreshold.Threshold, Is.EqualTo(500));
-            Assert.That(itemYThreshold.Threshold, Is.EqualTo(100));
-            Assert.That(itemZThreshold.Threshold, Is.EqualTo(100));
-        }
-
-        [Test]
-        public async Task PopulateResourceNames_ByPatternAndNamed_ResourcesExpandedWithCorrectEvaluationPeriods()
-        {
-            // arrange
-            var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
-            resourceSourceStub
-                .Setup(x => x.GetResourceNamesAsync())
-                .ReturnsAsync(new List<string>
-                {
-                    "ItemX",
-                    "ItemY",
-                    "ItemZ"
-                });
+                }));
 
             var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
 
@@ -133,15 +67,90 @@ namespace Watchman.Engine.Tests.Generation
             };
 
             // act
-            await sut.PopulateResourceNames(group);
+            var result = await sut.PopulateResourceNames(group);
 
             // assert
-            var resources = group.Service.Resources;
+            var resources = result.Service.Resources;
             Assert.That(resources.Count, Is.EqualTo(3));
 
-            var itemXThreshold = resources.First(x => x.Name == "ItemX").Values["SomeThreshold"];
-            var itemYThreshold = resources.First(x => x.Name == "ItemY").Values["SomeThreshold"];
-            var itemZThreshold = resources.First(x => x.Name == "ItemZ").Values["SomeThreshold"];
+            var itemXThreshold = resources.First(x => x.Definition.Name == "ItemX").Definition.Values["SomeThreshold"];
+            var itemYThreshold = resources.First(x => x.Definition.Name == "ItemY").Definition.Values["SomeThreshold"];
+            var itemZThreshold = resources.First(x => x.Definition.Name == "ItemZ").Definition.Values["SomeThreshold"];
+
+            Assert.That(itemXThreshold.Threshold, Is.EqualTo(500));
+            Assert.That(itemYThreshold.Threshold, Is.EqualTo(100));
+            Assert.That(itemZThreshold.Threshold, Is.EqualTo(100));
+        }
+
+        private List<AwsResource<ExampleServiceModel>> WrapResourceNames(IEnumerable<string> names)
+        {
+            return names
+                .Select(name =>
+                    new AwsResource<ExampleServiceModel>(name, _ => Task.FromResult(new ExampleServiceModel())))
+                .ToList();
+        }
+
+        [Test]
+        public async Task PopulateResourceNames_ByPatternAndNamed_ResourcesExpandedWithCorrectEvaluationPeriods()
+        {
+            // arrange
+            var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
+            resourceSourceStub
+                .Setup(x => x.GetResourcesAsync())
+                .ReturnsAsync(WrapResourceNames(new List<string>
+                {
+                    "ItemX",
+                    "ItemY",
+                    "ItemZ"
+                }));
+
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+
+            var namedItem = new ResourceThresholds<ResourceConfig>
+            {
+                Name = "ItemX",
+                Values = new Dictionary<string, AlarmValues>
+                {
+                    {
+                        "SomeThreshold", new AlarmValues(500, 2)
+                    }
+                }
+            };
+
+            var patternMatchedItem = new ResourceThresholds<ResourceConfig>
+            {
+                Pattern = "Item",
+                Values = new Dictionary<string, AlarmValues>
+                {
+                    {
+                        "SomeThreshold", new AlarmValues(100, 3)
+                    }
+                }
+            };
+
+            var group = new ServiceAlertingGroup<ResourceConfig>
+            {
+                GroupParameters = new AlertingGroupParameters("name", "suffix"),
+                Service = new AwsServiceAlarms<ResourceConfig>
+                {
+                    Resources = new List<ResourceThresholds<ResourceConfig>>
+                    {
+                        namedItem,
+                        patternMatchedItem
+                    }
+                }
+            };
+
+            // act
+            var result = await sut.PopulateResourceNames(group);
+
+            // assert
+            var resources = result.Service.Resources;
+            Assert.That(resources.Count, Is.EqualTo(3));
+
+            var itemXThreshold = resources.First(x => x.Definition.Name == "ItemX").Definition.Values["SomeThreshold"];
+            var itemYThreshold = resources.First(x => x.Definition.Name == "ItemY").Definition.Values["SomeThreshold"];
+            var itemZThreshold = resources.First(x => x.Definition.Name == "ItemZ").Definition.Values["SomeThreshold"];
 
             Assert.That(itemXThreshold.EvaluationPeriods, Is.EqualTo(2));
             Assert.That(itemYThreshold.EvaluationPeriods, Is.EqualTo(3));
@@ -154,14 +163,14 @@ namespace Watchman.Engine.Tests.Generation
             // arrange
             var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
             resourceSourceStub
-                .Setup(x => x.GetResourceNamesAsync())
-                .ReturnsAsync(new List<string>
+                .Setup(x => x.GetResourcesAsync())
+                .ReturnsAsync(WrapResourceNames(new List<string>
                 {
-                   "ItemY",
+                    "ItemY",
                     "Something"
-                });
+                }));
 
-            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig> (new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
 
             var group = new ServiceAlertingGroup<ResourceConfig>
             {
@@ -179,11 +188,11 @@ namespace Watchman.Engine.Tests.Generation
             };
 
             // act
-            await sut.PopulateResourceNames(group);
+            var result = await sut.PopulateResourceNames(group);
 
             // assert
-            Assert.That(group.Service.Resources.Count, Is.EqualTo(1));
-            Assert.That(group.Service.Resources.First().Name, Is.EqualTo("Something"));
+            Assert.That(result.Service.Resources.Count, Is.EqualTo(1));
+            Assert.That(result.Service.Resources.First().Definition.Name, Is.EqualTo("Something"));
         }
 
         [Test]
@@ -192,11 +201,11 @@ namespace Watchman.Engine.Tests.Generation
             // arrange
             var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
             resourceSourceStub
-                .Setup(x => x.GetResourceNamesAsync())
-                .ReturnsAsync(new List<string>
+                .Setup(x => x.GetResourcesAsync())
+                .ReturnsAsync(WrapResourceNames(new List<string>
                 {
                     "ItemY"
-                });
+                }));
 
             var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(
                 new ConsoleAlarmLogger(false), resourceSourceStub.Object);
@@ -216,23 +225,23 @@ namespace Watchman.Engine.Tests.Generation
             };
 
             // act
-            await sut.PopulateResourceNames(group);
+            var result = await sut.PopulateResourceNames(group);
 
             // assert
-            Assert.That(group.Service.Resources.Count, Is.EqualTo(1));
+            Assert.That(result.Service.Resources.Count, Is.EqualTo(1));
         }
 
         [Test]
-        public async Task PopulateResourceNames_NonExistantResourceSpecified_Ingnored()
+        public async Task PopulateResourceNames_NonExistantResourceSpecified_Ignored()
         {
             // arrange
             var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
             resourceSourceStub
-                .Setup(x => x.GetResourceNamesAsync())
-                .ReturnsAsync(new List<string>
+                .Setup(x => x.GetResourcesAsync())
+                .ReturnsAsync(WrapResourceNames(new List<string>
                 {
                     "ItemY"
-                });
+                }));
 
             var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
 
@@ -249,10 +258,10 @@ namespace Watchman.Engine.Tests.Generation
             };
 
             // act
-            await sut.PopulateResourceNames(group);
+            var result = await sut.PopulateResourceNames(group);
 
             // assert
-            Assert.That(group.Service.Resources.Count, Is.EqualTo(0));
+            Assert.That(result.Service.Resources.Count, Is.EqualTo(0));
         }
     }
 }

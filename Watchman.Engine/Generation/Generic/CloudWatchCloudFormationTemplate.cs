@@ -50,7 +50,7 @@ namespace Watchman.Engine.Generation.Generic
 
             foreach (var alarm in _alarms)
             {
-                var resourceName = NonAlpha.Replace(alarm.Resource.Name + alarm.AlarmDefinition.Name, "");
+                var resourceName = NonAlpha.Replace(alarm.ResourceIdentifier + alarm.AlarmDefinition.Name, "");
                 var alarmJson = BuildAlarmJson(alarm);
 
                 resources[resourceName] = alarmJson;

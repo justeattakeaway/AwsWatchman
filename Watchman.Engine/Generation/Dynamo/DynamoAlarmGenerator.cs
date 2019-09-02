@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.Model;
 using Watchman.AwsResources;
+using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.Configuration;
 using Watchman.Engine.Generation.Dynamo.Alarms;
 using Watchman.Engine.Logging;
@@ -104,15 +105,14 @@ namespace Watchman.Engine.Generation.Dynamo
         {
             try
             {
-                var tableResource = await _tableSource.GetResourceAsync(table.Name);
+                var tableDescription = await _tableSource.GetResourceAsync(table.Name);
 
-                if (tableResource == null)
+                if (tableDescription == null)
                 {
                     _logger.Error($"Skipping table {table.Name} as it does not exist");
                     return;
                 }
 
-                var tableDescription = tableResource.Resource;
                 var threshold = table.Threshold ?? alarmTables.Threshold;
 
                 await _tableAlarmCreator.EnsureReadCapacityAlarm(tableDescription, alarmTables.AlarmNameSuffix,
@@ -169,15 +169,14 @@ namespace Watchman.Engine.Generation.Dynamo
         {
             try
             {
-                var tableResource = await _tableSource.GetResourceAsync(table.Name);
+                var tableDescription = await _tableSource.GetResourceAsync(table.Name);
 
-                if (tableResource == null)
+                if (tableDescription == null)
                 {
                     _logger.Error($"Skipping table {table.Name} as it does not exist");
                     return;
                 }
 
-                var tableDescription = tableResource.Resource;
                 var threshold = table.Threshold ?? alarmTables.Threshold;
 
                 await _tableAlarmCreator.EnsureWriteCapacityAlarm(tableDescription, alarmTables.AlarmNameSuffix,
