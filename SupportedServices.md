@@ -118,6 +118,7 @@ The following services are supported
 - `Sqs` (new implementation of the existing non-cloudformation mechanism)
 - `VpcSubnet` (this is a custom service using JUST EAT custom metrics)
 - `DAX`
+- `CloudFront`
 
 ## Alarm names and default thresholds
 
@@ -209,6 +210,9 @@ Note that using the defaults here for all alarms is probably not that useful.
 ### DAX
 
 - `CPUUtilizationHigh`: 60 (%)
+
+### Cloudfront
+- `4xxErrorRate`: 10 errors in 5 minutes
 
 ## Full example
 
