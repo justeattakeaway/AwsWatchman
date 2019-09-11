@@ -3,6 +3,7 @@ using System.Net.Http;
 using Amazon;
 using Amazon.AutoScaling;
 using Amazon.CloudFormation;
+using Amazon.CloudFront;
 using Amazon.CloudWatch;
 using Amazon.DAX;
 using Amazon.DynamoDBv2;
@@ -110,6 +111,10 @@ namespace Watchman.IoC
             For<IAmazonDAX>()
                 .Use(ctx => new AmazonDAXClient(creds,
                     CreateClientConfig<AmazonDAXConfig>(region, ctx.GetInstance<HttpClient>())))
+                .Singleton();
+            For<IAmazonCloudFront>()
+                .Use(ctx => new AmazonCloudFrontClient(creds,
+                    CreateClientConfig<AmazonCloudFrontConfig>(region, ctx.GetInstance<HttpClient>())))
                 .Singleton();
         }
 

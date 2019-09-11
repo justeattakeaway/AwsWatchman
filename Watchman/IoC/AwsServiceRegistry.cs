@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Amazon.AutoScaling.Model;
+using Amazon.CloudFront.Model;
 using Amazon.DAX.Model;
 using Amazon.DynamoDBv2.Model;
 using Amazon.ElasticLoadBalancing.Model;
@@ -11,6 +12,7 @@ using StructureMap;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.Alb;
 using Watchman.AwsResources.Services.AutoScaling;
+using Watchman.AwsResources.Services.CloudFront;
 using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.AwsResources.Services.Dax;
 using Watchman.AwsResources.Services.Elb;
@@ -79,6 +81,10 @@ namespace Watchman.IoC
 
             AddService<Cluster, DaxSource, DaxAlarmDataProvider, ResourceConfig>(
                 WatchmanServiceConfigurationMapper.MapDax, Defaults.Dax
+            );
+
+            AddService<DistributionSummary, CloudFrontSource, CloudFrontAlarmDataProvider, ResourceConfig>(
+                WatchmanServiceConfigurationMapper.MapCloudFront, Defaults.CloudFront
             );
         }
 

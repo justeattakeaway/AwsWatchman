@@ -13,5 +13,6 @@ namespace Watchman.Engine
         public const string Kinesis = "AWS/Kinesis";
         public const string StepFunction = "AWS/States";
         public const string DAX = "AWS/DAX";
+        public const string CloudFront = "AWS/CloudFront";
     }
 }

@@ -73,6 +73,12 @@ namespace Watchman.Engine.Generation
             return Map(input, id, a => a?.Services?.Dax);
         }
 
+        public static WatchmanServiceConfiguration<ResourceConfig> MapCloudFront(WatchmanConfiguration input)
+        {
+            const string id = "CloudFront";
+            return Map(input, id, a => a?.Services?.CloudFront);
+        }
+
         private static WatchmanServiceConfiguration<TConfig> Map<TConfig>(WatchmanConfiguration input,
             string serviceName,
             Func<AlertingGroup, AwsServiceAlarms<TConfig>> readServiceFromGroup) where TConfig : class

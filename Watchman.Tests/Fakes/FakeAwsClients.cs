@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
+using Amazon.CloudFront;
+using Amazon.CloudFront.Model;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Amazon.DAX;
@@ -66,6 +68,20 @@ namespace Watchman.Tests.Fakes
                     });
 
             }
+        }
+
+        public static void HasCloudFrontDistributions(this Mock<IAmazonCloudFront> fake,
+            IEnumerable<DistributionSummary> distributionSummaries)
+        {
+            fake.Setup(l => l.ListDistributionsAsync(It.IsAny<ListDistributionsRequest>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ListDistributionsResponse()
+                {
+                    DistributionList = new DistributionList
+                    {
+                        Items = distributionSummaries.ToList()
+                    }
+                });
         }
 
         public static void HasSqsQueues(this Mock<IAmazonCloudWatch> fake, IEnumerable<string> queues)
