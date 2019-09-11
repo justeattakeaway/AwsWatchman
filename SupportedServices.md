@@ -246,7 +246,19 @@ Note that using the defaults here for all alarms is probably not that useful.
       		"Values": {
       			"ErrorsHigh": 10
       		}
-	    }
+	    },
+		"CloudFront": {
+			"Resources": [
+				{"Pattern": "my-distribution-id"},
+				{"Pattern": "my-dist-overridden-stats",
+				"Values": {
+					"4xxErrorRate": {
+						"EvaluationPeriods": 5,
+						"Threshold": 10
+					}
+				}}
+			]
+		}
     }
 }
 ```
