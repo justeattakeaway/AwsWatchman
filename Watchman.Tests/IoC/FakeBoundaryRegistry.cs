@@ -1,5 +1,6 @@
 using Amazon.AutoScaling;
 using Amazon.CloudFormation;
+using Amazon.CloudFront;
 using Amazon.CloudWatch;
 using Amazon.DAX;
 using Amazon.DynamoDBv2;
@@ -51,6 +52,7 @@ namespace Watchman.Tests.IoC
             SetupFake<IAmazonStepFunctions>();
             SetupFake<IAmazonDAX>();
             SetupFake<IAmazonCloudWatch>();
+            SetupFake<IAmazonCloudFront>();
         }
 
         private void SetupLocalDependencies()

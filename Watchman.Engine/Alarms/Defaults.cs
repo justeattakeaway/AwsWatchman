@@ -794,5 +794,27 @@ namespace Watchman.Engine.Alarms
                 Namespace = AwsNamespace.DAX,
             }
         };
+
+        public static IList<AlarmDefinition> CloudFront = new List<AlarmDefinition>()
+        {
+            new AlarmDefinition()
+            {
+                Enabled = true,
+                Name = "4xxErrorRateHigh",
+                Metric = "4xxErrorRate",
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 5,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 10
+                },
+                DimensionNames = new[] { "DistributionId" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                AlertOnInsufficientData = false,
+                Statistic = Statistic.Average,
+                Namespace = AwsNamespace.CloudFront
+            }
+        };
     }
 }

@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AWSSDK.AutoScaling" Version="3.3.100.5" />
+    <PackageReference Include="AWSSDK.CloudFront" Version="3.3.11.24" />
     <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.101.2" />
     <PackageReference Include="AWSSDK.Core" Version="3.3.100.5" />
     <PackageReference Include="AWSSDK.DAX" Version="3.3.100.5" />
