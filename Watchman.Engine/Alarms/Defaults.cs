@@ -292,6 +292,24 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Rds
+            },
+            new AlarmDefinition
+            {
+                Name = "CPUSurplusCreditsChargedHigh",
+                Metric = "CPUSurplusCreditsCharged",
+                Enabled = false,
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 12,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 0
+                },
+                DimensionNames = new[] { "DBInstanceIdentifier" },
+                ComparisonOperator = ComparisonOperator.GreaterThanThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Rds,
+                TreatMissingData = TreatMissingDataConstants.Missing
             }
         };
 
