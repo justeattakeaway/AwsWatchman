@@ -299,7 +299,7 @@ namespace Watchman.Engine.Alarms
                 Metric = "CPUSurplusCreditsCharged",
                 Enabled = false,
                 Period = TimeSpan.FromMinutes(5),
-                EvaluationPeriods = 12,
+                EvaluationPeriods = 1,
                 Threshold = new Threshold
                 {
                     ThresholdType = ThresholdType.Absolute,
