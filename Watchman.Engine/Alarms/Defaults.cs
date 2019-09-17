@@ -309,7 +309,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Rds,
-                TreatMissingData = TreatMissingDataConstants.Missing
+                TreatMissingData = TreatMissingDataConstants.Breaching
             }
         };
 
