@@ -129,6 +129,7 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `FreeStorageSpaceLow`: 30 (%)
 - `CPUUtilizationHigh`: 60 (%)
 - `DatabaseConnectionsHigh`: 200 (count)
+- `CPUSurplusCreditsChargedHigh`: Disabled by default. Enable if a t3.* instance type is used. By default will go into alarm state when any credits are charged for (i.e. the spent surplus credits exceed the maximum number of credits that the instance can earn in a 24-hour period)
 
 ### AutoScaling
 #### Values
