@@ -13,6 +13,12 @@ namespace Watchman.Engine.Generation
             return Map(input, id, a => a?.Services?.Rds);
         }
 
+        public static WatchmanServiceConfiguration<ResourceConfig> MapRdsCluster(WatchmanConfiguration input)
+        {
+            const string id = "RdsCluster";
+            return Map(input, id, a => a?.Services?.RdsCluster);
+        }
+
         public static WatchmanServiceConfiguration<AutoScalingResourceConfig> MapAutoScaling(WatchmanConfiguration input)
         {
             const string id = "AutoScaling";
