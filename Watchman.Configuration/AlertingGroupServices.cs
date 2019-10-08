@@ -7,6 +7,7 @@ namespace Watchman.Configuration
     public class AlertingGroupServices
     {
         public AwsServiceAlarms<ResourceConfig> Rds { get; set;  }
+        public AwsServiceAlarms<ResourceConfig> RdsCluster { get; set;  }
         public AwsServiceAlarms<AutoScalingResourceConfig> AutoScaling { get; set; }
         public AwsServiceAlarms<ResourceConfig> Lambda { get; set; }
         public AwsServiceAlarms<ResourceConfig> VpcSubnet { get; set; }
@@ -28,6 +29,7 @@ namespace Watchman.Configuration
         public Dictionary<string, IAwsServiceAlarms> AllServicesByName => new Dictionary<string, IAwsServiceAlarms>()
         {
             {"Rds", Rds},
+            {"RdsCluster", RdsCluster},
             {"AutoScaling", AutoScaling},
             {"Lambda", Lambda},
             {"VpcSubnet", VpcSubnet},

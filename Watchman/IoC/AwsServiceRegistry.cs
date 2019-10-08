@@ -19,6 +19,7 @@ using Watchman.AwsResources.Services.Elb;
 using Watchman.AwsResources.Services.Kinesis;
 using Watchman.AwsResources.Services.Lambda;
 using Watchman.AwsResources.Services.Rds;
+using Watchman.AwsResources.Services.RdsCluster;
 using Watchman.AwsResources.Services.Sqs;
 using Watchman.AwsResources.Services.StepFunction;
 using Watchman.AwsResources.Services.VpcSubnet;
@@ -40,6 +41,10 @@ namespace Watchman.IoC
 
             AddService<DBInstance, RdsSource, RdsAlarmDataProvider, ResourceConfig>(
                 WatchmanServiceConfigurationMapper.MapRds, Defaults.Rds
+                );
+
+            AddService<DBCluster, RdsClusterSource, RdsClusterAlarmDataProvider, ResourceConfig>(
+                WatchmanServiceConfigurationMapper.MapRdsCluster, Defaults.RdsCluster
                 );
 
             AddService

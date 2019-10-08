@@ -15,6 +15,8 @@ using Amazon.ElasticLoadBalancing;
 using Amazon.ElasticLoadBalancing.Model;
 using Amazon.Lambda;
 using Amazon.Lambda.Model;
+using Amazon.RDS;
+using Amazon.RDS.Model;
 using Moq;
 using DescribeLoadBalancersResponse = Amazon.ElasticLoadBalancing.Model.DescribeLoadBalancersResponse;
 
@@ -117,6 +119,16 @@ namespace Watchman.Tests.Fakes
                     Functions = functions.ToList()
                 });
             
+        }
+
+        public static void HasRdsClusters(this Mock<IAmazonRDS> fake, IEnumerable<DBCluster> dbClusters)
+        {
+            fake
+                .Setup(l => l.DescribeDBClustersAsync(It.IsAny<DescribeDBClustersRequest>(), new CancellationToken()))
+                .ReturnsAsync(new DescribeDBClustersResponse()
+                {
+                    DBClusters = dbClusters.ToList()
+                });
         }
 
         public static void HasAutoScalingGroups(this Mock<IAmazonAutoScaling> fake, IEnumerable<AutoScalingGroup> groups)

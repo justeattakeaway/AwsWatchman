@@ -313,6 +313,94 @@ namespace Watchman.Engine.Alarms
             }
         };
 
+        public static IList<AlarmDefinition> RdsCluster = new List<AlarmDefinition>
+        {
+            new AlarmDefinition
+            {
+                Name = "CPUUtilizationHigh",
+                Metric = "CPUUtilization",
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 5,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 60
+                },
+                DimensionNames = new[] { "DBClusterIdentifier" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Rds
+            },
+            new AlarmDefinition
+            {
+                Name = "InsertLatencyHigh",
+                Metric = "InsertLatency",
+                Enabled = false,
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 300
+                },
+                DimensionNames = new[] { "DBClusterIdentifier" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Rds
+            },
+            new AlarmDefinition
+            {
+                Name = "UpdateLatencyHigh",
+                Metric = "UpdateLatency",
+                Enabled = false,
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 300
+                },
+                DimensionNames = new[] { "DBClusterIdentifier" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Rds
+            },
+            new AlarmDefinition
+            {
+                Name = "DeleteLatencyHigh",
+                Metric = "DeleteLatency",
+                Enabled = false,
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 300
+                },
+                DimensionNames = new[] { "DBClusterIdentifier" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Rds
+            },
+            new AlarmDefinition
+            {
+                Name = "SelectLatencyHigh",
+                Metric = "SelectLatency",
+                Enabled = false,
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 300
+                },
+                DimensionNames = new[] { "DBClusterIdentifier" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Rds
+            }
+        };
+
         public static IList<AlarmDefinition> AutoScaling = new List<AlarmDefinition>
         {
             new AlarmDefinition
