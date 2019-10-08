@@ -23,9 +23,9 @@ namespace Watchman.AwsResources.IntegrationTests.Service.RdsCluster
 
         private static RdsClusterSource InitializeRdsClusterSource()
         {
-            var lambdaClient = new AmazonRDSClient(CredentialsReader.GetCredentials(), RegionEndpoint.EUWest1);
+            var rdsClient = new AmazonRDSClient(CredentialsReader.GetCredentials(), RegionEndpoint.EUWest1);
 
-            return new RdsClusterSource(lambdaClient);
+            return new RdsClusterSource(rdsClient);
         }
     }
 }
