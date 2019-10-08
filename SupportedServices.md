@@ -108,6 +108,7 @@ Note that only the values you want to override need to be defined.
 The following services are supported
 
 - `Rds`
+- `RdsCluster`
 - `AutoScaling`
 - `Lambda`
 - `Kinesis`
@@ -130,6 +131,11 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `CPUUtilizationHigh`: 60 (%)
 - `DatabaseConnectionsHigh`: 200 (count)
 - `CPUSurplusCreditsChargedHigh`: Disabled by default. Enable if a t3.* instance type is used. By default will go into alarm state when any credits are charged for (i.e. the spent surplus credits exceed the maximum number of credits that the instance can earn in a 24-hour period)
+
+### RdsCluster
+
+- `CPUUtilizationHigh`: 60 (%)
+- `(Select|Insert|Update|Delete)LatencyHigh`: Disabled by default. These metrics are for Aurora Serverless cluster only. The default is 300 ms maximum latency over 1 minute period.
 
 ### AutoScaling
 #### Values
