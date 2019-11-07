@@ -398,7 +398,40 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
                 Namespace = AwsNamespace.Rds
-            }
+            },
+            new AlarmDefinition
+            {
+                Name = "DatabaseConnectionsHigh",
+                Metric = "DatabaseConnections",
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 200
+                },
+                DimensionNames = new[] { "DBClusterIdentifier" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Maximum,
+                Namespace = AwsNamespace.Rds
+            },
+            new AlarmDefinition
+            {
+                Name = "FreeStorageSpaceLow",
+                Metric = "FreeStorageSpace",
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 1,
+                Threshold = new Threshold
+                {
+                    SourceAttribute = "AllocatedStorage",
+                    ThresholdType = ThresholdType.PercentageOf,
+                    Value = 30
+                },
+                DimensionNames = new[] { "DBClusterIdentifier" },
+                ComparisonOperator = ComparisonOperator.LessThanThreshold,
+                Statistic = Statistic.Minimum,
+                Namespace = AwsNamespace.Rds
+            },
         };
 
         public static IList<AlarmDefinition> AutoScaling = new List<AlarmDefinition>
