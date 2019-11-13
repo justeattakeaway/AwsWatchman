@@ -418,7 +418,7 @@ namespace Watchman.Engine.Alarms
             new AlarmDefinition
             {
                 Name = "FreeStorageSpaceLow",
-                Metric = "FreeLocalStorage",
+                Metric = "FreeStorageSpace",
                 Period = TimeSpan.FromMinutes(5),
                 EvaluationPeriods = 1,
                 Threshold = new Threshold
