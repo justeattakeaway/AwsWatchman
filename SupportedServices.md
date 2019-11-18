@@ -136,6 +136,8 @@ For each resource each of the default alarms will be applied. See [alarm definit
 
 - `CPUUtilizationHigh`: 60 (%)
 - `(Select|Insert|Update|Delete)LatencyHigh`: Disabled by default. These metrics are for Aurora Serverless cluster only. The default is 300 ms maximum latency over 1 minute period.
+- `DatabaseConnectionsHigh`: 200 (count)
+- `FreeStorageSpaceLow`: 30 (%)
 
 ### AutoScaling
 #### Values
