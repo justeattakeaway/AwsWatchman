@@ -46,7 +46,7 @@ if [ "$dotnet_version" != "$CLI_VERSION" ]; then
 fi
 
 
-dotnet build ./AwsWatchman.sln --output $artifacts --configuration $configuration || exit 1
+dotnet publish ./AwsWatchman.sln --output $artifacts --configuration $configuration || exit 1
 
 if [ $skipTests == 0 ]; then
     dotnet test ./Quartermaster.Tests/Quartermaster.Tests.csproj || exit 1
