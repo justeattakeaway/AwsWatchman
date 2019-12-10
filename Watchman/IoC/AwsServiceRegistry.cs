@@ -21,6 +21,7 @@ using Watchman.AwsResources.Services.Lambda;
 using Watchman.AwsResources.Services.Rds;
 using Watchman.AwsResources.Services.RdsCluster;
 using Watchman.AwsResources.Services.Sqs;
+using Watchman.AwsResources.Services.Sqs.V3;
 using Watchman.AwsResources.Services.StepFunction;
 using Watchman.AwsResources.Services.VpcSubnet;
 using Watchman.Configuration;
@@ -80,9 +81,13 @@ namespace Watchman.IoC
                 WatchmanServiceConfigurationMapper.MapDynamoDb, null);
 
 
-            AddService<QueueDataV2, QueueDataV2Source, QueueDataProvider, SqsResourceConfig, SqsResourceAlarmGenerator>(
+            //AddService<QueueDataV2, QueueDataV2Source, QueueDataProvider, SqsResourceConfig, SqsResourceAlarmGenerator>(
+            //    WatchmanServiceConfigurationMapper.MapSqs, Defaults.Sqs
+            //    );
+
+            AddService<QueueDataV3, QueueDataSourceV3, QueueDataProviderV3, SqsResourceConfig, SqsResourceAlarmGeneratorV3>(
                 WatchmanServiceConfigurationMapper.MapSqs, Defaults.Sqs
-                );
+            );
 
             AddService<Cluster, DaxSource, DaxAlarmDataProvider, ResourceConfig>(
                 WatchmanServiceConfigurationMapper.MapDax, Defaults.Dax
