@@ -1,23 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Amazon.CloudWatch;
-using Amazon.CloudWatch.Model;
 
 namespace Watchman.AwsResources.Services.Sqs
 {
     public class QueueDataV2Source : ResourceSourceBase<QueueDataV2>
     {
         private readonly QueueSource _queueSource;
+        private const string ErrorQueueSuffix = "_error";
 
         public QueueDataV2Source(QueueSource queueSource)
         {
             _queueSource = queueSource;
-        }
-
-        private Task<IList<string>> ReadActiveQueueNames()
-        {
-           return _queueSource.GetResourceNamesAsync();
         }
 
         protected override string GetResourceName(QueueDataV2 resource)
@@ -27,41 +22,53 @@ namespace Watchman.AwsResources.Services.Sqs
 
         protected override async Task<IEnumerable<QueueDataV2>> FetchResources()
         {
-            var names = await ReadActiveQueueNames();
+            var queueNames = await _queueSource.GetResourceNamesAsync();
 
-            var queues = names
-                .Where(e => !IsErrorQueue(e))
-                .Select(n =>
+            var uniqResourcesNames = queueNames
+                .Select(i => GetResourceName(i))
+                .Distinct();
+
+            var result = new List<QueueDataV2>();
+            foreach (var resourcesName in uniqResourcesNames)
+            {
+                var workingQueueName = resourcesName;
+                var errorQueueName = $"{resourcesName}{ErrorQueueSuffix}";
+
+                var hasWorkingQueue = queueNames.Any(i => string.Equals(workingQueueName, i));
+                var hasErrorQueue = queueNames.Any(i => string.Equals(errorQueueName, i));
+
+                var resource = new QueueDataV2(resourcesName);
+
+                if (hasWorkingQueue)
                 {
-                    var errorQueueName = names.FirstOrDefault(
-                        e => e.StartsWith(n) &&
-                             IsErrorQueue(e));
+                    resource.SetWorkingQueue(workingQueueName);
+                    resource.SetErrorQueue(errorQueueName);
+                }
 
+                if(!hasWorkingQueue && hasErrorQueue)
+                    resource.SetErrorQueue(errorQueueName);
 
-                    // we could have a scenario where nothing has been published/read to/from the error queue for
-                    // a few weeks so CloudWatch stops reporting it. In this case we still do want to alert on the queue
-                    // so in this case we can guess the name as it should be predictable anyway.
-                    errorQueueName = errorQueueName ?? $"{n}{ErrorQueueSuffix}";
+                result.Add(resource);
+            }
 
-                    return new QueueDataV2()
-                    {
-                        Name = n,
-
-                        ErrorQueue = new QueueDataV2()
-                        {
-                            Name = errorQueueName
-                        }
-                    };
-                });
-
-            return queues;
+            return result;
         }
 
-        private bool IsErrorQueue(string queueName)
+        private static string GetResourceName(string queueName)
         {
-            return queueName.ToLowerInvariant().EndsWith(ErrorQueueSuffix);
+            return TrimEnd(queueName, ErrorQueueSuffix, StringComparison.OrdinalIgnoreCase);
         }
 
-        private const string ErrorQueueSuffix = "_error";
+        // TODO: extract into extensions
+        public static string TrimEnd(string input, string suffixToRemove, StringComparison comparisonType)
+        {
+            if (input != null && suffixToRemove != null
+                              && input.EndsWith(suffixToRemove, comparisonType))
+            {
+                return input.Substring(0, input.Length - suffixToRemove.Length);
+            }
+
+            return input;
+        }
     }
 }

@@ -34,14 +34,11 @@ namespace Watchman.Engine.Generation.Sqs
                 return new List<Alarm>();
             }
 
-            List<Alarm> alarms = new List<Alarm>();
+            var alarms = new List<Alarm>();
 
             foreach (var resource in service.Resources)
             {
-               var alarmsForResource = await CreateAlarmsForResource(
-                    resource,
-                    service,
-                    groupParameters);
+                var alarmsForResource = await CreateAlarmsForResource(resource, service, groupParameters);
                 alarms.AddRange(alarmsForResource);
             }
 
@@ -60,25 +57,48 @@ namespace Watchman.Engine.Generation.Sqs
                 throw new Exception($"Entity {resource.Resource.Name} not found");
             }
 
-            var alarms = await BuildAlarmsForQueue(_defaultAlarms,
-                resource.Definition,
-                service,
-                groupParameters,
-                entity);
+            var mergedConfig = service.Options.OverrideWith(resource.Definition.Options);
+            var includeErrorQueues = mergedConfig.IncludeErrorQueues ?? true;
 
-            return alarms;
+            var result = new List<Alarm>();
+
+            // get working queue alarms
+            if (entity.WorkingQueue != null)
+            {
+                var alarms = await BuildAlarmsForQueue(_defaultAlarms,
+                    mergedConfig,
+                    resource.Definition,
+                    service,
+                    groupParameters,
+                    entity.WorkingQueue);
+
+                result.AddRange(alarms);
+            }
+
+            // get error queue alarms
+            if (includeErrorQueues && entity.ErrorQueue != null)
+            {
+                var alarms = await BuildAlarmsForQueue(_errorQueueDefaults,
+                    mergedConfig,
+                    resource.Definition,
+                    service,
+                    groupParameters,
+                    entity.ErrorQueue);
+
+                result.AddRange(alarms);
+            }
+
+            return result;
         }
 
         private async Task<List<Alarm>> BuildAlarmsForQueue(
             IList<AlarmDefinition> defaults,
+            SqsResourceConfig sqsConfig,
             ResourceThresholds<SqsResourceConfig> resource,
             PopulatedServiceAlarms<SqsResourceConfig, QueueDataV2> service,
             AlertingGroupParameters groupParameters,
             QueueDataV2 queue)
         {
-            var mergedConfig = service.Options.OverrideWith(resource.Options);
-            bool includeErrorQueues = mergedConfig.IncludeErrorQueues ?? true;
-
             var result = new List<Alarm>();
 
             var mergedValuesByAlarmName = service.Values.OverrideWith(resource.Values);
@@ -92,7 +112,7 @@ namespace Watchman.Engine.Generation.Sqs
 
                 var threshold = await ThresholdCalculator.ExpandThreshold(_attributeProvider,
                     queue,
-                    mergedConfig,
+                    sqsConfig,
                     actualThreshold);
 
                 var built = alarm.CopyWith(threshold, values);
@@ -109,13 +129,6 @@ namespace Watchman.Engine.Generation.Sqs
                 };
 
                 result.Add(model);
-            }
-
-            if (includeErrorQueues && queue.ErrorQueue != null)
-            {
-                var alarms = await BuildAlarmsForQueue(_errorQueueDefaults, resource, service, groupParameters,
-                    queue.ErrorQueue);
-                result.AddRange(alarms);
             }
 
             return result;

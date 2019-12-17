@@ -8,18 +8,17 @@ using Amazon.CloudWatch.Model;
 using Moq;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Sqs;
-using Watchman.AwsResources.Services.Sqs.V3;
 
 namespace Watchman.AwsResources.Tests.Services.Sqs
 {
     [TestFixture]
-    public class QueueSourceV3Tests
+    public class QueueDataV2SourceTests
     {
         private ListMetricsResponse _firstPage;
         private ListMetricsResponse _secondPage;
         private ListMetricsResponse _thirdPage;
 
-        private QueueDataSourceV3 SUT;
+        private QueueDataV2Source SUT;
 
         [SetUp]
         public void Setup()
@@ -111,7 +110,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 .ReturnsAsync(_thirdPage);
 
 
-            SUT = new QueueDataSourceV3(new QueueSource(cloudWatchMock.Object));
+            SUT = new QueueDataV2Source(new QueueSource(cloudWatchMock.Object));
         }
 
         [Test]
@@ -138,7 +137,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
             var result = await SUT.GetResourceAsync(resourceName);
 
             // assert
-            Assert.That(result, Is.InstanceOf<QueueDataV3>());
+            Assert.That(result, Is.InstanceOf<QueueDataV2>());
             Assert.That(result.Name, Is.EqualTo(resourceName));
 
             Assert.That(result.WorkingQueue, Is.Not.Null);
@@ -158,7 +157,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
             var result = await SUT.GetResourceAsync(resourceName);
 
             // assert
-            Assert.That(result, Is.InstanceOf<QueueDataV3>());
+            Assert.That(result, Is.InstanceOf<QueueDataV2>());
             Assert.That(result.Name, Is.EqualTo(resourceName));
 
             Assert.That(result.WorkingQueue, Is.Null);
@@ -177,7 +176,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
             var result = await SUT.GetResourceAsync(resourceName);
 
             // assert
-            Assert.That(result, Is.InstanceOf<QueueDataV3>());
+            Assert.That(result, Is.InstanceOf<QueueDataV2>());
             Assert.That(result.Name, Is.EqualTo(resourceName));
 
             Assert.That(result.WorkingQueue, Is.Not.Null);
