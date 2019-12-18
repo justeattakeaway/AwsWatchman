@@ -114,6 +114,35 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
         }
 
         [Test]
+        public async Task GetResourcesAsync_EmptyResult_EmptyListReturned()
+        {
+            // arrange
+            _firstPage.NextToken = null;
+            _firstPage.Metrics = new List<Metric>();
+
+            // act
+            var result = await SUT.GetResourceNamesAsync();
+
+            // assert
+            Assert.That(result, Is.Empty);
+        }
+
+        [Test]
+        public async Task GetResourcesAsync_SinglePage_FetchedAndReturned()
+        {
+            // arrange
+            _firstPage.NextToken = null;
+
+            // act
+            var result = await SUT.GetResourceNamesAsync();
+
+            // assert
+            Assert.That(result.Count, Is.EqualTo(1));
+
+            Assert.That(result.First(), Is.EqualTo(GetResourceName(_firstPage)));
+        }
+
+        [Test]
         public async Task GetResourcesAsync_MultiplePages_AllFetchedAndReturned()
         {
             // act
