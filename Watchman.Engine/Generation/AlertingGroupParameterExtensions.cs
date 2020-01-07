@@ -8,7 +8,7 @@ namespace Watchman.Engine.Generation
                 ? null
                 : $" ({groupParameters.Description})";
 
-            var description = $"{AwsConstants.DefaultDescription}. Alerting group: {groupParameters.Name}{suffix}";
+            var description = $"{AwsConstants.V2DefaultDescription}. Alerting group: {groupParameters.Name}{suffix}";
 
             return description;
         }
