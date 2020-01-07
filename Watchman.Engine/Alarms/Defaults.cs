@@ -718,7 +718,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Elb,
-                TreatMissingData = TreatMissingDataConstants.Breaching
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
 
