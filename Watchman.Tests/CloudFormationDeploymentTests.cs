@@ -261,19 +261,10 @@ namespace Watchman.Tests
             context.GetMock<IAmazonAutoScaling>()
                 .HasAutoScalingGroups(new AutoScalingGroup[0]);
 
-            Exception caught = null;
-            
-            try 
-            {
-                await context.Get<AlarmLoaderAndGenerator>()
+            await context.Get<AlarmLoaderAndGenerator>()
                 .LoadAndGenerateAlarms(RunMode.GenerateAlarms);
-            }
-            catch (Exception ex) 
-            {
-                caught = ex;
-            }
 
-            Assert.That(caught, Is.Null);
+            // pass as did not throw
         }
 
         [Test]
