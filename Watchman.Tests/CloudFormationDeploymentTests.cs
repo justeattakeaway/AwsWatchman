@@ -254,18 +254,18 @@ namespace Watchman.Tests
 
             var cloudformation = new FakeCloudFormation();
 
-            var firstTestContext = new TestingIocBootstrapper()
+            var context = new TestingIocBootstrapper()
                 .WithCloudFormation(cloudformation.Instance)
                 .WithConfig(config);
 
-            firstTestContext.GetMock<IAmazonAutoScaling>()
+            context.GetMock<IAmazonAutoScaling>()
                 .HasAutoScalingGroups(new AutoScalingGroup[0]);
 
             Exception caught = null;
             
             try 
             {
-                await firstTestContext.Get<AlarmLoaderAndGenerator>()
+                await context.Get<AlarmLoaderAndGenerator>()
                 .LoadAndGenerateAlarms(RunMode.GenerateAlarms);
             }
             catch (Exception ex) 
