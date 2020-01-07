@@ -82,7 +82,7 @@ namespace Watchman.Tests.RdsCluster
             // arrange
             var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices
             {
-                Lambda = new AwsServiceAlarms<ResourceConfig>
+                RdsCluster = new AwsServiceAlarms<ResourceConfig>
                 {
                     Resources = new List<ResourceThresholds<ResourceConfig>>()
                     {

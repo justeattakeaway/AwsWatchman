@@ -1,3 +1,4 @@
+using System.Threading;
 using Amazon.AutoScaling;
 using Amazon.CloudFormation;
 using Amazon.CloudFront;
@@ -11,6 +12,7 @@ using Amazon.Lambda;
 using Amazon.RDS;
 using Amazon.S3;
 using Amazon.SimpleNotificationService;
+using Amazon.SimpleNotificationService.Model;
 using Amazon.StepFunctions;
 using Moq;
 using StructureMap;
@@ -23,11 +25,13 @@ namespace Watchman.Tests.IoC
 {
     class FakeBoundaryRegistry : Registry
     {
-        private void SetupFake<T>() where T:class
+        private Mock<T> SetupFake<T>() where T : class
         {
+            var fake = new Mock<T>();
             For<T>()
-                .Use(Mock.Of<T>())
+                .Use(fake.Object)
                 .Singleton();
+            return fake;
         }
 
         public FakeBoundaryRegistry()
@@ -40,7 +44,16 @@ namespace Watchman.Tests.IoC
         {
             SetupFake<IAmazonDynamoDB>();
             SetupFake<IAmazonCloudWatch>();
-            SetupFake<IAmazonSimpleNotificationService>();
+
+            SetupFake<IAmazonSimpleNotificationService>()
+                // basic setup to stop other tests blowing up
+                .Setup(x => x.CreateTopicAsync(It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new CreateTopicResponse()
+                {
+                    TopicArn = "test-arn"
+                });
+
             SetupFake<IAmazonRDS>();
             SetupFake<IAmazonAutoScaling>();
             SetupFake<IAmazonCloudFormation>();
