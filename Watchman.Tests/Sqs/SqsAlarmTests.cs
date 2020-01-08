@@ -109,7 +109,7 @@ namespace Watchman.Tests.Sqs
             Assert.That(alarm1.Properties["ComparisonOperator"].Value<string>(), Is.EqualTo("GreaterThanOrEqualToThreshold"));
             Assert.That(alarm1.Properties["Statistic"].Value<string>(), Is.EqualTo("Maximum"));
             Assert.That(alarm1.Properties["Namespace"].Value<string>(), Is.EqualTo(AwsNamespace.Sqs));
-            Assert.That(alarm1.Properties["TreatMissingData"].Value<string>(), Is.EqualTo(TreatMissingDataConstants.Missing));
+            Assert.That(alarm1.Properties["TreatMissingData"].Value<string>(), Is.EqualTo(TreatMissingDataConstants.NotBreaching));
 
             Assert.That(alarmsForQueue.Exists(
                     alarm =>
@@ -121,7 +121,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.Missing
+                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.NotBreaching
                 )
             );
 
@@ -137,7 +137,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.Missing
+                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.NotBreaching
                 )
             );
 
@@ -151,7 +151,7 @@ namespace Watchman.Tests.Sqs
                         && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                         && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                         && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
-                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.Missing
+                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.NotBreaching
                 )
             );
         }
