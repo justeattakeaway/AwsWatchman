@@ -12,7 +12,7 @@ One or more alerting groups should be defined in the config folder that you supp
     { "Email": "email@just-eat.com" }
   ],
   "Services": {
-  	"ServiceIdentifier": { /* service */ }
+      "ServiceIdentifier": { /* service */ }
   }
 }
 
@@ -27,43 +27,43 @@ They all require an object in this format:
 
 ```
 {
-	// [optional] defines default thresholds and evaluation periods for the alerting group
-	"Values": {
-  		"AlarmName": 31
-  	},
+    // [optional] defines default thresholds and evaluation periods for the alerting group
+    "Values": {
+          "AlarmName": 31
+      },
 
     // [optional] specific options for this service type
     "Options": {
         "InstanceCountIncreaseDelayMinutes": 10
     },
 
-  	// Resources for this service type
-	"Resources": [
-		// regular expression match of resource name
-		{
-       		"Pattern": "^.*$",
+      // Resources for this service type
+    "Resources": [
+        // regular expression match of resource name
+        {
+               "Pattern": "^.*$",
 
-       		// [optional] override the thresholds defined elsewhere
-        	"Values": {
-        		"AlarmName": 11
-        	},
+               // [optional] override the thresholds defined elsewhere
+            "Values": {
+                "AlarmName": 11
+            },
 
             // [optional] override specific options for this service type
             "Options": {
                 "InstanceCountIncreaseDelayMinutes": 5
             },
 
-			// [optional]
-			"Description": "extra custom text for alarm description"
-     	},
+            // [optional]
+            "Description": "extra custom text for alarm description"
+         },
 
-     	// exact match of resource name
-     	{
-       		"Name": "Resource"
-     	},
+         // exact match of resource name
+         {
+               "Name": "Resource"
+         },
 
-     	// or
-     	"ResourceName"
+         // or
+         "ResourceName"
      ]
 }
 ```
@@ -230,48 +230,48 @@ Note that using the defaults here for all alarms is probably not that useful.
 
 ```
 {
-	"Name": "TEST",
-  	"AlarmNameSuffix": "TestingGroup",
-  	"Targets": [
-    	{ "Email": "email@just-eat.com" }
-  	],
-  	"Services": {
-    	"Rds": {
-    		"Resources": [{
-       			"Pattern": "allorest",
-        		"Thresholds": {
-        			"FreeStorageSpaceLow": 20
-        		},
-				"Description": "Storage space is low, perform some action"
-    		},{
-    			"Name": "something"
-    		},{
-    			"Name": "another"
-    		}],
-    		"Values": {
-      			"FreeStorageSpaceLow": 31
-      		}
-	    }
-	    "Lambda": {
-      		"Resources": [
-      			{"Pattern": "api-"}
-      		],
-      		"Values": {
-      			"ErrorsHigh": 10
-      		}
-	    },
-		"CloudFront": {
-			"Resources": [
-				{"Pattern": "my-distribution-id"},
-				{"Pattern": "my-dist-overridden-stats",
-				"Values": {
-					"4xxErrorRate": {
-						"EvaluationPeriods": 5,
-						"Threshold": 10
-					}
-				}}
-			]
-		}
+    "Name": "TEST",
+    "AlarmNameSuffix": "TestingGroup",
+    "Targets": [
+        { "Email": "email@just-eat.com" }
+    ],
+    "Services": {
+        "Rds": {
+            "Resources": [{
+                "Pattern": "allorest",
+                "Thresholds": {
+                    "FreeStorageSpaceLow": 20
+                },
+                "Description": "Storage space is low, perform some action"
+            },{
+                "Name": "something"
+            },{
+                "Name": "another"
+            }],
+            "Values": {
+                  "FreeStorageSpaceLow": 31
+              }
+        }
+        "Lambda": {
+              "Resources": [
+                  {"Pattern": "api-"}
+              ],
+              "Values": {
+                  "ErrorsHigh": 10
+              }
+        },
+        "CloudFront": {
+            "Resources": [
+                {"Pattern": "my-distribution-id"},
+                {"Pattern": "my-dist-overridden-stats",
+                "Values": {
+                    "4xxErrorRate": {
+                        "EvaluationPeriods": 5,
+                        "Threshold": 10
+                    }
+                }}
+            ]
+        }
     }
 }
 ```
