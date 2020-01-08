@@ -105,7 +105,8 @@ namespace Watchman.Engine.Generation
             {
                 Pattern = $"^{name}$",
                 Values = named.Values,
-                Options = named.Options
+                Options = named.Options,
+                Description = named.Description
             };
         }
 
@@ -146,7 +147,8 @@ namespace Watchman.Engine.Generation
                 Name = resource.Name,
                 Pattern = null,
                 Values = pattern.Values,
-                Options = pattern.Options
+                Options = pattern.Options,
+                Description = pattern.Description
             };
 
             var matched = new ResourceAndThresholdsPair<TConfig, T>(config, resource);

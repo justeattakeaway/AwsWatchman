@@ -41,6 +41,20 @@ namespace Watchman.Tests.Fakes
                 .ToDictionary(z => z.table, z => z.alarms.ToList());
         }
 
+        public static Dictionary<string, List<Resource>> AlarmsByNamespace(this Template t)
+        {
+            return t
+                .Resources
+                .Where(kvp => kvp.Value.Type == "AWS::CloudWatch::Alarm")
+                .Select(x => new
+                {
+                    ns = x.Value.Properties["Namespace"].Value<string>(),
+                    alarm = x.Value
+                })
+                .GroupBy(x => x.ns, x => x.alarm)
+                .ToDictionary(x => x.Key, grp => grp.ToList());
+        }
+
         public static IList<Resource> Alarms(this Template t)
         {
             return t

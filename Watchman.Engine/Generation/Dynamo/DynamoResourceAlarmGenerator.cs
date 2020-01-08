@@ -111,7 +111,7 @@ namespace Watchman.Engine.Generation.Dynamo
                 var model = new Alarm
                 {
                     AlarmName = $"{resourceConfig.Resource.Name}-{built.Name}-{groupParameters.AlarmNameSuffix}",
-                    AlarmDescription = groupParameters.DefaultAlarmDescription(),
+                    AlarmDescription = groupParameters.DefaultAlarmDescription(resourceConfig.Definition),
                     ResourceIdentifier = resourceConfig.Resource.Name,
                     Dimensions = dimensions,
                     AlarmDefinition = built
@@ -167,7 +167,7 @@ namespace Watchman.Engine.Generation.Dynamo
                     var model = new Alarm
                     {
                         AlarmName = $"{resourceConfig.Resource.Name}-{gsi.IndexName}-{alarm.Name}-{groupParameters.AlarmNameSuffix}",
-                        AlarmDescription = groupParameters.DefaultAlarmDescription(),
+                        AlarmDescription = groupParameters.DefaultAlarmDescription(resourceConfig.Definition),
                         ResourceIdentifier = resourceConfig.Resource.Name,
                         Dimensions = dimensions,
                         AlarmDefinition = built
