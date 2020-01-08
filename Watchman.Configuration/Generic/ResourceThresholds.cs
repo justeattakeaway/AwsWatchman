@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Watchman.Configuration.Generic
 {
@@ -16,6 +17,31 @@ namespace Watchman.Configuration.Generic
         public override string ToString()
         {
             return Name ?? Pattern;
+        }
+
+        public ResourceThresholds<TConfig> AsNamed(string name)
+        {
+            return new ResourceThresholds<TConfig>
+            {
+                Name = name,
+                Pattern = null,
+                Values = Values,
+                Options = Options,
+                Description = Description
+            };
+        }
+        
+        public ResourceThresholds<TConfig> AsPattern()
+        {
+            var name = Regex.Escape(Name);
+
+            return new ResourceThresholds<TConfig>()
+            {
+                Pattern = $"^{name}$",
+                Values = Values,
+                Options = Options,
+                Description = Description
+            };
         }
     }
 }

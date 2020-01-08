@@ -52,6 +52,9 @@ They all require an object in this format:
             "Options": {
                 "InstanceCountIncreaseDelayMinutes": 5
             },
+
+			// [optional]
+			"Description": "extra custom text for alarm description"
      	},
 
      	// exact match of resource name
@@ -238,7 +241,8 @@ Note that using the defaults here for all alarms is probably not that useful.
        			"Pattern": "allorest",
         		"Thresholds": {
         			"FreeStorageSpaceLow": 20
-        		}
+        		},
+				"Description": "Storage space is low, perform some action"
     		},{
     			"Name": "something"
     		},{
