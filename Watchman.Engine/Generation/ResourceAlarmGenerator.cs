@@ -77,7 +77,7 @@ namespace Watchman.Engine.Generation
                 var model = new Alarm
                 {
                     AlarmName = $"{resource.Resource.Name}-{built.Name}-{groupParameters.AlarmNameSuffix}",
-                    AlarmDescription = groupParameters.DefaultAlarmDescription(),
+                    AlarmDescription = groupParameters.DefaultAlarmDescription(resource.Definition),
                     ResourceIdentifier = resource.Resource.Name,
                     Dimensions = dimensions,
                     AlarmDefinition = built

@@ -100,7 +100,7 @@ namespace Watchman.Engine.Generation.Sqs
                 var model = new Alarm
                 {
                     AlarmName = $"{resource.Name}-{built.Name}-{groupParameters.AlarmNameSuffix}",
-                    AlarmDescription = groupParameters.DefaultAlarmDescription(),
+                    AlarmDescription = groupParameters.DefaultAlarmDescription(resource),
 
                     // error queues currently named as per parent queue
                     ResourceIdentifier = resource.Name,

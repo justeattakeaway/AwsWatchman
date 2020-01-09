@@ -66,7 +66,7 @@ namespace Watchman.Engine.Generation
         {
             var named = service.Resources
                 .Where(t => string.IsNullOrWhiteSpace(t.Pattern))
-                .Select(NameToPattern)
+                .Select(t => t.AsPattern())
                 .ToList();
 
             var patterns = service.Resources
@@ -97,17 +97,6 @@ namespace Watchman.Engine.Generation
             ).ToList();
         }
 
-        private static ResourceThresholds<TConfig> NameToPattern(ResourceThresholds<TConfig> named)
-        {
-            var name = Regex.Escape(named.Name);
-
-            return new ResourceThresholds<TConfig>()
-            {
-                Pattern = $"^{name}$",
-                Values = named.Values,
-                Options = named.Options
-            };
-        }
 
         private async Task<IList<ResourceAndThresholdsPair<TConfig, T>>> GetPatternMatches(
             ResourceThresholds<TConfig> resourcePattern,
@@ -141,15 +130,9 @@ namespace Watchman.Engine.Generation
         private static ResourceAndThresholdsPair<TConfig, T> PatternToTable(
             ResourceThresholds<TConfig> pattern, AwsResource<T> resource)
         {
-            var config= new ResourceThresholds<TConfig>
-            {
-                Name = resource.Name,
-                Pattern = null,
-                Values = pattern.Values,
-                Options = pattern.Options
-            };
+            pattern = pattern.AsNamed(resource.Name);
 
-            var matched = new ResourceAndThresholdsPair<TConfig, T>(config, resource);
+            var matched = new ResourceAndThresholdsPair<TConfig, T>(pattern, resource);
 
             return matched;
         }

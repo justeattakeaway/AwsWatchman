@@ -7,5 +7,6 @@ namespace Watchman.Configuration.Generic
         string Name { get; }
         string Pattern { get; }
         Dictionary<string, AlarmValues> Values { get; set; }
+        string Description { get; set; }
     }
 }
