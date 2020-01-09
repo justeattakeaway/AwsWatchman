@@ -118,7 +118,7 @@ namespace Watchman.Tests.Dax
                     && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
                     && alarm.Properties["Statistic"].Value<string>() == "Maximum"
                     && alarm.Properties["Namespace"].Value<string>() == "AWS/DAX"
-                    && alarm.Properties["TreatMissingData"].Value<string>() == "missing"
+                    && alarm.Properties["TreatMissingData"].Value<string>() == "notBreaching"
                     )
                 );
         }

@@ -13,6 +13,7 @@ DotNetTest "Quartermaster.Tests\Quartermaster.Tests.csproj"
 DotNetTest "Watchman.AwsResources.Tests\Watchman.AwsResources.Tests.csproj"
 DotNetTest "Watchman.Configuration.Tests\Watchman.Configuration.Tests.csproj"
 DotNetTest "Watchman.Engine.Tests\Watchman.Engine.Tests.csproj"
+DotNetTest "Watchman.Tests\Watchman.Tests.csproj"
 
 Write-Host "Publishing artefacts..." -ForegroundColor Green
 & $dotnet publish -c Release AwsWatchman.sln
