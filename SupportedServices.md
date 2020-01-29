@@ -152,6 +152,19 @@ For each resource each of the default alarms will be applied. See [alarm definit
 #### Options
 - `InstanceCountIncreaseDelayMinutes` Use to delay increasing the minimum threshold when the instance count increases (e.g. when scaling). The value used it then obtained from CloudWatch - using the minimum of `GroupDesiredCapacity` over the time period specified. Note that if CloudWatch metrics are not present then the current Desired capacity is used, as it better to have a more sensitive alarm than none.
 
+#### Important notes
+##### When MinimumInstanceCount < MaximumInstanceCount * 50%, the default `GroupInServiceInstancesLow` (50% of desired instance count) can trigger false alerts on scaling up.
+
+Let's take a look at scaling up from 2 to 6 instances (2 is less than 6 * 50% = 3). The alert threshold is updated from 1 to 3 in less than a minute after scaling up gets triggered. Then, this new threshold is compared with two GroupInServiceInstances datapoints which were consequently captured for the previous 10 minutes (each datapoint represents the minimum value in a 5-minute interval). There were 2 instances before the moment scale up was triggered, so a false alert gets triggered because 2 (instance count) < 3 (new threshold).
+
+##### When MinimumInstanceCount < MaximumInstanceCount * 50%, using `InstanceCountIncreaseDelayMinutes` might fix false scaling up alerts but instead introduces false scaling down alerts.
+
+Let's suppose we are scaling down from 6 to 2 instances and `InstanceCountIncreaseDelayMinutes` is set to 15 minutes. The alert threshold is updated from 3 to 1 with 15-minute delay after scaling down gets triggered. Instances finish scaling down before the threshold is updated and a false alert gets triggered.
+
+##### To solve these problems try either of the following:
+- Lower the `GroupInServiceInstancesLow` threshold
+- Adjust MinimumInstanceCount/MaximumInstanceCount so that MinimumInstanceCount is greater or equal to MaximumInstanceCount * 50% (e.g. 2/4, 3/6, etc)
+
 ### Lambda
 
 - `ErrorsHigh`: 3 (count)
