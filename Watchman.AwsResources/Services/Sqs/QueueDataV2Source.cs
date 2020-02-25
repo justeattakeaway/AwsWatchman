@@ -25,7 +25,7 @@ namespace Watchman.AwsResources.Services.Sqs
             var queueNames = await _queueSource.GetResourceNamesAsync();
 
             var uniqResourcesNames = queueNames
-                .Select(i => GetResourceName(i))
+                .Select(i => TrimEnd(i, ErrorQueueSuffix, StringComparison.OrdinalIgnoreCase))
                 .Distinct();
 
             var result = new List<QueueDataV2>();
@@ -52,11 +52,6 @@ namespace Watchman.AwsResources.Services.Sqs
             }
 
             return result;
-        }
-
-        private static string GetResourceName(string queueName)
-        {
-            return TrimEnd(queueName, ErrorQueueSuffix, StringComparison.OrdinalIgnoreCase);
         }
 
         // TODO: extract into extensions
