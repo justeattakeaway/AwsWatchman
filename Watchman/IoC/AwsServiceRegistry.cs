@@ -79,10 +79,9 @@ namespace Watchman.IoC
             AddService<TableDescription, TableDescriptionSource, DynamoDbDataProvider, DynamoResourceConfig, DynamoResourceAlarmGenerator>(
                 WatchmanServiceConfigurationMapper.MapDynamoDb, null);
 
-
             AddService<QueueDataV2, QueueDataV2Source, QueueDataProvider, SqsResourceConfig, SqsResourceAlarmGenerator>(
                 WatchmanServiceConfigurationMapper.MapSqs, Defaults.Sqs
-                );
+            );
 
             AddService<Cluster, DaxSource, DaxAlarmDataProvider, ResourceConfig>(
                 WatchmanServiceConfigurationMapper.MapDax, Defaults.Dax

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,14 +12,13 @@ using Watchman.AwsResources.Services.Sqs;
 namespace Watchman.AwsResources.Tests.Services.Sqs
 {
     [TestFixture]
-    public class SqsServiceSourceTests
+    public class QueueDataV2SourceTests
     {
         private ListMetricsResponse _firstPage;
         private ListMetricsResponse _secondPage;
         private ListMetricsResponse _thirdPage;
-        private Dictionary<string, string> _attributes;
 
-        private QueueDataV2Source _queueSource;
+        private QueueDataV2Source SUT;
 
         [SetUp]
         public void Setup()
@@ -55,7 +55,7 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                             new Dimension
                             {
                                 Name = "QueueName",
-                                Value = "Queue-2"
+                                Value = "Queue-2_error"
                             }
                         }
                     }
@@ -93,11 +93,6 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 }
             };
 
-            _attributes = new Dictionary<string, string>
-            {
-                {"AttrName", "AttrValue"}
-            };
-
             var cloudWatchMock = new Mock<IAmazonCloudWatch>();
             cloudWatchMock.Setup(s => s.ListMetricsAsync(
                 It.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == null),
@@ -110,43 +105,12 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 .ReturnsAsync(_secondPage);
 
             cloudWatchMock.Setup(s => s.ListMetricsAsync(
-                It.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == "token-2"),
-                It.IsAny<CancellationToken>()))
+                    It.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == "token-2"),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_thirdPage);
 
 
-            _queueSource = new QueueDataV2Source(new QueueSource(cloudWatchMock.Object));
-        }
-
-        [Test]
-        public async Task GetResourcesAsync_MultiplePages_AllFetchedAndReturned()
-        {
-            // arrange
-
-            // act
-            var result = await _queueSource.GetResourceNamesAsync();
-
-            // assert
-            Assert.That(result.Count, Is.EqualTo(3));
-
-            Assert.That(result.First(), Is.EqualTo(_firstPage.Metrics.Single().Dimensions.Single().Value));
-            Assert.That(result.Skip(1).First(), Is.EqualTo(_secondPage.Metrics.Single().Dimensions.Single().Value));
-            Assert.That(result.Skip(2).First(), Is.EqualTo(_thirdPage.Metrics.First().Dimensions.Single().Value));
-        }
-
-        [Test]
-        public async Task GetResourcesAsync_SinglePage_FetchedAndReturned()
-        {
-            // arrange
-            _firstPage.NextToken = null;
-
-            // act
-            var result = await _queueSource.GetResourceNamesAsync();
-
-            // assert
-            Assert.That(result.Count, Is.EqualTo(1));
-
-            Assert.That(result.First(), Is.EqualTo(_firstPage.Metrics.Single().Dimensions.Single().Value));
+            SUT = new QueueDataV2Source(new QueueSource(cloudWatchMock.Object));
         }
 
         [Test]
@@ -157,38 +121,116 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
             _firstPage.Metrics = new List<Metric>();
 
             // act
-            var result = await _queueSource.GetResourceNamesAsync();
+            var result = await SUT.GetResourceNamesAsync();
 
             // assert
             Assert.That(result, Is.Empty);
         }
 
         [Test]
-        public async Task GetResourceAsync_ReturnsCorrectResource()
+        public async Task GetResourcesAsync_SinglePage_FetchedAndReturned()
         {
             // arrange
-            var secondQueueName = _secondPage.Metrics.First().Dimensions.Single().Value;
+            _firstPage.NextToken = null;
 
             // act
-            var result = await _queueSource.GetResourceAsync(secondQueueName);
+            var result = await SUT.GetResourceNamesAsync();
 
             // assert
-            Assert.That(result, Is.InstanceOf<QueueDataV2>());
-            Assert.That(result.Name, Is.EqualTo(secondQueueName));
+            Assert.That(result.Count, Is.EqualTo(1));
+
+            Assert.That(result.First(), Is.EqualTo(GetResourceName(_firstPage)));
         }
 
         [Test]
-        public async Task GetResourceAsyncCorrectlyPopulatesTheIsErrorField()
+        public async Task GetResourcesAsync_MultiplePages_AllFetchedAndReturned()
         {
-            // arrange
-            var thirdQueueName = _thirdPage.Metrics.First().Dimensions.Single().Value;
-
             // act
-            var result = await _queueSource.GetResourceAsync(thirdQueueName);
+            var result = await SUT.GetResourceNamesAsync();
 
             // assert
+            Assert.That(result.Count, Is.EqualTo(3));
+
+            Assert.That(result.First(), Is.EqualTo(GetResourceName(_firstPage)));
+            Assert.That(result.Skip(1).First(), Is.EqualTo(GetResourceName(_secondPage)));
+            Assert.That(result.Skip(2).First(), Is.EqualTo(GetResourceName(_thirdPage)));
+        }
+
+        [Test]
+        public async Task GetResourceAsync_ReturnsCorrectResource_WhenOnlyWorkingQueuePresent()
+        {
+            // arrange
+            var resourceName = GetResourceName(_firstPage);
+
+            // act
+            var result = await SUT.GetResourceAsync(resourceName);
+
+            // assert
+            Assert.That(result, Is.InstanceOf<QueueDataV2>());
+            Assert.That(result.Name, Is.EqualTo(resourceName));
+
+            Assert.That(result.WorkingQueue, Is.Not.Null);
+            Assert.That(result.WorkingQueue.Name, Is.EqualTo("Queue-1"));
+
             Assert.That(result.ErrorQueue, Is.Not.Null);
-            Assert.That(result.ErrorQueue.Name, Is.EqualTo(thirdQueueName + "_error"));
+            Assert.That(result.ErrorQueue.Name, Is.EqualTo("Queue-1_error"));
+        }
+
+        [Test]
+        public async Task GetResourceAsync_ReturnsCorrectResource_WhenOnlyErrorQueuePresent()
+        {
+            // arrange
+            var resourceName = GetResourceName(_secondPage);
+
+            // act
+            var result = await SUT.GetResourceAsync(resourceName);
+
+            // assert
+            Assert.That(result, Is.InstanceOf<QueueDataV2>());
+            Assert.That(result.Name, Is.EqualTo(resourceName));
+
+            Assert.That(result.WorkingQueue, Is.Null);
+
+            Assert.That(result.ErrorQueue, Is.Not.Null);
+            Assert.That(result.ErrorQueue.Name, Is.EqualTo("Queue-2_error"));
+        }
+
+        [Test]
+        public async Task GetResourceAsync_ReturnsCorrectResource_WhenBothQueuesPresent()
+        {
+            // arrange
+            var resourceName = GetResourceName(_thirdPage);
+
+            // act
+            var result = await SUT.GetResourceAsync(resourceName);
+
+            // assert
+            Assert.That(result, Is.InstanceOf<QueueDataV2>());
+            Assert.That(result.Name, Is.EqualTo(resourceName));
+
+            Assert.That(result.WorkingQueue, Is.Not.Null);
+            Assert.That(result.WorkingQueue.Name, Is.EqualTo("Queue-3"));
+
+            Assert.That(result.ErrorQueue, Is.Not.Null);
+            Assert.That(result.ErrorQueue.Name, Is.EqualTo("Queue-3_error"));
+        }
+
+        private static string GetResourceName(ListMetricsResponse metrics)
+        {
+            var queueName = metrics.Metrics.SelectMany(i => i.Dimensions).First(i => i.Name == "QueueName").Value;
+            return TrimEnd(queueName, "_error", StringComparison.OrdinalIgnoreCase);
+        }
+
+        // TODO: extract into extensions
+        public static string TrimEnd(string input, string suffixToRemove, StringComparison comparisonType)
+        {
+            if (input != null && suffixToRemove != null
+                && input.EndsWith(suffixToRemove, comparisonType))
+            {
+                return input.Substring(0, input.Length - suffixToRemove.Length);
+            }
+
+            return input;
         }
     }
 }

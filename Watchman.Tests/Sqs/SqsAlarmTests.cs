@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -497,6 +496,77 @@ namespace Watchman.Tests.Sqs
 
             Assert.That(alarmsForErrorQueue, Is.Not.Empty);
 
+        }
+
+        [Test]
+        public async Task GenerateAlarmsForErrorQueue_WhenWorkingQueueDoesNotExists()
+        {
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
+            {
+                Sqs = new AwsServiceAlarms<SqsResourceConfig>()
+                {
+                    Resources = new List<ResourceThresholds<SqsResourceConfig>>()
+                    {
+                        new ResourceThresholds<SqsResourceConfig>()
+                        {
+                            Pattern = "first-sqs-queue"
+                        }
+                    }
+                }
+            });
+
+            var cloudFormation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudFormation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonCloudWatch>().HasSqsQueues(new[]
+            {
+                "first-sqs-queue_error"
+            });
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var alarmsByQueue = cloudFormation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("QueueName");
+
+            var alarmsForErrorQueue = alarmsByQueue["first-sqs-queue_error"];
+
+            Assert.That(alarmsForErrorQueue, Is.Not.Empty);
+
+            Assert.That(alarmsForErrorQueue.Exists(
+                    alarm =>
+                        alarm.Properties["MetricName"].Value<string>() == "ApproximateNumberOfMessagesVisible"
+                        && alarm.Properties["AlarmName"].Value<string>().Contains("NumberOfVisibleMessages_Error")
+                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
+                        && alarm.Properties["Threshold"].Value<int>() == 10
+                        && alarm.Properties["Period"].Value<int>() == 60 * 5
+                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
+                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
+                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
+                )
+            );
+
+            Assert.That(alarmsForErrorQueue.Exists(
+                    alarm =>
+                        alarm.Properties["MetricName"].Value<string>() == "ApproximateAgeOfOldestMessage"
+                        && alarm.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage_Error")
+                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
+                        && alarm.Properties["Threshold"].Value<int>() == 600
+                        && alarm.Properties["Period"].Value<int>() == 60 * 5
+                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
+                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
+                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Sqs
+                )
+            );
         }
     }
 }
