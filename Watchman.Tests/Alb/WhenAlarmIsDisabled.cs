@@ -13,7 +13,7 @@ namespace Watchman.Tests.Alb
         public async Task OneTimeSetup()
         {
             _albTestSetupData = await new AlbTestSetupBuilder()
-                .WithOverride("Target5xxErrorsHigh", new AlarmValues(null, null, null, false))
+                .WithOverride("Target5xxErrorsHigh", new AlarmValues(null, null, null, null, false))
                 .Build();
         }
 
@@ -33,4 +33,4 @@ namespace Watchman.Tests.Alb
             Assert.That(_albTestSetupData.Alarms.Count, Is.EqualTo(3));
         }
     }
- }
+}
