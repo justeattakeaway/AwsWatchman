@@ -72,6 +72,10 @@ namespace Watchman.Engine
             copy.Threshold = threshold;
             copy.EvaluationPeriods = mergedValues.EvaluationPeriods ?? EvaluationPeriods;
 
+            copy.Statistic = IsValidStatistic(mergedValues.Statistic)
+                ? new Statistic(mergedValues.Statistic)
+                : Statistic;
+
             copy.ExtendedStatistic = !string.IsNullOrEmpty(mergedValues.ExtendedStatistic)
                 ? mergedValues.ExtendedStatistic
                 : ExtendedStatistic;
@@ -83,6 +87,24 @@ namespace Watchman.Engine
             copy.Enabled = mergedValues.Enabled ?? Enabled;
 
             return copy;
+        }
+
+        private bool IsValidStatistic(string statistic)
+        {
+            if (string.IsNullOrEmpty(statistic))
+                return false;
+
+            switch (statistic)
+            {
+                case nameof(Statistic.Average):
+                case nameof(Statistic.Maximum):
+                case nameof(Statistic.Minimum):
+                case nameof(Statistic.SampleCount):
+                case nameof(Statistic.Sum):
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }

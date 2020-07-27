@@ -54,11 +54,12 @@ namespace Watchman.Configuration.Load
             var jsonObject = JObject.Load(reader);
             var thresholdProp = jsonObject["Threshold"];
             var evalPeriodsProp = jsonObject["EvaluationPeriods"];
+            var statistic = jsonObject["Statistic"];
             var extendedStatistic = jsonObject["ExtendedStatistic"];
             var enabled = jsonObject["Enabled"];
             var periodMinutes = jsonObject["PeriodMinutes"];
 
-            if (thresholdProp == null && evalPeriodsProp == null && extendedStatistic == null && enabled == null)
+            if (thresholdProp == null && evalPeriodsProp == null && extendedStatistic == null && enabled == null && statistic == null)
             {
                 throw new JsonReaderException("Must be number or contain a 'Threshold', 'EvaluationPeriods', 'ExtendedStatistic' or 'Enabled' property");
             }
@@ -78,6 +79,7 @@ namespace Watchman.Configuration.Load
 
             return new AlarmValues(thresholdValue,
                 evalPeriods,
+                statistic?.ToString(),
                 extendedStatistic?.ToString(),
                 enabled?.ToObject<bool>(),
                 periodMinutes?.ToObject<int>());
