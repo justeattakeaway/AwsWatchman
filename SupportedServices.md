@@ -89,6 +89,7 @@ An alarm can be disabled using:
 Multiple attributes can be overridden if an object is specified:
 - `Threshold`: threshold (will be either an absolute value or a percentage - see below)
 - `EvaluationPeriods`: number of periods for which the threshold must be breached, in order to trigger the alarm
+- `Statistic`: Can be "Average", "Maximum", "Minimum", "SampleCount" or "Sum". NB If ExtendedStatistic is defined then it overrides Statistic.
 - `ExtendedStatistic`: instead of the default statistic (e.g. average, max, etc.) use a percentile e.g. "p99"). See [AWS documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Percentiles.
 - `Enabled`: Whether the alarm is disabled or not. Currently all alarms are default enabled - this might change in future for certain types.
 
