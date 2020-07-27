@@ -13,8 +13,8 @@ namespace Watchman.Tests.Alb
         public async Task OneTimeSetup()
         {
             _albTestSetupData = await new AlbTestSetupBuilder()
-                .WithOverride("TargetResponseTimeHigh", new AlarmValues(20, 2, "p95"))
-                .WithOverride("RejectedConnectionCountHigh", new AlarmValues(25, 3, "p90"))
+                .WithOverride("TargetResponseTimeHigh", new AlarmValues(20, 2, null, "p95"))
+                .WithOverride("RejectedConnectionCountHigh", new AlarmValues(25, 3, null, "p90"))
                 .Build();
         }
 

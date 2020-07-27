@@ -39,6 +39,10 @@ namespace Watchman.Engine.Generation
                             .Select(t => t.Threshold)
                             .FirstOrDefault(t => t.HasValue);
 
+                        var matchedStatistic = matchesForKey
+                            .Select(t => t.Statistic)
+                            .FirstOrDefault(t => !string.IsNullOrEmpty(t));
+
                         var matchedExtendedStatistic = matchesForKey
                             .Select(t => t.ExtendedStatistic)
                             .FirstOrDefault(t => !string.IsNullOrEmpty(t));
@@ -53,6 +57,7 @@ namespace Watchman.Engine.Generation
 
                         var mergedValues = new AlarmValues(matchedThresholdValue,
                             matchedEvalPeriods,
+                            matchedStatistic,
                             matchedExtendedStatistic,
                             matchedEnabled,
                             matchedPeriodMinutes);

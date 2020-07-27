@@ -18,6 +18,7 @@
     <None Remove="data\duplicates\duplicateGroups\first.json" />
     <None Remove="data\duplicates\duplicateGroups\second.json" />
     <None Remove="data\EnabledFlag.json" />
+    <None Remove="data\Statistic.json" />
     <None Remove="simpleData\AlbOnly.json" />
   </ItemGroup>
   <ItemGroup>

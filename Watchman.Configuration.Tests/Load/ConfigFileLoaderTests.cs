@@ -288,6 +288,19 @@ namespace Watchman.Configuration.Tests.Load
         }
 
         [Test]
+        public void StatisticDeserialised()
+        {
+            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "StatisticTest");
+
+            Assert.That(group, Is.Not.Null);
+
+            var elb = group.Services.Elb;
+
+            Assert.That(elb.Values["LatencyHigh"].Statistic, Is.EqualTo("Sum"));
+            Assert.That(elb.Resources.First().Values["LatencyHigh"].Statistic, Is.EqualTo("Average"));
+        }
+
+        [Test]
         public void ExtendedStatisticDeserialised()
         {
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "ExtendedStatisticTest");
