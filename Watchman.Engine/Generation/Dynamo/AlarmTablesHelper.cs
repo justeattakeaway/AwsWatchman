@@ -16,6 +16,7 @@ namespace Watchman.Engine.Generation.Dynamo
                 AlarmNameSuffix = alertingGroup.AlarmNameSuffix,
                 Threshold = alertingGroup.DynamoDb.Threshold ?? AwsConstants.DefaultCapacityThreshold,
                 MonitorThrottling = alertingGroup.DynamoDb.MonitorThrottling ?? true,
+                MonitorCapacity = alertingGroup.DynamoDb.MonitorCapacity ?? true,
                 Tables = filteredTables.ToList()
             };
         }
@@ -31,6 +32,7 @@ namespace Watchman.Engine.Generation.Dynamo
                 AlarmNameSuffix = alertingGroup.AlarmNameSuffix,
                 Threshold = alertingGroup.DynamoDb.Threshold ?? AwsConstants.DefaultCapacityThreshold,
                 MonitorThrottling = alertingGroup.DynamoDb.MonitorThrottling ?? true,
+                MonitorCapacity = alertingGroup.DynamoDb.MonitorCapacity ?? true,
                 Tables = filteredTables.ToList()
             };
         }

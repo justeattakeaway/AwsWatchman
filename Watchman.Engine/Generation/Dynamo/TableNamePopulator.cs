@@ -92,6 +92,7 @@ namespace Watchman.Engine.Generation.Dynamo
                 Threshold = pattern.Threshold,
                 MonitorWrites = pattern.MonitorWrites,
                 MonitorThrottling = pattern.MonitorThrottling,
+                MonitorCapacity = pattern.MonitorCapacity,
                 ThrottlingThreshold = pattern.ThrottlingThreshold
             };
         }

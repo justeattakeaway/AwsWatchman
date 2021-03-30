@@ -137,6 +137,21 @@ namespace Watchman.Configuration.Tests.Load
         }
 
         [Test]
+        public void DynamoCapacityFlagRead()
+        {
+            var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "DynamoDisablingCapacity");
+
+            Assert.That(group, Is.Not.Null);
+            Assert.That(group.DynamoDb.MonitorCapacity, Is.False);
+            Assert.That(group.DynamoDb.Tables, Is.Not.Null);
+
+            var tables = group.DynamoDb.Tables;
+
+            Assert.That(tables.Single(t => t.Name ==  "test-table-no-capacity").MonitorCapacity, Is.Null);
+            Assert.That(tables.Single(t => t.Name ==  "test-table-capacity").MonitorCapacity, Is.True);
+        }
+
+        [Test]
         public void DynamoGroup2ExclusionsAreDeserialized()
         {
             var group = _config.AlertingGroups.FirstOrDefault(g => g.Name == "DynamoGroup2");

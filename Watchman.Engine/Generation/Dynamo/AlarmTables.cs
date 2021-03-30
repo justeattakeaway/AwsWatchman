@@ -10,6 +10,7 @@ namespace Watchman.Engine.Generation.Dynamo
 
         public double Threshold { get; set; }
         public bool MonitorThrottling { get; set; }
+        public bool MonitorCapacity { get; set; }
 
         public double ThrottlingThreshold { get; set; }
 
