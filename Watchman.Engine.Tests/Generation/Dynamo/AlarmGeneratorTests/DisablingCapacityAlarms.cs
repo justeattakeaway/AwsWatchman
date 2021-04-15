@@ -100,6 +100,8 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
             await generator.GenerateAlarmsFor(config, RunMode.GenerateAlarms);
 
             CloudwatchVerify.AlarmWasPutOnTable(mockery.Cloudwatch, "test1", "ConsumedReadCapacityUnits");
+            
+            CloudwatchVerify.AlarmWasPutOnTable(mockery.Cloudwatch, "test1", "ConsumedWriteCapacityUnits");
         }
 
         [Test]
