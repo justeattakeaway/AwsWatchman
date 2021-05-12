@@ -1,0 +1,18 @@
+﻿{
+  "Name": "DynamoDisablingCapacity",
+  "AlarmNameSuffix": "DynamoDisablingCapacity",
+  "Targets": [
+    { "Email": "DynamoDisablingCapacity@example.com" }
+  ],
+  "DynamoDb": {
+    "MonitorCapacity": false,
+    "Threshold": 0.75,
+    "Tables": [
+      "test-table-no-capacity",
+      {
+        "Name": "test-table-capacity",
+        "MonitorCapacity": true
+      }
+    ]
+  }
+}

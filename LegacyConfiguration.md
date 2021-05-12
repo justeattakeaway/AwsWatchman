@@ -6,6 +6,7 @@
 |-------|------|-----------|------------|
 | Threshold | Decimal | Default is `0.8` (ie 80%) | The used as a percentage of the capacity to work out the alarm thresholds. Will be used as threshold of all tables listed in an AlertingGroup unless overridden for a table. |
 | MonitorThrottling | bool | Default is false | Enables monitoring on throttled reads or writes. |
+| MonitorCapacity | bool | Default is true | Enables monitoring of usage against provisioned capacity. |
 | ThrottlingThreshold| int| Optional | Set the throttling threshold - the number of throttled reads or writes in a minute that causes an alarm. |
 | Tables | Array of `Table` | ** | Array of dynamo tables to add the alerts to.<br>See below for more info on `Tables` |
 | ExcludeTablesPrefixedWith | Array of strings | | Don't add read or write alerts for any tables with these name prefixes.<br>Exclude overrides `Tables` settings.  |
@@ -24,6 +25,7 @@ Tables can either be added as strings or Table objects. If added as simple strin
 | Threshold | Decimal | Default from the `Threshold` value of containing alerting group. | Used as a fraction of the capacity to work out the alarm threshold for this table *** |
 | MonitorWrites | Boolean | Default is `true` | If `false`, no alerts are generated for writes to the table or its indexes |
 | MonitorThrottling | bool | Default from the `MonitorThrottling` value of containing alerting group. | Enables or disables monitoring on throttled reads or writes. |
+| MonitorCapacity | bool | Default from the `MonitorCapacity` value of containing alerting group. | Enables monitoring of usage against provisioned capacity. |
 | ThrottlingThreshold| int| Default from the `ThrottlingThreshold` value of containing alerting group. | Set the throttling threshold - the number of throttled reads or writes in a minute that causes an alarm. |
 
 

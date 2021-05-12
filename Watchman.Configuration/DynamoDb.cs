@@ -14,6 +14,8 @@ namespace Watchman.Configuration
 
         public double? Threshold { get; set; }
 
+        public bool? MonitorCapacity { get; set; }
+
         public int? ThrottlingThreshold { get; set; }
 
         public bool? MonitorThrottling { get; set; }

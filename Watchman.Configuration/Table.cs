@@ -9,6 +9,8 @@ namespace Watchman.Configuration
 
         public bool? MonitorThrottling { get; set; }
 
+        public bool? MonitorCapacity { get; set; }
+
         public double? ThrottlingThreshold { get; set; }
 
         public static implicit operator Table(string text)
@@ -42,6 +44,7 @@ namespace Watchman.Configuration
                 && Threshold.Equals(other.Threshold)
                 && MonitorWrites.Equals(other.MonitorWrites)
                 && MonitorThrottling.Equals(other.MonitorThrottling)
+                && MonitorCapacity.Equals(other.MonitorCapacity)
                 && ThrottlingThreshold.Equals(other.ThrottlingThreshold);
         }
 
