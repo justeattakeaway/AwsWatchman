@@ -809,6 +809,40 @@ namespace Watchman.Engine.Alarms
                 Namespace = AwsNamespace.Alb,
                 TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
+            new AlarmDefinition
+            {
+                Name = "UnHealthyHostCountHigh",
+                Metric = "UnHealthyHostCount",
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 4,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 1
+                },
+                DimensionNames = new[] { "LoadBalancerName" },
+                ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
+                Statistic = Statistic.Average,
+                Namespace = AwsNamespace.Alb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
+            },
+            new AlarmDefinition
+            {
+                Name = "HealthyHostCountLow",
+                Metric = "HealthyHostCount",
+                Period = TimeSpan.FromMinutes(1),
+                EvaluationPeriods = 4,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 1
+                },
+                DimensionNames = new[] { "LoadBalancerName" },
+                ComparisonOperator = ComparisonOperator.LessThanOrEqualToThreshold,
+                Statistic = Statistic.Minimum,
+                Namespace = AwsNamespace.Alb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
+            }
 
             // TODO we should add Unhealthy host count to match ELB?
         };

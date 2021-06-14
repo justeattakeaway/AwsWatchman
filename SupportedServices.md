@@ -233,6 +233,8 @@ Note that using the defaults here for all alarms is probably not that useful.
 - `Target5xxErrorsHigh`: 10 (count)
 - `RejectedConnectionCountHigh`: 10 (count)
 - `TargetResponseTimeHigh`: 2 (seconds) compared against `p99`
+- `HealthyHostCountLow`: 1 (count)
+- `UnHealthyHostCountHigh`: 1 (count)
 
 ### DAX
 
