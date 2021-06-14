@@ -724,7 +724,7 @@ namespace Watchman.Engine.Alarms
             {
                 Name = "HealthyHostCountLow",
                 Metric = "HealthyHostCount",
-                Period = TimeSpan.FromMinutes(5),
+                Period = TimeSpan.FromMinutes(1),
                 EvaluationPeriods = 4,
                 Threshold = new Threshold
                 {
@@ -733,7 +733,7 @@ namespace Watchman.Engine.Alarms
                 },
                 DimensionNames = new[] { "LoadBalancerName" },
                 ComparisonOperator = ComparisonOperator.LessThanOrEqualToThreshold,
-                Statistic = Statistic.Average,
+                Statistic = Statistic.Minimum,
                 Namespace = AwsNamespace.Elb,
                 TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
