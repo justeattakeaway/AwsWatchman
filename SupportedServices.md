@@ -224,6 +224,7 @@ Note that using the defaults here for all alarms is probably not that useful.
 - `SurgeQueueLengthHigh`: 200 (count)
 - `SpilloverCountHigh`: 10 (count)
 - `LatencyHigh`: 0.5 (average in seconds)
+- `HealthyHostCountLow`: 1 (count)
 - `UnHealthyHostCountHigh`: 1 (count)
 
 ### Alb

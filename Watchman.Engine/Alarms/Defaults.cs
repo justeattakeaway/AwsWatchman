@@ -719,6 +719,23 @@ namespace Watchman.Engine.Alarms
                 Statistic = Statistic.Average,
                 Namespace = AwsNamespace.Elb,
                 TreatMissingData = TreatMissingDataConstants.NotBreaching
+            },
+            new AlarmDefinition
+            {
+                Name = "HealthyHostCountLow",
+                Metric = "HealthyHostCount",
+                Period = TimeSpan.FromMinutes(5),
+                EvaluationPeriods = 4,
+                Threshold = new Threshold
+                {
+                    ThresholdType = ThresholdType.Absolute,
+                    Value = 1
+                },
+                DimensionNames = new[] { "LoadBalancerName" },
+                ComparisonOperator = ComparisonOperator.LessThanOrEqualToThreshold,
+                Statistic = Statistic.Average,
+                Namespace = AwsNamespace.Elb,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
 
