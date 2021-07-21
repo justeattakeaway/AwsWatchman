@@ -90,6 +90,36 @@ namespace Watchman.Tests.Lambda
                         && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.Missing
                 )
             );
+
+            Assert.That(alarmsForLambda.Exists(
+                    alarm =>
+                        alarm.Properties["MetricName"].Value<string>() == "Throttles"
+                        && alarm.Properties["AlarmName"].Value<string>().Contains("ThrottlesHigh")
+                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
+                        && alarm.Properties["Threshold"].Value<int>() == 5
+                        && alarm.Properties["Period"].Value<int>() == 60 * 5
+                        && alarm.Properties["EvaluationPeriods"].Value<int>() == 1
+                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
+                        && alarm.Properties["Statistic"].Value<string>() == "Sum"
+                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Lambda
+                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.NotBreaching
+                )
+            );
+
+            Assert.That(alarmsForLambda.Exists(
+                    alarm =>
+                        alarm.Properties["MetricName"].Value<string>() == "IteratorAge"
+                        && alarm.Properties["AlarmName"].Value<string>().Contains("IteratorAgeHigh")
+                        && alarm.Properties["AlarmName"].Value<string>().Contains("-group-suffix")
+                        && alarm.Properties["Threshold"].Value<int>() == 300000
+                        && alarm.Properties["Period"].Value<int>() == 60 * 5
+                        && alarm.Properties["EvaluationPeriods"].Value<int>() == 1
+                        && alarm.Properties["ComparisonOperator"].Value<string>() == "GreaterThanOrEqualToThreshold"
+                        && alarm.Properties["Statistic"].Value<string>() == "Maximum"
+                        && alarm.Properties["Namespace"].Value<string>() == AwsNamespace.Lambda
+                        && alarm.Properties["TreatMissingData"].Value<string>() == TreatMissingDataConstants.NotBreaching
+                )
+            );
         }
 
         [Test]
