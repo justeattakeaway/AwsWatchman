@@ -554,7 +554,8 @@ namespace Watchman.Engine.Alarms
                 DimensionNames = new[] { "FunctionName" },
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 Statistic = Statistic.Maximum,
-                Namespace = AwsNamespace.Lambda
+                Namespace = AwsNamespace.Lambda,
+                TreatMissingData = TreatMissingDataConstants.NotBreaching
             },
             new AlarmDefinition
             {
@@ -933,7 +934,7 @@ namespace Watchman.Engine.Alarms
         };
 
         public static IList<AlarmDefinition> Dax = new List<AlarmDefinition>
-        { 
+        {
             new AlarmDefinition
             {
                 Enabled = true,
@@ -972,7 +973,7 @@ namespace Watchman.Engine.Alarms
                 ComparisonOperator = ComparisonOperator.GreaterThanOrEqualToThreshold,
                 AlertOnInsufficientData = false,
                 Statistic = Statistic.Average,
-                Namespace = AwsNamespace.CloudFront,                
+                Namespace = AwsNamespace.CloudFront,
                 TreatMissingData = TreatMissingDataConstants.NotBreaching
             }
         };
