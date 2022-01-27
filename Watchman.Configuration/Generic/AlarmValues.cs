@@ -34,7 +34,7 @@ namespace Watchman.Configuration.Generic
 
         public static implicit operator AlarmValues(double? threshold)
         {
-            return new AlarmValues(threshold, null, null);
+            return new AlarmValues(threshold, null, null, enabled: true);
         }
     }
 }
