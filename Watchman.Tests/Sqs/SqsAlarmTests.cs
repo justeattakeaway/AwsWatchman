@@ -568,5 +568,67 @@ namespace Watchman.Tests.Sqs
                 )
             );
         }
+
+        [Test]
+        public async Task GroupDisabledAlarmEnabledWhenThresholdSetForResource()
+        {
+            // arrange
+            var config = ConfigHelper.CreateBasicConfiguration("test", "group-suffix", new AlertingGroupServices()
+            {
+                Sqs = new AwsServiceAlarms<SqsResourceConfig>()
+                {
+                    Resources = new List<ResourceThresholds<SqsResourceConfig>>()
+                    {
+                        new ResourceThresholds<SqsResourceConfig>()
+                        {
+                            Pattern = "first-sqs-queue",
+                            Values = new Dictionary<string, AlarmValues>()
+                            {
+                                // expect enabled to not inherit from group value
+                                { "AgeOfOldestMessage_Error",  new AlarmValues(10) }
+                            }
+                        }
+                    },
+                    Values = new Dictionary<string, AlarmValues>()
+                    {
+                        { "AgeOfOldestMessage_Error",  new AlarmValues(enabled: false) }
+                    }
+                }
+            });
+
+            var cloudformation = new FakeCloudFormation();
+            var ioc = new TestingIocBootstrapper()
+                .WithCloudFormation(cloudformation.Instance)
+                .WithConfig(config);
+
+            ioc.GetMock<IAmazonCloudWatch>().HasSqsQueues(new[]
+            {
+                "first-sqs-queue",
+                "first-sqs-queue_error"
+            });
+
+            var sut = ioc.Get<AlarmLoaderAndGenerator>();
+
+            // act
+
+            await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
+
+            // assert
+
+            var alarmsByQueue = cloudformation
+                .Stack("Watchman-test")
+                .AlarmsByDimension("QueueName");
+
+            var alarmsForErrorQueue = alarmsByQueue["first-sqs-queue_error"];
+
+            var alarm = alarmsForErrorQueue.SingleOrDefault(
+                a =>
+                    a.Properties["AlarmName"].Value<string>().Contains("AgeOfOldestMessage_Error")
+                    && a.Properties["Threshold"].Value<int>() == 10
+            );
+
+            Assert.That(alarm, Is.Not.Null);
+            Assert.That(alarm.Properties["Threshold"].Value<int>(), Is.EqualTo(10));
+        }
     }
 }
