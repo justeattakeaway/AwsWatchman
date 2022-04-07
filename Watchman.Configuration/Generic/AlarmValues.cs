@@ -32,9 +32,10 @@ namespace Watchman.Configuration.Generic
             PeriodMinutes = periodMinutes;
         }
 
+        // todo: it's awkward that this shortcut is implemented differently to the boolean one (in AlarmValuesConverter)
         public static implicit operator AlarmValues(double? threshold)
         {
-            return new AlarmValues(threshold, null, null);
+            return new AlarmValues(threshold, null, null, enabled: true);
         }
     }
 }
