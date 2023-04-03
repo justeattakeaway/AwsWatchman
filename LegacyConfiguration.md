@@ -1,6 +1,6 @@
-## Legacy configuration
+# Legacy configuration
 
-#### DynamoDb 
+## DynamoDb
 
 | Field | Type | Value | Description |
 |-------|------|-----------|------------|
@@ -8,13 +8,12 @@
 | MonitorThrottling | bool | Default is false | Enables monitoring on throttled reads or writes. |
 | MonitorCapacity | bool | Default is true | Enables monitoring of usage against provisioned capacity. |
 | ThrottlingThreshold| int| Optional | Set the throttling threshold - the number of throttled reads or writes in a minute that causes an alarm. |
-| Tables | Array of `Table` | ** | Array of dynamo tables to add the alerts to.<br>See below for more info on `Tables` |
-| ExcludeTablesPrefixedWith | Array of strings | | Don't add read or write alerts for any tables with these name prefixes.<br>Exclude overrides `Tables` settings.  |
-| ExcludeReadsForTablesPrefixedWith | Array of strings |  | Don't add read alerts for any tables with these name prefixes.<br>Exclude overrides `Tables` settings.)  |
-| ExcludeWritesForTablesPrefixedWith | Array of strings | | Don't add write alerts for any tables with these name prefixes.<br>Exclude overrides `Tables` settings.  |
+| Tables | Array of `Table` | ** | Array of dynamo tables to add the alerts to. See below for more info on `Tables` |
+| ExcludeTablesPrefixedWith | Array of strings | | Don't add read or write alerts for any tables with these name prefixes. Exclude overrides `Tables` settings. |
+| ExcludeReadsForTablesPrefixedWith | Array of strings |  | Don't add read alerts for any tables with these name prefixes. Exclude overrides `Tables` settings. |
+| ExcludeWritesForTablesPrefixedWith | Array of strings | | Don't add write alerts for any tables with these name prefixes. Exclude overrides `Tables` settings. |
 
-
-#### Tables
+## Tables
 
 Tables can either be added as strings or Table objects. If added as simple strings, the default options will used.
 
@@ -28,11 +27,11 @@ Tables can either be added as strings or Table objects. If added as simple strin
 | MonitorCapacity | bool | Default from the `MonitorCapacity` value of containing alerting group. | Enables monitoring of usage against provisioned capacity. |
 | ThrottlingThreshold| int| Default from the `ThrottlingThreshold` value of containing alerting group. | Set the throttling threshold - the number of throttled reads or writes in a minute that causes an alarm. |
 
+The alerting Threshold is a value from 0.0 to 1.0 that specifies the fraction of the table's read or write capacity being used that triggers the cloudwatch alarm. The threshold for a table uses these fallbacks:
 
-*** The alerting Threshold is a value from 0.0 to 1.0 that specifies the fraction of the table's read or write capacity being used that triggers the cloudwatch alarm. The threshold for a table uses these fallbacks:
- - if a threshold is specified for the table, that is used. If not,
- - if a threshold is specified for the containing alerting group, that is used. If not,
- - a global default of 0.8 (i.e. 80% utilisation) is used.
+- if a threshold is specified for the table, that is used. If not,
+- if a threshold is specified for the containing alerting group, that is used. If not,
+- a global default of 0.8 (i.e. 80% utilisation) is used.
 
 All global secondary indexes on the table will also be monitored at the same threshold.
 
@@ -67,6 +66,5 @@ Can be attached to Queue or alerting group or both. Values are defaulted - if a 
 | Suffix | string | Optional, default is "_error" | Text at the end of queue name to determine if this is an error queue |
 | LengthThreshold | int, count of messages | Optional | Value for alert on error queue length |
 | OldestMessageThreshold  | int, number of seconds | Optional | Value for alert on age of messages in an error queue |
-
 
 This looks complex, but the defaults are overrides are aimed at producing readable and sensible markup, while dealing with the way that queues are set up in a variety of ways: in some cases the team needs to know about even 1 message arriving on an error queue, while in others the error queue is ignored, or does not exist.

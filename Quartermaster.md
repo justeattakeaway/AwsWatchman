@@ -6,12 +6,13 @@ Quartermaster is a tool for reporting on dynamo provisioning and consumption.  I
 
 Run the exe - specifying aws credentials and a config folder for config files (see config schema, below).
 
-e.g.
-```
-quartermaster.exe --AwsAccessKey AK123BC456 --AwsSecretKey abcd1234 --ConfigFolder ".\Configs"
+For example:
+
+```powershell
+quartermaster.exe --AwsAccessKey AK123BC456 --AwsSecretKey abcd1234 --ConfigFolder ".\configuration"
 ```
 
-The command line parameters for specifying AWS credentials, `AwsAccessKey`, `AwsSecretKey`, `AwsRegion`, and `AwsProfile` work as in Watchman. 
+The command line parameters for specifying AWS credentials, `AwsAccessKey`, `AwsSecretKey`, `AwsRegion`, and `AwsProfile` work as in Watchman.
 
 The user associated with the credentials needs the following roles:
 
@@ -23,7 +24,7 @@ The user associated with the credentials needs the following roles:
 
 Configuration for Watchman is read from [DynamoWatchman.Config](https://github.je-labs.com/cogpart/DynamoWatchman.Config) project.
 
-## Report 
+## Report
 
 The report is generated as a CSV file, and includes the following data per row
 
@@ -33,8 +34,8 @@ The report is generated as a CSV file, and includes the following data per row
 | IndexName | Secondary Index Name (Blank if the line refers to the table's provisioning) |
 | ProvisionedReadCapacityUnits | Raw "ProvisionedRead" figure |
 | ProvisionedWriteCapacityUnits | Raw "ProvisionedWrite" figure |
-| ProvisionedReadPerMinute | Provisioned Reads per Minute (ProvisionedReadCapacityUnits * 60) |
-| ProvisionedWritePerMinute | Provisioned Writes per Minute (ProvisionedWriteCapacityUnits * 60)|
+| ProvisionedReadPerMinute | Provisioned Reads per Minute (ProvisionedReadCapacityUnits x 60) |
+| ProvisionedWritePerMinute | Provisioned Writes per Minute (ProvisionedWriteCapacityUnits x 60)|
 | MaxConsumedReadPerMinute | Peak Consumed Reads per minute. |
 | MaxConsumedWritePerMinute | Peak Consumed Writes per minute. |
 | ReadUsePercentage | MaxConsumedReadPerMinute as a percentage of ProvisionedReadPerMinute |

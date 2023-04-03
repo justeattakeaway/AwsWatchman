@@ -4,7 +4,7 @@
 
 One or more alerting groups should be defined in the config folder that you supply to watchman.
 
-```
+```json
 {
   "Name": "TEST",
   "AlarmNameSuffix": "TestingGroup",
@@ -15,17 +15,15 @@ One or more alerting groups should be defined in the config folder that you supp
       "ServiceIdentifier": { /* service */ }
   }
 }
-
 ```
 
 ## Service definition
 
 Configuration for the additional services is added to the alerting group under the "Services" property. (note that configuration for Dynamo and SQS requires a different configuration format - see existing documentation).
 
-
 They all require an object in this format:
 
-```
+```json
 {
     // [optional] defines default thresholds and evaluation periods for the alerting group
     "Values": {
@@ -68,11 +66,11 @@ They all require an object in this format:
 }
 ```
 
-# Overriding threshold and other default attributes
+## Overriding threshold and other default attributes
 
 As in the above example, the threshold can be overriden by including the following (at either resource or service level):
 
-```
+```json
   "Values": {
      "AlarmName": 11
   }
@@ -80,13 +78,14 @@ As in the above example, the threshold can be overriden by including the followi
 
 An alarm can be disabled using:
 
-```
+```json
   "Values": {
      "AlarmName": false
   }
 ```
 
 Multiple attributes can be overridden if an object is specified:
+
 - `Threshold`: threshold (will be either an absolute value or a percentage - see below)
 - `EvaluationPeriods`: number of periods for which the threshold must be breached, in order to trigger the alarm
 - `Statistic`: Can be "Average", "Maximum", "Minimum", "SampleCount" or "Sum". NB If ExtendedStatistic is defined then it overrides Statistic.
@@ -95,7 +94,7 @@ Multiple attributes can be overridden if an object is specified:
 
 For example:
 
-```
+```json
   "Values": {
      "AlarmName": {
         "Threshold": 11,
@@ -107,7 +106,7 @@ For example:
 
 Note that only the values you want to override need to be defined.
 
-# Resource types
+## Resource types
 
 The following services are supported
 
@@ -144,6 +143,7 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `FreeStorageSpaceLow`: 30 (%)
 
 ### AutoScaling
+
 #### Values
 
 - `CPUCreditBalanceLow`: 0.2 (credit balance)
@@ -151,18 +151,21 @@ For each resource each of the default alarms will be applied. See [alarm definit
 - `GroupInServiceInstancesLow`: 50 (% of desired)
 
 #### Options
+
 - `InstanceCountIncreaseDelayMinutes` Use to delay increasing the minimum threshold when the instance count increases (e.g. when scaling). The value used it then obtained from CloudWatch - using the minimum of `GroupDesiredCapacity` over the time period specified. Note that if CloudWatch metrics are not present then the current Desired capacity is used, as it better to have a more sensitive alarm than none.
 
 #### Important notes
-##### When MinimumInstanceCount < MaximumInstanceCount * 50%, the default `GroupInServiceInstancesLow` (50% of desired instance count) can trigger false alerts on scaling up.
+
+When MinimumInstanceCount < MaximumInstanceCount * 50%, the default `GroupInServiceInstancesLow` (50% of desired instance count) can trigger false alerts on scaling up
 
 Let's take a look at scaling up from 2 to 6 instances (2 is less than 6 * 50% = 3). The alert threshold is updated from 1 to 3 in less than a minute after scaling up gets triggered. Then, this new threshold is compared with two GroupInServiceInstances datapoints which were consequently captured for the previous 10 minutes (each datapoint represents the minimum value in a 5-minute interval). There were 2 instances before the moment scale up was triggered, so a false alert gets triggered because 2 (instance count) < 3 (new threshold).
 
-##### When MinimumInstanceCount < MaximumInstanceCount * 50%, using `InstanceCountIncreaseDelayMinutes` might fix false scaling up alerts but instead introduces false scaling down alerts.
+When MinimumInstanceCount < MaximumInstanceCount * 50%, using `InstanceCountIncreaseDelayMinutes` might fix false scaling up alerts but instead introduces false scaling down alerts
 
 Let's suppose we are scaling down from 6 to 2 instances and `InstanceCountIncreaseDelayMinutes` is set to 15 minutes. The alert threshold is updated from 3 to 1 with 15-minute delay after scaling down gets triggered. Instances finish scaling down before the threshold is updated and a false alert gets triggered.
 
-##### To solve these problems try either of the following:
+To solve these problems try either of the following:
+
 - Lower the `GroupInServiceInstancesLow` threshold
 - Adjust MinimumInstanceCount/MaximumInstanceCount so that MinimumInstanceCount is greater or equal to MaximumInstanceCount * 50% (e.g. 2/4, 3/6, etc)
 
@@ -183,7 +186,7 @@ Let's suppose we are scaling down from 6 to 2 instances and `InstanceCountIncrea
 
 - `ExecutionsFailedHigh`: 1 (count)
 
-### DynamoDb
+### DynamoDB
 
 - `ConsumedReadCapacityUnitsHigh`: 80 (% of provisioned)
 - `ConsumedWriteCapacityUnitsHigh`: 80 (% of provisioned)
@@ -195,6 +198,7 @@ Let's suppose we are scaling down from 6 to 2 instances and `InstanceCountIncrea
 - `GsiWriteThrottleEventsHigh`: 2
 
 #### Options
+
 - `MonitorWrites` Shorthand can be used to disable all the write alarms. Default is `true`.
 - `ThresholdIsAbsolute` If this value is true, the `Consumed` metrics above will use this value as an absolute, instead of the value calculated as a percentage of the provisioned capacity. The value is measured over a period of 60 seconds, so if you want a threshold on WCU / RCU, multiply your desired value by 60. Example: Desired alarm on RCU of 200, so threshold over 60 seconds is `12000`. Default value is `false`.
 
@@ -238,11 +242,12 @@ Note that using the defaults here for all alarms is probably not that useful.
 - `CPUUtilizationHigh`: 60 (%)
 
 ### Cloudfront
+
 - `4xxErrorRate`: 10 errors in 5 minutes
 
 ## Full example
 
-```
+```json
 {
     "Name": "TEST",
     "AlarmNameSuffix": "TestingGroup",
