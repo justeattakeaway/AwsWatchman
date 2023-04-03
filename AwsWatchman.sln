@@ -62,6 +62,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{E1C8AF5C-01D0-414F-AA85-95848B325B4F}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\update-dotnet-sdk.yml = .github\workflows\update-dotnet-sdk.yml
 	EndProjectSection
 EndProject
 Global
