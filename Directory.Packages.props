@@ -30,7 +30,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
+  <ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
     <PackageReference Include="GitHubActionsTestLogger" PrivateAssets="All" />
   </ItemGroup>
 </Project>
