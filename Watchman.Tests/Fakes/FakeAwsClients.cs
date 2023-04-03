@@ -89,7 +89,7 @@ namespace Watchman.Tests.Fakes
                 .Setup(x => x.ListMetricsAsync(It.IsAny<ListMetricsRequest>(), new CancellationToken()))
                 .ReturnsAsync(new ListMetricsResponse()
                               {
-                                  Metrics = queues.Select(q => new Metric()
+                                  Metrics = queues.Select(q => new Amazon.CloudWatch.Model.Metric()
                                                                {
                                                                    MetricName = "ApproximateAgeOfOldestMessage",
                                                                    Dimensions =
@@ -110,12 +110,11 @@ namespace Watchman.Tests.Fakes
         public static void HasLambdaFunctions(this Mock<IAmazonLambda> fake, IEnumerable<FunctionConfiguration> functions)
         {
             fake
-                .Setup(l => l.ListFunctionsAsync(It.IsAny<ListFunctionsRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ListFunctionsResponse()
+                .Setup(l => l.ListFunctionsAsync(It.IsAny<Amazon.Lambda.Model.ListFunctionsRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Amazon.Lambda.Model.ListFunctionsResponse()
                 {
                     Functions = functions.ToList()
                 });
-            
         }
 
         public static void HasRdsClusters(this Mock<IAmazonRDS> fake, IEnumerable<DBCluster> dbClusters)
