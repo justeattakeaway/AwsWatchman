@@ -41,7 +41,6 @@ namespace Watchman.IoC
                 RegionEndpoint = region,
                 MaxErrorRetry = 5,
                 Timeout = TimeSpan.FromSeconds(30),
-                ReadWriteTimeout = TimeSpan.FromSeconds(90),
                 HttpClientFactory = new SingletonHttpClientFactory(client)
             };
 

@@ -1,0 +1,48 @@
+version: 2
+updates:
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "05:30"
+    timezone: Europe/London
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "05:30"
+    timezone: Europe/London
+  open-pull-requests-limit: 99
+  ignore:
+    # Ignore patches for the AWS SDKs
+    - dependency-name: "AWSSDK.AutoScaling"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.CloudFormation"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.CloudFront"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.CloudWatch"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.DAX"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.DynamoDBv2"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.EC2"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.ElasticLoadBalancing"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.ElasticLoadBalancingV2"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.Lambda"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.RDS"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.S3"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.SimpleNotificationService"
+      update-types: ["version-update:semver-patch"]
+    - dependency-name: "AWSSDK.StepFunctions"
+      update-types: ["version-update:semver-patch"]
+    # Ignore the .NET libraries which are pinned to a release channel
+    - dependency-name: "System.Configuration.ConfigurationManager"
+      update-types: ["version-update:semver-major"]
