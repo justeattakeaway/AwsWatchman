@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Watchman.Configuration;
+﻿using Watchman.Configuration;
 using Watchman.Engine.Generation.Generic;
 
 namespace Watchman.Engine.Generation.Sqs

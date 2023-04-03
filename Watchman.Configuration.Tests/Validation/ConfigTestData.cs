@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace Watchman.Configuration.Tests.Validation
+﻿namespace Watchman.Configuration.Tests.Validation
 {
     public static class ConfigTestData
     {

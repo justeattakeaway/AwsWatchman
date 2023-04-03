@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Watchman.Engine
+﻿namespace Watchman.Engine
 {
     public class WatchmanException : Exception
     {

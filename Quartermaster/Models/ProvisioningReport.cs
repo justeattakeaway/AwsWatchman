@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Watchman.Configuration;
+﻿using Watchman.Configuration;
 
 namespace QuarterMaster.Models
 {

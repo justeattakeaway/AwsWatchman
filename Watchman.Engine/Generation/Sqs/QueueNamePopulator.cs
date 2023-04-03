@@ -1,9 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 using Watchman.AwsResources;
-using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.AwsResources.Services.Sqs;
 using Watchman.Configuration;
 using Watchman.Engine.Logging;

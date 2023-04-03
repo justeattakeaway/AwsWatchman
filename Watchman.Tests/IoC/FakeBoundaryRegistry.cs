@@ -1,5 +1,4 @@
-using System.Threading;
-using Amazon.AutoScaling;
+﻿using Amazon.AutoScaling;
 using Amazon.CloudFormation;
 using Amazon.CloudFront;
 using Amazon.CloudWatch;

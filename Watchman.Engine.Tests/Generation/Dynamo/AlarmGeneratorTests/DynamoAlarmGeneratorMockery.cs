@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using Amazon.CloudWatch;
+﻿using Amazon.CloudWatch;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Moq;

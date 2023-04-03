@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Watchman.AwsResources;
+﻿using Watchman.AwsResources;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine.Generation

@@ -1,5 +1,4 @@
-using System.Threading.Tasks;
-using Amazon.CloudWatch;
+﻿using Amazon.CloudWatch;
 using Moq;
 using NUnit.Framework;
 using Watchman.Engine.Alarms;

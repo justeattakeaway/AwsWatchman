@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Watchman.Configuration;
+﻿using Watchman.Configuration;
 
 namespace Watchman.Engine.Sns
 {

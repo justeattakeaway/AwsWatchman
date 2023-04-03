@@ -1,6 +1,4 @@
-using System;
-using System.Threading.Tasks;
-using CommandLine;
+﻿using CommandLine;
 using QuarterMaster;
 
 namespace Quartermaster

@@ -1,7 +1,7 @@
-using StructureMap;
+﻿using StructureMap;
 
 namespace Watchman.IoC
-{   
+{
     public class IocBootstrapper
     {
         public IContainer ConfigureContainer(StartupParameters parameters)

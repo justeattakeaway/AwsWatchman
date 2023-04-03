@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using Amazon.CloudWatch;
+﻿using Amazon.CloudWatch;
 using Watchman.Configuration;
 
 namespace Watchman.Engine.Alarms

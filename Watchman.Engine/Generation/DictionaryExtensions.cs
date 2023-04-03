@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace Watchman.Engine.Generation
+﻿namespace Watchman.Engine.Generation
 {
     static class DictionaryExtensions
     {

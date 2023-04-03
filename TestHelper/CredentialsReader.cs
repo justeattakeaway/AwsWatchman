@@ -1,5 +1,5 @@
-﻿using System;
-using Amazon.Runtime;
+﻿using Amazon.Runtime;
+using NUnit.Framework;
 
 namespace TestHelper
 {

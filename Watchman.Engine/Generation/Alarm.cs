@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using Amazon.CloudWatch.Model;
-using Watchman.AwsResources;
+﻿using Amazon.CloudWatch.Model;
 
 namespace Watchman.Engine.Generation
 {

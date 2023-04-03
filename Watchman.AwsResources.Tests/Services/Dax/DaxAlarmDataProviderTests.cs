@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Amazon.CloudWatch.Model;
+﻿using Amazon.CloudWatch.Model;
 using Amazon.DAX.Model;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;

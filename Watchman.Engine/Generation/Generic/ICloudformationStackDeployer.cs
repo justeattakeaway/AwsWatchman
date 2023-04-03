@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
-
-namespace Watchman.Engine.Generation.Generic
+﻿namespace Watchman.Engine.Generation.Generic
 {
     public interface ICloudformationStackDeployer
     {

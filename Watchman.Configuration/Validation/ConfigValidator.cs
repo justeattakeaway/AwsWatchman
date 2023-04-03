@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Watchman.Configuration.Validation
+﻿namespace Watchman.Configuration.Validation
 {
     public static class ConfigValidator
     {

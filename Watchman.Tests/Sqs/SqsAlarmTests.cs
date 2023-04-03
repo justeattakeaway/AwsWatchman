@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amazon.CloudWatch;
+﻿using Amazon.CloudWatch;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Watchman.Configuration;

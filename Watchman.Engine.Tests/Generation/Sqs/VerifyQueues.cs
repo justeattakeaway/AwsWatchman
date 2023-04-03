@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Moq;
+﻿using Moq;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.Sqs;
 using Watchman.Engine.Generation.Sqs;

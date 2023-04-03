@@ -1,6 +1,4 @@
-using System.IO;
-using System.Threading.Tasks;
-using Watchman.Engine.Logging;
+﻿using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Generation.Generic
 {

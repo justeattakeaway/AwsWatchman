@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amazon.AutoScaling;
+﻿using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
 
 namespace Watchman.AwsResources.Services.AutoScaling

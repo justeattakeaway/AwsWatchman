@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Watchman.AwsResources;
-using Watchman.AwsResources.Services.DynamoDb;
+﻿using Watchman.AwsResources;
 
 namespace Watchman.Engine.Generation.Generic
 {

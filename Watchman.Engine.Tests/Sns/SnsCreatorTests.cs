@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Amazon.SimpleNotificationService;
+﻿using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
 using Moq;
 using NUnit.Framework;

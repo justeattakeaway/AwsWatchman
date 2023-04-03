@@ -1,5 +1,4 @@
-using System.Threading.Tasks;
-using Amazon;
+﻿using Amazon;
 using Amazon.StepFunctions;
 using NUnit.Framework;
 using TestHelper;

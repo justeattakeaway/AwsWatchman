@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.4.3" />
-    <PackageReference Include="StructureMap" Version="4.7.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+    <PackageReference Include="CommandLineParser" />
+    <PackageReference Include="StructureMap" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Watchman.AwsResources\Watchman.AwsResources.csproj" />

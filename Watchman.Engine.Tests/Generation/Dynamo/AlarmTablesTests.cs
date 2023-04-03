@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NUnit.Framework;
 using Watchman.Configuration;
-using NUnit.Framework;
 using Watchman.Engine.Generation.Dynamo;
 
 namespace Watchman.Engine.Tests.Generation.Dynamo

@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Amazon.EC2.Model;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.VpcSubnet;
-using Amazon.EC2.Model;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.AwsResources.Tests.Services.VpcSubnet

@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using Moq;
+﻿using Moq;
 using Watchman.Configuration;
 using Watchman.Configuration.Load;
 

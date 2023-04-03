@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Watchman.Configuration
+﻿namespace Watchman.Configuration
 {
     public class WatchmanConfiguration
     {

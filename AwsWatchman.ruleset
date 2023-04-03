@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="AwsWatchman Rules" Description="This rule set contains rules for the AwsWatchman solution." ToolsVersion="17.0">
+  <IncludeAll Action="Warning" />
+</RuleSet>

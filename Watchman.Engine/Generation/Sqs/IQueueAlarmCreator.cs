@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Watchman.Engine.Generation.Sqs
+﻿namespace Watchman.Engine.Generation.Sqs
 {
     public interface IQueueAlarmCreator
     {

@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Amazon.AutoScaling;
+﻿using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
 using Amazon.CloudFront;
 using Amazon.CloudFront.Model;

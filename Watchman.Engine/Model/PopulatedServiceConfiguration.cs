@@ -1,7 +1,5 @@
-using System.Collections.Generic;
-using Watchman.AwsResources;
+﻿using Watchman.AwsResources;
 using Watchman.Configuration.Generic;
-using Watchman.Engine.Generation;
 
 namespace Watchman.Engine
 {

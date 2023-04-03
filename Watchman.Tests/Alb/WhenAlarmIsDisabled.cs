@@ -1,6 +1,4 @@
-using System.Linq;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.Tests.Alb

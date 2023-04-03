@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amazon.CloudWatch.Model;
+﻿using Amazon.CloudWatch.Model;
 using Amazon.DynamoDBv2.Model;
 using Watchman.Configuration.Generic;
 

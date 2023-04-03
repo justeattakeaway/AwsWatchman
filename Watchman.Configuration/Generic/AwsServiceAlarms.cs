@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Watchman.Configuration.Generic
+﻿namespace Watchman.Configuration.Generic
 {
     public class AwsServiceAlarms<TResourceConfig>
         : IAwsServiceAlarms

@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using NUnit.Framework;
 using Watchman.Configuration;
-using NUnit.Framework;
 using Watchman.Engine.Generation;
 
 namespace Watchman.Engine.Tests

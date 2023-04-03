@@ -1,6 +1,4 @@
-using System;
-using System.Net.Http;
-using Amazon;
+﻿using Amazon;
 using Amazon.AutoScaling;
 using Amazon.CloudFormation;
 using Amazon.CloudFront;

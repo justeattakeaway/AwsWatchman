@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Amazon.DynamoDBv2.Model;
-using Watchman.Configuration;
+﻿using Amazon.DynamoDBv2.Model;
 using Moq;
 using NUnit.Framework;
 using Watchman.AwsResources;
+using Watchman.Configuration;
 using Watchman.Engine.Generation.Dynamo;
 using Watchman.Engine.Generation.Generic;
 

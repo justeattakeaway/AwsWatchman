@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Collections.Generic;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Watchman.Configuration;
 
 namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests

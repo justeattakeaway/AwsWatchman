@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace Watchman.Engine.LegacyTracking
+﻿namespace Watchman.Engine.LegacyTracking
 {
     public interface ILegacyAlarmTracker
     {

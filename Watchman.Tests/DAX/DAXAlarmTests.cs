@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Amazon.DAX;
+﻿using Amazon.DAX;
 using Amazon.DAX.Model;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;

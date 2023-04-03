@@ -1,5 +1,4 @@
-using System.Threading.Tasks;
-using Amazon;
+﻿using Amazon;
 using Amazon.DAX;
 using NUnit.Framework;
 using TestHelper;

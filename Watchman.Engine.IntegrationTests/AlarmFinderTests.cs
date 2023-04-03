@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Amazon;
+﻿using Amazon;
 using Amazon.CloudWatch;
 using NUnit.Framework;
 using TestHelper;

@@ -1,6 +1,4 @@
-using System;
-
-namespace Watchman.AwsResources
+﻿namespace Watchman.AwsResources
 {
     public class CurrentTimeProvider : ICurrentTimeProvider
     {

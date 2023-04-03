@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Watchman.AwsResources;
+﻿using Watchman.AwsResources;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 

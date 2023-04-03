@@ -1,21 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Moq;
-using NUnit.Framework;
-using Watchman.Engine.Generation.Generic;
-using Watchman.Engine.Logging;
-using Amazon.CloudFormation;
+﻿using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Moq;
+using NUnit.Framework;
 using Watchman.AwsResources;
 using Watchman.Configuration;
 using Watchman.Engine.Generation;
+using Watchman.Engine.Generation.Generic;
+using Watchman.Engine.Logging;
 using S3Location = Watchman.Engine.Generation.Generic.S3Location;
 
 namespace Watchman.Engine.Tests.Generation

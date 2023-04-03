@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Amazon;
+﻿using Amazon;
 using Amazon.DynamoDBv2;
 using NUnit.Framework;
 using TestHelper;

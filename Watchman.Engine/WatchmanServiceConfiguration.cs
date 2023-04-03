@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace Watchman.Engine
+﻿namespace Watchman.Engine
 {
     public class WatchmanServiceConfiguration<TConfigType> where TConfigType:class
     {

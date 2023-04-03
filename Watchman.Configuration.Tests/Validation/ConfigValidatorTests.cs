@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.Configuration.Tests.Validation

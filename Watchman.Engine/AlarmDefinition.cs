@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using Amazon.CloudWatch;
+﻿using Amazon.CloudWatch;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 

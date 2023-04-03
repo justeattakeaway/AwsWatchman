@@ -1,0 +1,37 @@
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="AWSSDK.AutoScaling" Version="3.3.102.52" />
+    <PackageVersion Include="AWSSDK.CloudFormation" Version="3.3.105.6" />
+    <PackageVersion Include="AWSSDK.CloudFront" Version="3.3.101.152" />
+    <PackageVersion Include="AWSSDK.CloudWatch" Version="3.3.107.30" />
+    <PackageVersion Include="AWSSDK.Core" Version="3.3.107.2" />
+    <PackageVersion Include="AWSSDK.DAX" Version="3.3.100.186" />
+    <PackageVersion Include="AWSSDK.DynamoDBv2" Version="3.3.106.10" />
+    <PackageVersion Include="AWSSDK.EC2" Version="3.3.179" />
+    <PackageVersion Include="AWSSDK.ElasticLoadBalancing" Version="3.3.100.185" />
+    <PackageVersion Include="AWSSDK.ElasticLoadBalancingV2" Version="3.3.104.82" />
+    <PackageVersion Include="AWSSDK.Lambda" Version="3.3.109.32" />
+    <PackageVersion Include="AWSSDK.RDS" Version="3.3.121.20" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.3.111.3" />
+    <PackageVersion Include="AWSSDK.SimpleNotificationService" Version="3.3.101.174" />
+    <PackageVersion Include="AWSSDK.StepFunctions" Version="3.3.104.50" />
+    <PackageVersion Include="CommandLineParser" Version="2.9.1" />
+    <PackageVersion Include="coverlet.msbuild" Version="3.2.0" />
+    <PackageVersion Include="CsvHelper" Version="30.0.1" />
+    <PackageVersion Include="GitHubActionsTestLogger" Version="2.0.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageVersion Include="NUnit" Version="3.13.3" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.4.2" />
+    <PackageVersion Include="Moq" Version="4.18.4" />
+    <PackageVersion Include="StructureMap" Version="4.7.1" />
+    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="6.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
+    <PackageReference Include="GitHubActionsTestLogger" PrivateAssets="All" />
+  </ItemGroup>
+</Project>

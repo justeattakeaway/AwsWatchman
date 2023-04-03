@@ -1,5 +1,4 @@
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Watchman.Tests.Alb
 {

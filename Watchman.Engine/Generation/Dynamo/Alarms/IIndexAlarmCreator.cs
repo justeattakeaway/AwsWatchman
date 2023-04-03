@@ -1,5 +1,4 @@
-using System.Threading.Tasks;
-using Amazon.DynamoDBv2.Model;
+﻿using Amazon.DynamoDBv2.Model;
 
 namespace Watchman.Engine.Generation.Dynamo.Alarms
 {

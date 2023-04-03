@@ -1,8 +1,5 @@
-using System.Linq;
-using System.Threading.Tasks;
-using Amazon.DynamoDBv2.Model;
+﻿using Amazon.DynamoDBv2.Model;
 using Watchman.AwsResources;
-using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.Configuration;
 using Watchman.Engine.Generation.Generic;
 

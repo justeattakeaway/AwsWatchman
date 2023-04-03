@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using Watchman.Configuration.Load;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
-using Watchman.Configuration.Tests.Extensions;
+using Watchman.Configuration.Load;
 
 namespace Watchman.Configuration.Tests.Load
 {
@@ -15,7 +12,7 @@ namespace Watchman.Configuration.Tests.Load
         [SetUp]
         public void Setup()
         {
-            var testFilePath = TestFiles.GetRelativePathTo(($"data\\withThresholds".ToCrossPlatformPath()));
+            var testFilePath = TestFiles.GetRelativePathTo(Path.Join("data", "withThresholds"));
             var testFilesSettings = new FileSettings(testFilePath);
 
             var logger = new Mock<IConfigLoadLogger>();

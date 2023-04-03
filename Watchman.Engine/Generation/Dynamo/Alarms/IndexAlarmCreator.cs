@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Amazon.CloudWatch;
+﻿using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Amazon.DynamoDBv2.Model;
 using Watchman.Engine.Alarms;
