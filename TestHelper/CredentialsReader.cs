@@ -22,14 +22,14 @@ namespace TestHelper
             var accessKey = Environment.GetEnvironmentVariable("AwsAccessKey");
             if (string.IsNullOrWhiteSpace(accessKey))
             {
-                throw new CredentialsException("No AwsAccessKey found");
+                Assert.Ignore("No AWS access key configured.");
             }
 
             var secretKey = Environment.GetEnvironmentVariable("AwsSecretKey");
 
             if (string.IsNullOrWhiteSpace(secretKey))
             {
-                throw new CredentialsException("No AwsSecretKey found");
+                Assert.Ignore("No AWS secret key configured.");
             }
 
             return new BasicAWSCredentials(accessKey, secretKey);
