@@ -120,6 +120,7 @@ ClientBin/
 
 launchSettings.json
 
-.vscode/
-
 *.ncrunch*
+
+.dotnetcli/
+artifacts/
