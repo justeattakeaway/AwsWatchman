@@ -1,35 +1,68 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quartermaster", "Quartermaster\Quartermaster.csproj", "{8019EBF7-26F1-489B-9DE1-73EDF141D335}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quartermaster", "Quartermaster\Quartermaster.csproj", "{8019EBF7-26F1-489B-9DE1-73EDF141D335}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchman.Engine", "Watchman.Engine\Watchman.Engine.csproj", "{55A30138-C1AA-4422-9E9C-E19D30428770}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchman.Engine", "Watchman.Engine\Watchman.Engine.csproj", "{55A30138-C1AA-4422-9E9C-E19D30428770}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchman.Engine.Tests", "Watchman.Engine.Tests\Watchman.Engine.Tests.csproj", "{A04536F5-8BF4-48E3-B3EB-0B8BCBA04337}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchman.Engine.Tests", "Watchman.Engine.Tests\Watchman.Engine.Tests.csproj", "{A04536F5-8BF4-48E3-B3EB-0B8BCBA04337}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02302288-B385-4E01-B647-2748B0405843}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quartermaster.Tests", "Quartermaster.Tests\Quartermaster.Tests.csproj", "{A6C04395-43E4-47FB-9FFD-8493B95184EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quartermaster.Tests", "Quartermaster.Tests\Quartermaster.Tests.csproj", "{A6C04395-43E4-47FB-9FFD-8493B95184EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchman.Engine.IntegrationTests", "Watchman.Engine.IntegrationTests\Watchman.Engine.IntegrationTests.csproj", "{AD03FC8B-562A-4949-9FDC-3B9DF45B4DBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchman.Engine.IntegrationTests", "Watchman.Engine.IntegrationTests\Watchman.Engine.IntegrationTests.csproj", "{AD03FC8B-562A-4949-9FDC-3B9DF45B4DBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchman.Configuration", "Watchman.Configuration\Watchman.Configuration.csproj", "{14F0238F-BD4A-45E2-8B79-AE841F28FED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchman.Configuration", "Watchman.Configuration\Watchman.Configuration.csproj", "{14F0238F-BD4A-45E2-8B79-AE841F28FED3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchman.Configuration.Tests", "Watchman.Configuration.Tests\Watchman.Configuration.Tests.csproj", "{1B30501D-6D69-40A9-90D8-2717C905A80A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchman.Configuration.Tests", "Watchman.Configuration.Tests\Watchman.Configuration.Tests.csproj", "{1B30501D-6D69-40A9-90D8-2717C905A80A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchman", "Watchman\Watchman.csproj", "{D39B4AF7-092B-41E2-BFE4-E9C8ECA1DBE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchman", "Watchman\Watchman.csproj", "{D39B4AF7-092B-41E2-BFE4-E9C8ECA1DBE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchman.Tests", "Watchman.Tests\Watchman.Tests.csproj", "{47AAA486-2099-4DBD-9217-81954CB5D612}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchman.Tests", "Watchman.Tests\Watchman.Tests.csproj", "{47AAA486-2099-4DBD-9217-81954CB5D612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchman.AwsResources", "Watchman.AwsResources\Watchman.AwsResources.csproj", "{9123605B-B87D-4616-BF13-404342A447ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchman.AwsResources", "Watchman.AwsResources\Watchman.AwsResources.csproj", "{9123605B-B87D-4616-BF13-404342A447ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHelper", "TestHelper\TestHelper.csproj", "{07BBE54D-9B0C-463B-8D21-6CCCB5D9C353}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHelper", "TestHelper\TestHelper.csproj", "{07BBE54D-9B0C-463B-8D21-6CCCB5D9C353}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchman.AwsResources.IntegrationTests", "Watchman.AwsResources.IntegrationTests\Watchman.AwsResources.IntegrationTests.csproj", "{5AD59491-B77E-4939-A4EA-AF11DFB67B8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchman.AwsResources.IntegrationTests", "Watchman.AwsResources.IntegrationTests\Watchman.AwsResources.IntegrationTests.csproj", "{5AD59491-B77E-4939-A4EA-AF11DFB67B8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchman.AwsResources.Tests", "Watchman.AwsResources.Tests\Watchman.AwsResources.Tests.csproj", "{734D49A1-DC80-403D-B891-17F5018A2ECC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Watchman.AwsResources.Tests", "Watchman.AwsResources.Tests\Watchman.AwsResources.Tests.csproj", "{734D49A1-DC80-403D-B891-17F5018A2ECC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E343061A-D702-4BDD-9C6B-FFFBD4A1A2CD}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.vsconfig = .vsconfig
+		AwsWatchman.ruleset = AwsWatchman.ruleset
+		build.ps1 = build.ps1
+		ConfigurationExamples.md = ConfigurationExamples.md
+		ConfigurationFileFormat.md = ConfigurationFileFormat.md
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+		justeat-oss.snk = justeat-oss.snk
+		LegacyConfiguration.md = LegacyConfiguration.md
+		LICENSE.md = LICENSE.md
+		package-icon.png = package-icon.png
+		Quartermaster.md = Quartermaster.md
+		README.md = README.md
+		SecurityPolicy.md = SecurityPolicy.md
+		SupportedServices.md = SupportedServices.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{994C8153-410B-4034-8B35-D61E50BF86DA}"
+	ProjectSection(SolutionItems) = preProject
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{E1C8AF5C-01D0-414F-AA85-95848B325B4F}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,5 +135,10 @@ Global
 		{07BBE54D-9B0C-463B-8D21-6CCCB5D9C353} = {02302288-B385-4E01-B647-2748B0405843}
 		{5AD59491-B77E-4939-A4EA-AF11DFB67B8F} = {02302288-B385-4E01-B647-2748B0405843}
 		{734D49A1-DC80-403D-B891-17F5018A2ECC} = {02302288-B385-4E01-B647-2748B0405843}
+		{994C8153-410B-4034-8B35-D61E50BF86DA} = {E343061A-D702-4BDD-9C6B-FFFBD4A1A2CD}
+		{E1C8AF5C-01D0-414F-AA85-95848B325B4F} = {994C8153-410B-4034-8B35-D61E50BF86DA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5AE7E4FB-9666-42C0-BABE-086B016D01E9}
 	EndGlobalSection
 EndGlobal

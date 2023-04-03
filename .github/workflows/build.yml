@@ -1,0 +1,43 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ v* ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+
+    - name: Build, Test and Publish
+      shell: pwsh
+      run: ./build.ps1
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: true
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+        DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: 1
+        NUGET_XMLDOC_MODE: skip
+        TERM: xterm
+
+    - name: Publish artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: artifacts-${{ matrix.os_name }}
+        path: ./artifacts
