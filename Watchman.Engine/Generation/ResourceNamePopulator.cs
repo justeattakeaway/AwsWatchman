@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Text.RegularExpressions;
 using Watchman.AwsResources;
 using Watchman.Configuration.Generic;
 using Watchman.Engine.Logging;

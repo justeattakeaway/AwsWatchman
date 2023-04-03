@@ -3,13 +3,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.CloudFormation" Version="3.3.105.6" />
-    <PackageReference Include="AWSSDK.CloudWatch" Version="3.3.107.30" />
-    <PackageReference Include="AWSSDK.Core" Version="3.3.107.2" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.106.10" />
-    <PackageReference Include="AWSSDK.S3" Version="3.3.111.3" />
-    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.174" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="AWSSDK.S3" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Watchman.AwsResources\Watchman.AwsResources.csproj" />

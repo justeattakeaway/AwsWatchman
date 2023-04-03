@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Amazon.CloudWatch.Model;
+﻿using Amazon.CloudWatch.Model;
 using Moq;
 using NUnit.Framework;
 using Watchman.Configuration;

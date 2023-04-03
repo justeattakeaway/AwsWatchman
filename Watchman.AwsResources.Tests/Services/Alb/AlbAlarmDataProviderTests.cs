@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Amazon.ElasticLoadBalancingV2.Model;
+﻿using Amazon.ElasticLoadBalancingV2.Model;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Alb;
 using Watchman.Configuration.Generic;

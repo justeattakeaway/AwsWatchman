@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Watchman.Configuration
+﻿namespace Watchman.Configuration
 {
     public class ConsoleConfigLoadLogger : IConfigLoadLogger
     {

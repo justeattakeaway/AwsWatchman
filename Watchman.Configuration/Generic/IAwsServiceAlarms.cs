@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace Watchman.Configuration.Generic
+﻿namespace Watchman.Configuration.Generic
 {
     public interface IAwsServiceAlarms
     {

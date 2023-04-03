@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Watchman.Engine.Generation
+﻿namespace Watchman.Engine.Generation
 {
     public static class Filters
     {

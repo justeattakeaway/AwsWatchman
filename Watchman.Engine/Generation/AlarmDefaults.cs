@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace Watchman.Engine.Generation
+﻿namespace Watchman.Engine.Generation
 {
     public class AlarmDefaults<TServiceType> : List<AlarmDefinition>
     {

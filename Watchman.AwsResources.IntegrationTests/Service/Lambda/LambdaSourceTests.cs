@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
-using Amazon;
-using NUnit.Framework;
-using Watchman.AwsResources.Services.Lambda;
+﻿using Amazon;
 using Amazon.Lambda;
+using NUnit.Framework;
 using TestHelper;
+using Watchman.AwsResources.Services.Lambda;
 
 namespace Watchman.AwsResources.IntegrationTests.Service.Lambda
 {

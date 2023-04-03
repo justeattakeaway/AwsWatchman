@@ -1,6 +1,4 @@
-using System;
-
-namespace Watchman.Configuration.Generic
+﻿namespace Watchman.Configuration.Generic
 {
     public class AutoScalingResourceConfig : IServiceAlarmConfig<AutoScalingResourceConfig>
     {

@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Amazon.RDS;
+﻿using Amazon.RDS;
 using Amazon.RDS.Model;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;

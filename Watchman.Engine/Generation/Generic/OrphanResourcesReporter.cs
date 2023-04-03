@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Watchman.Engine.Generation.Generic
+﻿namespace Watchman.Engine.Generation.Generic
 {
     public class OrphanResourcesReporter<T, TConfig> where T : class
     where TConfig : class

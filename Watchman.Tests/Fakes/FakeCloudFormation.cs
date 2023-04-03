@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Amazon.CloudFormation;
+﻿using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
 using Moq;
 using Newtonsoft.Json;

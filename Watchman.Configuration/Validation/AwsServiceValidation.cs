@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using Watchman.Configuration.Generic;
+﻿using Watchman.Configuration.Generic;
 
 namespace Watchman.Configuration.Validation
 {

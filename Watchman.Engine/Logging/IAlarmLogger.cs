@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Watchman.Engine.Logging
+﻿namespace Watchman.Engine.Logging
 {
     public interface IAlarmLogger
     {

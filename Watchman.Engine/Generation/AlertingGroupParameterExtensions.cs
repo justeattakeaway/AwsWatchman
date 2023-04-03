@@ -1,5 +1,4 @@
-using System;
-using Watchman.Configuration.Generic;
+﻿using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine.Generation
 {

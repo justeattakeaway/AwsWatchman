@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using Amazon;
+﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
 using Watchman.Configuration;

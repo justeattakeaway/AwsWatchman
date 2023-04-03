@@ -1,5 +1,4 @@
-using System.Threading.Tasks;
-using Amazon.SimpleNotificationService;
+﻿using Amazon.SimpleNotificationService;
 using Watchman.Engine.Logging;
 
 namespace Watchman.Engine.Sns

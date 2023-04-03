@@ -1,5 +1,4 @@
-using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Watchman.Configuration.Generic;
 

@@ -1,7 +1,4 @@
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
+﻿using System.Linq.Expressions;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Moq;

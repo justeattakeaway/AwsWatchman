@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
+﻿using System.Configuration;
+using System.Globalization;
 using System.Net.Mail;
-using System.Threading.Tasks;
-using QuarterMaster.Models;
 using CsvHelper;
+using QuarterMaster.Models;
 
 namespace Quartermaster
 {
@@ -84,7 +80,7 @@ namespace Quartermaster
         {
             var reportString = new StringWriter();
 
-            var csv = new CsvWriter(reportString);
+            using var csv = new CsvWriter(reportString, CultureInfo.InvariantCulture);
             csv.WriteRecords(provisionReport.Rows);
             return reportString.ToString();
         }

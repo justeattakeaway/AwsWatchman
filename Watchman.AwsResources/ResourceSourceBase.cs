@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Watchman.AwsResources
+﻿namespace Watchman.AwsResources
 {
     /// <summary>
     /// Base ResourceSource which can be used for AWS types where the model and name can be retrieved sensibly in the same call

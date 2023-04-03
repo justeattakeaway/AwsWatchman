@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Amazon.CloudFront;
+﻿using Amazon.CloudFront;
 using Amazon.CloudFront.Model;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;

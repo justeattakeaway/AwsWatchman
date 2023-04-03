@@ -1,7 +1,4 @@
-using System;
-using System.Threading.Tasks;
-using Amazon;
-using Amazon.Util;
+﻿using Amazon;
 using Watchman.Engine.Generation;
 using Watchman.IoC;
 

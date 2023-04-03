@@ -1,9 +1,9 @@
 ﻿using Amazon.DynamoDBv2.Model;
-using Watchman.Configuration;
-using Watchman.Configuration.Load;
 using StructureMap;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.DynamoDb;
+using Watchman.Configuration;
+using Watchman.Configuration.Load;
 using Watchman.Engine.Logging;
 
 namespace Quartermaster

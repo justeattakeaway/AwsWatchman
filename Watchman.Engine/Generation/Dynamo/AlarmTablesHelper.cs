@@ -1,5 +1,4 @@
-using System.Linq;
-using Watchman.Configuration;
+﻿using Watchman.Configuration;
 
 namespace Watchman.Engine.Generation.Dynamo
 {

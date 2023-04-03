@@ -1,7 +1,4 @@
-using System;
-using System.Threading.Tasks;
-
-namespace Watchman.AwsResources
+﻿namespace Watchman.AwsResources
 {
     public class AwsResource<T> : IAwsResource where T: class
     {

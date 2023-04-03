@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using Amazon.CloudWatch.Model;
+﻿using Amazon.CloudWatch.Model;
 
 namespace Watchman.AwsResources
 {

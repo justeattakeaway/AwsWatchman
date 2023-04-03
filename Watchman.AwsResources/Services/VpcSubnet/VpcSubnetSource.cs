@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Amazon.EC2;
+﻿using Amazon.EC2;
 using Amazon.EC2.Model;
 
 namespace Watchman.AwsResources.Services.VpcSubnet

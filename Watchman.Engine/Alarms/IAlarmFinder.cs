@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Amazon.CloudWatch.Model;
+﻿using Amazon.CloudWatch.Model;
 
 namespace Watchman.Engine.Alarms
 {

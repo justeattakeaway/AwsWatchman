@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Amazon.ElasticLoadBalancing;
+﻿using Amazon.ElasticLoadBalancing;
 using Amazon.ElasticLoadBalancing.Model;
 
 namespace Watchman.AwsResources.Services.Elb

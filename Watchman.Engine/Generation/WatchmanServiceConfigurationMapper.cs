@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Watchman.Configuration;
+﻿using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 
 namespace Watchman.Engine.Generation

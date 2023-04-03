@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using Amazon.CloudWatch;
+﻿using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Moq;
 using Watchman.Engine.Alarms;

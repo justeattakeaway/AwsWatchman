@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using Amazon.AutoScaling.Model;
+﻿using Amazon.AutoScaling.Model;
 using Amazon.CloudFront.Model;
 using Amazon.DAX.Model;
 using Amazon.DynamoDBv2.Model;
@@ -13,8 +11,8 @@ using Watchman.AwsResources;
 using Watchman.AwsResources.Services.Alb;
 using Watchman.AwsResources.Services.AutoScaling;
 using Watchman.AwsResources.Services.CloudFront;
-using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.AwsResources.Services.Dax;
+using Watchman.AwsResources.Services.DynamoDb;
 using Watchman.AwsResources.Services.Elb;
 using Watchman.AwsResources.Services.Kinesis;
 using Watchman.AwsResources.Services.Lambda;

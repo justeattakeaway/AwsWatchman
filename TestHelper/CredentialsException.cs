@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TestHelper
+﻿namespace TestHelper
 {
     public class CredentialsException : Exception
     {

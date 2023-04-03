@@ -1,5 +1,4 @@
-using System.Net.Http;
-using Amazon.Runtime;
+﻿using Amazon.Runtime;
 
 namespace Watchman.IoC
 {

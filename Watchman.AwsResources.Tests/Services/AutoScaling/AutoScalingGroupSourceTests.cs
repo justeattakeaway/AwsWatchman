@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Amazon.AutoScaling;
+﻿using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
 using Moq;
 using NUnit.Framework;

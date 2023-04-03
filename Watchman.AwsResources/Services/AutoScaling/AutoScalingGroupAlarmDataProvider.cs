@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amazon.AutoScaling.Model;
+﻿using Amazon.AutoScaling.Model;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Watchman.Configuration.Generic;

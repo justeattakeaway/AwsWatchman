@@ -1,11 +1,9 @@
-using System.Threading;
-using Amazon.SimpleNotificationService;
+﻿using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
 using Moq;
 using NUnit.Framework;
 using Watchman.Engine.Logging;
 using Watchman.Engine.Sns;
-using System.Threading.Tasks;
 
 namespace Watchman.Engine.Tests.Sns
 {

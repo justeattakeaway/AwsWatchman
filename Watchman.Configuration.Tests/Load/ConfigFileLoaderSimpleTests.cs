@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
-using Watchman.Configuration.Load;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using Watchman.Configuration.Generic;
+using Watchman.Configuration.Load;
 
 namespace Watchman.Configuration.Tests.Load
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace QuarterMaster.Models
+﻿namespace QuarterMaster.Models
 {
     public class ProvisioningReportRow
     {

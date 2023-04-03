@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Watchman.AwsResources
+﻿namespace Watchman.AwsResources
 {
     public interface IResourceSource<T> where T: class
     {

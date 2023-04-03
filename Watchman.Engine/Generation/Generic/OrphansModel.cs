@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Watchman.Engine.Generation.Generic
+﻿namespace Watchman.Engine.Generation.Generic
 {
     public class OrphansModel
     {

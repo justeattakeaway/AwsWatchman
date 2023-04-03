@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amazon.CloudWatch.Model;
+﻿using Amazon.CloudWatch.Model;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using Watchman.AwsResources.Services.Kinesis;

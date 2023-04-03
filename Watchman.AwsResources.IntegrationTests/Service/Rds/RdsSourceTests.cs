@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using Amazon;
-using NUnit.Framework;
+﻿using Amazon;
 using Amazon.RDS;
+using NUnit.Framework;
 using TestHelper;
 using Watchman.AwsResources.Services.Rds;
 

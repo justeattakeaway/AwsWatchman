@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
-
-namespace Watchman.AwsResources
+﻿namespace Watchman.AwsResources
 {
     public interface IResourceAttributesProvider<in T, in TAlarmConfig> where TAlarmConfig : class
     {

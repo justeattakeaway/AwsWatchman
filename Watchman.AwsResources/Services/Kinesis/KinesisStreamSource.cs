@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amazon.CloudWatch;
+﻿using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 
 namespace Watchman.AwsResources.Services.Kinesis

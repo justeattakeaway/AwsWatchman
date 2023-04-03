@@ -1,5 +1,4 @@
-using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Amazon.CloudFormation;
 using Amazon.DynamoDBv2.Model;
 using Amazon.S3;

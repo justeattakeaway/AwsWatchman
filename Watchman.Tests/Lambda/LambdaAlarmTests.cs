@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Amazon.CloudWatch;
-using Amazon.Lambda;
+﻿using Amazon.Lambda;
 using Amazon.Lambda.Model;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;

@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
-
-namespace Watchman.Engine.Sns
+﻿namespace Watchman.Engine.Sns
 {
     public interface ISnsTopicCreator
     {
