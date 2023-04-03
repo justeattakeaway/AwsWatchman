@@ -7,22 +7,21 @@ Each file contains an "alerting group".
 
 ## AlertingGroup
 
-
 | Field | Type | Value | Description |
 |-------|------|-----------|------------|
 | Name | String | Required | AlertGroup name (usually the team's Name) |
 | AlarmNameSuffix | String | Required | Used when generating the dynamo alarms, so can distinguish multiple alarms on the same table (usually the COG's name) |
-| Targets | Array of `Target` | Required | Must contain at least one target.<br> See below more info on `Targets`. |
+| Targets | Array of `Target` | Required | Must contain at least one target. See below more information on `Targets`. |
 | ReportTargets | Array of `ReportTarget` | | List of email addresses to mail the provisioning report to, for use with Quartermaster |
 | IsCatchAll | Boolean | Default is `false` |If `true`, this group is not inspected when generating the lists of unmonitored resources, and it can include resources monitored by this group.|
 |Services| services| Required | Describes the services to monitor. |
-|NumberOfCloudFormationStacks| int |  Optional (default 1) | Divide alarms between this many CloudFormation stacks. CloudFormation stacks have some hard limits on number of resources and template file size. Do not reduce this value once you have set it and deployed stacks, unless you manually delete the stacks first. | 
- 
+|NumberOfCloudFormationStacks| int |  Optional (default 1) | Divide alarms between this many CloudFormation stacks. CloudFormation stacks have some hard limits on number of resources and template file size. Do not reduce this value once you have set it and deployed stacks, unless you manually delete the stacks first. |
+
 __NOTES:__
 
 ** Each AlertingGroup must specify services to monitor in some form.
 
-#### Targets
+### Targets
 
 Targets receive the alerts - they are added to the SNS subscriptions for each cloudwatch alarm when setting these up. Each target in the array should provide only one key, i.e. a url or an email, not both.
 
@@ -35,4 +34,4 @@ To get a Url for PagerDuty integration, use the "In pagerDuty" section of the [P
 
 ### Services sections
 
-See [Supported Services](SupportedServices.md) 
+See [Supported Services](SupportedServices.md)

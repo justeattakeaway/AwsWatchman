@@ -34,7 +34,7 @@
     { "Url": "https://events.pagerduty.com/integration/123456789asdfaxbkj/enqueue" },
     { "Email": "cog2@justeat.pagerduty.com" }
   ],
-  "DynamoDb": {  
+  "DynamoDb": {
     "Tables": [
       { "Name": "table3"},
       { "Name": "table5", "Threshold": 0.75 },
@@ -52,7 +52,7 @@
     { "Email": "SysOps@justeat.pagerduty.com" }
   ],
   "IsCatchAll": true,
-  "DynamoDb": {   
+  "DynamoDb": {
     "Threshold": 0.75,
     "Tables": [
       { "Pattern": ".*" }
@@ -89,16 +89,16 @@
 
 ```
 
-### Regex
+## Regex
 
-Patterns are regular expressions, so we can use the RegEx syntax [to exclude](http://fineonly.com/solutions/regex-exclude-a-string) certain resources from one general rule and catch them with a second specific rule, in order to e.g. apply a different "OldestMessageThreshold" to [a delay queue](http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-delay-queues.html).
+Patterns are regular expressions, so we can use Regular Expression syntax to exclude certain resources from one general rule and catch them with a second specific rule, in order to, for example, apply a different "OldestMessageThreshold" to [a delay queue](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-delay-queues.html).
 
 ```json
 {
     "Name": "QueueFilters",
     "AlarmNameSuffix": "qf",
     "Targets": [
-		{ "Url": "http://farley.com" }
+      { "Url": "http://farley.com" }
     ],
     "Sqs": {
         "LengthThreshold": 5,
