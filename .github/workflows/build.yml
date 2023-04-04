@@ -39,5 +39,5 @@ jobs:
     - name: Publish artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: artifacts-${{ matrix.os_name }}
-        path: ./artifacts
+        name: artifacts-${{ matrix.os }}
+        path: ./artifacts/publish
