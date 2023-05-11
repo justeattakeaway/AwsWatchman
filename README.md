@@ -2,7 +2,7 @@
 
 > Because unmonitored infrastructure will bite you
 
-[![Build status](https://github.com/justeat/AwsWatchman/workflows/build/badge.svg?branch=main&event=push)](https://github.com/justeat/AwsWatchman/actions?query=workflow%3Abuild+branch%3Amain+event%3Apush)
+[![Build status](https://github.com/justeattakeaway/AwsWatchman/workflows/build/badge.svg?branch=main&event=push)](https://github.com/justeattakeaway/AwsWatchman/actions?query=workflow%3Abuild+branch%3Amain+event%3Apush)
 
 ## What
 
