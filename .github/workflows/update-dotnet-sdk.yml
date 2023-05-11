@@ -1,33 +1,20 @@
 name: update-dotnet-sdk
 
-env:
-  GIT_COMMIT_USER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
-  GIT_COMMIT_USER_NAME: github-actions[bot]
-  TERM: xterm
-
 on:
   schedule:
     - cron:  '00 19 * * TUE'
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
-  update-dotnet-sdk:
-    name: Update .NET SDK
-    runs-on: ubuntu-latest
-    if: ${{ github.event.repository.fork == false }}
-
-    steps:
-
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Update .NET SDK
-      id: update-dotnet-sdk
-      uses: martincostello/update-dotnet-sdk@v2
-      with:
-        labels: "dependencies,.NET"
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        user-email: ${{ env.GIT_COMMIT_USER_EMAIL }}
-        user-name: ${{ env.GIT_COMMIT_USER_NAME }}
+  update-sdk:
+    uses: martincostello/update-dotnet-sdk/.github/workflows/update-dotnet-sdk.yml@6cfd047b0c2ce72ea0e22708bc1918a3d912c050 # v2.2.0
+    with:
+      labels: "dependencies,.NET"
+      update-nuget-packages: false
+      user-email: ${{ vars.UPDATER_COMMIT_USER_EMAIL }}
+      user-name: ${{ vars.UPDATER_COMMIT_USER_NAME }}
+    secrets:
+      application-id: ${{ secrets.UPDATER_APPLICATION_ID }}
+      application-private-key: ${{ secrets.UPDATER_APPLICATION_PRIVATE_KEY }}
