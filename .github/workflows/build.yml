@@ -21,10 +21,10 @@ jobs:
     steps:
 
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
 
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@607fce577a46308457984d59e4954e075820f10a # v3.0.3
 
     - name: Build, Test and Publish
       shell: pwsh
@@ -37,7 +37,7 @@ jobs:
         TERM: xterm
 
     - name: Publish artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
       with:
         name: artifacts-${{ matrix.os }}
         path: ./artifacts/publish
