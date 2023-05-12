@@ -24,7 +24,7 @@ Unmonitored infrastructure is a problem waiting to happen, so all infrastructure
 
 ## Run
 
-`Watchman` is written in C# and targets .NEt 6. [You can download the `dotnet` runtime for Windows, Mac or Linux here](https://dotnet.microsoft.com/download)
+`Watchman` is written in C# and targets .NET 6. [You can download the `dotnet` runtime for Windows, Mac or Linux here](https://dotnet.microsoft.com/download)
 
 Run the `Watchman` specifying a config folder for config files (see [Configuration file format](ConfigurationFileFormat.md)), and optionally AWS credentials.
 
