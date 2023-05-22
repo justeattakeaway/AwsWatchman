@@ -15,7 +15,7 @@
     <PackageVersion Include="AWSSDK.SimpleNotificationService" Version="3.7.101.39" />
     <PackageVersion Include="AWSSDK.StepFunctions" Version="3.7.102.76" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
-    <PackageVersion Include="coverlet.msbuild" Version="3.2.0" />
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.0" />
     <PackageVersion Include="CsvHelper" Version="30.0.1" />
     <PackageVersion Include="GitHubActionsTestLogger" Version="2.2.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
