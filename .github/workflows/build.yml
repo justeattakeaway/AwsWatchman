@@ -17,6 +17,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
+        include:
+          - os: macos-latest
+            os_name: macos
+          - os: ubuntu-latest
+            os_name: linux
+          - os: windows-latest
+            os_name: windows
 
     steps:
 
@@ -40,4 +47,29 @@ jobs:
       uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
       with:
         name: artifacts-${{ matrix.os }}
-        path: ./artifacts/publish
+        path: ./artifacts/packages
+
+    - name: Publish NuGet packages
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
+      with:
+        name: packages-${{ matrix.os }}
+        path: ./artifacts/packages
+        if-no-files-found: error
+
+  publish-nuget:
+    needs: validate-packages
+    runs-on: ubuntu-latest
+    if: |
+        github.event.repository.fork == false &&
+        startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        with:
+          name: packages-linux
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@607fce577a46308457984d59e4954e075820f10a # v3.0.3
+
+      - name: Push NuGet packages to NuGet.org
+        run: dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_TOKEN }} --skip-duplicate --source https://api.nuget.org/v3/index.json
