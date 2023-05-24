@@ -61,9 +61,9 @@ namespace Watchman.Engine.Alarms
         {
             await Preload();
 
-            if (_alarmData.ContainsKey(alarmName))
+            if (_alarmData.TryGetValue(alarmName, out var name))
             {
-                return _alarmData[alarmName];
+                return name;
             }
 
             return null;
