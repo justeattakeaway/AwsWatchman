@@ -76,10 +76,10 @@ if ($installDotNetSdk -eq $true) {
     $env:PATH = "$env:DOTNET_INSTALL_DIR;$env:PATH"
 }
 
-function DotNetPublish {
+function DotNetPack {
     param([string]$Project)
 
-    $publishPath = (Join-Path $OutputPath "publish")
+    $PackageOutputPath = (Join-Path $OutputPath "packages")
 
     $additionalArgs = @()
 
@@ -88,10 +88,10 @@ function DotNetPublish {
         $additionalArgs += $VersionSuffix
     }
 
-    & $dotnet publish $Project --output $publishPath --configuration $Configuration $additionalArgs
+    & $dotnet pack $Project --output $PackageOutputPath --configuration $Configuration --include-symbols --include-source $additionalArgs
 
     if ($LASTEXITCODE -ne 0) {
-        throw "dotnet publish failed with exit code $LASTEXITCODE"
+        throw "dotnet pack failed with exit code $LASTEXITCODE"
     }
 }
 
@@ -112,14 +112,14 @@ function DotNetTest {
     }
 }
 
-$publishProjects = @(
+$packageProjects = @(
     (Join-Path $solutionPath "Watchman\Watchman.csproj"),
     (Join-Path $solutionPath "Quartermaster\Quartermaster.csproj")
 )
 
-Write-Host "Publishing solution..." -ForegroundColor Green
-ForEach ($project in $publishProjects) {
-    DotNetPublish $project
+Write-Host "Building $($packageProjects.Count) NuGet package(s)..." -ForegroundColor Green
+ForEach ($project in $packageProjects) {
+    DotNetPack $project
 }
 
 $unitTestProjects = @(

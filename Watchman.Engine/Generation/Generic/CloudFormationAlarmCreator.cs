@@ -27,9 +27,9 @@ namespace Watchman.Engine.Generation.Generic
                 }
             }
 
-            if (_alarms.ContainsKey(group))
+            if (_alarms.TryGetValue(group, out var groupAlarms))
             {
-                _alarms[group].AddRange(alarms);
+                groupAlarms.AddRange(alarms);
             }
             else
             {
@@ -63,11 +63,11 @@ namespace Watchman.Engine.Generation.Generic
             CheckForDuplicateStackNames();
 
             var groups = _alarms.Keys;
-            
+
             foreach (var alertingGroup in groups)
             {
                 var alarms = _alarms[alertingGroup];
-                
+
                 var stackName = StackName(alertingGroup);
 
                 var stacks = Enumerable.Range(0, alertingGroup.NumberOfCloudFormationStacks)
