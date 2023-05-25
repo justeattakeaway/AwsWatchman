@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>quartermaster</ToolCommandName>
+    <PackageId>JustEatTakeaway.Quartermaster</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" />
