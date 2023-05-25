@@ -4,6 +4,11 @@
 
 [![Build status](https://github.com/justeattakeaway/AwsWatchman/workflows/build/badge.svg?branch=main&event=push)](https://github.com/justeattakeaway/AwsWatchman/actions?query=workflow%3Abuild+branch%3Amain+event%3Apush)
 
+| **Package** | **Latest Version** |
+| :---------- | :----------------- |
+| JustEatTakeaway.Watchman | [![NuGet version](https://buildstats.info/nuget/JustEatTakeaway.Watchman?includePreReleases=false)](https://www.nuget.org/packages/JustEatTakeaway.Watchman/) |
+| JustEatTakeaway.Quartermaster | [![NuGet version](https://buildstats.info/nuget/JustEatTakeaway.Quartermaster?includePreReleases=false)](https://www.nuget.org/packages/JustEatTakeaway.Quartermaster/) |
+
 ## What
 
 AWSWatchman creates and maintains AWS CloudWatch alerts.
