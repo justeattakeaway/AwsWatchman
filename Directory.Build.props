@@ -24,7 +24,7 @@
     <PackageIcon>package-icon.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/justeattakeaway/AwsWatchman</PackageProjectUrl>
-    <PackageReadmeFile>$(MSBuildThisFileDirectory)README.md</PackageReadmeFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>See $(PackageProjectUrl)/releases for details.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>alerting,aws,monitoring</PackageTags>
