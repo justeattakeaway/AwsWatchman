@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>watchman</ToolCommandName>
+    <PackageId>JustEatTakeaway.Watchman</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" />
