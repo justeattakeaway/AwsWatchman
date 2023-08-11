@@ -11,14 +11,14 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
             double threshold, int period, string action)
         {
             alarmFinder.FindAlarmByName(Arg.Any<string>())
-                .Returns(Task.FromResult(new MetricAlarm
+                .Returns(new MetricAlarm
                 {
                     Threshold = threshold,
                     EvaluationPeriods = 1,
                     Period = period,
                     AlarmActions = new List<string> { action },
                     OKActions = new List<string> { action }
-                }));
+                });
         }
 
         public static void PutMetricAlarmWasCalledOnce(IAmazonCloudWatch cloudWatch)

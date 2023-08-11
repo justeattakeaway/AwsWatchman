@@ -67,7 +67,7 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
 
             dynamoDbMock.DescribeTableAsync(Arg.Is<string>(r => r == secondTableName),
                     Arg.Any<CancellationToken>())
-                .Returns(Task.FromResult(describeSecondTableResponse));
+                .Returns(describeSecondTableResponse);
 
             return new TableDescriptionSource(dynamoDbMock);
         }
