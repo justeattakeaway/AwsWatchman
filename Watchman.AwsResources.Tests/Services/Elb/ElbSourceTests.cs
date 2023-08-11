@@ -1,6 +1,6 @@
 ﻿using Amazon.ElasticLoadBalancing;
 using Amazon.ElasticLoadBalancing.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Elb;
 
@@ -42,23 +42,23 @@ namespace Watchman.AwsResources.Tests.Services.Elb
                 }
             };
 
-            var elbMock = new Mock<IAmazonElasticLoadBalancing>();
-            elbMock.Setup(s => s.DescribeLoadBalancersAsync(
-                It.Is<DescribeLoadBalancersRequest>(r => r.Marker == null),
-                It.IsAny<CancellationToken>()
-                )).ReturnsAsync(_firstPage);
+            var elbMock = Substitute.For<IAmazonElasticLoadBalancing>();
+            elbMock.DescribeLoadBalancersAsync(
+                Arg.Is<DescribeLoadBalancersRequest>(r => r.Marker == null),
+                Arg.Any<CancellationToken>()
+                ).Returns(_firstPage);
 
-            elbMock.Setup(s => s.DescribeLoadBalancersAsync(
-                It.Is<DescribeLoadBalancersRequest>(r => r.Marker == "token-1"),
-                It.IsAny<CancellationToken>()
-                )).ReturnsAsync(_secondPage);
+            elbMock.DescribeLoadBalancersAsync(
+                Arg.Is<DescribeLoadBalancersRequest>(r => r.Marker == "token-1"),
+                Arg.Any<CancellationToken>()
+                ).Returns(_secondPage);
 
-            elbMock.Setup(s => s.DescribeLoadBalancersAsync(
-                It.Is<DescribeLoadBalancersRequest>(r => r.Marker == "token-2"),
-                It.IsAny<CancellationToken>()
-                )).ReturnsAsync(_thirdPage);
+            elbMock.DescribeLoadBalancersAsync(
+                Arg.Is<DescribeLoadBalancersRequest>(r => r.Marker == "token-2"),
+                Arg.Any<CancellationToken>()
+                ).Returns(_thirdPage);
 
-            _elbSource = new ElbSource(elbMock.Object);
+            _elbSource = new ElbSource(elbMock);
         }
 
         [Test]

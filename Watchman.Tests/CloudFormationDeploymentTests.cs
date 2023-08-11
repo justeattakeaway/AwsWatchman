@@ -1,5 +1,6 @@
 ﻿using Amazon.AutoScaling;
 using Amazon.AutoScaling.Model;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources;
 using Watchman.Configuration;
@@ -44,7 +45,7 @@ namespace Watchman.Tests
             var now = DateTime.Parse("2018-01-26");
 
             ioc.GetMock<ICurrentTimeProvider>()
-                .Setup(f => f.UtcNow)
+                .UtcNow
                 .Returns(now);
 
 
@@ -439,7 +440,7 @@ namespace Watchman.Tests
 
             await context.Get<AlarmLoaderAndGenerator>()
                     .LoadAndGenerateAlarms(RunMode.GenerateAlarms);
-     
+
             var stacks = cloudFormation.Stacks();
 
             Assert.That(stacks.Count, Is.GreaterThan(1));

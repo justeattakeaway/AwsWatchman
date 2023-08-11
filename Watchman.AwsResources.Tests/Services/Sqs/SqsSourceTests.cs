@@ -1,6 +1,6 @@
 ﻿using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Sqs;
 
@@ -82,24 +82,24 @@ namespace Watchman.AwsResources.Tests.Services.Sqs
                 {"AttrName", "AttrValue"}
             };
 
-            var cloudWatchMock = new Mock<IAmazonCloudWatch>();
-            cloudWatchMock.Setup(s => s.ListMetricsAsync(
-                It.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == null),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_firstPage);
+            var cloudWatchMock = Substitute.For<IAmazonCloudWatch>();
+            cloudWatchMock.ListMetricsAsync(
+                Arg.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == null),
+                Arg.Any<CancellationToken>())
+                .Returns(_firstPage);
 
-            cloudWatchMock.Setup(s => s.ListMetricsAsync(
-                It.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == "token-1"),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_secondPage);
+            cloudWatchMock.ListMetricsAsync(
+                Arg.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == "token-1"),
+                Arg.Any<CancellationToken>())
+                .Returns(_secondPage);
 
-            cloudWatchMock.Setup(s => s.ListMetricsAsync(
-                It.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == "token-2"),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_thirdPage);
+            cloudWatchMock.ListMetricsAsync(
+                Arg.Is<ListMetricsRequest>(r => r.MetricName == "ApproximateAgeOfOldestMessage" && r.NextToken == "token-2"),
+                Arg.Any<CancellationToken>())
+                .Returns(_thirdPage);
 
 
-            _queueSource = new QueueSource(cloudWatchMock.Object);
+            _queueSource = new QueueSource(cloudWatchMock);
         }
 
         [Test]

@@ -1,6 +1,6 @@
 ﻿using Amazon.StepFunctions;
 using Amazon.StepFunctions.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.StepFunction;
 
@@ -57,23 +57,23 @@ namespace Watchman.AwsResources.Tests.Services.StepFunction
                 NextToken = null
             };
 
-            var stepFunctionsClient = new Mock<IAmazonStepFunctions>();
-            stepFunctionsClient.Setup(c => c.ListStateMachinesAsync(
-                It.Is<ListStateMachinesRequest>(r => r.NextToken == null),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_firstPage);
+            var stepFunctionsClient = Substitute.For<IAmazonStepFunctions>();
+            stepFunctionsClient.ListStateMachinesAsync(
+                Arg.Is<ListStateMachinesRequest>(r => r.NextToken == null),
+                Arg.Any<CancellationToken>())
+                .Returns(_firstPage);
 
-            stepFunctionsClient.Setup(c => c.ListStateMachinesAsync(
-                    It.Is<ListStateMachinesRequest>(r => r.NextToken == "token-1"),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_secondPage);
+            stepFunctionsClient.ListStateMachinesAsync(
+                    Arg.Is<ListStateMachinesRequest>(r => r.NextToken == "token-1"),
+                    Arg.Any<CancellationToken>())
+                .Returns(_secondPage);
 
-            stepFunctionsClient.Setup(c => c.ListStateMachinesAsync(
-                    It.Is<ListStateMachinesRequest>(r => r.NextToken == "token-2"),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_thirdPage);
+            stepFunctionsClient.ListStateMachinesAsync(
+                    Arg.Is<ListStateMachinesRequest>(r => r.NextToken == "token-2"),
+                    Arg.Any<CancellationToken>())
+                .Returns(_thirdPage);
 
-            _source = new StepFunctionSource(stepFunctionsClient.Object);
+            _source = new StepFunctionSource(stepFunctionsClient);
         }
 
         [Test]

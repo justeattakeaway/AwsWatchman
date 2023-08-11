@@ -1,6 +1,6 @@
 ﻿using Amazon.CloudWatch;
 using Amazon.DynamoDBv2.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.Engine.Alarms;
 using Watchman.Engine.Generation.Dynamo.Alarms;
@@ -15,12 +15,12 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         [Test]
         public async Task TestBasicReadThrottlingAlarmCreation()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
-            var logger = new Mock<IAlarmLogger>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -32,12 +32,12 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         [Test]
         public async Task TestBasicWriteThrottlingAlarmCreation()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
-            var logger = new Mock<IAlarmLogger>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -49,12 +49,12 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         [Test]
         public async Task WhenDryRunReadThrottlingAlarmIsNotPut()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
-            var logger = new Mock<IAlarmLogger>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -66,12 +66,12 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         [Test]
         public async Task WhenDryRunWriteThrottlingAlarmIsNotPut()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
-            var logger = new Mock<IAlarmLogger>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -83,14 +83,14 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         [Test]
         public async Task WhenReadThrottlingAlarmExistsAtSameLevelNoAlarmIsCreated()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 5, 60, "testArn");
 
-            var logger = new Mock<IAlarmLogger>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -102,14 +102,14 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         [Test]
         public async Task WhenWriteThrottlingAlarmExistsAtSameLevelNoAlarmIsCreated()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 5, 60, "testArn");
 
-            var logger = new Mock<IAlarmLogger>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -121,14 +121,14 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         [Test]
         public async Task WhenReadThrottlingAlarmExistsWithDifferentThresholdAlarmIsCreated()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 101, 300, "testArn");
 
-            var logger = new Mock<IAlarmLogger>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 
@@ -140,14 +140,14 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
         [Test]
         public async Task WhenWriteThrottlingAlarmExistsWithDifferentThresholdAlarmIsCreated()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 101, 300, "testArn");
 
-            var logger = new Mock<IAlarmLogger>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var tableAlarmCreator = new TableAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             var table = MakeTableDescription();
 

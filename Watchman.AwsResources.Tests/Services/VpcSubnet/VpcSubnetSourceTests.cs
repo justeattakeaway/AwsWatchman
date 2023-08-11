@@ -1,6 +1,6 @@
 ﻿using Amazon.EC2;
 using Amazon.EC2.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.VpcSubnet;
 
@@ -9,18 +9,18 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
     [TestFixture]
     public class VpcSubnetSourceTests
     {
-        private Mock<IAmazonEC2> _fakeEc2Client;
+        private IAmazonEC2 _fakeEc2Client;
 
         [SetUp]
         public void SetUp()
         {
-            _fakeEc2Client = new Mock<IAmazonEC2>();
+            _fakeEc2Client = Substitute.For<IAmazonEC2>();
         }
 
         private void DescribeSubnetsReturns(List<Subnet> subnets)
         {
-            _fakeEc2Client.Setup(x => x.DescribeSubnetsAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new DescribeSubnetsResponse()
+            _fakeEc2Client.DescribeSubnetsAsync(Arg.Any<CancellationToken>())
+                .Returns(new DescribeSubnetsResponse()
                 {
                     Subnets = subnets
                 });
@@ -35,7 +35,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
                 new Subnet {SubnetId = "Abc123"}
             });
 
-            var sut = new VpcSubnetSource(_fakeEc2Client.Object);
+            var sut = new VpcSubnetSource(_fakeEc2Client);
 
             // act
             var result = await sut.GetResourceNamesAsync();
@@ -55,7 +55,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
                 subnet
             });
 
-            var sut = new VpcSubnetSource(_fakeEc2Client.Object);
+            var sut = new VpcSubnetSource(_fakeEc2Client);
 
             // act
             var result = await sut.GetResourceAsync("Abc123");
@@ -74,7 +74,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
                 subnet
             });
 
-            var sut = new VpcSubnetSource(_fakeEc2Client.Object);
+            var sut = new VpcSubnetSource(_fakeEc2Client);
 
             // act
             await sut.GetResourceNamesAsync();
@@ -82,7 +82,7 @@ namespace Watchman.AwsResources.Tests.Services.VpcSubnet
             await sut.GetResourceAsync("Abc123");
 
             // assert
-            _fakeEc2Client.Verify(x => x.DescribeSubnetsAsync(It.IsAny<CancellationToken>()), Times.Once);
+            await _fakeEc2Client.Received().DescribeSubnetsAsync(Arg.Any<CancellationToken>());
         }
     }
 }

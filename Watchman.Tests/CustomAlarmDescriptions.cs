@@ -75,13 +75,13 @@ namespace Watchman.Tests
                     }
                 }
             });
-            
+
             ioc.GetMock<IAmazonCloudWatch>().HasSqsQueues(new[]
             {
                 "first-sqs-queue",
                 "first-sqs-queue_error"
             });
-            
+
             ioc.GetMock<IAmazonLambda>().HasLambdaFunctions(new[]
             {
                 new FunctionConfiguration  { FunctionName = "first-lambda" }

@@ -1,6 +1,6 @@
 ﻿using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.Configuration;
 using Watchman.Engine.Logging;
@@ -14,7 +14,7 @@ namespace Watchman.Engine.Tests.Sns
         [Test]
         public async Task ReturnsArnForUrlTarget()
         {
-            var sns = new Mock<IAmazonSimpleNotificationService>();
+            var sns = Substitute.For<IAmazonSimpleNotificationService>();
             SetupArnForCreateTopic(sns, "TestGroup-Alerts", "sns-topic-arn");
 
             var sut = MakeSnsCreator(sns);
@@ -28,7 +28,7 @@ namespace Watchman.Engine.Tests.Sns
         [Test]
         public async Task UrlSubscriptionIsAdded()
         {
-            var sns = new Mock<IAmazonSimpleNotificationService>();
+            var sns = Substitute.For<IAmazonSimpleNotificationService>();
             SetupArnForCreateTopic(sns, "TestGroup-Alerts", "sns-topic-arn");
 
             var sut = MakeSnsCreator(sns);
@@ -45,7 +45,7 @@ namespace Watchman.Engine.Tests.Sns
         [Test]
         public async Task EmailSubscriptionIsAdded()
         {
-            var sns = new Mock<IAmazonSimpleNotificationService>();
+            var sns = Substitute.For<IAmazonSimpleNotificationService>();
             SetupArnForCreateTopic(sns, "TestGroup-Alerts", "sns-topic-arn");
 
             var sut = MakeSnsCreator(sns);
@@ -62,7 +62,7 @@ namespace Watchman.Engine.Tests.Sns
         [Test]
         public async Task ReturnsArnForEmailTarget()
         {
-            var sns = new Mock<IAmazonSimpleNotificationService>();
+            var sns = Substitute.For<IAmazonSimpleNotificationService>();
             SetupArnForCreateTopic(sns, "TestGroup-Alerts", "sns-topic-arn");
 
             var sut = MakeSnsCreator(sns);
@@ -76,7 +76,7 @@ namespace Watchman.Engine.Tests.Sns
         [Test]
         public async Task ReturnsArnForBothTargets()
         {
-            var sns = new Mock<IAmazonSimpleNotificationService>();
+            var sns = Substitute.For<IAmazonSimpleNotificationService>();
             SetupArnForCreateTopic(sns, "TestGroup-Alerts", "sns-topic-arn");
 
             var sut = MakeSnsCreator(sns);
@@ -90,7 +90,7 @@ namespace Watchman.Engine.Tests.Sns
         [Test]
         public async Task ReturnsArnInDryRunMode()
         {
-            var sns = new Mock<IAmazonSimpleNotificationService>();
+            var sns = Substitute.For<IAmazonSimpleNotificationService>();
             SetupArnForCreateTopic(sns, "TestGroup-Alerts", "sns-topic-arn");
 
             var sut = MakeSnsCreator(sns);
@@ -104,7 +104,7 @@ namespace Watchman.Engine.Tests.Sns
         [Test]
         public async Task NoSubscriptionAddedInDryRunMode()
         {
-            var sns = new Mock<IAmazonSimpleNotificationService>();
+            var sns = Substitute.For<IAmazonSimpleNotificationService>();
             SetupArnForCreateTopic(sns, "TestGroup-Alerts", "sns-topic-arn");
 
             var sut = MakeSnsCreator(sns);
@@ -115,13 +115,13 @@ namespace Watchman.Engine.Tests.Sns
             VerifyNoSubscriptionAdded(sns);
         }
 
-        private static SnsCreator MakeSnsCreator(Mock<IAmazonSimpleNotificationService> sns)
+        private static SnsCreator MakeSnsCreator(IAmazonSimpleNotificationService sns)
         {
             var logger = new ConsoleAlarmLogger(false);
 
             return new SnsCreator(
-                new SnsTopicCreator(sns.Object, logger),
-                new SnsSubscriptionCreator(logger, sns.Object));
+                new SnsTopicCreator(sns, logger),
+                new SnsSubscriptionCreator(logger, sns));
         }
 
         private AlertingGroup ConfigWithAlertUrl()
@@ -161,7 +161,7 @@ namespace Watchman.Engine.Tests.Sns
             };
         }
 
-        private void SetupArnForCreateTopic(Mock<IAmazonSimpleNotificationService> sns,
+        private void SetupArnForCreateTopic(IAmazonSimpleNotificationService sns,
             string topic, string arn)
         {
             var response = new CreateTopicResponse
@@ -170,44 +170,41 @@ namespace Watchman.Engine.Tests.Sns
             };
 
             sns
-                .Setup(x => x.CreateTopicAsync(topic, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(response);
+                .CreateTopicAsync(topic, Arg.Any<CancellationToken>())
+                .Returns(response);
         }
 
-        private void VerifyTopicCreated(Mock<IAmazonSimpleNotificationService> sns)
+        private void VerifyTopicCreated(IAmazonSimpleNotificationService sns)
         {
-            sns.Verify(x => x.CreateTopicAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()),
-                Times.Once);
+            sns.ReceivedWithAnyArgs(1).CreateTopicAsync(default(string));
         }
 
-        private void VerifyNoTopicCreated(Mock<IAmazonSimpleNotificationService> sns)
+        private void VerifyNoTopicCreated(IAmazonSimpleNotificationService sns)
         {
-            sns.Verify(x => x.CreateTopicAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()),
-                Times.Never);
+            sns.DidNotReceiveWithAnyArgs().CreateTopicAsync(default(string));
         }
 
-        private void VerifyHttpSubscriptionAdded(Mock<IAmazonSimpleNotificationService> sns, string arn, string url)
+        private void VerifyHttpSubscriptionAdded(IAmazonSimpleNotificationService sns, string arn, string url)
         {
-            sns.Verify(x => x.SubscribeAsync(
-                It.Is<SubscribeRequest>(r => r.Protocol == "http" && r.TopicArn == arn &&  r.Endpoint == url),
-                It.IsAny<CancellationToken>()),
-                Times.Once);
-        }
-
-
-        private void VerifyEmailSubscriptionAdded(Mock<IAmazonSimpleNotificationService> sns, string arn, string emailAddress)
-        {
-            sns.Verify(x => x.SubscribeAsync(
-                It.Is<SubscribeRequest>(r => r.Protocol == "email" && r.Endpoint == emailAddress),
-                It.IsAny<CancellationToken>()),
-                Times.Once);
+            sns.Received(1)
+                .SubscribeAsync(
+                    Arg.Is<SubscribeRequest>(r => r.Protocol == "http" && r.TopicArn == arn && r.Endpoint == url),
+                    Arg.Any<CancellationToken>());
         }
 
 
-        private void VerifyNoSubscriptionAdded(Mock<IAmazonSimpleNotificationService> sns)
+        private void VerifyEmailSubscriptionAdded(IAmazonSimpleNotificationService sns, string arn, string emailAddress)
         {
-            sns.Verify(x => x.SubscribeAsync(It.IsAny<SubscribeRequest>(), It.IsAny<CancellationToken>()),
-                Times.Never);
+            sns.Received(1)
+                .SubscribeAsync(
+                    Arg.Is<SubscribeRequest>(r => r.Protocol == "email" && r.Endpoint == emailAddress),
+                    Arg.Any<CancellationToken>());
+        }
+
+
+        private void VerifyNoSubscriptionAdded(IAmazonSimpleNotificationService sns)
+        {
+            sns.DidNotReceiveWithAnyArgs().SubscribeAsync(default);
         }
     }
 }

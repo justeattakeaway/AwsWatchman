@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources;
 using Watchman.Configuration.Generic;
@@ -16,17 +16,17 @@ namespace Watchman.Engine.Tests.Generation
         public async Task PopulateResourceNames_ByPatternAndNamed_ResourcesExpandedWithCorrectThresholds()
         {
             // arrange
-            var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
+            var resourceSourceStub = Substitute.For<IResourceSource<ExampleServiceModel>>();
             resourceSourceStub
-                .Setup(x => x.GetResourcesAsync())
-                .ReturnsAsync(WrapResourceNames(new List<string>
+                .GetResourcesAsync()
+                .Returns(WrapResourceNames(new List<string>
                 {
                     "ItemX",
                     "ItemY",
                     "ItemZ"
                 }));
 
-            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub);
 
             var namedItem = new ResourceThresholds<ResourceConfig>
             {
@@ -91,17 +91,17 @@ namespace Watchman.Engine.Tests.Generation
         public async Task PopulateResourceNames_ByPatternAndNamed_ResourcesExpandedWithCorrectEvaluationPeriods()
         {
             // arrange
-            var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
+            var resourceSourceStub = Substitute.For<IResourceSource<ExampleServiceModel>>();
             resourceSourceStub
-                .Setup(x => x.GetResourcesAsync())
-                .ReturnsAsync(WrapResourceNames(new List<string>
+                .GetResourcesAsync()
+                .Returns(WrapResourceNames(new List<string>
                 {
                     "ItemX",
                     "ItemY",
                     "ItemZ"
                 }));
 
-            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub);
 
             var namedItem = new ResourceThresholds<ResourceConfig>
             {
@@ -158,16 +158,16 @@ namespace Watchman.Engine.Tests.Generation
         public async Task PopulateResourceNames_ExclusionPrefixSpecified_ExcludesResources()
         {
             // arrange
-            var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
+            var resourceSourceStub = Substitute.For<IResourceSource<ExampleServiceModel>>();
             resourceSourceStub
-                .Setup(x => x.GetResourcesAsync())
-                .ReturnsAsync(WrapResourceNames(new List<string>
+                .GetResourcesAsync()
+                .Returns(WrapResourceNames(new List<string>
                 {
                     "ItemY",
                     "Something"
                 }));
 
-            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub);
 
             var group = new ServiceAlertingGroup<ResourceConfig>
             {
@@ -196,16 +196,16 @@ namespace Watchman.Engine.Tests.Generation
         public async Task PopulateResourceNames_DuplicatesMatched_DoesNotReturnDuplicates()
         {
             // arrange
-            var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
+            var resourceSourceStub = Substitute.For<IResourceSource<ExampleServiceModel>>();
             resourceSourceStub
-                .Setup(x => x.GetResourcesAsync())
-                .ReturnsAsync(WrapResourceNames(new List<string>
+                .GetResourcesAsync()
+                .Returns(WrapResourceNames(new List<string>
                 {
                     "ItemY"
                 }));
 
             var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(
-                new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+                new ConsoleAlarmLogger(false), resourceSourceStub);
 
             var group = new ServiceAlertingGroup<ResourceConfig>
             {
@@ -232,15 +232,15 @@ namespace Watchman.Engine.Tests.Generation
         public async Task PopulateResourceNames_NonExistantResourceSpecified_Ignored()
         {
             // arrange
-            var resourceSourceStub = new Mock<IResourceSource<ExampleServiceModel>>();
+            var resourceSourceStub = Substitute.For<IResourceSource<ExampleServiceModel>>();
             resourceSourceStub
-                .Setup(x => x.GetResourcesAsync())
-                .ReturnsAsync(WrapResourceNames(new List<string>
+                .GetResourcesAsync()
+                .Returns(WrapResourceNames(new List<string>
                 {
                     "ItemY"
                 }));
 
-            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub.Object);
+            var sut = new ResourceNamePopulator<ExampleServiceModel, ResourceConfig>(new ConsoleAlarmLogger(false), resourceSourceStub);
 
             var group = new ServiceAlertingGroup<ResourceConfig>
             {

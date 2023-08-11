@@ -1,5 +1,5 @@
 ﻿using Amazon.DynamoDBv2.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources;
 using Watchman.Configuration;
@@ -16,7 +16,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
         {
             var loader = MockTableSource(new List<string>());
 
-            var reporter = new OrphanTablesFinder(loader.Object);
+            var reporter = new OrphanTablesFinder(loader);
 
             var config = MakeConfigFor(new AlertingGroup());
 
@@ -30,7 +30,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
         {
             var loader = MockTableSource(new List<string> { "tableA", "tableB", "tableC" });
 
-            var reporter = new OrphanTablesFinder(loader.Object);
+            var reporter = new OrphanTablesFinder(loader);
 
             var config = MakeConfigFor(new AlertingGroup());
 
@@ -44,7 +44,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
         {
             var loader = MockTableSource(new List<string> { "tableA", "tableB", "tableC" });
 
-            var reporter = new OrphanTablesFinder(loader.Object);
+            var reporter = new OrphanTablesFinder(loader);
 
             var config = MakeConfigFor(new AlertingGroup
                 {
@@ -64,7 +64,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
         {
             var loader = MockTableSource(new List<string> { "tableA", "tableB", "tableC", "tableD" });
 
-            var reporter = new OrphanTablesFinder(loader.Object);
+            var reporter = new OrphanTablesFinder(loader);
 
             var config =  new WatchmanConfiguration
             {
@@ -97,7 +97,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
         {
             var loader = MockTableSource(new List<string> { "tableA", "tableB", "tableC", "tableD" });
 
-            var reporter = new OrphanTablesFinder(loader.Object);
+            var reporter = new OrphanTablesFinder(loader);
 
             var config = new WatchmanConfiguration
             {
@@ -130,7 +130,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
         {
             var loader = MockTableSource(new List<string> { "tableA", "tableB", "tableC", "tableD" });
 
-            var reporter = new OrphanTablesFinder(loader.Object);
+            var reporter = new OrphanTablesFinder(loader);
 
             var config = new WatchmanConfiguration
             {
@@ -167,11 +167,11 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
             AssertHasOrphans(orphans, new List<string> { "tableB", "tableC" });
         }
 
-        private static Mock<IResourceSource<TableDescription>> MockTableSource(List<string> tableNames)
+        private static IResourceSource<TableDescription> MockTableSource(List<string> tableNames)
         {
-            var loader = new Mock<IResourceSource<TableDescription>>();
-            loader.Setup(l => l.GetResourceNamesAsync())
-                .ReturnsAsync(tableNames);
+            var loader = Substitute.For<IResourceSource<TableDescription>>();
+            loader.GetResourceNamesAsync()
+                .Returns(tableNames);
 
             return loader;
         }

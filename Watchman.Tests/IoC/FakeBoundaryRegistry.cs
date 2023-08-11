@@ -13,7 +13,7 @@ using Amazon.S3;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
 using Amazon.StepFunctions;
-using Moq;
+using NSubstitute;
 using StructureMap;
 using Watchman.AwsResources;
 using Watchman.Configuration;
@@ -24,11 +24,11 @@ namespace Watchman.Tests.IoC
 {
     class FakeBoundaryRegistry : Registry
     {
-        private Mock<T> SetupFake<T>() where T : class
+        private T SetupFake<T>() where T : class
         {
-            var fake = new Mock<T>();
+            var fake = Substitute.For<T>();
             For<T>()
-                .Use(fake.Object)
+                .Use(fake)
                 .Singleton();
             return fake;
         }
@@ -46,9 +46,9 @@ namespace Watchman.Tests.IoC
 
             SetupFake<IAmazonSimpleNotificationService>()
                 // basic setup to stop other tests blowing up
-                .Setup(x => x.CreateTopicAsync(It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new CreateTopicResponse()
+                .CreateTopicAsync(Arg.Any<string>(),
+                    Arg.Any<CancellationToken>())
+                .Returns(new CreateTopicResponse()
                 {
                     TopicArn = "test-arn"
                 });

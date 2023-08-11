@@ -1,6 +1,6 @@
 ﻿using Amazon.ElasticLoadBalancingV2;
 using Amazon.ElasticLoadBalancingV2.Model;
-using Moq;
+using NSubstitute;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
 using Watchman.Engine;
@@ -79,8 +79,8 @@ namespace Watchman.Tests.Alb
                 .WithConfig(config);
 
             ioc.GetMock<IAmazonElasticLoadBalancingV2>()
-                .Setup(x => x.DescribeLoadBalancersAsync(It.IsAny<DescribeLoadBalancersRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => new DescribeLoadBalancersResponse
+                .DescribeLoadBalancersAsync(Arg.Any<DescribeLoadBalancersRequest>(), Arg.Any<CancellationToken>())
+                .Returns(new DescribeLoadBalancersResponse
                 {
                     LoadBalancers = _loadBalancers
                 });

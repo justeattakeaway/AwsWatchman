@@ -1,7 +1,8 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using Moq;
+using NSubstitute;
 using Newtonsoft.Json.Linq;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
@@ -91,22 +92,19 @@ namespace Watchman.Tests.Dynamo
             var dynamo = ioc.GetMock<IAmazonDynamoDB>();
 
             dynamo
-                .Setup(x => x.ListTablesAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ListTablesResponse()
+                .ListTablesAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(new ListTablesResponse()
                 {
                     TableNames = new List<string>() { "non-existent", "existent" }
                 });
 
             dynamo
-                .Setup(x => x.DescribeTableAsync("non-existent", It.IsAny<CancellationToken>()))
-                .ThrowsAsync(new ResourceNotFoundException("bad"))
-
-                // so we know this actually got hit and the error was thrown
-                .Verifiable();
+                .DescribeTableAsync("non-existent", Arg.Any<CancellationToken>())
+                .ThrowsAsync(new ResourceNotFoundException("bad"));
 
             dynamo
-                .Setup(x => x.DescribeTableAsync("existent", It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new DescribeTableResponse()
+                .DescribeTableAsync("existent", Arg.Any<CancellationToken>())
+                .Returns(new DescribeTableResponse()
                 {
                     Table = new TableDescription()
                     {
@@ -125,7 +123,10 @@ namespace Watchman.Tests.Dynamo
 
             // assert
 
-            dynamo.Verify();
+            await dynamo
+                .Received()
+                .DescribeTableAsync("non-existent", Arg.Any<CancellationToken>());
+
             Assert.That(cloudformation.StacksDeployed, Is.EqualTo(1));
 
             var alarms = cloudformation

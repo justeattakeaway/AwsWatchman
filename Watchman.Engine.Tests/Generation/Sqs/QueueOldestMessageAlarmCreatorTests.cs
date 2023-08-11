@@ -1,5 +1,5 @@
 ﻿using Amazon.CloudWatch;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.Engine.Alarms;
 using Watchman.Engine.Generation.Sqs;
@@ -15,12 +15,12 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task TestBasicQueueOldestMessageAlarmCreation()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
-            var logger = new Mock<IAlarmLogger>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureOldestMessageAlarm("testQueue", 100, "suffix", "testArn", false);
 
@@ -30,12 +30,12 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task WhenDryRunQueueLengthAlarmIsNotPut()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
-            var logger = new Mock<IAlarmLogger>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureOldestMessageAlarm("testQueue", 100, "suffix", "testArn", true);
 
@@ -45,15 +45,15 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task WhenOldestMessageAlarmExistsAtSameLevelNoAlarmIsCreated()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 100,
                 AwsConstants.FiveMinutesInSeconds, "testArn");
 
-            var logger = new Mock<IAlarmLogger>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureOldestMessageAlarm("testQueue", 100, "suffix", "testArn", false);
 
@@ -63,15 +63,15 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task WhenOldestMessageAlarmExistsWithDifferentThresholdAlarmIsCreated()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 101,
                 AwsConstants.FiveMinutesInSeconds, "testArn");
 
-            var logger = new Mock<IAlarmLogger>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureOldestMessageAlarm("testQueue", 100, "suffix", "testArn", false);
 
@@ -81,15 +81,15 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task WhenOldestMessageAlarmExistsWithDifferentPeriodAlarmIsCreated()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 100,
                 AwsConstants.FiveMinutesInSeconds + 1, "testArn");
 
-            var logger = new Mock<IAlarmLogger>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureOldestMessageAlarm("testQueue", 100, "suffix", "testArn", false);
 
@@ -99,15 +99,15 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task WhenOldestMessageAlarmExistsWithDifferentTargetAlarmIsCreated()
         {
-            var cloudWatch = new Mock<IAmazonCloudWatch>();
-            var alarmFinder = new Mock<IAlarmFinder>();
+            var cloudWatch = Substitute.For<IAmazonCloudWatch>();
+            var alarmFinder = Substitute.For<IAlarmFinder>();
             VerifyCloudwatch.AlarmFinderFindsThreshold(alarmFinder, 100,
                 AwsConstants.FiveMinutesInSeconds, "firstTarget");
 
-            var logger = new Mock<IAlarmLogger>();
+            var logger = Substitute.For<IAlarmLogger>();
 
             var queueAlarmCreator = new QueueAlarmCreator(
-                cloudWatch.Object, alarmFinder.Object, logger.Object, Mock.Of<ILegacyAlarmTracker>());
+                cloudWatch, alarmFinder, logger, Substitute.For<ILegacyAlarmTracker>());
 
             await queueAlarmCreator.EnsureOldestMessageAlarm("testQueue", 100, "suffix", "secondTarget", false);
 

@@ -1,6 +1,6 @@
 ﻿using Amazon.CloudFormation;
 using Amazon.CloudFormation.Model;
-using Moq;
+using NSubstitute;
 using Newtonsoft.Json;
 
 namespace Watchman.Tests.Fakes
@@ -9,42 +9,43 @@ namespace Watchman.Tests.Fakes
     {
         private readonly Dictionary<string, FakeStack> _submitted = new Dictionary<string, FakeStack>();
 
-        private Mock<IAmazonCloudFormation> fake = new Mock<IAmazonCloudFormation>();
+        private IAmazonCloudFormation fake = Substitute.For<IAmazonCloudFormation>();
 
         public int CallsToListStacks { get; private set; } = 0;
-        public IAmazonCloudFormation Instance => fake.Object;
+        public IAmazonCloudFormation Instance => fake;
 
         public FakeCloudFormation()
         {
-            fake.Setup(x => x.CreateStackAsync(It.IsAny<CreateStackRequest>(),
-                    It.IsAny<CancellationToken>()))
-                .Callback((CreateStackRequest req, CancellationToken token) =>
+            fake.CreateStackAsync(Arg.Any<CreateStackRequest>(),
+                    Arg.Any<CancellationToken>())
+                .Returns(new CreateStackResponse())
+                .AndDoes(x =>
                 {
+                    var req = x.ArgAt<CreateStackRequest>(0);
                     _submitted[req.StackName] = new FakeStack()
                     {
                         LastOperation = LastOperation.Create,
                         StackJson = req.TemplateBody,
                         StackName = req.StackName
                     };
-                })
-                .ReturnsAsync(new CreateStackResponse());
+                });
 
-            fake.Setup(x => x.UpdateStackAsync(It.IsAny<UpdateStackRequest>(),
-                    It.IsAny<CancellationToken>()))
-                .Callback((UpdateStackRequest req, CancellationToken token) =>
+            fake.UpdateStackAsync(Arg.Any<UpdateStackRequest>(),
+                    Arg.Any<CancellationToken>())
+                .Returns(new UpdateStackResponse())
+                .AndDoes(x =>
                 {
+                    var req = x.ArgAt<UpdateStackRequest>(0);
                     _submitted[req.StackName] = new FakeStack()
                     {
                         LastOperation = LastOperation.Update,
                         StackJson = req.TemplateBody,
                         StackName = req.StackName
                     };
-                })
-                .ReturnsAsync(new UpdateStackResponse());
+                });
 
-            fake.Setup(x => x.ListStacksAsync(It.IsAny<ListStacksRequest>(), It.IsAny<CancellationToken>()))
-                .Callback(() => { CallsToListStacks++;})
-                .ReturnsAsync(() => new ListStacksResponse()
+            fake.ListStacksAsync(Arg.Any<ListStacksRequest>(), Arg.Any<CancellationToken>())
+                .Returns(_ => new ListStacksResponse()
                 {
                     StackSummaries = _submitted
                         .Select(s => new StackSummary()
@@ -54,10 +55,11 @@ namespace Watchman.Tests.Fakes
                                 ? StackStatus.CREATE_COMPLETE
                                 : StackStatus.UPDATE_COMPLETE
                         }).ToList()
-                });
+                })
+                .AndDoes(_ => { CallsToListStacks++;});
 
-            fake.Setup(x => x.DescribeStacksAsync(It.IsAny<DescribeStacksRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((DescribeStacksRequest req, CancellationToken _) => new DescribeStacksResponse()
+            fake.DescribeStacksAsync(Arg.Any<DescribeStacksRequest>(), Arg.Any<CancellationToken>())
+                .Returns(_ => new DescribeStacksResponse()
                 {
                     Stacks = _submitted
                         .Select(s => new Stack()
