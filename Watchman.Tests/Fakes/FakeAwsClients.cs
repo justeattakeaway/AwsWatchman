@@ -14,7 +14,7 @@ using Amazon.Lambda;
 using Amazon.Lambda.Model;
 using Amazon.RDS;
 using Amazon.RDS.Model;
-using Moq;
+using NSubstitute;
 using DescribeLoadBalancersResponse = Amazon.ElasticLoadBalancing.Model.DescribeLoadBalancersResponse;
 
 namespace Watchman.Tests.Fakes
@@ -22,46 +22,43 @@ namespace Watchman.Tests.Fakes
     internal static class FakeAwsClients
     {
 
-        public static void DescribeReturnsLoadBalancers(this Mock<IAmazonElasticLoadBalancing> fake,
+        public static void DescribeReturnsLoadBalancers(this IAmazonElasticLoadBalancing fake,
             IEnumerable<LoadBalancerDescription> loadBalancers)
         {
-            fake.Setup(x => x.DescribeLoadBalancersAsync(
-                    It.Is<Amazon.ElasticLoadBalancing.Model.DescribeLoadBalancersRequest>(req => req.Marker == null),
-                    It.IsAny<CancellationToken>()
+            fake.DescribeLoadBalancersAsync(
+                    Arg.Is<Amazon.ElasticLoadBalancing.Model.DescribeLoadBalancersRequest>(req => req.Marker == null),
+                    Arg.Any<CancellationToken>(
                 ))
-                .ReturnsAsync(new DescribeLoadBalancersResponse()
+                .Returns(new DescribeLoadBalancersResponse()
                 {
                     LoadBalancerDescriptions = loadBalancers.ToList()
                 });
         }
 
-        public static void HasClusters(this Mock<IAmazonDAX> fake, IEnumerable<Cluster> clusters)
+        public static void HasClusters(this IAmazonDAX fake, IEnumerable<Cluster> clusters)
         {
-            fake
-                .Setup(l => l.DescribeClustersAsync(It.IsAny<DescribeClustersRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new DescribeClustersResponse
+            fake.DescribeClustersAsync(Arg.Any<DescribeClustersRequest>(), Arg.Any<CancellationToken>())
+                .Returns(new DescribeClustersResponse
                 {
                     Clusters = clusters.ToList()
                 });
-            
+
         }
 
-        public static void HasDynamoTables(this Mock<IAmazonDynamoDB> fake, IEnumerable<TableDescription> tables)
+        public static void HasDynamoTables(this IAmazonDynamoDB fake, IEnumerable<TableDescription> tables)
         {
             tables = tables.ToList();
 
-            fake
-                .Setup(x => x.ListTablesAsync((string)null, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ListTablesResponse()
+            fake.ListTablesAsync((string)null, Arg.Any<CancellationToken>())
+                .Returns(new ListTablesResponse()
                 {
                     TableNames = tables.Select(t => t.TableName).ToList()
                 });
 
             foreach (var table in tables)
             {
-                fake
-                    .Setup(x => x.DescribeTableAsync(table.TableName, It.IsAny<CancellationToken>()))
-                    .ReturnsAsync(new DescribeTableResponse()
+                fake.DescribeTableAsync(table.TableName, Arg.Any<CancellationToken>())
+                    .Returns(new DescribeTableResponse()
                     {
                         Table = table
                     });
@@ -69,12 +66,12 @@ namespace Watchman.Tests.Fakes
             }
         }
 
-        public static void HasCloudFrontDistributions(this Mock<IAmazonCloudFront> fake,
+        public static void HasCloudFrontDistributions(this IAmazonCloudFront fake,
             IEnumerable<DistributionSummary> distributionSummaries)
         {
-            fake.Setup(l => l.ListDistributionsAsync(It.IsAny<ListDistributionsRequest>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ListDistributionsResponse()
+            fake.ListDistributionsAsync(Arg.Any<ListDistributionsRequest>(),
+                    Arg.Any<CancellationToken>())
+                .Returns(new ListDistributionsResponse()
                 {
                     DistributionList = new DistributionList
                     {
@@ -83,11 +80,10 @@ namespace Watchman.Tests.Fakes
                 });
         }
 
-        public static void HasSqsQueues(this Mock<IAmazonCloudWatch> fake, IEnumerable<string> queues)
+        public static void HasSqsQueues(this IAmazonCloudWatch fake, IEnumerable<string> queues)
         {
-            fake
-                .Setup(x => x.ListMetricsAsync(It.IsAny<ListMetricsRequest>(), new CancellationToken()))
-                .ReturnsAsync(new ListMetricsResponse()
+            fake.ListMetricsAsync(Arg.Any<ListMetricsRequest>(), new CancellationToken())
+                .Returns(new ListMetricsResponse()
                               {
                                   Metrics = queues.Select(q => new Amazon.CloudWatch.Model.Metric()
                                                                {
@@ -107,32 +103,29 @@ namespace Watchman.Tests.Fakes
 
         }
 
-        public static void HasLambdaFunctions(this Mock<IAmazonLambda> fake, IEnumerable<FunctionConfiguration> functions)
+        public static void HasLambdaFunctions(this IAmazonLambda fake, IEnumerable<FunctionConfiguration> functions)
         {
-            fake
-                .Setup(l => l.ListFunctionsAsync(It.IsAny<Amazon.Lambda.Model.ListFunctionsRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new Amazon.Lambda.Model.ListFunctionsResponse()
+            fake.ListFunctionsAsync(Arg.Any<Amazon.Lambda.Model.ListFunctionsRequest>(), Arg.Any<CancellationToken>())
+                .Returns(new Amazon.Lambda.Model.ListFunctionsResponse()
                 {
                     Functions = functions.ToList()
                 });
         }
 
-        public static void HasRdsClusters(this Mock<IAmazonRDS> fake, IEnumerable<DBCluster> dbClusters)
+        public static void HasRdsClusters(this IAmazonRDS fake, IEnumerable<DBCluster> dbClusters)
         {
-            fake
-                .Setup(l => l.DescribeDBClustersAsync(It.IsAny<DescribeDBClustersRequest>(), new CancellationToken()))
-                .ReturnsAsync(new DescribeDBClustersResponse()
+            fake.DescribeDBClustersAsync(Arg.Any<DescribeDBClustersRequest>(), new CancellationToken())
+                .Returns(new DescribeDBClustersResponse()
                 {
                     DBClusters = dbClusters.ToList()
                 });
         }
 
-        public static void HasAutoScalingGroups(this Mock<IAmazonAutoScaling> fake, IEnumerable<AutoScalingGroup> groups)
+        public static void HasAutoScalingGroups(this IAmazonAutoScaling fake, IEnumerable<AutoScalingGroup> groups)
         {
-            fake
-                .Setup(a => a.DescribeAutoScalingGroupsAsync(It.IsAny<DescribeAutoScalingGroupsRequest>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new DescribeAutoScalingGroupsResponse()
+            fake.DescribeAutoScalingGroupsAsync(Arg.Any<DescribeAutoScalingGroupsRequest>(),
+                    Arg.Any<CancellationToken>())
+                .Returns(new DescribeAutoScalingGroupsResponse()
                 {
                     AutoScalingGroups = groups.ToList()
                 });

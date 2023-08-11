@@ -1,6 +1,6 @@
 ﻿using Amazon.RDS;
 using Amazon.RDS.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Rds;
 
@@ -42,23 +42,23 @@ namespace Watchman.AwsResources.Tests.Services.Rds
                 }
             };
 
-            var rdsMock = new Mock<IAmazonRDS>();
-            rdsMock.Setup(s => s.DescribeDBInstancesAsync(
-                It.Is<DescribeDBInstancesRequest>(r => r.Marker == null),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_firstPage);
+            var rdsMock = Substitute.For<IAmazonRDS>();
+            rdsMock.DescribeDBInstancesAsync(
+                Arg.Is<DescribeDBInstancesRequest>(r => r.Marker == null),
+                Arg.Any<CancellationToken>())
+                .Returns(_firstPage);
 
-            rdsMock.Setup(s => s.DescribeDBInstancesAsync(
-                It.Is<DescribeDBInstancesRequest>(r => r.Marker == "token-1"),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_secondPage);
+            rdsMock.DescribeDBInstancesAsync(
+                Arg.Is<DescribeDBInstancesRequest>(r => r.Marker == "token-1"),
+                Arg.Any<CancellationToken>())
+                .Returns(_secondPage);
 
-            rdsMock.Setup(s => s.DescribeDBInstancesAsync(
-                It.Is<DescribeDBInstancesRequest>(r => r.Marker == "token-2"),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_thirdPage);
+            rdsMock.DescribeDBInstancesAsync(
+                Arg.Is<DescribeDBInstancesRequest>(r => r.Marker == "token-2"),
+                Arg.Any<CancellationToken>())
+                .Returns(_thirdPage);
 
-            _rdsSource = new RdsSource(rdsMock.Object);
+            _rdsSource = new RdsSource(rdsMock);
         }
 
         [Test]

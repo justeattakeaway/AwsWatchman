@@ -1,6 +1,7 @@
-﻿using Amazon.DAX;
+﻿using System.Linq.Expressions;
+using Amazon.DAX;
 using Amazon.DAX.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.Dax;
 
@@ -17,7 +18,7 @@ namespace Watchman.AwsResources.Tests.Services.Dax
         [SetUp]
         public void SetUp()
         {
-            var stepClusterMock = new Mock<IAmazonDAX>();
+            var stepClusterMock = Substitute.For<IAmazonDAX>();
 
             _firstPage = new DescribeClustersResponse
             {
@@ -55,22 +56,22 @@ namespace Watchman.AwsResources.Tests.Services.Dax
                 }
             };
 
-            stepClusterMock.Setup(c => c.DescribeClustersAsync(
-                It.Is<DescribeClustersRequest>(r => r.NextToken == null)
-                , It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_firstPage);
+            stepClusterMock.DescribeClustersAsync(
+                Arg.Is<DescribeClustersRequest>(r => r.NextToken == null)
+                , Arg.Any<CancellationToken>())
+                .Returns(_firstPage);
 
-            stepClusterMock.Setup(c => c.DescribeClustersAsync(
-                    It.Is<DescribeClustersRequest>(r => r.NextToken == "token-1")
-                    , It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_secondPage);
+            stepClusterMock.DescribeClustersAsync(
+                    Arg.Is<DescribeClustersRequest>(r => r.NextToken == "token-1")
+                    , Arg.Any<CancellationToken>())
+                .Returns(_secondPage);
 
-            stepClusterMock.Setup(c => c.DescribeClustersAsync(
-                    It.Is<DescribeClustersRequest>(r => r.NextToken == "token-2")
-                    , It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_thirdPage);
+            stepClusterMock.DescribeClustersAsync(
+                    Arg.Is<DescribeClustersRequest>(r => r.NextToken == "token-2")
+                    , Arg.Any<CancellationToken>())
+                .Returns(_thirdPage);
 
-            _source = new DaxSource(stepClusterMock.Object);
+            _source = new DaxSource(stepClusterMock);
         }
 
         [Test]

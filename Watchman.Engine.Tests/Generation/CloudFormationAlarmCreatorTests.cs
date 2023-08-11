@@ -4,7 +4,8 @@ using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 using Watchman.AwsResources;
 using Watchman.Configuration;
@@ -23,14 +24,14 @@ namespace Watchman.Engine.Tests.Generation
             public string Name { get; set; }
         }
 
-        private Mock<IAmazonCloudFormation> _cloudFormationMock;
-        private Mock<IAmazonS3> _s3Mock;
+        private IAmazonCloudFormation _cloudFormationMock;
+        private IAmazonS3 _s3Mock;
 
         private void SetupListStacksToReturnStackNames(params string[] stackNames)
         {
             _cloudFormationMock
-                .Setup(x => x.ListStacksAsync(It.IsAny<ListStacksRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new ListStacksResponse
+                .ListStacksAsync(Arg.Any<ListStacksRequest>(), Arg.Any<CancellationToken>())
+                .Returns(new ListStacksResponse
                 {
                     StackSummaries = stackNames.Select(s => new StackSummary
                         {
@@ -42,7 +43,7 @@ namespace Watchman.Engine.Tests.Generation
         private void SetupCreateStackAsyncToFail()
         {
             _cloudFormationMock
-                .Setup(x => x.CreateStackAsync(It.IsAny<CreateStackRequest>(), It.IsAny<CancellationToken>()))
+                .CreateStackAsync(Arg.Any<CreateStackRequest>(), Arg.Any<CancellationToken>())
                 .ThrowsAsync(new Exception("all gon rong"));
         }
 
@@ -56,11 +57,10 @@ namespace Watchman.Engine.Tests.Generation
             var i = 0;
 
             _cloudFormationMock
-                .Setup(x => x.DescribeStacksAsync(
-                    It.Is<DescribeStacksRequest>(s => s.StackName == stackName),
-                    It.IsAny<CancellationToken>())
-                )
-                .Returns(() =>
+                .DescribeStacksAsync(
+                    Arg.Is<DescribeStacksRequest>(s => s.StackName == stackName),
+                    Arg.Any<CancellationToken>())
+                .Returns(_ =>
                 {
                     var result = new DescribeStacksResponse
                     {
@@ -118,8 +118,8 @@ namespace Watchman.Engine.Tests.Generation
         [SetUp]
         public void SetUp()
         {
-            _cloudFormationMock = new Mock<IAmazonCloudFormation>();
-            _s3Mock = new Mock<IAmazonS3>();
+            _cloudFormationMock = Substitute.For<IAmazonCloudFormation>();
+            _s3Mock = Substitute.For<IAmazonS3>();
         }
 
         [Test]
@@ -145,10 +145,11 @@ namespace Watchman.Engine.Tests.Generation
             await sut.SaveChanges(false);
 
             // assert
-            _cloudFormationMock
-               .Verify(x => x.UpdateStackAsync(
-                   It.Is<UpdateStackRequest>(s => s.StackName == stackName),
-                   It.IsAny<CancellationToken>()));
+            await _cloudFormationMock
+                .Received()
+                .UpdateStackAsync(
+                    Arg.Is<UpdateStackRequest>(s => s.StackName == stackName),
+                    Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -174,10 +175,11 @@ namespace Watchman.Engine.Tests.Generation
             await sut.SaveChanges(false);
 
             // assert
-            _cloudFormationMock
-                .Verify(x => x.CreateStackAsync(
-                    It.Is<CreateStackRequest>(s => s.StackName == stackName),
-                    It.IsAny<CancellationToken>()));
+            await _cloudFormationMock
+                .Received()
+                .CreateStackAsync(
+                    Arg.Is<CreateStackRequest>(s => s.StackName == stackName),
+                    Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -214,15 +216,17 @@ namespace Watchman.Engine.Tests.Generation
             await sut.SaveChanges(false);
 
             // assert
-            _cloudFormationMock
-                .Verify(x => x.CreateStackAsync(
-                    It.IsAny<CreateStackRequest>(),
-                    It.IsAny<CancellationToken>()), Times.Never);
+            await _cloudFormationMock
+                .DidNotReceive()
+                .CreateStackAsync(
+                    Arg.Any<CreateStackRequest>(),
+                    Arg.Any<CancellationToken>());
 
-            _cloudFormationMock
-                .Verify(x => x.UpdateStackAsync(
-                    It.IsAny<UpdateStackRequest>(),
-                    It.IsAny<CancellationToken>()), Times.Never);
+            await _cloudFormationMock
+                .DidNotReceive()
+                .UpdateStackAsync(
+                    Arg.Any<UpdateStackRequest>(),
+                    Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -242,10 +246,11 @@ namespace Watchman.Engine.Tests.Generation
             await sut.SaveChanges(true);
 
             // assert
-            _cloudFormationMock
-                .Verify(x => x.CreateStackAsync(
-                    It.IsAny<CreateStackRequest>(),
-                    It.IsAny<CancellationToken>()), Times.Never());
+            await _cloudFormationMock
+                .DidNotReceive()
+                .CreateStackAsync(
+                    Arg.Any<CreateStackRequest>(),
+                    Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -284,10 +289,11 @@ namespace Watchman.Engine.Tests.Generation
             var maxDelayMillis = expectedDelayMillis * 4;
             Assert.That(actualWaitMillis, Is.LessThanOrEqualTo(maxDelayMillis));
 
-            _cloudFormationMock
-                .Verify(x => x.DescribeStacksAsync(
-                    It.Is<DescribeStacksRequest>(s => s.StackName == stackName),
-                    It.IsAny<CancellationToken>()), Times.Exactly(3));
+            await _cloudFormationMock
+                .Received(3)
+                .DescribeStacksAsync(
+                    Arg.Is<DescribeStacksRequest>(s => s.StackName == stackName),
+                    Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -317,18 +323,19 @@ namespace Watchman.Engine.Tests.Generation
 
             // assert
             var s3Path = $"{s3Location.Path}/{stackName}.json";
-            _s3Mock
-                .Verify(x => x.PutObjectAsync(
-                    It.Is<PutObjectRequest>(r => r.BucketName == s3Location.BucketName && r.Key == s3Path),
-                    It.IsAny<CancellationToken>()));
+            await _s3Mock
+                .PutObjectAsync(
+                    Arg.Is<PutObjectRequest>(r => r.BucketName == s3Location.BucketName && r.Key == s3Path),
+                    Arg.Any<CancellationToken>());
 
             var expectedStackUrl = $"https://s3.amazonaws.com/{s3Location.BucketName}/{s3Path}";
-            _cloudFormationMock
-               .Verify(x => x.CreateStackAsync(
-                   It.Is<CreateStackRequest>(s => s.StackName == stackName
-                        && s.TemplateURL == expectedStackUrl
-                        && s.TemplateBody == null),
-                   It.IsAny<CancellationToken>()), Times.Exactly(1));
+            await _cloudFormationMock
+                .Received(1)
+                .CreateStackAsync(
+                    Arg.Is<CreateStackRequest>(s => s.StackName == stackName
+                                                    && s.TemplateURL == expectedStackUrl
+                                                    && s.TemplateBody == null),
+                    Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -353,17 +360,19 @@ namespace Watchman.Engine.Tests.Generation
             await sut.SaveChanges(false);
 
             // assert
-            _s3Mock
-                .Verify(x => x.PutObjectAsync(
-                    It.IsAny<PutObjectRequest>(),
-                    It.IsAny<CancellationToken>()), Times.Never);
+            await _s3Mock
+                .DidNotReceive()
+                .PutObjectAsync(
+                    Arg.Any<PutObjectRequest>(),
+                    Arg.Any<CancellationToken>());
 
-            _cloudFormationMock
-               .Verify(x => x.CreateStackAsync(
-                   It.Is<CreateStackRequest>(s => s.StackName == stackName
-                        && s.TemplateURL == null
-                        && !string.IsNullOrWhiteSpace(s.TemplateBody)),
-                   It.IsAny<CancellationToken>()), Times.Exactly(1));
+            await _cloudFormationMock
+                .Received(1)
+                .CreateStackAsync(
+                    Arg.Is<CreateStackRequest>(s => s.StackName == stackName
+                                                    && s.TemplateURL == null
+                                                    && !string.IsNullOrWhiteSpace(s.TemplateBody)),
+                    Arg.Any<CancellationToken>());
         }
 
         [Test]
@@ -386,7 +395,7 @@ namespace Watchman.Engine.Tests.Generation
             var deployer = MakeDeployer(s3Location, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 
             var sut = new CloudFormationAlarmCreator(deployer, new ConsoleAlarmLogger(false));
-            
+
             //act
 
             Exception caught = null;
@@ -416,45 +425,45 @@ namespace Watchman.Engine.Tests.Generation
             {
                 alarms.Add(Alarm($"Test alarm {i}"));
             }
-           
+
             var group = Group(numberOfStacks: 2);
-            
+
             var stackName1 = $"Watchman-{group.Name.ToLowerInvariant()}";
             var stackName2 = $"Watchman-{group.Name.ToLowerInvariant()}-1";
 
             SetupListStacksToReturnStackNames();
 
-            _cloudFormationMock.Setup(x => x.DescribeStacksAsync(
-                           It.Is<DescribeStacksRequest>(s => s.StackName == stackName1),
-                           It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new DescribeStacksResponse
-                          {
-                              Stacks = new List<Stack>
-                                       {
-                                           new Stack
-                                           {
-                                               StackStatus = "CREATE_COMPLETE",
-                                               StackName = stackName1
-                                           }
-                                       }
-                          
-                         });
-            _cloudFormationMock.Setup(x => x.DescribeStacksAsync(
-                                          It.Is<DescribeStacksRequest>(s => s.StackName == stackName2),
-                                          It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new DescribeStacksResponse
-                              {
-                                  Stacks = new List<Stack>
-                                           {
-                                               new Stack
-                                               {
-                                                   StackStatus = "CREATE_COMPLETE",
-                                                   StackName = stackName2
-                                               }
-                                           }
+            _cloudFormationMock.DescribeStacksAsync(
+                           Arg.Is<DescribeStacksRequest>(s => s.StackName == stackName1),
+                           Arg.Any<CancellationToken>())
+                .Returns(new DescribeStacksResponse
+                {
+                    Stacks = new List<Stack>
+                    {
+                        new Stack
+                        {
+                            StackStatus = "CREATE_COMPLETE",
+                            StackName = stackName1
+                        }
+                    }
 
-                              });
-          
+                });
+            _cloudFormationMock.DescribeStacksAsync(
+                                          Arg.Is<DescribeStacksRequest>(s => s.StackName == stackName2),
+                                          Arg.Any<CancellationToken>())
+                .Returns(new DescribeStacksResponse
+                {
+                    Stacks = new List<Stack>
+                    {
+                        new Stack
+                        {
+                            StackStatus = "CREATE_COMPLETE",
+                            StackName = stackName2
+                        }
+                    }
+
+                });
+
 
             var deployer = MakeDeployer(null,
                 TimeSpan.FromMilliseconds(5),
@@ -468,15 +477,17 @@ namespace Watchman.Engine.Tests.Generation
             await sut.SaveChanges(false);
 
             // assert
-            _cloudFormationMock
-                .Verify(x => x.CreateStackAsync(
-                            It.Is<CreateStackRequest>(s => s.StackName == stackName1),
-                            It.IsAny<CancellationToken>()));
+            await _cloudFormationMock
+                .Received()
+                .CreateStackAsync(
+                            Arg.Is<CreateStackRequest>(s => s.StackName == stackName1),
+                            Arg.Any<CancellationToken>());
 
-            _cloudFormationMock
-                .Verify(x => x.CreateStackAsync(
-                            It.Is<CreateStackRequest>(s => s.StackName == stackName2),
-                            It.IsAny<CancellationToken>()));
+            await _cloudFormationMock
+                .Received()
+                .CreateStackAsync(
+                            Arg.Is<CreateStackRequest>(s => s.StackName == stackName2),
+                            Arg.Any<CancellationToken>());
         }
 
         private CloudFormationStackDeployer MakeDeployer(
@@ -484,8 +495,8 @@ namespace Watchman.Engine.Tests.Generation
         {
             return new CloudFormationStackDeployer(
                 new ConsoleAlarmLogger(false),
-                _cloudFormationMock.Object,
-                _s3Mock.Object,
+                _cloudFormationMock,
+                _s3Mock,
                 s3Location,
                 wait, waitTimeout);
         }
@@ -494,8 +505,8 @@ namespace Watchman.Engine.Tests.Generation
         {
             return new CloudFormationStackDeployer(
                 new ConsoleAlarmLogger(false),
-                _cloudFormationMock.Object,
-                _s3Mock.Object,
+                _cloudFormationMock,
+                _s3Mock,
                 null);
         }
     }

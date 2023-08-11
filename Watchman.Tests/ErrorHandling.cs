@@ -2,7 +2,8 @@
 using Amazon.AutoScaling.Model;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 using Watchman.Configuration;
 using Watchman.Configuration.Generic;
@@ -96,10 +97,10 @@ namespace Watchman.Tests
                     DesiredCapacity = 10
                 }
             });
-            
+
             ioc.GetMock<IAmazonCloudWatch>()
-                .Setup(c => c.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(),
-                    It.IsAny<CancellationToken>()))
+                .GetMetricStatisticsAsync(Arg.Any<GetMetricStatisticsRequest>(),
+                    Arg.Any<CancellationToken>())
                 .ThrowsAsync(new Exception("something bad"));
 
             var sut = ioc.Get<AlarmLoaderAndGenerator>();

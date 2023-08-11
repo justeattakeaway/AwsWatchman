@@ -80,7 +80,7 @@ namespace Watchman.Tests
             });
 
             var sut = ioc.Get<AlarmLoaderAndGenerator>();
-            
+
             // act
 
             await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
@@ -91,7 +91,7 @@ namespace Watchman.Tests
                 .Stack("Watchman-group-with-description")
                 .Alarms()
                 .First();
-            
+
             var description = firstGroupAlarm.Properties["AlarmDescription"].ToString();
 
             Assert.That(description, Contains.Substring("Alarm (new version) managed by AwsWatchman"));

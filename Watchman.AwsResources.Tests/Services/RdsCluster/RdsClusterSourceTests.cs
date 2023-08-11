@@ -1,6 +1,6 @@
 ﻿using Amazon.RDS;
 using Amazon.RDS.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.RdsCluster;
 
@@ -42,23 +42,23 @@ namespace Watchman.AwsResources.Tests.Services.RdsCluster
                 }
             };
 
-            var rdsMock = new Mock<IAmazonRDS>();
-            rdsMock.Setup(s => s.DescribeDBClustersAsync(
-                It.Is<DescribeDBClustersRequest>(r => r.Marker == null),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_firstPage);
+            var rdsMock = Substitute.For<IAmazonRDS>();
+            rdsMock.DescribeDBClustersAsync(
+                Arg.Is<DescribeDBClustersRequest>(r => r.Marker == null),
+                Arg.Any<CancellationToken>())
+                .Returns(_firstPage);
 
-            rdsMock.Setup(s => s.DescribeDBClustersAsync(
-                It.Is<DescribeDBClustersRequest>(r => r.Marker == "token-1"),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_secondPage);
+            rdsMock.DescribeDBClustersAsync(
+                Arg.Is<DescribeDBClustersRequest>(r => r.Marker == "token-1"),
+                Arg.Any<CancellationToken>())
+                .Returns(_secondPage);
 
-            rdsMock.Setup(s => s.DescribeDBClustersAsync(
-                It.Is<DescribeDBClustersRequest>(r => r.Marker == "token-2"),
-                It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_thirdPage);
+            rdsMock.DescribeDBClustersAsync(
+                Arg.Is<DescribeDBClustersRequest>(r => r.Marker == "token-2"),
+                Arg.Any<CancellationToken>())
+                .Returns(_thirdPage);
 
-            _rdsClusterSource = new RdsClusterSource(rdsMock.Object);
+            _rdsClusterSource = new RdsClusterSource(rdsMock);
         }
 
         [Test]

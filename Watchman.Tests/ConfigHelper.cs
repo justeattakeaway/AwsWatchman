@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using NSubstitute;
 using Watchman.Configuration;
 using Watchman.Configuration.Load;
 
@@ -34,22 +34,22 @@ namespace Watchman.Tests
 
         public static IConfigLoader ConfigLoaderFor(WatchmanConfiguration config)
         {
-            var fake = new Mock<IConfigLoader>();
+            var fake = Substitute.For<IConfigLoader>();
             fake
-                .Setup(x => x.LoadConfig())
+                .LoadConfig()
                 .Returns(config);
 
-            return fake.Object;
+            return fake;
         }
 
         public static IConfigLoader ConfigLoaderFor(params AlertingGroup[] groups)
         {
-            var fake = new Mock<IConfigLoader>();
+            var fake = Substitute.For<IConfigLoader>();
             fake
-                .Setup(x => x.LoadConfig())
+                .LoadConfig()
                 .Returns(new WatchmanConfiguration() { AlertingGroups = groups.ToList() });
 
-            return fake.Object;
+            return fake;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Amazon.CloudFront;
 using Amazon.CloudFront.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources.Services.CloudFront;
 
@@ -17,28 +17,28 @@ namespace Watchman.AwsResources.Tests.Services.CloudFront
         [SetUp]
         public void SetUp()
         {
-            var stepCloudFrontMock = new Mock<IAmazonCloudFront>();
+            var stepCloudFrontMock = Substitute.For<IAmazonCloudFront>();
 
             _firstPage = BuildListResponse(1);
             _secondPage = BuildListResponse(2);
             _thirdPage = BuildListResponse(null);
 
-            stepCloudFrontMock.Setup(c => c.ListDistributionsAsync(
-                    It.Is<ListDistributionsRequest>(r => r.Marker == null),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_firstPage);
+            stepCloudFrontMock.ListDistributionsAsync(
+                    Arg.Is<ListDistributionsRequest>(r => r.Marker == null),
+                    Arg.Any<CancellationToken>())
+                .Returns(_firstPage);
 
-            stepCloudFrontMock.Setup(c => c.ListDistributionsAsync(
-                    It.Is<ListDistributionsRequest>(r => r.Marker == "token-1"),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_secondPage);
+            stepCloudFrontMock.ListDistributionsAsync(
+                    Arg.Is<ListDistributionsRequest>(r => r.Marker == "token-1"),
+                    Arg.Any<CancellationToken>())
+                .Returns(_secondPage);
 
-            stepCloudFrontMock.Setup(c => c.ListDistributionsAsync(
-                    It.Is<ListDistributionsRequest>(r => r.Marker == "token-2"),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(_thirdPage);
+            stepCloudFrontMock.ListDistributionsAsync(
+                    Arg.Is<ListDistributionsRequest>(r => r.Marker == "token-2"),
+                    Arg.Any<CancellationToken>())
+                .Returns(_thirdPage);
 
-            _source = new CloudFrontSource(stepCloudFrontMock.Object);
+            _source = new CloudFrontSource(stepCloudFrontMock);
         }
 
         [Test]

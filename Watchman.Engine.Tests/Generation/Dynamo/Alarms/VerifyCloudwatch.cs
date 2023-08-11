@@ -1,17 +1,17 @@
 ﻿using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
-using Moq;
+using NSubstitute;
 using Watchman.Engine.Alarms;
 
 namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
 {
     public static class VerifyCloudwatch
     {
-        public static void AlarmFinderFindsThreshold(Mock<IAlarmFinder> alarmFinder,
+        public static void AlarmFinderFindsThreshold(IAlarmFinder alarmFinder,
             double threshold, int period, string action)
         {
-            alarmFinder.Setup(x => x.FindAlarmByName(It.IsAny<string>()))
-                .ReturnsAsync(new MetricAlarm
+            alarmFinder.FindAlarmByName(Arg.Any<string>())
+                .Returns(new MetricAlarm
                 {
                     Threshold = threshold,
                     EvaluationPeriods = 1,
@@ -21,18 +21,16 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.Alarms
                 });
         }
 
-        public static void PutMetricAlarmWasCalledOnce(Mock<IAmazonCloudWatch> cloudWatch)
+        public static void PutMetricAlarmWasCalledOnce(IAmazonCloudWatch cloudWatch)
         {
-            cloudWatch.Verify(x => x.PutMetricAlarmAsync(
-                It.IsAny<PutMetricAlarmRequest>(), It.IsAny<CancellationToken>()),
-                Times.Once);
+            cloudWatch.Received(1).PutMetricAlarmAsync(
+                Arg.Any<PutMetricAlarmRequest>(), Arg.Any<CancellationToken>());
         }
 
-        public static void PutMetricAlarmWasNotCalled(Mock<IAmazonCloudWatch> cloudWatch)
+        public static void PutMetricAlarmWasNotCalled(IAmazonCloudWatch cloudWatch)
         {
-            cloudWatch.Verify(x => x.PutMetricAlarmAsync(
-                It.IsAny<PutMetricAlarmRequest>(), It.IsAny<CancellationToken>()),
-                Times.Never);
+            cloudWatch.DidNotReceive().PutMetricAlarmAsync(
+                Arg.Any<PutMetricAlarmRequest>(), Arg.Any<CancellationToken>());
         }
 
     }

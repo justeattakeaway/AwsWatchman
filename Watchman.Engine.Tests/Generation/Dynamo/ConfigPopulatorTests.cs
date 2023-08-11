@@ -1,5 +1,5 @@
 ﻿using Amazon.DynamoDBv2.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources;
 using Watchman.Configuration;
@@ -11,7 +11,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
     [TestFixture]
     public class ConfigPopulatorTests
     {
-        private Mock<IResourceSource<TableDescription>> _tableLoaderMock;
+        private IResourceSource<TableDescription> _tableLoaderMock;
 
         [Test]
         public async Task ASingleTableIsPassedThrough()
@@ -36,7 +36,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
             Assert.That(alertingGroup.DynamoDb.Tables.Count, Is.EqualTo(1));
             ShouldHaveTable(alertingGroup.DynamoDb.Tables, "tableA");
 
-            _tableLoaderMock.Verify(t => t.GetResourceNamesAsync(), Times.Never);
+            await _tableLoaderMock.DidNotReceive().GetResourceNamesAsync();
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
             ShouldHaveTable(alertingGroup.DynamoDb.Tables, "tableA");
             ShouldHaveTable(alertingGroup.DynamoDb.Tables, "tableB");
 
-            _tableLoaderMock.Verify(t => t.GetResourceNamesAsync(), Times.Never);
+            await _tableLoaderMock.DidNotReceive().GetResourceNamesAsync();
         }
 
         [Test]
@@ -92,7 +92,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
             ShouldHaveTable(alertingGroup.DynamoDb.Tables, "AutoTable2");
             ShouldHaveTable(alertingGroup.DynamoDb.Tables, "ATable3");
 
-            _tableLoaderMock.Verify(t => t.GetResourceNamesAsync(), Times.Once);
+            await _tableLoaderMock.Received(1).GetResourceNamesAsync();
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
             Assert.That(autoTable2.Threshold, Is.Null);
             Assert.That(autoTable2.MonitorWrites, Is.Null);
 
-            _tableLoaderMock.Verify(t => t.GetResourceNamesAsync(), Times.Once);
+            await _tableLoaderMock.Received(1).GetResourceNamesAsync();
         }
 
         [Test]
@@ -164,7 +164,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
             Assert.That(autoTable2.Threshold, Is.EqualTo(0.42));
             Assert.That(autoTable2.MonitorWrites, Is.False);
 
-            _tableLoaderMock.Verify(t => t.GetResourceNamesAsync(), Times.Once);
+            await _tableLoaderMock.Received(1).GetResourceNamesAsync();
         }
 
         [Test]
@@ -199,7 +199,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
             Assert.That(autoTable2.MonitorThrottling, Is.True);
             Assert.That(autoTable2.ThrottlingThreshold, Is.EqualTo(123));
 
-            _tableLoaderMock.Verify(t => t.GetResourceNamesAsync(), Times.Once);
+            await _tableLoaderMock.Received(1).GetResourceNamesAsync();
         }
 
         [Test]
@@ -237,7 +237,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
             Assert.That(autoTable2.Name, Is.EqualTo("AutoTable2"));
             Assert.That(autoTable2.Threshold, Is.EqualTo(0.42));
 
-            _tableLoaderMock.Verify(t => t.GetResourceNamesAsync(), Times.Once);
+            await _tableLoaderMock.Received(1).GetResourceNamesAsync();
         }
 
         [Test]
@@ -273,7 +273,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
             Assert.That(autoTable2.Threshold, Is.EqualTo(0.53));
             Assert.That(autoTable2.MonitorWrites, Is.False);
 
-            _tableLoaderMock.Verify(t => t.GetResourceNamesAsync(), Times.AtLeastOnce);
+            await _tableLoaderMock.Received().GetResourceNamesAsync();
         }
 
         [Test]
@@ -297,7 +297,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
             await populator.PopulateDynamoTableNames(alertingGroup);
 
             Assert.That(alertingGroup.DynamoDb.Tables.Count, Is.EqualTo(9));
-            _tableLoaderMock.Verify(t => t.GetResourceNamesAsync(), Times.Once);
+            await _tableLoaderMock.Received(1).GetResourceNamesAsync();
         }
 
         [Test]
@@ -402,13 +402,13 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
                 tableNames.Add("woof");
             }
 
-            var logger = new Mock<IAlarmLogger>();
-            _tableLoaderMock = new Mock<IResourceSource<TableDescription>>();
+            var logger = Substitute.For<IAlarmLogger>();
+            _tableLoaderMock = Substitute.For<IResourceSource<TableDescription>>();
 
-            _tableLoaderMock.Setup(t => t.GetResourceNamesAsync())
-                .ReturnsAsync(tableNames);
+            _tableLoaderMock.GetResourceNamesAsync()
+                .Returns(tableNames);
 
-            return new TableNamePopulator(logger.Object, _tableLoaderMock.Object);
+            return new TableNamePopulator(logger, _tableLoaderMock);
         }
 
         private void ShouldHaveTable(IEnumerable<Table> tables, string name)

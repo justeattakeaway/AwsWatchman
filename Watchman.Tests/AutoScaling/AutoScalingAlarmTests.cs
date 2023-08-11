@@ -2,7 +2,7 @@
 using Amazon.AutoScaling.Model;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources;
 using Watchman.Configuration;
@@ -16,37 +16,29 @@ namespace Watchman.Tests.AutoScaling
 {
     public class AutoScalingAlarmTests
     {
-        private void SetupCloudWatchDesiredMetric(Mock<IAmazonCloudWatch> client,
+        private void SetupCloudWatchDesiredMetric(IAmazonCloudWatch client,
             int lagSeconds,
             DateTime now,
             string autoScalingGroupName,
             int value)
         {
 
-            client.Setup(
-                    c => c.GetMetricStatisticsAsync(It.Is<GetMetricStatisticsRequest>(req =>
-                            req.MetricName == "GroupDesiredCapacity"
-                            && req.Namespace == "AWS/AutoScaling"
-                            && req.Period == lagSeconds
-                            && req.Statistics.All(s => s == "Minimum")
-                            && req.Dimensions.All(
-                                x => x.Name == "AutoScalingGroupName" && x.Value== autoScalingGroupName
-                            )
-                            && req.EndTimeUtc == now
-                            && req.StartTimeUtc == now.AddSeconds(lagSeconds * -1)
+            client.GetMetricStatisticsAsync(Arg.Is<GetMetricStatisticsRequest>(req =>
+                        req.MetricName == "GroupDesiredCapacity"
+                        && req.Namespace == "AWS/AutoScaling"
+                        && req.Period == lagSeconds
+                        && req.Statistics.All(s => s == "Minimum")
+                        && req.Dimensions.All(
+                            x => x.Name == "AutoScalingGroupName" && x.Value == autoScalingGroupName
+                        )
+                        && req.EndTimeUtc == now
+                        && req.StartTimeUtc == now.AddSeconds(lagSeconds * -1)
 
-                        ),
-                        It.IsAny<CancellationToken>())
-                )
-                .ReturnsAsync(new GetMetricStatisticsResponse()
+                    ),
+                    Arg.Any<CancellationToken>())
+                .Returns(new GetMetricStatisticsResponse()
                 {
-                    Datapoints = new List<Datapoint>()
-                    {
-                        new Datapoint()
-                        {
-                            Minimum = value
-                        }
-                    }
+                    Datapoints = new List<Datapoint>() { new Datapoint() { Minimum = value } }
                 });
         }
 
@@ -103,7 +95,7 @@ namespace Watchman.Tests.AutoScaling
             var now = DateTime.Parse("2018-01-26");
 
             ioc.GetMock<ICurrentTimeProvider>()
-                .Setup(f => f.UtcNow)
+                .UtcNow
                 .Returns(now);
 
             var cloudWatch = ioc.GetMock<IAmazonCloudWatch>();
@@ -223,11 +215,10 @@ namespace Watchman.Tests.AutoScaling
 
             var now = DateTime.UtcNow;
 
-            ioc.GetMock<ICurrentTimeProvider>().Setup(a => a.UtcNow).Returns(now);
+            ioc.GetMock<ICurrentTimeProvider>().UtcNow.Returns(now);
 
-            ioc.GetMock<IAmazonCloudWatch>().Setup(x =>
-                    x.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new GetMetricStatisticsResponse()
+            ioc.GetMock<IAmazonCloudWatch>().GetMetricStatisticsAsync(Arg.Any<GetMetricStatisticsRequest>(), Arg.Any<CancellationToken>())
+                .Returns(new GetMetricStatisticsResponse()
                 {
                     Datapoints = new List<Datapoint>()
                 });
@@ -294,9 +285,9 @@ namespace Watchman.Tests.AutoScaling
             });
 
             ioc.GetMock<IAmazonCloudWatch>()
-                .Setup(c => c.GetMetricStatisticsAsync(It.IsAny<GetMetricStatisticsRequest>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new GetMetricStatisticsResponse()
+                .GetMetricStatisticsAsync(Arg.Any<GetMetricStatisticsRequest>(),
+                    Arg.Any<CancellationToken>())
+                .Returns(new GetMetricStatisticsResponse()
                 {
                     Datapoints = new List<Datapoint>()
                     {
@@ -311,12 +302,11 @@ namespace Watchman.Tests.AutoScaling
             await sut.LoadAndGenerateAlarms(RunMode.GenerateAlarms);
 
             // assert
-            ioc.GetMock<IAmazonCloudWatch>().Verify(x => x.GetMetricStatisticsAsync(
-                It.Is<GetMetricStatisticsRequest>(
-                    r => r.StartTimeUtc.Kind == DateTimeKind.Utc
-                    && r.EndTimeUtc.Kind == DateTimeKind.Utc
-                    ), It.IsAny<CancellationToken>())
-                );
+            await ioc.GetMock<IAmazonCloudWatch>().Received().GetMetricStatisticsAsync(
+                    Arg.Is<GetMetricStatisticsRequest>(
+                        r => r.StartTimeUtc.Kind == DateTimeKind.Utc
+                             && r.EndTimeUtc.Kind == DateTimeKind.Utc
+                    ), Arg.Any<CancellationToken>());
         }
 
         [Test]

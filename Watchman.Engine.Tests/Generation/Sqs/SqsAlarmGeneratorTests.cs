@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using NSubstitute;
 using NUnit.Framework;
 using Watchman.AwsResources;
 using Watchman.AwsResources.Services.Sqs;
@@ -15,23 +15,22 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task DryRunShouldCallQueueAlarmCreator()
         {
-            var queueSource = new Mock<IResourceSource<QueueData>>();
+            var queueSource = Substitute.For<IResourceSource<QueueData>>();
             VerifyQueues.ReturnsQueues(queueSource, new List<string> { "queue1" });
 
-            var alarmCreator = new Mock<IQueueAlarmCreator>();
-            var snsTopicCreator = new Mock<ISnsTopicCreator>();
-            var snsSubscriptionCreator = new Mock<ISnsSubscriptionCreator>();
+            var alarmCreator = Substitute.For<IQueueAlarmCreator>();
+            var snsTopicCreator = Substitute.For<ISnsTopicCreator>();
+            var snsSubscriptionCreator = Substitute.For<ISnsSubscriptionCreator>();
 
-            var snsCreator = new SnsCreator(snsTopicCreator.Object, snsSubscriptionCreator.Object);
+            var snsCreator = new SnsCreator(snsTopicCreator, snsSubscriptionCreator);
 
             var config = MakeSimpleConfig();
 
-            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false),
-                queueSource.Object);
+            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false), queueSource);
 
             var generator = new SqsAlarmGenerator(
-                new ConsoleAlarmLogger(false), queueSource.Object,
-                populator, alarmCreator.Object,
+                new ConsoleAlarmLogger(false), queueSource,
+                populator, alarmCreator,
                 snsCreator);
 
             await generator.GenerateAlarmsFor(config, RunMode.DryRun);
@@ -42,23 +41,22 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task GenerateAlarmsRunShouldCallQueueAlarmCreator()
         {
-            var queueSource = new Mock<IResourceSource<QueueData>>();
+            var queueSource = Substitute.For<IResourceSource<QueueData>>();
             VerifyQueues.ReturnsQueues(queueSource, new List<string> { "queue1" });
 
-            var alarmCreator = new Mock<IQueueAlarmCreator>();
-            var snsTopicCreator = new Mock<ISnsTopicCreator>();
-            var snsSubscriptionCreator = new Mock<ISnsSubscriptionCreator>();
+            var alarmCreator = Substitute.For<IQueueAlarmCreator>();
+            var snsTopicCreator = Substitute.For<ISnsTopicCreator>();
+            var snsSubscriptionCreator = Substitute.For<ISnsSubscriptionCreator>();
 
-            var snsCreator = new SnsCreator(snsTopicCreator.Object, snsSubscriptionCreator.Object);
+            var snsCreator = new SnsCreator(snsTopicCreator, snsSubscriptionCreator);
 
             var config = MakeSimpleConfig();
 
-            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false),
-                queueSource.Object);
+            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false), queueSource);
 
             var generator = new SqsAlarmGenerator(
-                new ConsoleAlarmLogger(false), queueSource.Object,
-                populator, alarmCreator.Object,
+                new ConsoleAlarmLogger(false), queueSource,
+                populator, alarmCreator,
                 snsCreator);
 
             await generator.GenerateAlarmsFor(config, RunMode.GenerateAlarms);
@@ -69,7 +67,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task ExtraQueuesInResourcesShouldBeIgnored()
         {
-            var queueSource = new Mock<IResourceSource<QueueData>>();
+            var queueSource = Substitute.For<IResourceSource<QueueData>>();
             VerifyQueues.ReturnsQueues(queueSource, new List<string>
                 {
                     "aa_nomatch_queue",
@@ -78,20 +76,19 @@ namespace Watchman.Engine.Tests.Generation.Sqs
                     "zz_nomatch_queue"
                 });
 
-            var alarmCreator = new Mock<IQueueAlarmCreator>();
-            var snsTopicCreator = new Mock<ISnsTopicCreator>();
-            var snsSubscriptionCreator = new Mock<ISnsSubscriptionCreator>();
+            var alarmCreator = Substitute.For<IQueueAlarmCreator>();
+            var snsTopicCreator = Substitute.For<ISnsTopicCreator>();
+            var snsSubscriptionCreator = Substitute.For<ISnsSubscriptionCreator>();
 
-            var snsCreator = new SnsCreator(snsTopicCreator.Object, snsSubscriptionCreator.Object);
+            var snsCreator = new SnsCreator(snsTopicCreator, snsSubscriptionCreator);
 
             var config = MakePatternConfig();
 
-            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false),
-                queueSource.Object);
+            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false), queueSource);
 
             var generator = new SqsAlarmGenerator(
-                new ConsoleAlarmLogger(false), queueSource.Object,
-                populator, alarmCreator.Object,
+                new ConsoleAlarmLogger(false), queueSource,
+                populator, alarmCreator,
                 snsCreator);
 
             await generator.GenerateAlarmsFor(config, RunMode.GenerateAlarms);
@@ -105,7 +102,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task ExtraQueueInPatternShouldBeIgnored()
         {
-            var queueSource = new Mock<IResourceSource<QueueData>>();
+            var queueSource = Substitute.For<IResourceSource<QueueData>>();
             VerifyQueues.ReturnsQueues(queueSource, new List<string>
                 {
                     "aa_nomatch_queue",
@@ -114,11 +111,11 @@ namespace Watchman.Engine.Tests.Generation.Sqs
                     "zz_nomatch_queue"
                 });
 
-            var alarmCreator = new Mock<IQueueAlarmCreator>();
-            var snsTopicCreator = new Mock<ISnsTopicCreator>();
-            var snsSubscriptionCreator = new Mock<ISnsSubscriptionCreator>();
+            var alarmCreator = Substitute.For<IQueueAlarmCreator>();
+            var snsTopicCreator = Substitute.For<ISnsTopicCreator>();
+            var snsSubscriptionCreator = Substitute.For<ISnsSubscriptionCreator>();
 
-            var snsCreator = new SnsCreator(snsTopicCreator.Object, snsSubscriptionCreator.Object);
+            var snsCreator = new SnsCreator(snsTopicCreator, snsSubscriptionCreator);
 
             var config = MakePatternConfig();
             config.AlertingGroups[0].Sqs.Queues = new List<Queue>
@@ -127,12 +124,11 @@ namespace Watchman.Engine.Tests.Generation.Sqs
                     new Queue {Pattern = "prod-pattern-queue"}
                 };
 
-            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false),
-                queueSource.Object);
+            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false), queueSource);
 
             var generator = new SqsAlarmGenerator(
-                new ConsoleAlarmLogger(false), queueSource.Object,
-                populator, alarmCreator.Object,
+                new ConsoleAlarmLogger(false), queueSource,
+                populator, alarmCreator,
                 snsCreator);
 
             await generator.GenerateAlarmsFor(config, RunMode.GenerateAlarms);
@@ -145,7 +141,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task ExtraQueueInNameShouldBeIgnored()
         {
-            var queueSource = new Mock<IResourceSource<QueueData>>();
+            var queueSource = Substitute.For<IResourceSource<QueueData>>();
             VerifyQueues.ReturnsQueues(queueSource, new List<string>
                 {
                     "aa_nomatch_queue",
@@ -154,11 +150,11 @@ namespace Watchman.Engine.Tests.Generation.Sqs
                     "zz_nomatch_queue"
                 });
 
-            var alarmCreator = new Mock<IQueueAlarmCreator>();
-            var snsTopicCreator = new Mock<ISnsTopicCreator>();
-            var snsSubscriptionCreator = new Mock<ISnsSubscriptionCreator>();
+            var alarmCreator = Substitute.For<IQueueAlarmCreator>();
+            var snsTopicCreator = Substitute.For<ISnsTopicCreator>();
+            var snsSubscriptionCreator = Substitute.For<ISnsSubscriptionCreator>();
 
-            var snsCreator = new SnsCreator(snsTopicCreator.Object, snsSubscriptionCreator.Object);
+            var snsCreator = new SnsCreator(snsTopicCreator, snsSubscriptionCreator);
 
             var config = MakePatternConfig();
             config.AlertingGroups[0].Sqs.Queues = new List<Queue>
@@ -167,12 +163,11 @@ namespace Watchman.Engine.Tests.Generation.Sqs
                     new Queue {Name = "prod-pattern-queue"}
                 };
 
-            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false),
-                queueSource.Object);
+            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false), queueSource);
 
             var generator = new SqsAlarmGenerator(
-                new ConsoleAlarmLogger(false), queueSource.Object,
-                populator, alarmCreator.Object,
+                new ConsoleAlarmLogger(false), queueSource,
+                populator, alarmCreator,
                 snsCreator);
 
             await generator.GenerateAlarmsFor(config, RunMode.GenerateAlarms);
@@ -186,7 +181,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task PatternQueueShouldAlsoMonitorMatchingErrorQueue()
         {
-            var queueSource = new Mock<IResourceSource<QueueData>>();
+            var queueSource = Substitute.For<IResourceSource<QueueData>>();
             VerifyQueues.ReturnsQueues(queueSource, new List<string>
                 {
                     "prod-pattern-queue",
@@ -194,11 +189,11 @@ namespace Watchman.Engine.Tests.Generation.Sqs
                     "some-other-queue"
                 });
 
-            var alarmCreator = new Mock<IQueueAlarmCreator>();
-            var snsTopicCreator = new Mock<ISnsTopicCreator>();
-            var snsSubscriptionCreator = new Mock<ISnsSubscriptionCreator>();
+            var alarmCreator = Substitute.For<IQueueAlarmCreator>();
+            var snsTopicCreator = Substitute.For<ISnsTopicCreator>();
+            var snsSubscriptionCreator = Substitute.For<ISnsSubscriptionCreator>();
 
-            var snsCreator = new SnsCreator(snsTopicCreator.Object, snsSubscriptionCreator.Object);
+            var snsCreator = new SnsCreator(snsTopicCreator, snsSubscriptionCreator);
 
             var config = MakeSimpleConfig();
             var sqsConfig = config.AlertingGroups[0].Sqs;
@@ -218,12 +213,11 @@ namespace Watchman.Engine.Tests.Generation.Sqs
                 }
             };
 
-            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false),
-                queueSource.Object);
+            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false), queueSource);
 
             var generator = new SqsAlarmGenerator(
-                new ConsoleAlarmLogger(false), queueSource.Object,
-                populator, alarmCreator.Object,
+                new ConsoleAlarmLogger(false), queueSource,
+                populator, alarmCreator,
                 snsCreator);
 
             await generator.GenerateAlarmsFor(config, RunMode.GenerateAlarms);
@@ -237,7 +231,7 @@ namespace Watchman.Engine.Tests.Generation.Sqs
         [Test]
         public async Task NamedQueueShouldAlsoMonitorMatchingErrorQueue()
         {
-            var queueSource = new Mock<IResourceSource<QueueData>>();
+            var queueSource = Substitute.For<IResourceSource<QueueData>>();
             VerifyQueues.ReturnsQueues(queueSource, new List<string>
                 {
                     "prod-pattern-queue",
@@ -245,11 +239,11 @@ namespace Watchman.Engine.Tests.Generation.Sqs
                     "some-other-queue"
                 });
 
-            var alarmCreator = new Mock<IQueueAlarmCreator>();
-            var snsTopicCreator = new Mock<ISnsTopicCreator>();
-            var snsSubscriptionCreator = new Mock<ISnsSubscriptionCreator>();
+            var alarmCreator = Substitute.For<IQueueAlarmCreator>();
+            var snsTopicCreator = Substitute.For<ISnsTopicCreator>();
+            var snsSubscriptionCreator = Substitute.For<ISnsSubscriptionCreator>();
 
-            var snsCreator = new SnsCreator(snsTopicCreator.Object, snsSubscriptionCreator.Object);
+            var snsCreator = new SnsCreator(snsTopicCreator, snsSubscriptionCreator);
 
             var config = MakeSimpleConfig();
             var sqsConfig = config.AlertingGroups[0].Sqs;
@@ -269,12 +263,11 @@ namespace Watchman.Engine.Tests.Generation.Sqs
                 }
             };
 
-            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false),
-                queueSource.Object);
+            var populator = new QueueNamePopulator(new ConsoleAlarmLogger(false), queueSource);
 
             var generator = new SqsAlarmGenerator(
-                new ConsoleAlarmLogger(false), queueSource.Object,
-                populator, alarmCreator.Object,
+                new ConsoleAlarmLogger(false), queueSource,
+                populator, alarmCreator,
                 snsCreator);
 
             await generator.GenerateAlarmsFor(config, RunMode.GenerateAlarms);

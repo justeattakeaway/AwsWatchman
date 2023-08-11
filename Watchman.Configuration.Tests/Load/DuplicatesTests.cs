@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using NSubstitute;
 using NUnit.Framework;
 using Watchman.Configuration.Load;
 using Watchman.Configuration.Validation;
@@ -15,8 +15,8 @@ namespace Watchman.Configuration.Tests.Load
                 var testFilePath = TestFiles.GetRelativePathTo(path);
                 var testFilesSettings = new FileSettings(testFilePath);
 
-                var logger = new Mock<IConfigLoadLogger>();
-                var loader = new ConfigLoader(testFilesSettings, logger.Object);
+                var logger = Substitute.For<IConfigLoadLogger>();
+                var loader = new ConfigLoader(testFilesSettings, logger);
 
                 return loader.LoadConfig();
             };

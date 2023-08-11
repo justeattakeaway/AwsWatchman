@@ -238,7 +238,7 @@ namespace Watchman.Engine.Generation.Generic
                 var stacksResponse = await _cloudformation.DescribeStacksAsync(new DescribeStacksRequest
                     {
                         StackName = stackName
-                    });
+                    }, default);
 
                 var stack = stacksResponse?.Stacks?.FirstOrDefault();
 

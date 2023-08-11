@@ -1,21 +1,21 @@
 ﻿using System.Linq.Expressions;
 using Amazon.CloudWatch;
 using Amazon.CloudWatch.Model;
-using Moq;
+using NSubstitute;
 
 namespace Watchman.Engine.Tests.Generation.Dynamo
 {
     public static class CloudwatchVerify
     {
-        public static void AlarmWasPutMatching(Mock<IAmazonCloudWatch> cloudwatch,
-            Expression<Func<PutMetricAlarmRequest, bool>> expression)
+        public static void AlarmWasPutMatching(IAmazonCloudWatch cloudwatch,
+            Expression<Predicate<PutMetricAlarmRequest>> expression)
         {
-            cloudwatch.Verify(x =>
-                x.PutMetricAlarmAsync(It.Is(expression), It.IsAny<CancellationToken>()),
-                Times.Once);
+            cloudwatch
+                .Received(1)
+                .PutMetricAlarmAsync(Arg.Is(expression), Arg.Any<CancellationToken>());
         }
 
-        public static void AlarmWasPutOnTable(Mock<IAmazonCloudWatch> cloudwatch,
+        public static void AlarmWasPutOnTable(IAmazonCloudWatch cloudwatch,
             string alarmName, string tableName, string metricName)
         {
             AlarmWasPutMatching(cloudwatch,
@@ -25,7 +25,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
                 && IsForTable(request, tableName));
         }
 
-        public static void AlarmWasPutOnTable(Mock<IAmazonCloudWatch> cloudwatch, string tableName, string metricName)
+        public static void AlarmWasPutOnTable(IAmazonCloudWatch cloudwatch, string tableName, string metricName)
         {
             AlarmWasPutMatching(cloudwatch,
                 request =>
@@ -33,7 +33,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
                     && IsForTable(request, tableName) && IsNotForIndex(request));
         }
 
-        public static void AlarmWasPutOnTable(Mock<IAmazonCloudWatch> cloudwatch,
+        public static void AlarmWasPutOnTable(IAmazonCloudWatch cloudwatch,
             string alarmName, string tableName, string metricName,
             int threshold, int period)
         {
@@ -52,7 +52,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
                 && request.OKActions.Contains("sns-topic-arn"));
         }
 
-        public static void AlarmWasPutOnIndex(Mock<IAmazonCloudWatch> cloudwatch,
+        public static void AlarmWasPutOnIndex(IAmazonCloudWatch cloudwatch,
             string tableName, string indexName, string metricName)
         {
             AlarmWasPutMatching(cloudwatch,
@@ -62,7 +62,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
                     && IsForIndex(request, indexName));
         }
 
-        public static void AlarmWasPutOnIndex(Mock<IAmazonCloudWatch> cloudwatch,
+        public static void AlarmWasPutOnIndex(IAmazonCloudWatch cloudwatch,
             string alarmName, string tableName, string indexName, string metricName,
             int threshold, int period)
         {
@@ -82,55 +82,59 @@ namespace Watchman.Engine.Tests.Generation.Dynamo
                 && request.OKActions.Contains("sns-topic-arn"));
         }
 
-        public static void AlarmWasNotPutOnTable(Mock<IAmazonCloudWatch> cloudwatch, string tableName)
+        public static void AlarmWasNotPutOnTable(IAmazonCloudWatch cloudwatch, string tableName)
         {
-            cloudwatch.Verify(x =>
-                x.PutMetricAlarmAsync(It.Is<PutMetricAlarmRequest>(request =>
-                request.Statistic.Value == "Sum"
-                && IsForTable(request, tableName)
-                && request.Namespace == "AWS/DynamoDB"), It.IsAny<CancellationToken>()), Times.Never);
+            cloudwatch
+                .DidNotReceive()
+                .PutMetricAlarmAsync(Arg.Is<PutMetricAlarmRequest>(request =>
+                    request.Statistic.Value == "Sum"
+                    && IsForTable(request, tableName)
+                    && request.Namespace == "AWS/DynamoDB"), Arg.Any<CancellationToken>());
         }
 
-        public static void AlarmWasNotPutOnTable(Mock<IAmazonCloudWatch> cloudwatch,
+        public static void AlarmWasNotPutOnTable(IAmazonCloudWatch cloudwatch,
             string tableName, string metricName)
         {
-            cloudwatch.Verify(x =>
-                x.PutMetricAlarmAsync(It.Is<PutMetricAlarmRequest>(request =>
-                request.MetricName == metricName
-                && request.Statistic.Value == "Sum"
-                && IsForTable(request, tableName)
-                && request.Namespace == "AWS/DynamoDB"), It.IsAny<CancellationToken>()), Times.Never);
+            cloudwatch
+                .DidNotReceive()
+                .PutMetricAlarmAsync(Arg.Is<PutMetricAlarmRequest>(request =>
+                    request.MetricName == metricName
+                    && request.Statistic.Value == "Sum"
+                    && IsForTable(request, tableName)
+                    && request.Namespace == "AWS/DynamoDB"), Arg.Any<CancellationToken>());
         }
 
-        public static void AlarmWasNotPutonIndex(Mock<IAmazonCloudWatch> cloudwatch,
+        public static void AlarmWasNotPutonIndex(IAmazonCloudWatch cloudwatch,
             string tableName, string indexName)
         {
-            cloudwatch.Verify(x =>
-                x.PutMetricAlarmAsync(It.Is<PutMetricAlarmRequest>(request =>
-                request.Statistic.Value == "Sum"
-                && IsForTable(request, tableName)
-                && IsForIndex(request, indexName)
-                && request.Namespace == "AWS/DynamoDB"), It.IsAny<CancellationToken>()), Times.Never);
+            cloudwatch
+                .DidNotReceive()
+                .PutMetricAlarmAsync(Arg.Is<PutMetricAlarmRequest>(request =>
+                    request.Statistic.Value == "Sum"
+                    && IsForTable(request, tableName)
+                    && IsForIndex(request, indexName)
+                    && request.Namespace == "AWS/DynamoDB"), Arg.Any<CancellationToken>());
         }
 
-        public static void AlarmWasNotPutOnIndex(Mock<IAmazonCloudWatch> cloudwatch,
+        public static void AlarmWasNotPutOnIndex(IAmazonCloudWatch cloudwatch,
             string tableName, string indexName, string metricName)
         {
-            cloudwatch.Verify(x =>
-                x.PutMetricAlarmAsync(It.Is<PutMetricAlarmRequest>(request =>
+            cloudwatch
+                .DidNotReceive()
+                .PutMetricAlarmAsync(Arg.Is<PutMetricAlarmRequest>(request =>
                     request.Statistic.Value == "Sum"
                     && IsForTable(request, tableName)
                     && IsForIndex(request, indexName)
                     && request.MetricName == metricName
-                    && request.Namespace == "AWS/DynamoDB"), It.IsAny<CancellationToken>()), Times.Never);
+                    && request.Namespace == "AWS/DynamoDB"), Arg.Any<CancellationToken>());
         }
 
-        public static void AlarmWasNotPutOnMetric(Mock<IAmazonCloudWatch> cloudwatch, string metric)
+        public static void AlarmWasNotPutOnMetric(IAmazonCloudWatch cloudwatch, string metric)
         {
-            cloudwatch.Verify(x =>
-                x.PutMetricAlarmAsync(It.Is<PutMetricAlarmRequest>(
-                    request => request.MetricName == metric), It.IsAny<CancellationToken>()),
-                    Times.Never);
+            cloudwatch
+                .DidNotReceive()
+                .PutMetricAlarmAsync(Arg.Is<PutMetricAlarmRequest>(
+                    request => request.MetricName == metric), Arg.Any<CancellationToken>());
         }
 
         private static bool IsForTable(PutMetricAlarmRequest r, string tableName)
