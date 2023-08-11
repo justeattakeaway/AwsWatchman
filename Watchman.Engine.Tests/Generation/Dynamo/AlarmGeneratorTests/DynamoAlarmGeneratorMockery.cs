@@ -108,7 +108,7 @@ namespace Watchman.Engine.Tests.Generation.Dynamo.AlarmGeneratorTests
         public void GivenATableDoesNotExist(string failureTable)
         {
             TableLoader
-                .GetResourceAsync(failureTable).Throws(new AmazonDynamoDBException("The table does not exist"));
+                .GetResourceAsync(failureTable).ThrowsAsync(new AmazonDynamoDBException("The table does not exist"));
         }
 
 

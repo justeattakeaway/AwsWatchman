@@ -158,7 +158,7 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
                 });
 
             dynamoDbFake
-                .DescribeTableAsync("banana", Arg.Any<CancellationToken>()).Throws(new ResourceNotFoundException("Table not found"));
+                .DescribeTableAsync("banana", Arg.Any<CancellationToken>()).ThrowsAsync(new ResourceNotFoundException("Table not found"));
 
             var sut = new TableDescriptionSource(dynamoDbFake);
 
