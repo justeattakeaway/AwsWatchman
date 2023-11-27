@@ -131,7 +131,7 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
         public async Task GetResourceAsync_ReturnsNullIfNotInList()
         {
             var result = await SetupPagingTest().GetResourceAsync("does-not-exist");
-            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -159,7 +159,7 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
                 .Received()
                 .DescribeTableAsync("banana", Arg.Any<CancellationToken>());
 
-            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.Null);
         }
     }
 }
