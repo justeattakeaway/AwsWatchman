@@ -20,26 +20,17 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
             _firstPage = new ListTablesResponse
             {
                 LastEvaluatedTableName = firstTableName,
-                TableNames = new List<string>
-                {
-                    firstTableName
-                }
+                TableNames = [firstTableName]
             };
             var secondTableName = "Table-2";
             _secondPage = new ListTablesResponse
             {
                 LastEvaluatedTableName = secondTableName,
-                TableNames = new List<string>
-                {
-                    secondTableName
-                }
+                TableNames = [secondTableName]
             };
             _thirdPage = new ListTablesResponse
             {
-                TableNames = new List<string>
-                {
-                    "Table-3"
-                }
+                TableNames = ["Table-3"]
             };
 
             var describeSecondTableResponse = new DescribeTableResponse
@@ -112,7 +103,7 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
             // arrange
             var test = SetupPagingTest();
             _firstPage.LastEvaluatedTableName = null;
-            _firstPage.TableNames = new List<string>();
+            _firstPage.TableNames = [];
 
             // act
             var result = await test.GetResourceNamesAsync();
@@ -140,7 +131,7 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
         public async Task GetResourceAsync_ReturnsNullIfNotInList()
         {
             var result = await SetupPagingTest().GetResourceAsync("does-not-exist");
-            Assert.Null(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -154,7 +145,7 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
                 )
                 .Returns(new ListTablesResponse()
                 {
-                    TableNames = new List<string>() { "banana" }
+                    TableNames = ["banana"]
                 });
 
             dynamoDbFake
@@ -168,7 +159,7 @@ namespace Watchman.AwsResources.Tests.Services.DynamoDb
                 .Received()
                 .DescribeTableAsync("banana", Arg.Any<CancellationToken>());
 
-            Assert.Null(result);
+            Assert.That(result, Is.Null);
         }
     }
 }
