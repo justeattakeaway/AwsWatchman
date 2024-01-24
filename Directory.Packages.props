@@ -16,7 +16,7 @@
     <PackageVersion Include="AWSSDK.StepFunctions" Version="3.7.102.76" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="coverlet.msbuild" Version="6.0.0" />
-    <PackageVersion Include="CsvHelper" Version="30.0.1" />
+    <PackageVersion Include="CsvHelper" Version="30.0.3" />
     <PackageVersion Include="GitHubActionsTestLogger" Version="2.3.3" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
