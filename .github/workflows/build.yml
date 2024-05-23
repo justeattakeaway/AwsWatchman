@@ -79,7 +79,7 @@ jobs:
       uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
       with:
         name: artifacts-${{ matrix.os-name }}
-        path: ./artifacts/packages
+        path: ./artifacts
 
     - name: Publish NuGet packages
       uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
