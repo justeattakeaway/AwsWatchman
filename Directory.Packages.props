@@ -27,7 +27,4 @@
     <PackageVersion Include="StructureMap" Version="4.7.1" />
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="6.0.1" />
   </ItemGroup>
-  <ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
-    <PackageReference Include="GitHubActionsTestLogger" PrivateAssets="All" />
-  </ItemGroup>
 </Project>
