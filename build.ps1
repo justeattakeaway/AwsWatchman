@@ -6,7 +6,6 @@
 param(
     [Parameter(Mandatory = $false)][string] $Configuration = "Release",
     [Parameter(Mandatory = $false)][string] $VersionSuffix = "",
-    [Parameter(Mandatory = $false)][string] $OutputPath = "",
     [Parameter(Mandatory = $false)][switch] $SkipTests
 )
 
@@ -17,10 +16,6 @@ $solutionPath = $PSScriptRoot
 $sdkFile = Join-Path $solutionPath "global.json"
 
 $dotnetVersion = (Get-Content $sdkFile | Out-String | ConvertFrom-Json).sdk.version
-
-if ($OutputPath -eq "") {
-    $OutputPath = Join-Path "$(Convert-Path "$PSScriptRoot")" "artifacts"
-}
 
 $installDotNetSdk = $false;
 
@@ -79,8 +74,6 @@ if ($installDotNetSdk -eq $true) {
 function DotNetPack {
     param([string]$Project)
 
-    $PackageOutputPath = (Join-Path $OutputPath "packages")
-
     $additionalArgs = @()
 
     if (![string]::IsNullOrEmpty($VersionSuffix)) {
@@ -88,7 +81,7 @@ function DotNetPack {
         $additionalArgs += $VersionSuffix
     }
 
-    & $dotnet pack $Project --output $PackageOutputPath --configuration $Configuration --include-symbols --include-source --tl $additionalArgs
+    & $dotnet pack $Project --configuration $Configuration --include-symbols --include-source --tl $additionalArgs
 
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet pack failed with exit code $LASTEXITCODE"
@@ -105,7 +98,7 @@ function DotNetTest {
         $additionalArgs += "GitHubActions;report-warnings=false"
     }
 
-    & $dotnet test $Project --output $OutputPath --configuration $Configuration --tl $additionalArgs
+    & $dotnet test $Project --configuration $Configuration --tl $additionalArgs
 
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet test failed with exit code $LASTEXITCODE"

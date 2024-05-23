@@ -22,11 +22,11 @@ jobs:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
         include:
           - os: macos-latest
-            os_name: macos
+            os-name: macos
           - os: ubuntu-latest
-            os_name: linux
+            os-name: linux
           - os: windows-latest
-            os_name: windows
+            os-name: windows
 
     steps:
 
@@ -50,14 +50,14 @@ jobs:
     - name: Publish artifacts
       uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
       with:
-        name: artifacts-${{ matrix.os_name }}
+        name: artifacts-${{ matrix.os-name }}
         path: ./artifacts/packages
 
     - name: Publish NuGet packages
       uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
       with:
-        name: packages-${{ matrix.os_name }}
-        path: ./artifacts/packages
+        name: packages-${{ matrix.os-name }}
+        path: ./artifacts/package/release
         if-no-files-found: error
 
   validate-packages:
