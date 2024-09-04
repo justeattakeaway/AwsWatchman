@@ -6,8 +6,8 @@
 
 | **Package** | **Latest Version** |
 | :---------- | :----------------- |
-| JustEatTakeaway.Watchman | [![NuGet version](https://buildstats.info/nuget/JustEatTakeaway.Watchman?includePreReleases=false)](https://www.nuget.org/packages/JustEatTakeaway.Watchman/) |
-| JustEatTakeaway.Quartermaster | [![NuGet version](https://buildstats.info/nuget/JustEatTakeaway.Quartermaster?includePreReleases=false)](https://www.nuget.org/packages/JustEatTakeaway.Quartermaster/) |
+| JustEatTakeaway.Watchman | [![NuGet version](https://img.shields.io/nuget/v/JustEatTakeaway.Watchman?logo=nuget&label=NuGet&color=blue)](https://www.nuget.org/packages/JustEatTakeaway.Watchman/) |
+| JustEatTakeaway.Quartermaster | [![NuGet version](https://img.shields.io/nuget/v/JustEatTakeaway.Quartermaster?logo=nuget&label=NuGet&color=blue)](https://www.nuget.org/packages/JustEatTakeaway.Quartermaster/) |
 
 ## What
 
