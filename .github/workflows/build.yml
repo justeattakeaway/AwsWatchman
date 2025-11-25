@@ -39,7 +39,7 @@ jobs:
       uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5.0.0
+      uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
       id: setup-dotnet
 
     - name: Build, Test and Publish
@@ -99,7 +99,7 @@ jobs:
         name: packages-linux
 
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5.0.0
+      uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
       with:
         dotnet-version: ${{ needs.build.outputs.dotnet-sdk-version }}
 
@@ -137,7 +137,7 @@ jobs:
           name: packages-linux
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5.0.0
+        uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
         with:
           dotnet-version: ${{ needs.build.outputs.dotnet-sdk-version }}
 
@@ -157,7 +157,7 @@ jobs:
           name: packages-linux
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5.0.0
+        uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
         with:
           dotnet-version: ${{ needs.build.outputs.dotnet-sdk-version }}
 
