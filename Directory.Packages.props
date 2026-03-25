@@ -11,7 +11,7 @@
     <PackageVersion Include="AWSSDK.ElasticLoadBalancingV2" Version="3.7.100.103" />
     <PackageVersion Include="AWSSDK.Lambda" Version="3.7.105.23" />
     <PackageVersion Include="AWSSDK.RDS" Version="3.7.116.2" />
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.103.40" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.103.51" />
     <PackageVersion Include="AWSSDK.SimpleNotificationService" Version="3.7.101.39" />
     <PackageVersion Include="AWSSDK.StepFunctions" Version="3.7.102.76" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
