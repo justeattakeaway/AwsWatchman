@@ -7,6 +7,7 @@
     <PackageReference Include="AWSSDK.SimpleNotificationService" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" VersionOverride="13.0.4" />
     <ProjectReference Include="..\Watchman.AwsResources\Watchman.AwsResources.csproj" />
     <ProjectReference Include="..\Watchman.Configuration\Watchman.Configuration.csproj" />
   </ItemGroup>
