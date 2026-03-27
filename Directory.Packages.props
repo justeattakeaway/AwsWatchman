@@ -13,7 +13,7 @@
     <PackageVersion Include="AWSSDK.RDS" Version="3.7.116.2" />
     <PackageVersion Include="AWSSDK.S3" Version="3.7.103.40" />
     <PackageVersion Include="AWSSDK.SimpleNotificationService" Version="3.7.101.39" />
-    <PackageVersion Include="AWSSDK.StepFunctions" Version="3.7.102.76" />
+    <PackageVersion Include="AWSSDK.StepFunctions" Version="3.7.102.120" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="coverlet.msbuild" Version="6.0.0" />
     <PackageVersion Include="CsvHelper" Version="31.0.2" />
