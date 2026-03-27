@@ -1,6 +1,6 @@
 <Project>
   <ItemGroup>
-    <PackageVersion Include="AWSSDK.AutoScaling" Version="3.7.104.1" />
+    <PackageVersion Include="AWSSDK.AutoScaling" Version="3.7.104.52" />
     <PackageVersion Include="AWSSDK.CloudFormation" Version="3.7.104.41" />
     <PackageVersion Include="AWSSDK.CloudFront" Version="3.7.105.25" />
     <PackageVersion Include="AWSSDK.CloudWatch" Version="3.7.103.47" />
