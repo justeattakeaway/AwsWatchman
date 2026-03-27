@@ -25,6 +25,6 @@
     <PackageVersion Include="NUnit" Version="4.1.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageVersion Include="StructureMap" Version="4.7.1" />
-    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="6.0.1" />
+    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="6.0.2" />
   </ItemGroup>
 </Project>
