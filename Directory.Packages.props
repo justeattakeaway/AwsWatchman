@@ -6,7 +6,7 @@
     <PackageVersion Include="AWSSDK.CloudWatch" Version="3.7.103.47" />
     <PackageVersion Include="AWSSDK.DAX" Version="3.7.100.103" />
     <PackageVersion Include="AWSSDK.DynamoDBv2" Version="3.7.102.17" />
-    <PackageVersion Include="AWSSDK.EC2" Version="3.7.129.1" />
+    <PackageVersion Include="AWSSDK.EC2" Version="3.7.129.2" />
     <PackageVersion Include="AWSSDK.ElasticLoadBalancing" Version="3.7.100.103" />
     <PackageVersion Include="AWSSDK.ElasticLoadBalancingV2" Version="3.7.100.103" />
     <PackageVersion Include="AWSSDK.Lambda" Version="3.7.105.23" />
