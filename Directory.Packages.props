@@ -2,7 +2,7 @@
   <ItemGroup>
     <PackageVersion Include="AWSSDK.AutoScaling" Version="3.7.104.1" />
     <PackageVersion Include="AWSSDK.CloudFormation" Version="3.7.104.41" />
-    <PackageVersion Include="AWSSDK.CloudFront" Version="3.7.105.25" />
+    <PackageVersion Include="AWSSDK.CloudFront" Version="3.7.105.76" />
     <PackageVersion Include="AWSSDK.CloudWatch" Version="3.7.103.47" />
     <PackageVersion Include="AWSSDK.DAX" Version="3.7.100.103" />
     <PackageVersion Include="AWSSDK.DynamoDBv2" Version="3.7.102.17" />
